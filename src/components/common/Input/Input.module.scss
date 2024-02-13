@@ -1,0 +1,26 @@
+@import '../../../scss/colors';
+
+.input {
+  padding-left: 16px;
+  border: 2px solid transparent;
+  border-radius: 4px;
+  background-color: $grey;
+  color: rgb(135 140 158);
+  font-family: Onest, sans-serif;
+  transition: all .05s ease-in-out;
+
+  &:hover {
+    background-color: $dark-grey;
+  }
+
+  &:focus {
+    border-color: $blue;
+    background-color: $white;
+    color: $black;
+    outline: none;
+  }
+
+  &:focus::placeholder {
+    color: transparent;
+  }
+}

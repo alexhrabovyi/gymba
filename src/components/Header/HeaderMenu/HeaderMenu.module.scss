@@ -1,0 +1,116 @@
+@import '../../../scss/colors';
+@import '../../../scss/mixins';
+
+.menu {
+  position: fixed;
+  z-index: 10;
+  left: 0;
+  display: grid;
+  width: 100%;
+  background-color: $white;
+  box-shadow: 0 4px 4px rgb(0 0 0 / 25%);
+  column-gap: 32px;
+  grid-template-columns: 240px 1fr 331px;
+  transform: translateY(-100%);
+  transition: transform .5s ease-in-out;
+
+  &_open {
+    transform: translateY(0%);
+  }
+}
+
+.mainLinkBlock {
+  @include flex-builder(column, flex-start, flex-start);
+
+  padding-top: 32px;
+  border-right: 1px solid $dark-grey;
+  gap: 4px;
+}
+
+.mainLink {
+  width: 100%;
+  height: 48px;
+  padding: 0 16px;
+  color: $black;
+  font-family: Onest, sans-serif;
+  font-weight: 800;
+  text-decoration: none;
+  text-transform: uppercase;
+  transition: all .05s ease-in-out;
+
+  @include flex-builder(row, flex-start, center);
+
+  &:hover { 
+    background-color: $grey;
+  }
+}
+
+.additionalLinkBlock {
+  display: grid;
+  padding-top: 32px;
+  gap: 12px 164px;
+  grid-template-columns: auto auto;
+  place-content: flex-start flex-start;
+}
+
+.popularBlock {
+  padding-top: 32px;
+
+  @include flex-builder(column, flex-start, flex-start);
+
+  gap: 16px;
+}
+
+.popularTitle {
+  text-transform: uppercase;
+}
+
+.productCard {
+  @include flex-builder(column, flex-start, flex-start);
+
+  padding: 24px 0;
+  border: 1px solid $dark-grey;
+  gap: 37px;
+}
+
+.imgLink {
+  width: 100%;
+
+  @include flex-builder(row, center, center);
+}
+
+.productImg {
+  width: 50%;
+}
+
+.nameAndPriceBlock {
+  padding: 0 24px;
+
+  @include flex-builder(column, flex-start, flex-start);
+
+  gap: 48px;  
+}
+
+.priceBlock {
+  font-family: Onest, sans-serif;
+}
+
+.oldPrice {
+  color: $blue;
+  font-size: 14px;
+  text-decoration: line-through;
+}
+
+.actualPrice {
+  color: $black;
+  font-size: 24px;
+  font-weight: 800;
+
+  @include flex-builder(row, center, center);
+}
+
+.actualPriceSpan {
+  margin-left: 8px;
+  font-size: 16px;
+  font-weight: 400;
+}

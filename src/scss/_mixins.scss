@@ -1,0 +1,33 @@
+// media mixins
+
+@mixin media-l {
+  @media (width <= 1360px) { @content; }
+}
+
+@mixin media-m {
+  @media (width <= 1024px) { @content; }
+}
+
+@mixin media-s {
+  @media (width <= 768px) { @content; }
+}
+
+@mixin media-xs {
+  @media (width <= 576px) { @content; }
+}
+
+// flex mixins
+
+@mixin flex-builder($direction, $justify, $align) {
+  display: flex;
+  flex-direction: $direction;
+  align-items: $align;
+  justify-content: $justify;
+}
+
+// background mixin
+
+@mixin background-cover($property) {
+  background: ($property) center center no-repeat;
+  background-size: cover;
+}

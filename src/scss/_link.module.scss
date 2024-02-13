@@ -1,0 +1,21 @@
+@import '../scss/colors';
+
+.link {
+  color: $black;
+  font-family: Onest, sans-serif;
+  font-weight: 400;
+  text-decoration: none;
+  transition: all .05s ease-in-out;
+
+  &:hover {
+    color: $blue;
+  }
+
+  &:active {
+    color: $dark-blue;
+  }
+
+  &18px {
+    font-size: 18px;
+  }
+}
