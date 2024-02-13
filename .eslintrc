@@ -1,0 +1,29 @@
+{
+  "parserOptions": {
+    "sourceType": "module",
+    "ecmaFeatures": {
+      "jsx": true
+    },
+    "ecmaVersion": "latest",
+    "allowImportExportEverywhere": true
+  },
+  "extends": [
+    "airbnb",
+    "airbnb/hooks"
+  ],
+  "env": {
+    "browser": true,
+    "es6": true
+  },
+  "rules": {
+    "linebreak-style": "off",
+    "react/react-in-jsx-scope": "off",
+    "import/extensions": "off",
+    "react/prop-types": "off"
+  },
+  "ignorePatterns": [
+    "bundle",
+    "webpack.config.js",
+    "node_modules"
+  ]
+}
