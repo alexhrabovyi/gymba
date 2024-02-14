@@ -1,0 +1,126 @@
+@import '../../scss/colors';
+@import '../../scss/mixins';
+
+.footer {
+  width: 100%;
+  padding-top: 100px;
+  padding-bottom: 100px;
+  background: rgb(9 31 58) url('./images/bg.svg') top left;
+
+  @include flex-builder(column, flex-start, flex-start);
+}
+
+.mainBlock {
+  display: grid;
+  width: 100%;
+  padding-bottom: 58px;
+  grid-template-columns: 191px 251px 410px 48px 424px;
+  row-gap: 95px;
+}
+
+.logoLink {
+  align-self: flex-start;
+}
+
+.logo {
+  width: 100%;
+  height: 100%;
+}
+
+.mainLinkBlock {
+  grid-column: 3/4;
+}
+
+.mainLinkList {
+  gap: 16px;
+  list-style-type: none;
+
+  @include flex-builder(column, flex-start, flex-start);
+}
+
+.link {
+  color: $white;
+  font-family: Onest, sans-serif;
+  font-weight: 800;
+  text-decoration: none;
+  text-transform: uppercase;
+  transition: all .05s ease-in-out;
+
+  &:hover {
+    color: rgb(131 143 156);
+  }
+
+  &:active {
+    color: rgb(102 112 122);
+  }
+
+  &Big {
+    font-size: 28px;
+  }
+
+  &Small {
+    font-size: 12px;
+  }
+}
+
+.subscribeForm {
+  grid-column: 5/6;
+}
+
+.inputBLock {
+  position: relative;
+  margin-top: 24px;
+}
+
+.input {
+  width: 100%;
+  height: 56px;
+  padding-right: 167px;
+  background-color: rgb(45 64 87);
+
+  &:hover {
+    background-color: rgb(55 74 97);
+  }
+
+  &:focus {
+    background-color: $white;
+  }
+}
+
+.subscribeButton {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  width: 143px;
+  height: 40px;
+}
+
+.address {
+  grid-column: 3/4;
+}
+
+.contactBlock {
+  grid-column: 5/6;
+
+  @include flex-builder(column, flex-start, flex-start);
+}
+
+.additionalBlock {
+  padding-top: 60px;
+  border-top: 1px solid rgb(52 70 92);
+}
+
+.text {
+  color: rgb(133 149 167);
+}
+
+.additionalLinkBlock {
+  margin-top: 42px;
+}
+
+.additionalLinkList {
+  gap: 24px;
+  list-style-type: none;
+
+  @include flex-builder(row, flex-start, flex-start);
+}
