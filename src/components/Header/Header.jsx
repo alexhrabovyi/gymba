@@ -14,6 +14,7 @@ import Compare from './images/compare.svg';
 import Favorite from './images/favorite.svg';
 import Cart from './images/cart.svg';
 import HeaderMenu from './HeaderMenu/HeaderMenu.jsx';
+import Input from '../common/Input/Input.jsx';
 
 export default function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -113,7 +114,7 @@ export default function Header() {
             <p className={classNames(textCls.text, textCls.textFw800, textCls.text18px)}>Каталог</p>
           </button>
           <div className={headerCls.inputBlock}>
-            <input className={headerCls.input} placeholder="Поиск товаров" />
+            <Input className={headerCls.input} placeholder="Поиск товаров" />
             <Button className={headerCls.submitButton} type="submit">Найти</Button>
           </div>
           <nav>

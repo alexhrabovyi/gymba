@@ -1,0 +1,60 @@
+@import '../../../scss/colors';
+@import '../../../scss/mixins';
+
+.oblique {
+  width: 52px;
+  height: 100%;
+  fill: $blue;
+}
+
+.arrow {
+  width: 24px;
+  height: 24px;
+  margin-left: 16px;
+  fill: $black;
+
+  &_white {
+    fill: $white;
+  }
+}
+
+.link {
+  height: 65px;
+  color: $black;
+  font-family: Onest, sans-serif;
+  font-size: 18px;
+  font-weight: 800;
+  text-decoration: none;
+  text-transform: uppercase;
+  transition: all .05s ease-in-out;
+
+  @include flex-builder(row, flex-start, center);
+
+  &:hover .oblique {
+    fill: $dark-blue;
+  }
+
+  &:active .oblique {
+    fill: $blue-active;
+  }
+
+  &_white {
+    color: $white;
+
+    &:hover {
+      color: $white-hover;
+    }
+
+    &:hover .arrow_white {
+      fill: $white-hover;
+    }
+
+    &:active {
+      color: $white-active;
+    }
+
+    &:active .arrow_white {
+      fill: $white-active;
+    }
+  }
+}

@@ -1,0 +1,14 @@
+@import '../../../scss/mixins';
+
+.slide {
+  width: 100%;
+  height: 100%;
+  padding: 60px;
+  background-image: url('./images/bg_1.png');
+
+  @include flex-builder(column, space-between, flex-start);
+}
+
+.text {
+  text-transform: uppercase;
+}

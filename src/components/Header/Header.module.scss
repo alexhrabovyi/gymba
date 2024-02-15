@@ -2,11 +2,12 @@
 @import '../../scss/mixins';
 
 .header {
-  position: fixed;
+  position: sticky;
   z-index: 100;
   top: 0;
   left: 0;
   display: grid;
+  width: 100%;
   padding-top: 32px;
   padding-bottom: 32px;
   background: $light-blue;
@@ -42,6 +43,7 @@
 .linkWithIcon {
   @include flex-builder(row, flex-start, center);
 
+  color: $black;
   gap: 8px;
   text-decoration: none;
   transition: all .05s ease-in-out;
@@ -167,27 +169,14 @@
   width: 100%;
   height: 100%;
   padding-right: 116px;
-  padding-left: 16px;
-  border: 2px solid transparent;
-  border-radius: 4px;
   background-color: $dark-grey;
-  color: rgb(135 140 158);
-  font-family: Onest, sans-serif;
-  transition: all .05s ease-in-out;
 
   &:hover {
     background-color: rgb(212 218 224);
   }
 
   &:focus {
-    border-color: $blue;
     background-color: $white;
-    color: $black;
-    outline: none;
-  }
-
-  &:focus::placeholder {
-    color: transparent;
   }
 }
 

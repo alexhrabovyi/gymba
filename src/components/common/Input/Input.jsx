@@ -9,7 +9,7 @@ export default function Input({
   return (
     <input
       type={inputType}
-      className={classNames(className, inputCls.input)}
+      className={classNames(inputCls.input, className)}
       placeholder={placeholder}
       id={id}
     />

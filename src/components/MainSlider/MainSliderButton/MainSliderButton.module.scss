@@ -1,0 +1,33 @@
+@import '../../../scss/mixins';
+@import '../../../scss/colors';
+
+.button {
+  width: 56px;
+  height: 56px;
+  border: none;
+  border-radius: 4px;
+  background-color: $white;
+  fill: $blue;
+  transition: all .05s ease-in-out;
+
+  @include flex-builder(row, center, center);
+
+  &:hover {
+    background-color: $white-hover;
+    fill: $dark-blue;
+  }
+
+  &:active {
+    background-color: $white-active;
+    fill: $blue-active;
+  }
+}
+
+.arrow {
+  width: 24px;
+  height: 24px;
+
+  &_right {
+    transform: rotate(180deg);
+  }
+}
