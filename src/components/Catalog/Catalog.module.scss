@@ -1,0 +1,15 @@
+.catalog {
+  margin-top: 160px;
+  margin-bottom: 160px;
+}
+
+.title {
+  margin-bottom: 48px;
+  text-transform: uppercase;
+}
+
+.categoryBlock {
+  display: grid;
+  gap: 32px 24px;
+  grid-template-columns: 1fr 1fr 1fr;
+}

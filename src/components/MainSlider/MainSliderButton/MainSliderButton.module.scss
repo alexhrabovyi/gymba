@@ -7,6 +7,7 @@
   border: none;
   border-radius: 4px;
   background-color: $white;
+  cursor: pointer;
   fill: $blue;
   transition: all .05s ease-in-out;
 
@@ -20,6 +21,19 @@
   &:active {
     background-color: $white-active;
     fill: $blue-active;
+  }
+
+  &_inactive {
+    background-color: $white-inactive;
+    pointer-events: none;
+
+    &:hover {
+      background-color: $white-inactive;
+    }
+
+    &:active {
+      background-color: $white-inactive;
+    }
   }
 }
 
