@@ -92,14 +92,23 @@ module.exports = (env) => {
       },
       {
         test: /\.svg$/i,
-        issuer: /\.[jt]sx?$/,
+        resourceQuery: { not: [/url/] },
         use: [
           {
             loader: '@svgr/webpack',
             options: { icon: true },
             // outDir: 'assets/images/[name].[contenthash].[ext]',
-          }
+          },
         ],
+      },
+      {
+        test: /\.svg$/i,
+        type: 'asset/resource',
+        resourceQuery: /url/i,
+        generator: {
+          filename: `assets/images/[name].[contenthash].[ext]`,
+        },
+        use: isProd ? ['image-webpack-loader'] : [],
       },
     ],
   }

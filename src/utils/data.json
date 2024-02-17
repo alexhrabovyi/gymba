@@ -1,0 +1,398 @@
+[
+  {
+    "name": "Эмали",
+    "id": "enamels",
+    "imgId": "1",
+    "imgAlt": "Эмаль Dulux Master",
+    "subcategories": [
+      {
+        "name": "Алкидные эмали",
+        "id": "alkyd_enamels"
+      },
+      {
+        "name": "Акриловые эмали",
+        "id": "acrylic_enamels"
+      },
+      {
+        "name": "Нитроэмали",
+        "id": "nitro_enamels"
+      },
+      {
+        "name": "Масляные краски",
+        "id": "oil_paints"
+      },
+      {
+        "name": "Грунты ГФ и ГЭ",
+        "id": "soils_gf_ge"
+      },
+      {
+        "name": "Эмали спецназначения",
+        "id": "special_purpose_enamels"
+      },
+      {
+        "name": "Растворители",
+        "id": "solvents"
+      },
+      {
+        "name": "Специальные грунты",
+        "id": "special_soils"
+      }
+    ]
+  },
+  {
+    "name": "Краски",
+    "id": "paints",
+    "imgId": "2",
+    "imgAlt": "Краска Marshall Export 7",
+    "subcategories": [
+      {
+        "name": "Водно-дисперсионные краски",
+        "id": "waterdispersion_paints"
+      },
+      {
+        "name": "Колеровочные пасты",
+        "id": "tinting_pastes"
+      },
+      {
+        "name": "Аэрозольные краски",
+        "id": "aerosol_paints"
+      },
+      {
+        "name": "Декоративные штукатурки",
+        "id": "decorative_plasters"
+      },
+      {
+        "name": "Колоранты",
+        "id": "colorants"
+      },
+      {
+        "name": "Шпатлевки готовые",
+        "id": "ready_putties"
+      },
+      {
+        "name": "Акриловые грунты",
+        "id": "acrylic_primers"
+      }
+    ]
+  },
+  {
+    "name": "Защита для древесины",
+    "id": "wood_protection",
+    "imgId": "3",
+    "imgAlt": "Здоровый Дом Био - Средство для защиты древесины",
+    "subcategories": [
+      {
+        "name": "Для дерева",
+        "id": "for_wood"
+      },
+      {
+        "name": "Огне- биозащита, антисептики",
+        "id": "fire_bio_protection_antiseptics"
+      },
+      {
+        "name": "Для сауны",
+        "id": "for_sauna"
+      },
+      {
+        "name": "Лак ХВ",
+        "id": "varnish_hv"
+      },
+      {
+        "name": "Морилки",
+        "id": "stains"
+      },
+      {
+        "name": "Нитролаки",
+        "id": "nitrovarnishes"
+      },
+      {
+        "name": "Пропитки",
+        "id": "impregnations"
+      },
+      {
+        "name": "Прочее",
+        "id": "other"
+      }
+    ]
+  },
+  {
+    "name": "Пены, герметики, клей",
+    "id": "foams_sealants_glue",
+    "imgId": "4",
+    "imgAlt": "Клей Quelyd Спец-флизелин",
+    "subcategories": [
+      {
+        "name": "Пены монтажные",
+        "id": "foams"
+      },
+      {
+        "name": "Герметики",
+        "id": "sealants"
+      },
+      {
+        "name": "Мастики",
+        "id": "mastics"
+      },
+      {
+        "name": "Жидкие гвозди",
+        "id": "liquid_nails"
+      },
+      {
+        "name": "ПВА",
+        "id": "pva"
+      },
+      {
+        "name": "Контактный клей",
+        "id": "contact_glue"
+      },
+      {
+        "name": "Клей для обоев",
+        "id": "wallpaper_glue"
+      },
+      {
+        "name": "Для напольных покрытий",
+        "id": "for_floor_coverings"
+      },
+      {
+        "name": "Для потолочных и декоративных плит",
+        "id": "for_ceiling_and_decorative_tiles"
+      },
+      {
+        "name": "Универсальные клея",
+        "id": "universal_adhesives"
+      },
+      {
+        "name": "Холодная сварка",
+        "id": "cold_welding"
+      },
+      {
+        "name": "Эпоксидные клея",
+        "id": "epoxy_adhesives"
+      }
+    ]
+  },
+  {
+    "name": "Инструменты",
+    "id": "instruments",
+    "imgId": "5",
+    "imgAlt": "Валик",
+    "subcategories": [
+      {
+        "name": "Измерительные",
+        "id": "measuring"
+      },
+      {
+        "name": "Ленты",
+        "id": "ribbons"
+      },
+      {
+        "name": "Малярный",
+        "id": "painter"
+      },
+      {
+        "name": "Монтажно-крепежный",
+        "id": "mounting_fastening"
+      },
+      {
+        "name": "Пистолеты",
+        "id": "pistols"
+      },
+      {
+        "name": "Абразивные",
+        "id": "abrasive"
+      },
+      {
+        "name": "Режущие",
+        "id": "cutting"
+      },
+      {
+        "name": "Средства защиты труда",
+        "id": "labor_protection_equipment"
+      },
+      {
+        "name": "Прочее",
+        "id": "other"
+      },
+      {
+        "name": "Столярно-слесарные",
+        "id": "carpentry_plumbing"
+      },
+      {
+        "name": "Штукатурные",
+        "id": "plastering"
+      }
+    ]
+  },
+  {
+    "name": "Оконная комплектация",
+    "id": "window_equipment",
+    "imgId": "6",
+    "imgAlt": "Оконная рамка в разрезе",
+    "subcategories": [
+      {
+        "name": "Космофен",
+        "id": "cosmofen"
+      },
+      {
+        "name": "Откос оконный утепленный",
+        "id": "insulated_window_slope"
+      },
+      {
+        "name": "Москитная группа",
+        "id": "mosquito_group"
+      },
+      {
+        "name": "Панели ПВХ",
+        "id": "pvc_panels"
+      },
+      {
+        "name": "Подкладки под стеклопакет",
+        "id": "linings_for_glass_units"
+      },
+      {
+        "name": "Прочее",
+        "id": "other"
+      },
+      {
+        "name": "Подоконник",
+        "id": "windowsill"
+      },
+      {
+        "name": "Профили, нащельники",
+        "id": "profiles_flashings"
+      },
+      {
+        "name": "Псулы, ленты",
+        "id": "psules_ribbons"
+      },
+      {
+        "name": "Ручки",
+        "id": "furniture_handles"
+      },
+      {
+        "name": "Сэндвич-ПВХ",
+        "id": "sandwich_PVC"
+      },
+      {
+        "name": "Уплотнители оконные",
+        "id": "window_seals"
+      }
+    ]
+  },
+  {
+    "name": "Общестроительные материалы",
+    "id": "construction_materials",
+    "imgId": "7",
+    "imgAlt": "Berg - Наливной пол",
+    "subcategories": [
+      {
+        "name": "Двери входные",
+        "id": "entrance_doors"
+      },
+      {
+        "name": "Двери межкомнатные",
+        "id": "interior_doors"
+      },
+      {
+        "name": "Плинтуса, порожки,стремянки",
+        "id": "thresholds_stepladders"
+      },
+      {
+        "name": "Сухие смеси",
+        "id": "dry_mixes"
+      },
+      {
+        "name": "Арматура",
+        "id": "armature"
+      },
+      {
+        "name": "Сантехника",
+        "id": "plumbing"
+      },
+      {
+        "name": "Теплоизоляция",
+        "id": "thermal_insulation"
+      },
+      {
+        "name": "Плинтуса потолочные, угол, плитка, фартук",
+        "id": "ceiling_plinths_corner_tiles_apron"
+      },
+      {
+        "name": "Профили для гипсокартона, комплектующие",
+        "id": "profiles_for_plasterboard_components"
+      },
+      {
+        "name": "Электрика",
+        "id": "electrics"
+      }
+    ]
+  },
+  {
+    "name": "Крепеж",
+    "id": "fasteners",
+    "imgId": "8",
+    "imgAlt": "Угловой крепеж",
+    "subcategories": [
+      {
+        "name": "Анкерные болты",
+        "id": "anchor_bolts"
+      },
+      {
+        "name": "Гайки",
+        "id": "nuts"
+      },
+      {
+        "name": "Гвозди",
+        "id": "nails"
+      },
+      {
+        "name": "Дюбельная техника",
+        "id": "doweling_technology"
+      },
+      {
+        "name": "Саморезы и шурупы",
+        "id": "self_tapping_screws"
+      },
+      {
+        "name": "Крепеж перфорированный",
+        "id": "perforated_fasteners"
+      },
+      {
+        "name": "Прочее",
+        "id": "other"
+      },
+      {
+        "name": "Скобы строительные",
+        "id": "construction_staples"
+      },
+      {
+        "name": "Шпильки резьбовые",
+        "id": "threaded_studs"
+      }
+    ]
+  },
+  {
+    "name": "Хозтовары",
+    "id": "household_goods",
+    "imgId": "9",
+    "imgAlt": "Полотно лопаты",
+    "subcategories": [
+      {
+        "name": "Батарейки",
+        "id": "batteries"
+      },
+      {
+        "name": "Бытовая химия",
+        "id": "household_chemicals"
+      },
+      {
+        "name": "Прочие хозтовары",
+        "id": "other_household_goods"
+      },
+      {
+        "name": "Лопаты снеговые",
+        "id": "snow_shovels"
+      }
+    ]
+  }
+]

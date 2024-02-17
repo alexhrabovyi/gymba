@@ -25,26 +25,32 @@
   position: absolute;
   top: 50%;
   left: 50%;
-  width: 80%;
   transform: translate(-50%, -50%);
 }
 
-.additionalLinkBlock {
+.spinner {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 40%;
+  height: 40%;
+  fill: $blue;
+  transform: translate(-50%, -50%);
+}
+
+.additionalLinkList {
   @include flex-builder(row, flex-start, center);
 
   flex-wrap: wrap;
   gap: 12px;
+  list-style: none;
 }
 
-.additionalLink {
+.additionalLinkListElement {
   padding: 7px 12px;
   border-radius: 4px;
   background-color: $white;
   color: $black;
-  font-family: Onest, sans-serif;
-  font-size: 14px;
-  text-decoration: none;
-  transition: all .05s ease-in-out;
 
   &:hover {
     color: $blue;
@@ -53,4 +59,12 @@
   &:active {
     color: $dark-blue;
   }
+}
+
+.additionalLink {
+  color: inherit;
+  font-family: Onest, sans-serif;
+  font-size: 14px;
+  text-decoration: none;
+  transition: all .05s ease-in-out;
 }
