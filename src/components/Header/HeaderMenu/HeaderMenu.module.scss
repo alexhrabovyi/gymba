@@ -7,6 +7,8 @@
   left: 0;
   display: grid;
   width: 100%;
+  padding-top: 32px;
+  padding-bottom: 32px;
   background-color: $white;
   box-shadow: 0 4px 4px rgb(0 0 0 / 25%);
   column-gap: 32px;
@@ -20,11 +22,16 @@
 }
 
 .mainLinkBlock {
-  @include flex-builder(column, flex-start, flex-start);
-
-  padding-top: 32px;
+  max-height: 464px;
   border-right: 1px solid $dark-grey;
+  overflow-y: auto;
+}
+
+.mainLinkList {
   gap: 4px;
+  list-style-type: none;
+
+  @include flex-builder(column, flex-start, stretch);
 }
 
 .mainLink {
@@ -43,19 +50,21 @@
   &:hover { 
     background-color: $grey;
   }
+
+  &_active { 
+    background-color: $grey;
+  }
 }
 
-.additionalLinkBlock {
+.additionalLinkList {
   display: grid;
-  padding-top: 32px;
   gap: 12px 164px;
   grid-template-columns: auto auto;
+  list-style: none;
   place-content: flex-start flex-start;
 }
 
 .popularBlock {
-  padding-top: 32px;
-
   @include flex-builder(column, flex-start, flex-start);
 
   gap: 16px;

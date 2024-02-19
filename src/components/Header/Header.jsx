@@ -1,4 +1,9 @@
-import { useState, useRef, useEffect } from 'react';
+import {
+  useState,
+  useRef,
+  useEffect,
+  useCallback,
+} from 'react';
 import { Link } from 'react-router-dom';
 import classNames from 'classnames';
 import containerCls from '../../scss/_container.module.scss';
@@ -15,24 +20,43 @@ import Favorite from './images/favorite.svg';
 import Cart from './images/cart.svg';
 import HeaderMenu from './HeaderMenu/HeaderMenu.jsx';
 import Input from '../common/Input/Input.jsx';
+import getScrollwidth from '../../utils/getScrollWidth.jsx';
+import useOnResize from '../../hooks/useOnResize.jsx';
 
 export default function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [headerBottomCoord, setHeaderBottomCoord] = useState(0);
   const headerRef = useRef(null);
 
+  const onResizeCallback = useCallback(() => {
+    const { bottom } = headerRef.current.getBoundingClientRect();
+    setHeaderBottomCoord(() => bottom);
+  }, []);
+
+  useOnResize(onResizeCallback);
+
   useEffect(() => {
-    function onResize() {
-      const { bottom } = headerRef.current.getBoundingClientRect();
-      setHeaderBottomCoord(() => bottom);
+    const header = headerRef.current;
+
+    if (isMenuOpen) {
+      const scrollWidth = getScrollwidth();
+      document.body.style.paddingRight = `${scrollWidth}px`;
+      document.body.style.overflowY = 'hidden';
+
+      const paddingRight = +getComputedStyle(header).paddingRight.match(/\d+/)[0];
+      const newPaddingRight = paddingRight + scrollWidth;
+
+      header.style.paddingRight = `${newPaddingRight}px`;
+      header.style.width = `${window.innerWidth}px`;
     }
 
-    window.addEventListener('resize', onResize);
-
-    onResize();
-
-    return () => { window.removeEventListener('resize', onResize); };
-  }, []);
+    return () => {
+      document.body.style.paddingRight = '';
+      document.body.style.overflowY = '';
+      header.style.paddingRight = '';
+      header.style.width = '';
+    };
+  }, [isMenuOpen]);
 
   return (
     <>
@@ -153,6 +177,13 @@ export default function Header() {
         </div>
       </header>
       <HeaderMenu isMenuOpen={isMenuOpen} topCoord={headerBottomCoord} />
+      <div
+        className={classNames(
+          headerCls.backdrop,
+          isMenuOpen && headerCls.backdrop_active,
+        )}
+        onClick={() => setIsMenuOpen(false)}
+      />
     </>
   );
 }

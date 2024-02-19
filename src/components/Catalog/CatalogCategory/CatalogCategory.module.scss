@@ -2,12 +2,21 @@
 @import '../../../scss/mixins';
 
 .category {
-  padding: 36px 32px 32px;
+  padding: 8.57% 7.62% 7.62%;
   border-radius: 4px;
   background-color: $light-blue;
   gap: 24px;
 
   @include flex-builder(column, flex-start, flex-start);
+
+  @media (max-width: 1600px) {
+    padding: 8% 7% 7%;
+  }
+
+  @include media-l {
+    padding: 7% 6% 6%;
+    gap: 18px;
+  }
 }
 
 .imageLink {

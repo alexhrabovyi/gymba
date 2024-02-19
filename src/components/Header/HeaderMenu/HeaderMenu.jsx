@@ -1,39 +1,87 @@
-import { Link } from 'react-router-dom';
+import { useEffect, useRef, useState } from 'react';
+import { Link, useLoaderData } from 'react-router-dom';
 import classNames from 'classnames';
 import headerMenuCls from './HeaderMenu.module.scss';
 import containerCls from '../../../scss/_container.module.scss';
 import linkCls from '../../../scss/_link.module.scss';
 import textCls from '../../../scss/_text.module.scss';
 import productImg from './images/product.png';
+import getScrollWidth from '../../../utils/getScrollWidth.jsx';
 
 export default function HeaderMenu({ isMenuOpen, topCoord }) {
+  const categories = useLoaderData();
+  const menuRef = useRef(null);
+  const [activeCategoryId, setActiveCategoryId] = useState(categories[0].id);
+
+  const activeCategory = categories.find((c) => c.id === activeCategoryId);
+  const { subcategories } = activeCategory;
+
+  useEffect(() => {
+    const menu = menuRef.current;
+
+    if (isMenuOpen) {
+      const menuPadding = +getComputedStyle(menu).paddingRight.match(/\d+/)[0];
+      const newMenuPadding = getScrollWidth() + menuPadding;
+      menu.style.paddingRight = `${newMenuPadding}px`;
+    }
+
+    return () => {
+      menu.style.paddingRight = '';
+    };
+  }, [isMenuOpen]);
+
+  function onMouseOverHandler(e) {
+    const link = e.target.closest('a');
+    if (!link) return;
+
+    const id = link.id.match(/^(link-)(.+)/i)[2];
+    setActiveCategoryId(id);
+  }
+
   return (
     <div
+      ref={menuRef}
       className={
       classNames(containerCls.container, headerMenuCls.menu, isMenuOpen && headerMenuCls.menu_open)
     }
       style={{ top: topCoord }}
     >
-      <nav className={headerMenuCls.mainLinkBlock}>
-        <Link to="/" className={classNames(headerMenuCls.mainLink)}>Эмали</Link>
-        <Link to="/" className={classNames(headerMenuCls.mainLink)}>Краски</Link>
-        <Link to="/" className={classNames(headerMenuCls.mainLink)}>Пены, герметики, клей</Link>
-        <Link to="/" className={classNames(headerMenuCls.mainLink)}>Защита для древесины</Link>
-        <Link to="/" className={classNames(headerMenuCls.mainLink)}>Инструменты</Link>
-        <Link to="/" className={classNames(headerMenuCls.mainLink)}>Оконная комплектация</Link>
-        <Link to="/" className={classNames(headerMenuCls.mainLink)}>Общестроительные материалы</Link>
-        <Link to="/" className={classNames(headerMenuCls.mainLink)}>Крепеж</Link>
-        <Link to="/" className={classNames(headerMenuCls.mainLink)}>Хозтовары</Link>
+      <nav
+        className={headerMenuCls.mainLinkBlock}
+        onMouseMove={onMouseOverHandler}
+      >
+        <ul className={headerMenuCls.mainLinkList}>
+          {categories.map((c) => (
+            <li key={c.id}>
+              <Link
+                to={`categories/${c.id}`}
+                id={`link-${c.id}`}
+                className={classNames(
+                  headerMenuCls.mainLink,
+                  activeCategoryId === c.id && headerMenuCls.mainLink_active,
+                )}
+                alt={c.name}
+              >
+                {c.name}
+              </Link>
+            </li>
+          ))}
+        </ul>
       </nav>
       <nav className={headerMenuCls.additionalLinkBlock}>
-        <Link to="/" className={classNames(linkCls.link, linkCls.link18px)}>Алкидные эмали</Link>
-        <Link to="/" className={classNames(linkCls.link, linkCls.link18px)}>Акриловые эмали</Link>
-        <Link to="/" className={classNames(linkCls.link, linkCls.link18px)}>Нитроэмали</Link>
-        <Link to="/" className={classNames(linkCls.link, linkCls.link18px)}>Масляные краски</Link>
-        <Link to="/" className={classNames(linkCls.link, linkCls.link18px)}>Спецэмали</Link>
-        <Link to="/" className={classNames(linkCls.link, linkCls.link18px)}>Молотковые краски</Link>
-        <Link to="/" className={classNames(linkCls.link, linkCls.link18px)}>Грунты и грунт-эмали</Link>
-        <Link to="/" className={classNames(linkCls.link, linkCls.link18px)}>Растворители</Link>
+        <ul className={headerMenuCls.additionalLinkList}>
+          {subcategories.map((subC) => (
+            <li key={subC.id}>
+              <Link
+                to={`categories/${activeCategory.id}/${subC.id}`}
+                className={classNames(linkCls.link, linkCls.link18px)}
+                alt={subC.name}
+              >
+                {subC.name}
+              </Link>
+            </li>
+          ))}
+        </ul>
       </nav>
       <article className={headerMenuCls.popularBlock}>
         <p className={

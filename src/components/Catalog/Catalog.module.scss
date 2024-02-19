@@ -1,15 +1,83 @@
+@import '../../scss/mixins';
+
 .catalog {
   margin-top: 160px;
   margin-bottom: 160px;
+
+  @include flex-builder(column, flex-start, flex-start);
+
+  gap: 48px;
+
+  @include media-l {
+    margin-top: 140px;
+    margin-bottom: 140px;
+    gap: 44px;
+  }
+
+  @include media-m {
+    margin-top: 120px;
+    margin-bottom: 120px;
+    gap: 42px;
+  }
+
+  @include media-s {
+    margin-top: 100px;
+    margin-bottom: 100px;
+    gap: 40px;
+  }
+
+  @include media-xs {
+    margin-top: 80px;
+    margin-bottom: 80px;
+    gap: 38px;
+  }
 }
 
 .title {
-  margin-bottom: 48px;
   text-transform: uppercase;
 }
 
 .categoryBlock {
   display: grid;
-  gap: 32px 24px;
+  justify-content: center;
+  gap: 32px 1.83%;
   grid-template-columns: 1fr 1fr 1fr;
+  transition: all 1s ease-in-out;
+
+  @media (max-width: 1600px) {
+    row-gap: 28px;
+  }
+
+  @include media-l {
+    row-gap: 24px;
+  }
+
+  @include media-m {
+    grid-template-columns: 1fr 1fr;
+    row-gap: 20px;
+  }
+
+  @include media-s {
+    width: 80%;
+    max-width: 400px;
+    align-self: center;
+    grid-template-columns: 1fr;
+  }
+
+  @include media-xs {
+    width: 100%;
+  }
+}
+
+.button {
+  display: none;
+  width: 190px;
+  height: 60;
+  align-self: center;
+  padding: 12px; 
+  font-size: 16px;
+
+  @include media-s {
+    display: block; 
+  }
 }

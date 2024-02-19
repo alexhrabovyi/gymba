@@ -6,10 +6,10 @@ export function loader() {
   return getCategoriesAndSubcategories();
 }
 
-export default function Main() {
+export function Main() {
   return (
     <>
-      <MainSlider />
+      {/* <MainSlider /> */}
       <Catalog />
     </>
   );
