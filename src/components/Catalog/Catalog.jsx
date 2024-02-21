@@ -4,6 +4,7 @@ import {
   useState,
   useRef,
   useCallback,
+  useLayoutEffect,
 } from 'react';
 import classNames from 'classnames';
 import { useLoaderData } from 'react-router-dom';
@@ -29,6 +30,10 @@ export default function Catalog() {
   }, []);
 
   useOnResize(onResizeCallback);
+
+  useLayoutEffect(() => {
+    onResizeCallback();
+  }, [onResizeCallback]);
 
   useEffect(() => {
     const categoryBlock = categoryBlockRef.current;

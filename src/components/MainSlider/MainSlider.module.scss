@@ -9,25 +9,89 @@
   position: relative;
   width: 100%;
   height: 550px;
+
+  @media(max-width: 1600px) {
+    height: 520px;
+  }
+
+  @include media-l {
+    height: 500px;
+  }
+
+  @include media-m {
+    height: 450px;
+  }
+
+  @include media-s {
+    height: 400px;
+  }
+
+  @include media-xs {
+    height: 350px;
+  }
 }
 
 .slide_1 {
   background-image: url('./images/bg_1.png');
+  background-position: right;
+
+  @include media-l {
+    background-position: top right 30%;
+    background-size: cover;
+  }
+
+  @include media-m {
+    background-position: center right 20%;
+    background-size: cover;
+  }
+
+  @include media-s {
+    background-position: top right 30%;
+    background-size: cover;
+  }
+
+  @include media-xs {
+    background-position: bottom right 30%;
+  }
 }
 
 .slide_2 {
   background-image: url('./images/bg_2.png');
-}
+  background-position: right;
 
-.slide_3 {
-  background: red;
+  @include media-l {
+    background-position: top left 50%;
+    background-size: cover;
+  }
+
+  @include media-m {
+    background-position: center left 60%;
+    background-size: cover;
+  }
+
+  @include media-s {
+    background-position: top left 40%;
+    background-size: cover;
+  }
+
+  @include media-xs {
+    background-position: top left 50%;
+  }
 }
 
 .buttonBlock {
   position: absolute;
-  right: 60px;
-  bottom: 60px;
+  right: 4.59%;
+  bottom: 4.59%;
   gap: 12px;
+
+  @include media-s {
+    gap: 10px;
+  }
+
+  @include media-xs {
+    gap: 8px;
+  }
 
   @include flex-builder(row, flex-start, center);
 }

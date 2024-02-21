@@ -10,8 +10,6 @@ export default function MainSlider() {
   const [isPrevBtnInactive, setIsPrevBtnInactive] = useState(true);
   const [isNextBtnInactive, setIsNextBtnInactive] = useState(false);
 
-  console.log('MainSlider rendered');
-
   const slides = useMemo(() => [
     <Slide
       to="/amogus"
@@ -28,29 +26,14 @@ export default function MainSlider() {
     </Slide>,
     <Slide
       to="/"
-      className={mainSliderCls.slide_3}
-      alt="Узнать подробнее"
-      linkText="Узнать подробнее"
-      key={mainSliderCls.slide_3}
-    >
-      Закажи онлайн —
-      <br />
-      забери в пункте
-      <br />
-      выдачи
-    </Slide>,
-    <Slide
-      to="/"
       className={mainSliderCls.slide_2}
       alt="Узнать подробнее"
       linkText="Узнать подробнее"
       key={mainSliderCls.slide_2}
     >
-      Закажи онлайн —
+      Работаем с
       <br />
-      забери в пункте
-      <br />
-      выдачи
+      оптовиками
     </Slide>,
   ], []);
 

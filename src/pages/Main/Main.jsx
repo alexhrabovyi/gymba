@@ -9,7 +9,7 @@ export function loader() {
 export function Main() {
   return (
     <>
-      {/* <MainSlider /> */}
+      <MainSlider />
       <Catalog />
     </>
   );

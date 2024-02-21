@@ -10,7 +10,7 @@ export function loader() {
 export function HeaderAndFooterLayout() {
   return (
     <>
-      {/* <Header /> */}
+      <Header />
       <Outlet />
       {/* <Footer /> */}
     </>

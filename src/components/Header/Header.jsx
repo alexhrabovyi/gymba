@@ -3,6 +3,7 @@ import {
   useRef,
   useEffect,
   useCallback,
+  useLayoutEffect,
 } from 'react';
 import { Link } from 'react-router-dom';
 import classNames from 'classnames';
@@ -28,12 +29,21 @@ export default function Header() {
   const [headerBottomCoord, setHeaderBottomCoord] = useState(0);
   const headerRef = useRef(null);
 
-  const onResizeCallback = useCallback(() => {
+  const getHeaderBottom = useCallback(() => {
     const { bottom } = headerRef.current.getBoundingClientRect();
     setHeaderBottomCoord(() => bottom);
   }, []);
 
-  useOnResize(onResizeCallback);
+  const closeMenuOnResize = useCallback(() => {
+    setIsMenuOpen(false);
+  }, []);
+
+  useLayoutEffect(() => {
+    getHeaderBottom();
+  }, [getHeaderBottom]);
+
+  useOnResize(getHeaderBottom);
+  useOnResize(closeMenuOnResize);
 
   useEffect(() => {
     const header = headerRef.current;
@@ -65,7 +75,7 @@ export default function Header() {
         className={classNames(containerCls.container, headerCls.header)}
       >
         <Link to="/" className={headerCls.logoLink}>
-          <Logo width="100%" height="auto" />
+          <Logo className={headerCls.logoLinkImg} />
         </Link>
         <div className={headerCls.topBlock}>
           <div className={headerCls.locationAndTelBlock}>

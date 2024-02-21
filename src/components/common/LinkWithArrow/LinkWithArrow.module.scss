@@ -5,6 +5,18 @@
   width: 52px;
   height: 100%;
   fill: $blue;
+
+  @include media-m {
+    width: 38px;
+  }
+
+  @include media-s {
+    width: 30px;
+  }
+
+  @include media-xs {
+    width: 26px;
+  }
 }
 
 .arrow {
@@ -12,6 +24,22 @@
   height: 24px;
   margin-left: 16px;
   fill: $black;
+
+  @include media-m {
+    margin-left: 10px;
+  }
+
+  @include media-s {
+    width: 20px;
+    height: 20px;
+    margin-left: 8px;
+  }
+
+  @include media-xs {
+    width: 18px;
+    height: 18px;
+    margin-left: 6px;
+  }
 
   &_white {
     fill: $white;
@@ -36,6 +64,20 @@
 
   &:active .oblique {
     fill: $blue-active;
+  }
+
+  @include media-m {
+    height: 48px;
+  }
+
+  @include media-s {
+    height: 42px;
+    font-size: 16px;
+  }
+
+  @include media-xs {
+    height: 38px;
+    font-size: 14px;
   }
 
   &_white {

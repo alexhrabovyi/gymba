@@ -30,7 +30,7 @@ export default function HeaderMenu({ isMenuOpen, topCoord }) {
     };
   }, [isMenuOpen]);
 
-  function onMouseOverHandler(e) {
+  function onPointerMoveHandler(e) {
     const link = e.target.closest('a');
     if (!link) return;
 
@@ -48,7 +48,7 @@ export default function HeaderMenu({ isMenuOpen, topCoord }) {
     >
       <nav
         className={headerMenuCls.mainLinkBlock}
-        onMouseMove={onMouseOverHandler}
+        onPointerMove={onPointerMoveHandler}
       >
         <ul className={headerMenuCls.mainLinkList}>
           {categories.map((c) => (

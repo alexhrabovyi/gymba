@@ -3,11 +3,27 @@
 .slide {
   width: 100%;
   height: 100%;
-  padding: 60px;
+  padding: 4.59%;
 
   @include flex-builder(column, space-between, flex-start);
 }
 
 .text {
   text-transform: uppercase;
+
+  @include media-l {
+    font-size: 42px;
+  }
+
+  @include media-m {
+    font-size: 32px;
+  }
+
+  @include media-s {
+    font-size: 30px;
+  }
+
+  @include media-xs {
+    font-size: 26px;
+  }
 }
