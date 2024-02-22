@@ -11,18 +11,95 @@
   padding-bottom: 32px;
   background-color: $white;
   box-shadow: 0 4px 4px rgb(0 0 0 / 25%);
-  column-gap: 32px;
-  grid-template-columns: 240px 1fr 331px;
+  column-gap: 2.45%;
+  grid-template-columns: 240px 1fr 25.35%;
   transform: translateY(-100%);
   transition: transform .5s ease-in-out;
+
+  @include media-l {
+    padding-top: 25px;
+    padding-bottom: 25px;
+    grid-template-columns: 210px 1fr 25.35%;
+  }
 
   &_open {
     transform: translateY(0%);
   }
 }
 
+.iconLinkBlock {
+  display: none;
+  width: 100%;
+  max-width: 210px;
+  padding-left: 1.32%;
+  margin-bottom: 25px;
+  grid-column: 1/4;
+
+  @include media-l {
+    display: block;
+  }
+}
+
+.iconLinkList {
+  @include flex-builder(row, flex-start, center);
+
+  gap: 25px;
+  list-style: none;
+}
+
+.iconLink {
+  display: block;
+  width: 24px;
+  height: 24px;
+  fill: $blue;
+  transition: all .05s ease-in-out;
+
+  &:hover {
+    fill: $dark-blue;
+  }
+
+  &:active {
+    fill: $blue-active;
+  }
+
+  &_cart {
+    @include media-l {
+      display: none;
+    }
+  }
+}
+
+.iconInLink {
+  width: 100%;
+  height: 100%;
+}
+
+.iconLinkWithCircle {
+  position: relative;
+
+  &::before {
+    position: absolute;
+    top: 0;
+    right: 0;
+    display: block;
+    width: 19px;
+    height: 19px;
+    border: solid 2px $light-blue;
+    border-radius: 50%;
+    background-color: $yellow;
+    color: $black;
+    content: attr(data-before);
+    font-family: Onest, sans-serif;
+    font-size: 10px;
+    font-weight: 500;
+    transform: translate(50%, -50%);
+
+    @include flex-builder(row, center, center);
+  }
+}
+
 .mainLinkBlock {
-  max-height: 464px;
+  max-height: 480px;
   border-right: 1px solid $dark-grey;
   overflow-y: auto;
 }
@@ -37,7 +114,7 @@
 .mainLink {
   width: 100%;
   height: 48px;
-  padding: 0 16px;
+  padding: 0 6.7%;
   color: $black;
   font-family: Onest, sans-serif;
   font-weight: 800;
@@ -58,10 +135,18 @@
 
 .additionalLinkList {
   display: grid;
-  gap: 12px 164px;
+  justify-content: space-around;
+  gap: 12px 5%;
   grid-template-columns: auto auto;
   list-style: none;
-  place-content: flex-start flex-start;
+ 
+  @media(max-width: 1405px) {
+    justify-content: space-between;
+  }
+
+  @include media-l {
+    gap: 15px 5%;
+  }
 }
 
 .popularBlock {
@@ -80,6 +165,11 @@
   padding: 24px 0;
   border: 1px solid $dark-grey;
   gap: 37px;
+
+  @include media-l {
+    padding: 18px 0;
+    gap: 20px;
+  }
 }
 
 .imgLink {

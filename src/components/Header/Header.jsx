@@ -12,22 +12,29 @@ import textCls from '../../scss/_text.module.scss';
 import linkCls from '../../scss/_link.module.scss';
 import headerCls from './Header.module.scss';
 import Logo from './images/logo.svg';
+import LogoSmall from './images/logoSmall.svg';
 import Tag from './images/tag.svg';
 import Phone from './images/phone.svg';
-import Button from '../common/Button/Button.jsx';
 import User from './images/user.svg';
 import Compare from './images/compare.svg';
 import Favorite from './images/favorite.svg';
 import Cart from './images/cart.svg';
 import HeaderMenu from './HeaderMenu/HeaderMenu.jsx';
-import Input from '../common/Input/Input.jsx';
 import getScrollwidth from '../../utils/getScrollWidth.jsx';
 import useOnResize from '../../hooks/useOnResize.jsx';
+import Button from '../common/Button/Button.jsx';
+import Input from '../common/Input/Input.jsx';
+import Search from './images/search.svg';
 
 export default function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [headerBottomCoord, setHeaderBottomCoord] = useState(0);
+  const [windowWidth, setWindowWidth] = useState(null);
   const headerRef = useRef(null);
+
+  const getWindowWidth = useCallback(() => {
+    setWindowWidth(window.innerWidth);
+  }, []);
 
   const getHeaderBottom = useCallback(() => {
     const { bottom } = headerRef.current.getBoundingClientRect();
@@ -39,9 +46,14 @@ export default function Header() {
   }, []);
 
   useLayoutEffect(() => {
+    getWindowWidth();
+  }, [getWindowWidth]);
+
+  useLayoutEffect(() => {
     getHeaderBottom();
   }, [getHeaderBottom]);
 
+  useOnResize(getWindowWidth);
   useOnResize(getHeaderBottom);
   useOnResize(closeMenuOnResize);
 
@@ -74,10 +86,14 @@ export default function Header() {
         ref={headerRef}
         className={classNames(containerCls.container, headerCls.header)}
       >
+        {windowWidth > 768 && (
         <Link to="/" className={headerCls.logoLink}>
           <Logo className={headerCls.logoLinkImg} />
         </Link>
+        )}
+        {windowWidth > 1024 && (
         <div className={headerCls.topBlock}>
+          {windowWidth > 1360 && (
           <div className={headerCls.locationAndTelBlock}>
             <a href="/" className={headerCls.linkWithIcon} alt="Казань">
               <Tag className={headerCls.icon} />
@@ -88,8 +104,9 @@ export default function Header() {
               <p className={textCls.text}>+7 8552 44-84-09</p>
             </a>
           </div>
-          <nav>
-            <ul className={headerCls.linkList}>
+          )}
+          <nav className={headerCls.linkListTopNav}>
+            <ul className={classNames(headerCls.linkList, headerCls.linkList_top)}>
               <li>
                 <Link to="/" className={linkCls.link} alt="Доставка">Доставка</Link>
               </li>
@@ -114,6 +131,7 @@ export default function Header() {
             </ul>
           </nav>
         </div>
+        )}
         <div className={headerCls.bottomBlock}>
           <button
             type="button"
@@ -145,33 +163,48 @@ export default function Header() {
                 d="M 20,70.999954 H 80.000231 C 80.000231,70.999954 94.498839,71.182648 94.532987,33.288669 94.543142,22.019327 90.966081,18.329754 85.259173,18.331003 79.552261,18.332249 75.000211,25.000058 75.000211,25.000058 L 25.000021,74.999942"
               />
             </svg>
-            <p className={classNames(textCls.text, textCls.textFw800, textCls.text18px)}>Каталог</p>
+            {windowWidth > 1025 ? 'Каталог' : windowWidth > 768 ? 'Меню' : ''}
           </button>
+          {windowWidth <= 768 && (
+          <Link to="/" className={headerCls.logoLink}>
+            <LogoSmall className={headerCls.logoLinkImg} />
+          </Link>
+          )}
           <div className={headerCls.inputBlock}>
             <Input className={headerCls.input} placeholder="Поиск товаров" />
-            <Button className={headerCls.submitButton} type="submit">Найти</Button>
+            {windowWidth > 768
+              ? (<Button className={headerCls.submitButton} type="submit">Найти</Button>)
+              : (
+                <button type="submit" className={headerCls.submitButtonWithIcon}>
+                  <Search className={headerCls.submitButtonIcon} />
+                </button>
+              )}
           </div>
-          <nav>
-            <ul className={headerCls.linkList}>
-              <li>
-                <Link to="/" className={headerCls.iconLink}>
-                  <User className={headerCls.iconInLink} />
-                </Link>
-              </li>
-              <li>
-                <Link to="/" className={headerCls.iconLink}>
-                  <Compare className={headerCls.iconInLink} />
-                </Link>
-              </li>
-              <li>
-                <Link
-                  to="/"
-                  className={classNames(headerCls.iconLink, headerCls.iconLinkWithCircle)}
-                  data-before={5}
-                >
-                  <Favorite className={headerCls.iconInLink} />
-                </Link>
-              </li>
+          <nav className={headerCls.linkListBottomNav}>
+            <ul className={classNames(headerCls.linkList, headerCls.linkList_bottom)}>
+              {windowWidth > 1360 && (
+              <>
+                <li>
+                  <Link to="/" className={headerCls.iconLink}>
+                    <User className={headerCls.iconInLink} />
+                  </Link>
+                </li>
+                <li>
+                  <Link to="/" className={headerCls.iconLink}>
+                    <Compare className={headerCls.iconInLink} />
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    to="/"
+                    className={classNames(headerCls.iconLink, headerCls.iconLinkWithCircle)}
+                    data-before={5}
+                  >
+                    <Favorite className={headerCls.iconInLink} />
+                  </Link>
+                </li>
+              </>
+              )}
               <li>
                 <Link
                   to="/"
@@ -183,7 +216,7 @@ export default function Header() {
               </li>
             </ul>
           </nav>
-          <p className={classNames(headerCls.price, textCls.text)}>221 465 ₽</p>
+          {windowWidth > 1024 && (<p className={classNames(headerCls.price, textCls.text)}>221 465 ₽</p>)}
         </div>
       </header>
       <HeaderMenu isMenuOpen={isMenuOpen} topCoord={headerBottomCoord} />

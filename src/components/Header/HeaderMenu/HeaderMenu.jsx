@@ -1,4 +1,6 @@
-import { useEffect, useRef, useState } from 'react';
+import {
+  memo, useEffect, useRef, useState, useCallback, useLayoutEffect,
+} from 'react';
 import { Link, useLoaderData } from 'react-router-dom';
 import classNames from 'classnames';
 import headerMenuCls from './HeaderMenu.module.scss';
@@ -7,14 +9,30 @@ import linkCls from '../../../scss/_link.module.scss';
 import textCls from '../../../scss/_text.module.scss';
 import productImg from './images/product.png';
 import getScrollWidth from '../../../utils/getScrollWidth.jsx';
+import useOnResize from '../../../hooks/useOnResize.jsx';
+import User from '../images/user.svg';
+import Compare from '../images/compare.svg';
+import Favorite from '../images/favorite.svg';
+import Cart from '../images/cart.svg';
 
-export default function HeaderMenu({ isMenuOpen, topCoord }) {
+const HeaderMenu = memo(({ isMenuOpen, topCoord }) => {
   const categories = useLoaderData();
   const menuRef = useRef(null);
   const [activeCategoryId, setActiveCategoryId] = useState(categories[0].id);
+  // const [windowWidth, setWindowWidth] = useState(null);
 
   const activeCategory = categories.find((c) => c.id === activeCategoryId);
   const { subcategories } = activeCategory;
+
+  // const getWindowWidth = useCallback(() => {
+  //   setWindowWidth(window.innerWidth);
+  // }, []);
+
+  // useLayoutEffect(() => {
+  //   getWindowWidth();
+  // }, [getWindowWidth]);
+
+  // useOnResize(getWindowWidth);
 
   useEffect(() => {
     const menu = menuRef.current;
@@ -42,10 +60,54 @@ export default function HeaderMenu({ isMenuOpen, topCoord }) {
     <div
       ref={menuRef}
       className={
-      classNames(containerCls.container, headerMenuCls.menu, isMenuOpen && headerMenuCls.menu_open)
-    }
+        classNames(
+          containerCls.container,
+          headerMenuCls.menu,
+          isMenuOpen && headerMenuCls.menu_open,
+        )
+      }
       style={{ top: topCoord }}
     >
+      <nav className={headerMenuCls.iconLinkBlock}>
+        <ul className={headerMenuCls.iconLinkList}>
+          <li>
+            <Link to="/" className={classNames(headerMenuCls.iconLink, headerMenuCls.iconLink_user)}>
+              <User className={headerMenuCls.iconInLink} />
+            </Link>
+          </li>
+          <li>
+            <Link to="/" className={classNames(headerMenuCls.iconLink, headerMenuCls.iconLink_compare)}>
+              <Compare className={headerMenuCls.iconInLink} />
+            </Link>
+          </li>
+          <li>
+            <Link
+              to="/"
+              className={classNames(
+                headerMenuCls.iconLink,
+                headerMenuCls.iconLink_favorite,
+                headerMenuCls.iconLinkWithCircle,
+              )}
+              data-before={5}
+            >
+              <Favorite className={headerMenuCls.iconInLink} />
+            </Link>
+          </li>
+          <li>
+            <Link
+              to="/"
+              className={classNames(
+                headerMenuCls.iconLink,
+                headerMenuCls.iconLink_cart,
+                headerMenuCls.iconLinkWithCircle,
+              )}
+              data-before={2}
+            >
+              <Cart className={headerMenuCls.iconInLink} />
+            </Link>
+          </li>
+        </ul>
+      </nav>
       <nav
         className={headerMenuCls.mainLinkBlock}
         onPointerMove={onPointerMoveHandler}
@@ -110,4 +172,6 @@ export default function HeaderMenu({ isMenuOpen, topCoord }) {
       </article>
     </div>
   );
-}
+});
+
+export default HeaderMenu;

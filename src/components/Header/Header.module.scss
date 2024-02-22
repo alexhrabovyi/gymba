@@ -24,6 +24,26 @@
     gap: 27px 3%;
     grid-template-columns: 12% 1fr;
   }
+
+  @include media-l {
+    gap: 20px 3%;
+  }
+
+  @include media-m {
+    align-items: center;
+    column-gap: 3%;
+    grid-template-columns: 15% 1fr;
+    grid-template-rows: 60px;
+  }
+
+  @include media-s {
+    grid-template-columns: 1fr;
+    grid-template-rows: 60px;
+  }
+
+  @include media-xs {
+    grid-template-rows: 50px;
+  }
 }
 
 .logoLink {
@@ -36,6 +56,16 @@
   &:hover {
     fill: $dark-blue;
   }
+
+  @include media-m {
+    grid-row: 1/2;
+  }
+
+  @include media-s {
+    grid-column: 2/3;
+
+    @include flex-builder(row, center, center);
+  }
 }
 
 .logoLinkImg {
@@ -43,9 +73,19 @@
   max-width: 190px;
   height: 100%;
   max-height: 107px;
+
+  @include media-s {
+    max-height: 60px;
+  }
+
+  @include media-xs {
+    max-height: 50px;
+  }
 }
 
 .topBlock {
+  width: 100%;
+
   @include flex-builder(row, space-between, center);
 
   gap: 5%;
@@ -56,6 +96,10 @@
 
   @media(max-width: 1600px) {
     gap: 3%;
+  }
+
+  @include media-l {
+    @include flex-builder(row, flex-end, center);
   }
 }
 
@@ -102,6 +146,13 @@
   }
 }
 
+.linkListTopNav {
+  @include media-l {
+    width: 100%;
+    max-width: 632px;
+  }
+}
+
 .linkList {
   gap: 24px;
   list-style-type: none;
@@ -115,10 +166,51 @@
   @media(max-width: 1405px) {
     gap: 10px;
   }
+
+  &_top {
+    @include media-l {
+      width: 100%;
+      gap: 0;
+
+      @include flex-builder(row, space-between, center);
+    }
+  }
+
+  &_bottom {
+    @include media-l {
+      width: 100%;
+      gap: 0;
+
+      @include flex-builder(row, space-between, center);
+    }
+  }
 }
 
 .bottomBlock {
+  width: 100%;
+
   @include flex-builder(row, flex-start, center);
+
+  @include media-l {
+    width: 100%;
+  }
+
+  @include media-m {
+    height: 100%;
+
+    @include flex-builder(row, space-between, center);
+  }
+
+  @include media-s {
+    display: grid;
+    gap: 3%;
+    grid-template-columns: 60px 10% 1fr auto;
+  }
+
+  @include media-xs {
+    gap: 5%;
+    grid-template-columns: 45px 13% 1fr auto;
+  }
 }
 
 .openMenuButton {
@@ -128,7 +220,11 @@
   border-radius: 4px;
   margin-right: 2.29%;
   background-color: $white;
+  color: $black;
   cursor: pointer;
+  font-family: Onest, sans-serif;
+  font-size: 18px;
+  font-weight: 800;
   gap: 9.2%;
   stroke: $black;
   text-transform: uppercase;
@@ -153,18 +249,36 @@
     gap: 5%;
   }
 
+  @include media-l {
+    width: 19.4%;
+    margin-right: 2%;
+  }
+
+  @include media-m {
+    @include flex-builder(row, space-around, center);
+
+    width: 16%;
+    font-size: 16px;
+  }
+
+  @include media-s {
+    width: 100%;
+    height: 100%;
+  }
+
+  @include media-xs {
+    width: 45px;
+    height: 45px;
+  }
+
   &_active {
     border-color: $blue;
     background-color: transparent;
+    color: $blue;
     stroke: $blue;
 
     &:hover {
       background-color: $dark-grey;
-    }
-
-    /* stylelint-disable-next-line no-descending-specificity */
-    & p {
-      color: $blue;
     }
   }
 }
@@ -172,6 +286,16 @@
 .burger {
   width: 35px;
   height: 35px;
+
+  @include media-s {
+    width: 40px;
+    height: 40px;
+  }
+
+  @include media-xs {
+    width: 35px;
+    height: 35px;
+  }
 }
 
 .burgerLine {
@@ -218,9 +342,7 @@
   position: relative;
   width: 54.7%;
   height: 100%;
-
-  // margin-right: 32px;
-  margin-right: 3.05%;
+  margin-right: auto;
 
   @include flex-builder(row, center, center);
 
@@ -230,6 +352,12 @@
 
   @media(max-width: 1600px) {
     margin-right: 1.5%;
+  }
+
+  @include media-l {
+    width: 100%;
+    max-width: 520px;
+    margin-right: 2%;
   }
 }
 
@@ -246,6 +374,14 @@
   &:focus {
     background-color: $white;
   }
+
+  @include media-s {
+    padding-right: 47px;
+  }
+
+  @include media-s {
+    padding-right: 43px;
+  }
 }
 
 .submitButton {
@@ -253,6 +389,26 @@
   right: 16px;
   width: 92px;
   height: 40px;
+}
+
+.submitButtonWithIcon {
+  position: absolute;
+  top: 50%;
+  right: 10px;
+  width: 27px;
+  border: none;
+  background: none;
+  fill: $blue;
+  transform: translateY(-50%);
+
+  @include media-xs {
+    width: 24px;
+  }
+}
+
+.submitButtonIcon {
+  width: 100%;
+  height: auto;
 }
 
 .iconLink {
@@ -268,6 +424,16 @@
 
   &:active {
     fill: $blue-active;
+  }
+
+  @include media-m {
+    width: 30px;
+    height: 30px;
+  }
+
+  @include media-s {
+    width: 28px;
+    height: 28px;
   }
 }
 
@@ -301,7 +467,12 @@
 }
 
 .price {
-  margin-left: 13px;
+  margin-left: 20px;
+
+  @include media-l {
+    flex-shrink: 0;
+    margin-left: 2%;
+  }
 }
 
 .backdrop {
