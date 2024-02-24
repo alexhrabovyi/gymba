@@ -2,8 +2,9 @@
 @import '../../../scss/mixins';
 
 .menu {
-  position: fixed;
-  z-index: 10;
+  position: absolute;
+  z-index: 100;
+  bottom: 0;
   left: 0;
   display: grid;
   width: 100%;
@@ -13,7 +14,6 @@
   box-shadow: 0 4px 4px rgb(0 0 0 / 25%);
   column-gap: 2.45%;
   grid-template-columns: 240px 1fr 25.35%;
-  transform: translateY(-100%);
   transition: transform .5s ease-in-out;
 
   @include media-l {
@@ -23,19 +23,33 @@
   }
 
   @include media-m {
-    width: 100%;
+    top: 100%;
+    bottom: 0;
     max-width: 400px;
-    height: 100%;
     padding-top: 40px;
     padding-bottom: 40px;
-    gap: 60px;
+    gap: 0;
     transform: translateX(-100%);
 
     @include flex-builder(column, flex-start, flex-start);
   }
 
+  @include media-s {
+    padding-top: 35px;
+    padding-bottom: 35px;
+  }
+
+  @include media-xs {
+    padding-top: 30px;
+    padding-bottom: 30px;
+  }
+
   &_open {
-    transform: translateY(0%);
+    transform: translateY(100%);
+
+    @include media-m {
+      transform: translateX(0);
+    }
   }
 }
 
@@ -47,7 +61,7 @@
   grid-column: 1/4;
 
   @include media-m {
-    margin-bottom: 0;
+    margin-bottom: 60px;
   }
 }
 
@@ -107,11 +121,9 @@
   width: 100%;
   max-height: 480px;
   border-right: 1px solid $dark-grey;
-  overflow-y: auto;
 
   @include media-m {
-    overflow: hidden;
-    max-height: auto;
+    max-height: 100%;
     border: none;
   }
 }
@@ -234,6 +246,7 @@
   border: none;
   background-color: transparent;
   color: $black;
+  cursor: pointer;
   fill: $black;
   font-family: Onest, sans-serif;
   font-size: 18px;
@@ -262,15 +275,17 @@
 
 .locationAndTelBlock {
   width: 100%;
+  flex-wrap: wrap;
+  margin-top: 60px;
+  gap: 10px 24px;
 
   @include flex-builder(row, flex-start, center);
-
-  gap: 24px;
 }
 
 .linkWithIcon {
   @include flex-builder(row, flex-start, center);
 
+  flex-shrink: 0;
   color: $black;
   fill: $blue;
   gap: 8px;
@@ -285,48 +300,4 @@
     color: $dark-blue;
     fill: $dark-blue;
   }
-}
-
-// categoryMenu
-
-.categoryMenu {
-  position: fixed;
-  z-index: 10;
-  right: 0;
-  width: 100%;
-  max-width: 400px;
-  height: 100%;
-  padding-top: 40px;
-  padding-bottom: 40px;
-  background-color: $white;
-  box-shadow: 0 4px 4px rgb(0 0 0 / 25%);
-  transition: transform .5s ease-in-out;
-}
-
-.categoryMenuLinkList {
-  width: 100%;
-  gap: 18px;
-  list-style: none;
-
-  @include flex-builder(column, flex-start, stretch);
-}
-
-.categoryButton {
-  width: 100%;
-  border: none;
-  background: transparent;
-  color: $black;
-  font-family: Onest, sans-serif;
-  font-size: 18px;
-  font-weight: 800;
-  gap: 5%;
-  text-align: left;
-  text-transform: uppercase;
-
-  @include flex-builder(row, space-between, center);
-}
-
-.categoryButtonChevron {
-  height: 18px;
-  transform: rotate(180deg);
 }

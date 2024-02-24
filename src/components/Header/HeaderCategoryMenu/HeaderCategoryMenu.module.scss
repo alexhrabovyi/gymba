@@ -1,0 +1,102 @@
+@import '../../../scss/colors';
+@import '../../../scss/mixins';
+
+.categoryMenu {
+  position: absolute;
+  z-index: 100;
+  top: 100%;
+  left: 0;
+  width: 100%;
+  max-width: 400px;
+  padding-top: 40px;
+  padding-bottom: 40px;
+  background-color: $white;
+  box-shadow: 0 4px 4px rgb(0 0 0 / 25%);
+  transform: translateX(-100%);
+  transition: transform .5s ease-in-out;
+
+  @include media-s {
+    padding-top: 35px;
+    padding-bottom: 35px;
+  }
+
+  @include media-xs {
+    padding-top: 30px;
+    padding-bottom: 30px;
+  }
+
+  &_open {
+    transform: translateX(0%);
+  }
+}
+
+.backButton {
+  border: none;
+  margin-bottom: 25px;
+  background-color: transparent;
+  color: $blue;
+  cursor: pointer;
+  fill: $blue;
+  font-family: Onest, sans-serif;
+  font-size: 20px;
+
+  @include flex-builder(row, flex-start, center);
+
+  &:hover {
+    color: $dark-blue;
+    fill: $dark-blue;
+  }
+}
+
+.backButtonChevron {
+  height: 16px;
+  margin-right: 7px;
+}
+
+.title {
+  padding-bottom: 10px;
+  border-bottom: 1px solid $dark-grey;
+  margin-bottom: 15px;
+  text-transform: uppercase;
+}
+
+.categoryMenuLinkList {
+  width: 100%;
+  gap: 18px;
+  list-style: none;
+
+  @include flex-builder(column, flex-start, stretch);
+}
+
+.categoryButton {
+  width: 100%;
+  border: none;
+  background: transparent;
+  color: $black;
+  cursor: pointer;
+  fill: $black;
+  font-family: Onest, sans-serif;
+  font-size: 18px;
+  font-weight: 800;
+  gap: 5%;
+  text-align: left;
+  text-transform: uppercase;
+
+  @include flex-builder(row, space-between, center);
+
+  &:hover {
+    color: $blue;
+    fill: $blue;
+  }
+
+  &:active {
+    color: $dark-blue;
+    fill: $dark-blue;
+  }
+}
+
+.categoryButtonChevron {
+  height: 18px;
+  flex-shrink: 0;
+  transform: rotate(180deg);
+}

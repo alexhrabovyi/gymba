@@ -1,12 +1,16 @@
 @import '../../scss/colors';
 @import '../../scss/mixins';
 
-.header {
+.headerWrapper {
   position: sticky;
-  z-index: 100;
+  z-index: 1000;
   top: 0;
-  right: 0;
   left: 0;
+}
+
+.header {
+  position: relative;
+  z-index: 1000;
   display: grid;
   width: 100%;
   padding-top: 1.68%;
@@ -31,6 +35,7 @@
 
   @include media-m {
     align-items: center;
+    box-shadow: 0 4px 4px rgb(0 0 0 / 25%);
     column-gap: 3%;
     grid-template-columns: 15% 1fr;
     grid-template-rows: 60px;
@@ -455,9 +460,7 @@
 
 .backdrop {
   position: fixed;
-  z-index: 1;
-  width: 100%;
-  height: 100%;
+  z-index: 10;
   background: rgb(0 0 0 / 48%);
   inset: 0;
   opacity: 0;
