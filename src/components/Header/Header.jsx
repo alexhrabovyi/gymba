@@ -96,17 +96,17 @@ export default function Header() {
           {windowWidth > 1360 && (
           <div className={headerCls.locationAndTelBlock}>
             <a href="/" className={headerCls.linkWithIcon} alt="Казань">
-              <Tag className={headerCls.icon} />
+              <Tag />
               <p className={textCls.text}>Казань</p>
             </a>
             <a href="tel:+78552448409" className={headerCls.linkWithIcon} alt="+7 8552 44-84-09">
-              <Phone className={headerCls.icon} />
+              <Phone />
               <p className={textCls.text}>+7 8552 44-84-09</p>
             </a>
           </div>
           )}
           <nav className={headerCls.linkListTopNav}>
-            <ul className={classNames(headerCls.linkList, headerCls.linkList_top)}>
+            <ul className={headerCls.linkList}>
               <li>
                 <Link to="/" className={linkCls.link} alt="Доставка">Доставка</Link>
               </li>
@@ -181,7 +181,7 @@ export default function Header() {
               )}
           </div>
           <nav className={headerCls.linkListBottomNav}>
-            <ul className={classNames(headerCls.linkList, headerCls.linkList_bottom)}>
+            <ul className={headerCls.linkList}>
               {windowWidth > 1360 && (
               <>
                 <li>
@@ -216,7 +216,9 @@ export default function Header() {
               </li>
             </ul>
           </nav>
-          {windowWidth > 1024 && (<p className={classNames(headerCls.price, textCls.text)}>221 465 ₽</p>)}
+          {windowWidth > 1024 && (
+          <p className={classNames(headerCls.price, textCls.text)}>221 465 ₽</p>
+          )}
         </div>
       </header>
       <HeaderMenu isMenuOpen={isMenuOpen} topCoord={headerBottomCoord} />

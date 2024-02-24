@@ -22,21 +22,32 @@
     grid-template-columns: 210px 1fr 25.35%;
   }
 
+  @include media-m {
+    width: 100%;
+    max-width: 400px;
+    height: 100%;
+    padding-top: 40px;
+    padding-bottom: 40px;
+    gap: 60px;
+    transform: translateX(-100%);
+
+    @include flex-builder(column, flex-start, flex-start);
+  }
+
   &_open {
     transform: translateY(0%);
   }
 }
 
 .iconLinkBlock {
-  display: none;
   width: 100%;
   max-width: 210px;
   padding-left: 1.32%;
   margin-bottom: 25px;
   grid-column: 1/4;
 
-  @include media-l {
-    display: block;
+  @include media-m {
+    margin-bottom: 0;
   }
 }
 
@@ -60,12 +71,6 @@
 
   &:active {
     fill: $blue-active;
-  }
-
-  &_cart {
-    @include media-l {
-      display: none;
-    }
   }
 }
 
@@ -99,16 +104,28 @@
 }
 
 .mainLinkBlock {
+  width: 100%;
   max-height: 480px;
   border-right: 1px solid $dark-grey;
   overflow-y: auto;
+
+  @include media-m {
+    overflow: hidden;
+    max-height: auto;
+    border: none;
+  }
 }
 
 .mainLinkList {
+  width: 100%;
   gap: 4px;
   list-style-type: none;
 
   @include flex-builder(column, flex-start, stretch);
+
+  @include media-m {
+    gap: 18px;
+  }
 }
 
 .mainLink {
@@ -135,7 +152,6 @@
 
 .additionalLinkList {
   display: grid;
-  justify-content: space-around;
   gap: 12px 5%;
   grid-template-columns: auto auto;
   list-style: none;
@@ -212,4 +228,105 @@
   margin-left: 8px;
   font-size: 16px;
   font-weight: 400;
+}
+
+.catalogButton {
+  border: none;
+  background-color: transparent;
+  color: $black;
+  fill: $black;
+  font-family: Onest, sans-serif;
+  font-size: 18px;
+  font-weight: 800;
+  text-transform: uppercase;
+  transition: all .05s ease-in-out;
+
+  @include flex-builder(row, flex-start, center);
+
+  &:hover {
+    color: $blue;
+    fill: $blue;
+  }
+
+  &:active {
+    color: $dark-blue;
+    fill: $dark-blue;
+  }
+}
+
+.catalogButtonChevron {
+  height: 18px;
+  margin-left: 25px;
+  transform: rotate(180deg);
+}
+
+.locationAndTelBlock {
+  width: 100%;
+
+  @include flex-builder(row, flex-start, center);
+
+  gap: 24px;
+}
+
+.linkWithIcon {
+  @include flex-builder(row, flex-start, center);
+
+  color: $black;
+  fill: $blue;
+  gap: 8px;
+  text-decoration: none;
+  transition: all .05s ease-in-out;
+
+  &:hover {
+    color: $blue;
+  }
+
+  &:active {
+    color: $dark-blue;
+    fill: $dark-blue;
+  }
+}
+
+// categoryMenu
+
+.categoryMenu {
+  position: fixed;
+  z-index: 10;
+  right: 0;
+  width: 100%;
+  max-width: 400px;
+  height: 100%;
+  padding-top: 40px;
+  padding-bottom: 40px;
+  background-color: $white;
+  box-shadow: 0 4px 4px rgb(0 0 0 / 25%);
+  transition: transform .5s ease-in-out;
+}
+
+.categoryMenuLinkList {
+  width: 100%;
+  gap: 18px;
+  list-style: none;
+
+  @include flex-builder(column, flex-start, stretch);
+}
+
+.categoryButton {
+  width: 100%;
+  border: none;
+  background: transparent;
+  color: $black;
+  font-family: Onest, sans-serif;
+  font-size: 18px;
+  font-weight: 800;
+  gap: 5%;
+  text-align: left;
+  text-transform: uppercase;
+
+  @include flex-builder(row, space-between, center);
+}
+
+.categoryButtonChevron {
+  height: 18px;
+  transform: rotate(180deg);
 }

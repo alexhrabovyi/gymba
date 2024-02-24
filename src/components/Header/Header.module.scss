@@ -117,27 +117,21 @@
   }
 }
 
-.icon {
-  fill: $blue;
-}
-
 .linkWithIcon {
   @include flex-builder(row, flex-start, center);
 
   color: $black;
+  fill: $blue;
   gap: 8px;
   text-decoration: none;
   transition: all .05s ease-in-out;
 
-  &:hover p {
+  &:hover {
     color: $blue;
   }
 
-  &:active p {
+  &:active {
     color: $dark-blue;
-  }
-
-  &:active .icon {
     fill: $dark-blue;
   }
 
@@ -167,22 +161,11 @@
     gap: 10px;
   }
 
-  &_top {
-    @include media-l {
-      width: 100%;
-      gap: 0;
+  @include media-l {
+    width: 100%;
+    gap: 0;
 
-      @include flex-builder(row, space-between, center);
-    }
-  }
-
-  &_bottom {
-    @include media-l {
-      width: 100%;
-      gap: 0;
-
-      @include flex-builder(row, space-between, center);
-    }
+    @include flex-builder(row, space-between, center);
   }
 }
 
@@ -190,10 +173,6 @@
   width: 100%;
 
   @include flex-builder(row, flex-start, center);
-
-  @include media-l {
-    width: 100%;
-  }
 
   @include media-m {
     height: 100%;
@@ -263,7 +242,6 @@
 
   @include media-s {
     width: 100%;
-    height: 100%;
   }
 
   @include media-xs {
