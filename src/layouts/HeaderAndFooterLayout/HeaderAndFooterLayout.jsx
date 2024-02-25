@@ -12,7 +12,7 @@ export function HeaderAndFooterLayout() {
     <>
       <Header />
       <Outlet />
-      {/* <Footer /> */}
+      <Footer />
     </>
   );
 }

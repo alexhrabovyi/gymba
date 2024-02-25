@@ -1,18 +1,20 @@
+/* eslint-disable import/no-unresolved */
 import { Link } from 'react-router-dom';
 import classNames from 'classnames';
 import containerCls from '../../scss/_container.module.scss';
 import textCls from '../../scss/_text.module.scss';
 import footerCls from './Footer.module.scss';
-import Logo from './images/logo.svg';
 import Input from '../common/Input/Input.jsx';
 import Button from '../common/Button/Button.jsx';
+import ValidationForm from '../common/ValidationForm/ValidationForm.jsx';
+import logo from './images/logo.svg?url';
 
 export default function Footer() {
   return (
     <footer className={classNames(footerCls.footer, containerCls.container)}>
       <div className={footerCls.mainBlock}>
         <Link to="/" className={footerCls.logoLink}>
-          <Logo className={footerCls.logo} />
+          <img src={logo} className={footerCls.logo} alt="Everest" />
         </Link>
         <nav className={footerCls.mainLinkBlock}>
           <ul className={footerCls.mainLinkList}>
@@ -39,16 +41,18 @@ export default function Footer() {
             </li>
           </ul>
         </nav>
-        <form className={footerCls.subscribeForm}>
+        <ValidationForm className={footerCls.subscribeForm}>
           <label htmlFor="input_subscribe" className={classNames(textCls.text, textCls.textWhite)}>
             Подпишитесь на рассылку новостей, акций, спецпредложений
           </label>
           <div className={footerCls.inputBLock}>
             <Input
               type="email"
+              name="subscribeEmail"
               className={footerCls.input}
               placeholder="Электронная почта"
               id="input_subscribe"
+              required
             />
             <Button
               className={footerCls.subscribeButton}
@@ -57,7 +61,7 @@ export default function Footer() {
               Подписаться
             </Button>
           </div>
-        </form>
+        </ValidationForm>
         <p className={classNames(footerCls.address, textCls.text, textCls.textWhite)}>
           ООО «ЭПК»
           <br />
