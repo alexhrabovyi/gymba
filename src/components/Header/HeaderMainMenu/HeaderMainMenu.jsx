@@ -16,6 +16,7 @@ import Favorite from '../images/favorite.svg';
 import Tag from '../images/tag.svg';
 import Phone from '../images/phone.svg';
 import Chevron from '../images/chevron.svg';
+import findAllInteractiveElements from '../../../utils/findAllInteractiveElements.js';
 
 const HeaderMainMenu = memo(({ isMenuOpen, categories, catalogBtnOnClick }) => {
   const menuRef = useRef(null);
@@ -69,6 +70,27 @@ const HeaderMainMenu = memo(({ isMenuOpen, categories, catalogBtnOnClick }) => {
     };
   }, [isMenuOpen]);
 
+  useEffect(() => {
+    let menuElements;
+
+    if (!isMenuOpen) {
+      menuElements = findAllInteractiveElements(menuRef.current);
+      menuElements.forEach((el) => {
+        el.tabIndex = '-1';
+        el.ariaHidden = true;
+      });
+    }
+
+    return () => {
+      if (!isMenuOpen) {
+        menuElements.forEach((el) => {
+          el.tabIndex = '';
+          el.ariaHidden = false;
+        });
+      }
+    };
+  });
+
   function onPointerMoveHandler(e) {
     const link = e.target.closest('a');
     if (!link) return;
@@ -76,6 +98,10 @@ const HeaderMainMenu = memo(({ isMenuOpen, categories, catalogBtnOnClick }) => {
     const id = link.dataset.categoryId;
     setActiveCategoryId(id);
   }
+
+  useEffect(() => {
+    if (isMenuOpen) menuRef.current.focus();
+  }, [isMenuOpen]);
 
   return (
     <div
@@ -87,6 +113,11 @@ const HeaderMainMenu = memo(({ isMenuOpen, categories, catalogBtnOnClick }) => {
           isMenuOpen && headerMenuCls.menu_open,
         )
       }
+      aria-hidden={!isMenuOpen}
+      role="dialog"
+      aria-modal
+      aria-label={windowWidth <= 1024 ? 'Меню каталога и навигации' : 'Меню каталога'}
+      tabIndex={isMenuOpen ? '0' : '-1'}
     >
       {windowWidth > 1024 && (
       <>
@@ -94,12 +125,20 @@ const HeaderMainMenu = memo(({ isMenuOpen, categories, catalogBtnOnClick }) => {
         <nav className={headerMenuCls.iconLinkBlock}>
           <ul className={headerMenuCls.iconLinkList}>
             <li>
-              <Link to="/" className={headerMenuCls.iconLink}>
+              <Link
+                to="/"
+                className={headerMenuCls.iconLink}
+                aria-label="Профиль пользователя"
+              >
                 <User className={headerMenuCls.iconInLink} />
               </Link>
             </li>
             <li>
-              <Link to="/" className={headerMenuCls.iconLink}>
+              <Link
+                to="/"
+                className={headerMenuCls.iconLink}
+                aria-label="Сравнить товары"
+              >
                 <Compare className={headerMenuCls.iconInLink} />
               </Link>
             </li>
@@ -108,6 +147,7 @@ const HeaderMainMenu = memo(({ isMenuOpen, categories, catalogBtnOnClick }) => {
                 to="/"
                 className={classNames(headerMenuCls.iconLink, headerMenuCls.iconLinkWithCircle)}
                 data-before={5}
+                aria-label="Понравившиеся товары"
               >
                 <Favorite className={headerMenuCls.iconInLink} />
               </Link>
@@ -118,6 +158,7 @@ const HeaderMainMenu = memo(({ isMenuOpen, categories, catalogBtnOnClick }) => {
         <nav
           className={headerMenuCls.mainLinkBlock}
           onPointerMove={onPointerMoveHandler}
+          onFocus={onPointerMoveHandler}
         >
           <ul className={headerMenuCls.mainLinkList}>
             {categories.map((c) => (
@@ -187,12 +228,20 @@ const HeaderMainMenu = memo(({ isMenuOpen, categories, catalogBtnOnClick }) => {
         <nav className={headerMenuCls.iconLinkBlock}>
           <ul className={headerMenuCls.iconLinkList}>
             <li>
-              <Link to="/" className={headerMenuCls.iconLink}>
+              <Link
+                to="/"
+                className={headerMenuCls.iconLink}
+                aria-label="Профиль пользователя"
+              >
                 <User className={headerMenuCls.iconInLink} />
               </Link>
             </li>
             <li>
-              <Link to="/" className={headerMenuCls.iconLink}>
+              <Link
+                to="/"
+                className={headerMenuCls.iconLink}
+                aria-label="Сравнить товары"
+              >
                 <Compare className={headerMenuCls.iconInLink} />
               </Link>
             </li>
@@ -201,6 +250,7 @@ const HeaderMainMenu = memo(({ isMenuOpen, categories, catalogBtnOnClick }) => {
                 to="/"
                 className={classNames(headerMenuCls.iconLink, headerMenuCls.iconLinkWithCircle)}
                 data-before={5}
+                aria-label="Понравившиеся товары"
               >
                 <Favorite className={headerMenuCls.iconInLink} />
               </Link>
@@ -214,6 +264,8 @@ const HeaderMainMenu = memo(({ isMenuOpen, categories, catalogBtnOnClick }) => {
                 type="button"
                 className={headerMenuCls.catalogButton}
                 onClick={catalogBtnOnClick}
+                aria-haspopup="dialog"
+                aria-label="Открыть меню каталога"
               >
                 Каталог
                 <Chevron className={headerMenuCls.catalogButtonChevron} />
@@ -243,11 +295,21 @@ const HeaderMainMenu = memo(({ isMenuOpen, categories, catalogBtnOnClick }) => {
           </ul>
         </nav>
         <div className={headerMenuCls.locationAndTelBlock}>
-          <a href="/" className={headerMenuCls.linkWithIcon} alt="Казань">
+          <a
+            href="/"
+            className={headerMenuCls.linkWithIcon}
+            alt="Наш магазин находится в городе Казань"
+            aria-label="Наш магазин находится в городе Казань"
+          >
             <Tag />
             <p className={textCls.text}>Казань</p>
           </a>
-          <a href="tel:+78552448409" className={headerMenuCls.linkWithIcon} alt="+7 8552 44-84-09">
+          <a
+            href="tel:+78552448409"
+            className={headerMenuCls.linkWithIcon}
+            alt="Номер телефона магазина +7 8552 44-84-09"
+            aria-label="Номер телефона магазина +7 8552 44-84-09"
+          >
             <Phone />
             <p className={textCls.text}>+7 8552 44-84-09</p>
           </a>

@@ -1,11 +1,14 @@
 import { Link } from 'react-router-dom';
 import classNames from 'classnames';
-import { memo, useRef, useLayoutEffect } from 'react';
+import {
+  memo, useRef, useEffect, useLayoutEffect,
+} from 'react';
 import containerCls from '../../../scss/_container.module.scss';
 import subcategoryMenuCls from './HeaderSubcategoryMenu.module.scss';
 import linkCls from '../../../scss/_link.module.scss';
 import textCls from '../../../scss/_text.module.scss';
 import Chevron from '../images/chevron.svg';
+import findAllInteractiveElements from '../../../utils/findAllInteractiveElements.js';
 
 const HeaderSubcategoryMenu = memo(({ isMenuOpen, category, backToCatalogOnClick }) => {
   const menuRef = useRef(null);
@@ -28,6 +31,31 @@ const HeaderSubcategoryMenu = memo(({ isMenuOpen, category, backToCatalogOnClick
     };
   }, [isMenuOpen]);
 
+  useEffect(() => {
+    let menuElements;
+
+    if (!isMenuOpen) {
+      menuElements = findAllInteractiveElements(menuRef.current);
+      menuElements.forEach((el) => {
+        el.tabIndex = '-1';
+        el.ariaHidden = true;
+      });
+    }
+
+    return () => {
+      if (!isMenuOpen) {
+        menuElements.forEach((el) => {
+          el.tabIndex = '';
+          el.ariaHidden = false;
+        });
+      }
+    };
+  });
+
+  useEffect(() => {
+    if (isMenuOpen) menuRef.current.focus();
+  }, [isMenuOpen]);
+
   return (
     <div
       ref={menuRef}
@@ -36,11 +64,18 @@ const HeaderSubcategoryMenu = memo(({ isMenuOpen, category, backToCatalogOnClick
         subcategoryMenuCls.menu,
         isMenuOpen && subcategoryMenuCls.menu_open,
       )}
+      aria-hidden={!isMenuOpen}
+      role="dialog"
+      aria-modal
+      aria-label={`Меню категории ${category.name}`}
+      tabIndex={isMenuOpen ? '0' : '-1'}
     >
       <button
         type="button"
         className={subcategoryMenuCls.backButton}
         onClick={backToCatalogOnClick}
+        aria-label="Вернуться в меню каталога"
+        aria-haspopup="dialog"
       >
         <Chevron className={subcategoryMenuCls.backButtonChevron} />
         Каталог

@@ -1,9 +1,12 @@
 import classNames from 'classnames';
-import { memo, useRef, useLayoutEffect } from 'react';
+import {
+  memo, useRef, useEffect, useLayoutEffect,
+} from 'react';
 import categoryMenuCls from './HeaderCategoryMenu.module.scss';
 import containerCls from '../../../scss/_container.module.scss';
 import textCls from '../../../scss/_text.module.scss';
 import Chevron from '../images/chevron.svg';
+import findAllInteractiveElements from '../../../utils/findAllInteractiveElements.js';
 
 const HeaderCategoryMenu = memo(({
   isMenuOpen,
@@ -30,6 +33,31 @@ const HeaderCategoryMenu = memo(({
     };
   }, [isMenuOpen]);
 
+  useEffect(() => {
+    let menuElements;
+
+    if (!isMenuOpen) {
+      menuElements = findAllInteractiveElements(menuRef.current);
+      menuElements.forEach((el) => {
+        el.tabIndex = '-1';
+        el.ariaHidden = true;
+      });
+    }
+
+    return () => {
+      if (!isMenuOpen) {
+        menuElements.forEach((el) => {
+          el.tabIndex = '';
+          el.ariaHidden = false;
+        });
+      }
+    };
+  });
+
+  useEffect(() => {
+    if (isMenuOpen) menuRef.current.focus();
+  }, [isMenuOpen]);
+
   return (
     <div
       ref={menuRef}
@@ -38,11 +66,18 @@ const HeaderCategoryMenu = memo(({
         categoryMenuCls.categoryMenu,
         isMenuOpen && categoryMenuCls.categoryMenu_open,
       )}
+      aria-hidden={!isMenuOpen}
+      role="dialog"
+      aria-modal
+      aria-label="Меню каталога"
+      tabIndex={isMenuOpen ? '0' : '-1'}
     >
       <button
         type="button"
         className={categoryMenuCls.backButton}
         onClick={backToMenuOnClick}
+        aria-label="Вернуться в меню навигации"
+        aria-haspopup="dialog"
       >
         <Chevron className={categoryMenuCls.backButtonChevron} />
         Меню
@@ -67,6 +102,8 @@ const HeaderCategoryMenu = memo(({
                 className={categoryMenuCls.categoryButton}
                 type="button"
                 data-category-id={c.id}
+                aria-haspopup="dialog"
+                aria-label={`Открыть меню категории ${c.name}`}
               >
                 {c.name}
                 <Chevron className={categoryMenuCls.categoryButtonChevron} />

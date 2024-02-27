@@ -1,3 +1,4 @@
+/* eslint-disable jsx-a11y/label-has-associated-control */
 /* eslint-disable import/no-unresolved */
 import { Link } from 'react-router-dom';
 import classNames from 'classnames';

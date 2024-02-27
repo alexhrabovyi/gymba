@@ -1,3 +1,4 @@
+/* eslint-disable jsx-a11y/no-static-element-interactions */
 import {
   useState,
   useRef,
@@ -27,6 +28,7 @@ import Input from '../common/Input/Input.jsx';
 import Search from './images/search.svg';
 import HeaderCategoryMenu from './HeaderCategoryMenu/HeaderCategoryMenu.jsx';
 import HeaderSubcategoryMenu from './HeaderSubcategoryMenu/HeaderSubcategoryMenu.jsx';
+import findAllInteractiveElements from '../../utils/findAllInteractiveElements.js';
 
 export default function Header() {
   const categories = useLoaderData();
@@ -131,6 +133,35 @@ export default function Header() {
     };
   }, [isAnyMenuOpen]);
 
+  const openMenuButtonRef = useRef(null);
+
+  useEffect(() => {
+    const openMenuButton = openMenuButtonRef.current;
+    let nonDialogElements;
+
+    if (isAnyMenuOpen) {
+      nonDialogElements = Array.from(findAllInteractiveElements(document.body))
+        .filter((el) => !el.closest('[role="dialog"]'));
+
+      nonDialogElements.forEach((el) => {
+        el.tabIndex = '-1';
+        el.ariaHidden = true;
+      });
+
+      openMenuButton.tabIndex = '0';
+      openMenuButton.ariaHidden = false;
+    }
+
+    return () => {
+      if (isAnyMenuOpen) {
+        nonDialogElements.forEach((el) => {
+          el.tabIndex = '';
+          el.ariaHidden = '';
+        });
+      }
+    };
+  }, [isAnyMenuOpen]);
+
   return (
     <>
       <div
@@ -142,19 +173,29 @@ export default function Header() {
           className={classNames(containerCls.container, headerCls.header)}
         >
           {windowWidth > 768 && (
-          <Link to="/" className={headerCls.logoLink}>
-            <Logo className={headerCls.logoLinkImg} />
+          <Link to="/" className={headerCls.logoLink} alt="Everest логотип" aria-label="Everest логотип">
+            <Logo className={headerCls.logoLinkImg} alt="Everest логотип" />
           </Link>
           )}
           {windowWidth > 1024 && (
           <div className={headerCls.topBlock}>
             {windowWidth > 1360 && (
             <div className={headerCls.locationAndTelBlock}>
-              <a href="/" className={headerCls.linkWithIcon} alt="Казань">
+              <a
+                href="/"
+                className={headerCls.linkWithIcon}
+                alt="Наш магазин находится в городе Казань"
+                aria-label="Наш магазин находится в городе Казань"
+              >
                 <Tag />
                 <p className={textCls.text}>Казань</p>
               </a>
-              <a href="tel:+78552448409" className={headerCls.linkWithIcon} alt="+7 8552 44-84-09">
+              <a
+                href="tel:+78552448409"
+                className={headerCls.linkWithIcon}
+                alt="Номер телефона магазина +7 8552 44-84-09"
+                aria-label="Номер телефона магазина +7 8552 44-84-09"
+              >
                 <Phone />
                 <p className={textCls.text}>+7 8552 44-84-09</p>
               </a>
@@ -189,12 +230,18 @@ export default function Header() {
           )}
           <div className={headerCls.bottomBlock}>
             <button
+              ref={openMenuButtonRef}
               type="button"
               className={classNames(
                 headerCls.openMenuButton,
                 isAnyMenuOpen && headerCls.openMenuButton_active,
               )}
               onClick={menuBtnOnClick}
+              aria-label={
+                windowWidth <= 1024 ? isAnyMenuOpen ? 'Закрыть меню' : 'Открыть меню'
+                  : isAnyMenuOpen ? 'Закрыть каталог' : 'Открыть каталог'
+              }
+              aria-haspopup="dialog"
             >
               <svg className={headerCls.burger} viewBox="0 0 100 100">
                 <path
@@ -227,7 +274,12 @@ export default function Header() {
             </Link>
             )}
             <div className={headerCls.inputBlock}>
-              <Input className={headerCls.input} placeholder="Поиск товаров" />
+              <Input
+                type="search"
+                className={headerCls.input}
+                placeholder="Поиск товаров"
+                required
+              />
               {windowWidth > 768
                 ? (<Button className={headerCls.submitButton} type="submit">Найти</Button>)
                 : (
@@ -241,12 +293,20 @@ export default function Header() {
                 {windowWidth > 1360 && (
                 <>
                   <li>
-                    <Link to="/" className={headerCls.iconLink}>
+                    <Link
+                      to="/"
+                      className={headerCls.iconLink}
+                      aria-label="Профиль пользователя"
+                    >
                       <User className={headerCls.iconInLink} />
                     </Link>
                   </li>
                   <li>
-                    <Link to="/" className={headerCls.iconLink}>
+                    <Link
+                      to="/"
+                      className={headerCls.iconLink}
+                      aria-label="Сравнить товары"
+                    >
                       <Compare className={headerCls.iconInLink} />
                     </Link>
                   </li>
@@ -255,6 +315,7 @@ export default function Header() {
                       to="/"
                       className={classNames(headerCls.iconLink, headerCls.iconLinkWithCircle)}
                       data-before={5}
+                      aria-label="Понравившиеся товары"
                     >
                       <Favorite className={headerCls.iconInLink} />
                     </Link>
@@ -266,6 +327,7 @@ export default function Header() {
                     to="/"
                     className={classNames(headerCls.iconLink, headerCls.iconLinkWithCircle)}
                     data-before={2}
+                    aria-label="Корзина"
                   >
                     <Cart className={headerCls.iconInLink} />
                   </Link>

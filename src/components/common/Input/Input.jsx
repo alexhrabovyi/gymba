@@ -14,6 +14,7 @@ export default function Input({
       placeholder={placeholder}
       id={id}
       required={required}
+      aria-required={required}
     />
   );
 }
