@@ -65,5 +65,34 @@
   gap: 18px;
   list-style: none;
 
-  @include flex-builder(column, flex-start, flex-start);
+  @include flex-builder(column, flex-start, stretch);
+}
+
+.allCategoriesLink {
+  display: block;
+  width: 100%;
+  margin-top: 20px;
+  color: $black;
+  font-family: Onest, sans-serif;
+  font-size: 18px;
+  font-weight: 800;
+  stroke: $black;
+  text-transform: uppercase;
+  transition: all .05s ease-in-out;
+
+  @include flex-builder(row, flex-start, center);
+
+  &:hover {
+    color: $blue;
+    stroke: $blue;
+  }
+
+  &:active {
+    color: $dark-blue;
+    stroke: $dark-blue;
+  }
+}
+
+.allCategoriesArrow {
+  margin-left: 5%;
 }

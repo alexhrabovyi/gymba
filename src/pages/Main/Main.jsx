@@ -1,9 +1,13 @@
 import Catalog from '../../components/Catalog/Catalog.jsx';
 import MainSlider from '../../components/MainSlider/MainSlider.jsx';
-import { getCategoriesAndSubcategories } from '../../utils/dataAPI.js';
+import NewsPreview from '../../components/NewsPreviews/NewsPreviews.jsx';
+import { getCategoriesAndSubcategories, getNewsPreviews } from '../../utils/dataAPI.js';
 
 export function loader() {
-  return getCategoriesAndSubcategories();
+  return {
+    categories: getCategoriesAndSubcategories(),
+    news: getNewsPreviews(),
+  };
 }
 
 export function Main() {
@@ -11,6 +15,7 @@ export function Main() {
     <>
       <MainSlider />
       <Catalog />
+      <NewsPreview />
     </>
   );
 }

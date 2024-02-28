@@ -81,6 +81,7 @@
   gap: 5%;
   text-align: left;
   text-transform: uppercase;
+  transition: all .05s ease-in-out;
 
   @include flex-builder(row, space-between, center);
 

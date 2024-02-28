@@ -9,6 +9,7 @@ export default function SliderButton({ id, isInactive, isRight }) {
       className={classNames(sliderButtonCls.button, isInactive && sliderButtonCls.button_inactive)}
       id={id}
       disabled={isInactive}
+      aria-hidden
     >
       <Arrow
         className={classNames(sliderButtonCls.arrow, isRight && sliderButtonCls.arrow_right)}

@@ -173,7 +173,7 @@ export default function Header() {
           className={classNames(containerCls.container, headerCls.header)}
         >
           {windowWidth > 768 && (
-          <Link to="/" className={headerCls.logoLink} alt="Everest логотип" aria-label="Everest логотип">
+          <Link to="/" className={headerCls.logoLink} alt="Главная страница Everest" aria-label="Главная страница Everest">
             <Logo className={headerCls.logoLinkImg} alt="Everest логотип" />
           </Link>
           )}
@@ -269,8 +269,8 @@ export default function Header() {
               {windowWidth > 1025 ? 'Каталог' : windowWidth > 768 ? 'Меню' : ''}
             </button>
             {windowWidth <= 768 && (
-            <Link to="/" className={headerCls.logoLink}>
-              <LogoSmall className={headerCls.logoLinkImg} />
+            <Link to="/" className={headerCls.logoLink} alt="Главная страница Everest" aria-label="Главная страница Everest">
+              <LogoSmall className={headerCls.logoLinkImg} alt="Everest логотип" />
             </Link>
             )}
             <div className={headerCls.inputBlock}>

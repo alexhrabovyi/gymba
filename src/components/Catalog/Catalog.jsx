@@ -16,12 +16,41 @@ import Button from '../common/Button/Button.jsx';
 import useOnResize from '../../hooks/useOnResize.jsx';
 
 export default function Catalog() {
-  const categories = useLoaderData();
+  const { categories } = useLoaderData();
   const [isAccordionNeeded, setIsAccordionNeeded] = useState(false);
   const [isAccordionOpen, setIsAccordionOpen] = useState(false);
   const categoryBlockRef = useRef(null);
 
-  const onResizeCallback = useCallback(() => {
+  const calcCollapsedHeight = useCallback(() => {
+    const categoryBlock = categoryBlockRef.current;
+
+    const gap = +getComputedStyle(categoryBlock).rowGap.match(/\d+/)[0];
+    const fourthBlockOffsetTop = categoryBlock.children[3].offsetTop;
+    return fourthBlockOffsetTop - gap;
+  }, []);
+
+  const calcExpandedHeight = useCallback(() => {
+    const categoryBlock = categoryBlockRef.current;
+    return categoryBlock.scrollHeight;
+  }, []);
+
+  const buttonOnClick = useCallback(() => {
+    setIsAccordionOpen(!isAccordionOpen);
+    const categoryBlock = categoryBlockRef.current;
+
+    categoryBlock.style.transition = 'height 1s ease-in-out';
+    categoryBlock.addEventListener('transitionend', () => {
+      categoryBlock.style.transition = '';
+    }, { once: true });
+
+    if (!isAccordionOpen) {
+      categoryBlock.style.height = `${calcExpandedHeight()}px`;
+    } else {
+      categoryBlock.style.height = `${calcCollapsedHeight()}px`;
+    }
+  }, [isAccordionOpen, calcExpandedHeight, calcCollapsedHeight]);
+
+  const checkAccordionOnResize = useCallback(() => {
     if (window.innerWidth <= 768) {
       setIsAccordionNeeded(true);
     } else {
@@ -29,25 +58,32 @@ export default function Catalog() {
     }
   }, []);
 
-  useOnResize(onResizeCallback);
+  useOnResize(checkAccordionOnResize);
 
   useLayoutEffect(() => {
-    onResizeCallback();
-  }, [onResizeCallback]);
+    checkAccordionOnResize();
+  }, [checkAccordionOnResize]);
+
+  const changeHeightOnResize = useCallback(() => {
+    if (!isAccordionNeeded) return;
+
+    const categoryBlock = categoryBlockRef.current;
+
+    if (isAccordionOpen) {
+      categoryBlock.style.height = '';
+      categoryBlock.style.height = `${calcExpandedHeight()}px`;
+    } else {
+      categoryBlock.style.height = `${calcCollapsedHeight()}px`;
+    }
+  }, [isAccordionNeeded, isAccordionOpen, calcExpandedHeight, calcCollapsedHeight]);
+
+  useOnResize(changeHeightOnResize);
 
   useEffect(() => {
     const categoryBlock = categoryBlockRef.current;
 
     if (isAccordionNeeded && categories.length > 3) {
-      const gap = +getComputedStyle(categoryBlock).rowGap.match(/\d+/)[0];
-
-      const firstBlockHeight = categoryBlock.children[0].offsetHeight;
-      const secondBlockHeight = categoryBlock.children[1].offsetHeight;
-      const thirdBlockHeight = categoryBlock.children[2].offsetHeight;
-
-      const newHeight = firstBlockHeight + secondBlockHeight + thirdBlockHeight + gap * 2;
-
-      categoryBlock.style.height = `${newHeight}px`;
+      categoryBlock.style.height = `${calcCollapsedHeight()}px`;
       categoryBlock.style.overflowY = 'hidden';
     }
 
@@ -56,20 +92,7 @@ export default function Catalog() {
       categoryBlock.style.height = '';
       categoryBlock.style.overflowY = '';
     };
-  }, [isAccordionNeeded, categories]);
-
-  useEffect(() => {
-    const categoryBlock = categoryBlockRef.current;
-    const prevHeight = +getComputedStyle(categoryBlock).height.match(/\d+/)[0];
-
-    if (isAccordionOpen) {
-      categoryBlock.style.height = `${categoryBlock.scrollHeight}px`;
-    }
-
-    return () => {
-      categoryBlock.style.height = `${prevHeight}px`;
-    };
-  }, [isAccordionOpen]);
+  }, [isAccordionNeeded, categories, calcCollapsedHeight]);
 
   let figureId = 1;
 
@@ -106,7 +129,8 @@ export default function Catalog() {
       </div>
       <Button
         className={catalogCls.button}
-        onClick={() => setIsAccordionOpen(!isAccordionOpen)}
+        onClick={buttonOnClick}
+        ariaHidden
       >
         {isAccordionOpen ? 'Скрыть' : 'Показать больше'}
       </Button>

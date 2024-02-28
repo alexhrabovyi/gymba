@@ -14,8 +14,8 @@ export default function Footer() {
   return (
     <footer className={classNames(footerCls.footer, containerCls.container)}>
       <div className={footerCls.mainBlock}>
-        <Link to="/" className={footerCls.logoLink}>
-          <img src={logo} className={footerCls.logo} alt="Everest" />
+        <Link to="/" className={footerCls.logoLink} alt="Главная страница Everest" aria-label="Главная страница Everest">
+          <img src={logo} className={footerCls.logo} alt="Everest логотип" />
         </Link>
         <nav className={footerCls.mainLinkBlock}>
           <ul className={footerCls.mainLinkList}>
@@ -75,6 +75,7 @@ export default function Footer() {
             href="tel:+78552448409"
             className={classNames(footerCls.link, footerCls.linkBig)}
             alt="tel:+78552448409"
+            aria-label="Номер телефона магазина +7 8552 44-84-09"
           >
             +7 8552 44-84-09
           </a>
@@ -82,6 +83,7 @@ export default function Footer() {
             href="mailto:sale@everest-rt.ru"
             className={classNames(footerCls.link, footerCls.linkBig)}
             alt="sale@everest-rt.ru"
+            aria-label="Электронная почта магазина sale@everest-rt.ru"
           >
             sale@everest-rt.ru
           </a>

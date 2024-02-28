@@ -22,6 +22,7 @@ export default function LinkWithArrow({
         )
       }
       alt={alt}
+      aria-label={alt}
     >
       <Oblique className={linkWithArrowCls.oblique} />
       {children}

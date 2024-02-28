@@ -14,7 +14,7 @@ export default function MainSlider() {
     <Slide
       to="/amogus"
       className={mainSliderCls.slide_1}
-      alt="Узнать подробнее"
+      alt="Узнать подробнее об условиях доставки и пунктах выдачи"
       linkText="Узнать подробнее"
       key={mainSliderCls.slide_1}
     >
@@ -27,7 +27,7 @@ export default function MainSlider() {
     <Slide
       to="/"
       className={mainSliderCls.slide_2}
-      alt="Узнать подробнее"
+      alt="Узнать подробнее о работе с оптовиками"
       linkText="Узнать подробнее"
       key={mainSliderCls.slide_2}
     >
@@ -53,16 +53,16 @@ export default function MainSlider() {
   return (
     <section className={classNames(containerCls.container, mainSliderCls.mainSlider)}>
       <div className={mainSliderCls.slider}>
+        <div className={mainSliderCls.buttonBlock}>
+          <SliderButton id={btnPrevId} isInactive={isPrevBtnInactive} />
+          <SliderButton id={btnNextId} isInactive={isNextBtnInactive} isRight />
+        </div>
         <Slider
           slides={slides}
           gap="1.5"
           btnPrevDetails={btnPrevDetails}
           btnNextDetails={btnNextDetails}
         />
-        <div className={mainSliderCls.buttonBlock}>
-          <SliderButton id={btnPrevId} isInactive={isPrevBtnInactive} />
-          <SliderButton id={btnNextId} isInactive={isNextBtnInactive} isRight />
-        </div>
       </div>
     </section>
   );

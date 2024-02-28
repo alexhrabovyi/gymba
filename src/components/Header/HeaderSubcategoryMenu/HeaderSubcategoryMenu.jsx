@@ -9,6 +9,7 @@ import linkCls from '../../../scss/_link.module.scss';
 import textCls from '../../../scss/_text.module.scss';
 import Chevron from '../images/chevron.svg';
 import findAllInteractiveElements from '../../../utils/findAllInteractiveElements.js';
+import ArrowRight from '../images/arrow-right.svg';
 
 const HeaderSubcategoryMenu = memo(({ isMenuOpen, category, backToCatalogOnClick }) => {
   const menuRef = useRef(null);
@@ -102,6 +103,12 @@ const HeaderSubcategoryMenu = memo(({ isMenuOpen, category, backToCatalogOnClick
               </Link>
             </li>
           ))}
+          <li>
+            <Link to={`categories/${category.id}`} className={subcategoryMenuCls.allCategoriesLink} alt="Все категории">
+              Все категории
+              <ArrowRight className={subcategoryMenuCls.allCategoriesArrow} />
+            </Link>
+          </li>
         </ul>
       </nav>
     </div>

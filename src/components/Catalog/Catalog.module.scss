@@ -38,11 +38,11 @@
 }
 
 .categoryBlock {
+  position: relative;
   display: grid;
   justify-content: center;
   gap: 32px 1.83%;
   grid-template-columns: 1fr 1fr 1fr;
-  transition: all 1s ease-in-out;
 
   @media (max-width: 1600px) {
     row-gap: 28px;

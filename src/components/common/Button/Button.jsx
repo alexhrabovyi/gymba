@@ -1,8 +1,9 @@
+/* eslint-disable react/button-has-type */
 import classNames from 'classnames';
 import buttonCls from './Button.module.scss';
 
 export default function Button({
-  className, type, children, id, onClick,
+  className, type, children, id, onClick, ariaHidden = false,
 }) {
   const buttonType = type || 'button';
 
@@ -12,6 +13,7 @@ export default function Button({
       type={buttonType}
       className={classNames(className, buttonCls.button)}
       id={id}
+      aria-hidden={ariaHidden}
     >
       {children}
     </button>
