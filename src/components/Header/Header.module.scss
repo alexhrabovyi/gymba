@@ -6,6 +6,7 @@
   z-index: 1000;
   top: 0;
   left: 0;
+  width: 100%;
 }
 
 .header {
@@ -381,11 +382,21 @@
   width: 27px;
   border: none;
   background: none;
+  cursor: pointer;
   fill: $blue;
   transform: translateY(-50%);
+  transition: all .05s ease-in-out;
 
   @include media-xs {
     width: 24px;
+  }
+
+  &:hover {
+    fill: $dark-blue;
+  }
+
+  &:active {
+    fill: $blue-active;
   }
 }
 

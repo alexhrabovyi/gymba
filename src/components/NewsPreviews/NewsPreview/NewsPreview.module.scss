@@ -1,0 +1,45 @@
+@import '../../../scss/mixins';
+@import '../../../scss/colors';
+
+.preview {
+  @include flex-builder(column, flex-start, flex-start);
+}
+
+.imgLink {
+  width: 100%;
+  margin-bottom: 40px;
+
+  @include flex-builder(row, center, center);
+
+  @include media-l {
+    max-width: 250px;
+    align-self: center;
+  }
+}
+
+.spinner {
+  width: 40%;
+  height: 40%;
+  fill: $blue;
+}
+
+.img {
+  width: 100%;
+}
+
+.infoBlock {
+  @include flex-builder(row, flex-start, center);
+
+  margin-bottom: 12px;
+  gap: 24px;
+}
+
+.viewBlock {
+  @include flex-builder(row, flex-start, center);
+
+  gap: 10px;
+}
+
+.text {
+  color: rgb(135 140 158);
+}

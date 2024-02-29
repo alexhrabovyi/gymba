@@ -283,7 +283,11 @@ export default function Header() {
               {windowWidth > 768
                 ? (<Button className={headerCls.submitButton} type="submit">Найти</Button>)
                 : (
-                  <button type="submit" className={headerCls.submitButtonWithIcon}>
+                  <button
+                    type="submit"
+                    className={headerCls.submitButtonWithIcon}
+                    aria-label="Поиск по сайту"
+                  >
                     <Search className={headerCls.submitButtonIcon} />
                   </button>
                 )}

@@ -1,3 +1,4 @@
+/* eslint-disable consistent-return */
 import {
   useEffect, useState, memo, useRef,
 } from 'react';
@@ -7,6 +8,7 @@ const Slider = memo(({
   slides,
   gap,
   initActiveSlideId = 0,
+  perView = 1,
   btnPrevDetails,
   btnNextDetails,
 }) => {
@@ -14,21 +16,26 @@ const Slider = memo(({
   const containerRef = useRef(null);
   const wrapperRef = useRef(null);
 
-  const slideAmount = slides.length;
-  const translateValue = -(activeSlideId * 100 + activeSlideId * +gap);
+  const slideWidth = (100 - +gap * (+perView - 1)) / +perView;
+  const gridTemplateColumns = `repeat(${slides.length}, ${slideWidth}%)`;
+  const translateValue = -(activeSlideId * slideWidth + activeSlideId * +gap);
 
   useEffect(() => {
+    if (!btnPrevDetails) return;
+
     btnPrevDetails.toggleInactive(false);
     btnNextDetails.toggleInactive(false);
 
     if (activeSlideId === 0) {
       btnPrevDetails.toggleInactive(true);
-    } else if (activeSlideId === slides.length - 1) {
+    } else if (activeSlideId === slides.length - perView) {
       btnNextDetails.toggleInactive(true);
     }
-  }, [btnPrevDetails, btnNextDetails, activeSlideId, slides]);
+  }, [btnPrevDetails, btnNextDetails, activeSlideId, slides, perView]);
 
   useEffect(() => {
+    if (!btnPrevDetails) return;
+
     function prevCallback() {
       setActiveSlideId((prevActiveId) => prevActiveId - 1);
     }
@@ -44,6 +51,8 @@ const Slider = memo(({
     btnNext.addEventListener('click', nextCallback);
 
     return () => {
+      if (!btnPrevDetails) return;
+
       btnPrev.removeEventListener('click', prevCallback);
       btnNext.removeEventListener('click', nextCallback);
     };
@@ -112,25 +121,21 @@ const Slider = memo(({
           && lastSlideRightCoord > containerRightCoord
         ) {
           if (finalpointerXCoordDiff < 0) {
-            setActiveSlideId((prevSlideId) => {
-              let nextSlideId = prevSlideId + 1;
-              if (nextSlideId === slides.length) {
-                nextSlideId = prevSlideId;
-                wrapper.style.transform = initialTranslateValueInPercents;
-              }
-
-              return nextSlideId;
-            });
+            setActiveSlideId((prevSlideId) => prevSlideId + 1);
           } else if (finalpointerXCoordDiff > 0) {
-            setActiveSlideId((prevSlideId) => {
-              let nextSlideId = prevSlideId - 1;
-              if (nextSlideId < 0) {
-                nextSlideId = 0;
-                wrapper.style.transform = initialTranslateValueInPercents;
-              }
-
-              return nextSlideId;
-            });
+            setActiveSlideId((prevSlideId) => prevSlideId - 1);
+          }
+        } else if (newTranslateValue > 0 && activeSlideId !== 0) {
+          setActiveSlideId(0);
+        } else if (
+          lastSlideRightCoord < containerRightCoord
+          && activeSlideId !== slides.length - 1
+        ) {
+          const newSlideId = slides.length - perView;
+          if (newSlideId === activeSlideId) {
+            wrapper.style.transform = initialTranslateValueInPercents;
+          } else {
+            setActiveSlideId(slides.length - perView);
           }
         } else {
           wrapper.style.transform = initialTranslateValueInPercents;
@@ -146,7 +151,7 @@ const Slider = memo(({
     return () => {
       wrapper.removeEventListener('pointerdown', onPointerDown);
     };
-  }, [slides]);
+  }, [slides, activeSlideId, perView]);
 
   return (
     <div ref={containerRef} className={sliderCls.container}>
@@ -155,7 +160,7 @@ const Slider = memo(({
         className={sliderCls.wrapper}
         style={
           {
-            gridTemplateColumns: `repeat(${slideAmount}, 100%)`,
+            gridTemplateColumns,
             gap: `${gap}%`,
             transform: `translateX(${translateValue}%)`,
           }
