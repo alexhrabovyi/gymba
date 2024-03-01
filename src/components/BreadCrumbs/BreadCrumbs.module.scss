@@ -1,0 +1,47 @@
+@import '../../scss/mixins';
+@import '../../scss/colors';
+
+.nav {
+  margin-top: 32px;
+}
+
+.list {
+  gap: 12px;
+  list-style: none;
+
+  @include flex-builder(row, flex-start, center);
+}
+
+.link {
+  color: $blue;
+  font-family: Onest, sans-serif;
+  font-size: 18px;
+  text-decoration: none;
+  text-transform: uppercase;
+  transition: all .05s ease-in-out;
+
+  @include media-xs {
+    font-size: 16px;
+  }
+
+  &:hover {
+    color: $dark-blue;
+  }
+
+  &:active {
+    color: $blue-active;
+  }
+
+  &_disabled {
+    color: $black;
+    pointer-events: none;
+  }
+}
+
+.circle {
+  display: block;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background-color: $blue;
+}

@@ -162,11 +162,20 @@ export default function Header() {
     };
   }, [isAnyMenuOpen]);
 
+  function headerOnClick(e) {
+    if (!e.target.closest('a')) return;
+
+    setIsMainMenuOpen(false);
+    setIsCategoryMenuOpen(false);
+    setIsSubcategoryMenuOpen(false);
+  }
+
   return (
     <>
       <div
         ref={headerWrapperRef}
         className={headerCls.headerWrapper}
+        onClick={headerOnClick}
       >
         <header
           ref={headerRef}

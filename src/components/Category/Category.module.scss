@@ -20,7 +20,12 @@
   }
 
   @include media-s {
+    margin-top: 50px;
     margin-bottom: 80px;
+  }
+
+  @include media-xs {
+    margin-top: 40px;
   }
 }
 
