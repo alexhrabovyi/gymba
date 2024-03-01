@@ -1,0 +1,72 @@
+@import '../../../scss/mixins';
+@import '../../../scss/colors';
+
+.subcategory {
+  @include flex-builder(column, flex-start, flex-start);
+
+  padding: 22% 9.79% 9.79%;
+  background-color: $white;
+  gap: 75px;
+  outline: 1px solid $dark-grey;
+  text-decoration: none;
+  transition: all .05s ease-in-out;
+
+  &:hover, &:focus {
+    z-index: 1;
+    outline: 1px solid $blue;
+  }
+
+  &:active {
+    z-index: 1;
+    outline: 1px solid $blue-active;
+  }
+
+  @include media-s {
+    padding: 17% 7% 8%;
+  }
+
+  @include media-xs {
+    padding: 15% 5% 8%;
+  }
+}
+
+.spinner {
+  width: 40%;
+  height: 40%;
+  align-self: center;
+  fill: $blue;
+}
+
+.img {
+  width: 80%;
+  align-self: center;
+}
+
+.textBlock {
+  width: 100%;
+  height: 100%;
+  color: $black;
+  fill: $black;
+  font-family: Onest, sans-serif;
+  font-size: 18px;
+  font-weight: 800;
+  gap: 10px;
+  text-transform: uppercase;
+  transition: all .05s ease-in-out;
+
+  @include flex-builder(row, space-between, center);
+
+  &:hover {
+    color: $blue;
+    fill: $blue;
+  }
+
+  &:active {
+    color: $blue-active;
+    fill: $blue-active;
+  }
+}
+
+.arrorRight {
+  flex-shrink: 0;
+}

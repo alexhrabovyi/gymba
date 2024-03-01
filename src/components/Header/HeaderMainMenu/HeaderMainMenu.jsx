@@ -164,7 +164,7 @@ const HeaderMainMenu = memo(({ isMenuOpen, categories, catalogBtnOnClick }) => {
             {categories.map((c) => (
               <li key={c.id}>
                 <Link
-                  to={`categories/${c.id}`}
+                  to={c.id}
                   data-category-id={c.id}
                   className={classNames(
                     headerMenuCls.mainLink,
@@ -183,7 +183,7 @@ const HeaderMainMenu = memo(({ isMenuOpen, categories, catalogBtnOnClick }) => {
             {subcategories.map((subC) => (
               <li key={subC.id}>
                 <Link
-                  to={`categories/${activeCategory.id}/${subC.id}`}
+                  to={`${activeCategory.id}/${subC.id}`}
                   className={classNames(linkCls.link, linkCls.link18px)}
                   alt={subC.name}
                 >

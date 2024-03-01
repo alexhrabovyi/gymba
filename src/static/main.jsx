@@ -4,6 +4,7 @@ import { createRoot } from 'react-dom/client';
 import './main.scss';
 import { HeaderAndFooterLayout, loader as HeaderAndFooterLayoutLoader } from '../layouts/HeaderAndFooterLayout/HeaderAndFooterLayout.jsx';
 import { Main, loader as mainLoader } from '../pages/Main/Main.jsx';
+import { CategoryPage, loader as categoryPageLoader } from '../pages/Category/Category.jsx';
 
 const router = createBrowserRouter([
   {
@@ -14,6 +15,11 @@ const router = createBrowserRouter([
         path: '/',
         loader: mainLoader,
         element: <Main />,
+      },
+      {
+        path: ':categoryId',
+        loader: categoryPageLoader,
+        element: <CategoryPage />,
       },
     ],
   },

@@ -15,7 +15,7 @@ export default function Category({ categoryProps, figureId }) {
   return (
     <nav className={categoryCls.category}>
       <Link
-        to={`categories/${categoryProps.id}`}
+        to={categoryProps.id}
         className={categoryCls.imageLink}
         alt={categoryProps.name}
       >
@@ -42,7 +42,7 @@ export default function Category({ categoryProps, figureId }) {
         </Suspense>
       </Link>
       <Link
-        to={`categories/${categoryProps.id}`}
+        to={categoryProps.id}
         className={classNames(
           categoryCls.mainLink,
           linkCls.link,
@@ -61,7 +61,7 @@ export default function Category({ categoryProps, figureId }) {
               className={categoryCls.additionalLinkListElement}
             >
               <Link
-                to={`categories/${categoryProps.id}/${subC.id}`}
+                to={`${categoryProps.id}/${subC.id}`}
                 className={categoryCls.additionalLink}
                 alt={subC.name}
               >

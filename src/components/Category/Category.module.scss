@@ -1,0 +1,52 @@
+@import '../../scss/mixins';
+@import '../../scss/colors';
+
+.main {
+  margin-top: 68px;
+  margin-bottom: 160px;
+
+  @include flex-builder(column, flex-start, flex-start);
+
+  @media (max-width: 1600px) {
+    margin-bottom: 140px;
+  }
+
+  @include media-l {
+    margin-bottom: 120px;
+  }
+
+  @include media-m {
+    margin-bottom: 100px;
+  }
+
+  @include media-s {
+    margin-bottom: 80px;
+  }
+}
+
+.title {
+  margin-bottom: 48px;
+  text-transform: uppercase;
+}
+
+.subcategories {
+  display: grid;
+  width: 100%;
+  align-self: center;
+  grid-template-columns: repeat(4, 1fr);
+
+  @include media-l {
+    max-width: 800px;
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  @include media-m {
+    max-width: 580px;
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  @include media-xs {
+    max-width: 300px;
+    grid-template-columns: 1fr;
+  }
+}

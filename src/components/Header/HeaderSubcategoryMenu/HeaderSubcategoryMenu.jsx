@@ -95,7 +95,7 @@ const HeaderSubcategoryMenu = memo(({ isMenuOpen, category, backToCatalogOnClick
           {subcategories.map((subC) => (
             <li key={subC.id}>
               <Link
-                to={`categories/${category.id}/${subC.id}`}
+                to={`${category.id}/${subC.id}`}
                 className={classNames(linkCls.link, linkCls.link18px)}
                 alt={subC.name}
               >
@@ -104,7 +104,7 @@ const HeaderSubcategoryMenu = memo(({ isMenuOpen, category, backToCatalogOnClick
             </li>
           ))}
           <li>
-            <Link to={`categories/${category.id}`} className={subcategoryMenuCls.allCategoriesLink} alt="Все категории">
+            <Link to={category.id} className={subcategoryMenuCls.allCategoriesLink} alt="Все категории">
               Все категории
               <ArrowRight className={subcategoryMenuCls.allCategoriesArrow} />
             </Link>
