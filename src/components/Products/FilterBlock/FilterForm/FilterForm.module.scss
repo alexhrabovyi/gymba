@@ -1,0 +1,49 @@
+@import '../../../../scss/mixins';
+@import '../../../../scss/colors';
+
+.form {
+  overflow: hidden;
+}
+
+.titleButton {
+  @include flex-builder(row, flex-start, center);
+
+  border: none; 
+  background: none;
+  color: $black;
+  cursor: pointer;
+  fill: $black;
+  gap: 8px;
+  transition: all .05s ease-in-out;
+
+  &:hover {
+    color: $blue;
+    fill: $blue;
+  }
+
+  &:active {
+    color: $dark-blue;
+    fill: $dark-blue;
+  }
+}
+
+.title {
+  font-size: 14px;
+  text-transform: uppercase;
+}
+
+.chevron {
+  width: 12px;
+
+  &_transformed {
+    transform: rotate(180deg);
+  }
+}
+
+.checkboxList {
+  margin-top: 16px;
+  gap: 12px;
+  list-style: none;
+
+  @include flex-builder(column, flex-start, flex-start);
+}

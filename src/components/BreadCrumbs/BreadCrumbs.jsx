@@ -20,6 +20,9 @@ export default function BreadCrumbs() {
     if (k === 'categoryId') {
       to = data.id;
       name = data.name;
+    } else if (k === 'subcategoryId') {
+      to = data.subcategory.id;
+      name = data.subcategory.name;
     }
 
     links.push((

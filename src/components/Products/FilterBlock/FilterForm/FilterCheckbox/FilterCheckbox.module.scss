@@ -1,0 +1,39 @@
+@import "../../../../../scss/mixins";
+@import "../../../../../scss/colors";
+
+.checkbox {
+  @include flex-builder(row, flex-start, center);
+
+  border: none;
+  background: none;
+  color: $black;
+  cursor: pointer;
+  font-family: Onest, sans-serif;
+  gap: 8px;
+  transition: all .05s ease-in-out;
+
+  &:hover {
+    color: $blue;
+  }
+
+  &:active {
+    color: $dark-blue;
+  }
+}
+
+.checkboxSquare {
+  width: 20px;
+  height: 20px;
+  border-radius: 4px;
+  background: $grey;
+
+  &_checked {
+    background-color: $blue;
+
+    @include flex-builder(row, center, center);
+    
+    &::before {
+      content: url("./images/mark.svg?url");
+    }
+  }
+}

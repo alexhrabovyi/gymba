@@ -15,13 +15,13 @@
 .link {
   color: $blue;
   font-family: Onest, sans-serif;
-  font-size: 18px;
+  font-size: 14px;
   text-decoration: none;
   text-transform: uppercase;
   transition: all .05s ease-in-out;
 
   @include media-xs {
-    font-size: 16px;
+    font-size: 12px;
   }
 
   &:hover {

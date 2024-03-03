@@ -12,7 +12,7 @@ const Subcategory = memo(({
 
   return (
     <Link
-      to={`${categoryId}/${id}`}
+      to={`${id}`}
       className={subcategoryCls.subcategory}
       alt={name}
       aria-label={name}
