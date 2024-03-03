@@ -83,7 +83,7 @@ module.exports = (env) => {
         }
       },
       {
-        test: /\.(jpe?g|png|gif)$/i,
+        test: /\.(jpe?g|png|gif|webp)$/i,
         type: 'asset/resource',
         generator: {
           filename: `assets/images/[name].[contenthash].[ext]`,

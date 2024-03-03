@@ -13,3 +13,8 @@
   column-gap: 24px;
   grid-template-columns: 312px 1fr;
 }
+
+.products {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+}

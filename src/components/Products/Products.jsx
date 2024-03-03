@@ -4,9 +4,23 @@ import containerCls from '../../scss/_container.module.scss';
 import textCls from '../../scss/_text.module.scss';
 import productsCls from './Products.module.scss';
 import FilterBlock from './FilterBlock/FilterBlock.jsx';
+import ProductCard from './ProductCard/ProductCard.jsx';
 
 export default function Products() {
   const { subcategory } = useLoaderData();
+  const { products } = subcategory;
+
+  console.log(products);
+
+  const productCards = products.map((p) => (
+    <ProductCard
+      key={p.id}
+      name={p.name}
+      id={p.id}
+      price={p.price}
+      oldPrice={p.oldPrice}
+    />
+  ));
 
   return (
     <main className={classNames(containerCls.container, productsCls.main)}>
@@ -22,6 +36,9 @@ export default function Products() {
       </h1>
       <div className={productsCls.filtersAndProducts}>
         <FilterBlock />
+        <div className={productsCls.products}>
+          {productCards}
+        </div>
       </div>
     </main>
   );

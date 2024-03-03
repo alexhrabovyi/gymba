@@ -1,0 +1,59 @@
+@import '../../../scss/mixins';
+@import '../../../scss/colors';
+
+.card {
+  width: 100%;
+
+  @include flex-builder(column, flex-start, flex-start);
+
+  padding: 24px;
+  outline: 1px solid $dark-grey;
+  transition: all .05 ease-in-out;
+
+  &:hover {
+    outline-color: $blue;
+  }
+
+  &:active {
+    outline-color: $blue-active;
+  }
+}
+
+.iconButtonsBlock {
+  align-self: flex-end;
+
+  @include flex-builder(row, flex-start, center);
+
+  gap: 12px;
+}
+
+.iconButton {
+  width: 24px;
+  height: 24px;
+  border: none;
+  background: none;
+  cursor: pointer;
+  fill: rgb(194 203 211);
+  transition: all .05 ease-in-out;
+
+  &:hover {
+    fill: $blue;
+  }
+
+  &:active {
+    fill: $dark-blue;
+  }
+}
+
+.imageLink {
+  width: 100%;
+
+  @include flex-builder(row, center, center);
+
+  margin-bottom: auto;
+}
+
+.image {
+  width: 100%;
+  max-width: 180px;
+}
