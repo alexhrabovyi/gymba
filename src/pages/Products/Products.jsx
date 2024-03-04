@@ -1,4 +1,4 @@
-import { getCategoryAndSubcategory, getSubcategoryFilters, getFilteredProducts } from '../../utils/dataAPI';
+import { getCategoryAndSubcategory, getSubcategoryFilters, getFilteredProductsAndMinMaxPrice } from '../../utils/dataAPI';
 import BreadCrumbs from '../../components/BreadCrumbs/BreadCrumbs.jsx';
 import Products from '../../components/Products/Products.jsx';
 
@@ -8,7 +8,11 @@ export function loader({ params, request }) {
 
   const categoryAndSubcategory = getCategoryAndSubcategory(categoryId, subcategoryId);
   const subcategoryFilters = getSubcategoryFilters(categoryId, subcategoryId);
-  const filteredProducts = getFilteredProducts(categoryId, subcategoryId, searchParams);
+  const {
+    minPrice,
+    maxPrice,
+    filteredProducts,
+  } = getFilteredProductsAndMinMaxPrice(categoryId, subcategoryId, searchParams);
 
   return {
     name: categoryAndSubcategory.name,
@@ -16,6 +20,8 @@ export function loader({ params, request }) {
     subcategory: categoryAndSubcategory.subcategory,
     subcategoryFilters,
     filteredProducts,
+    minPrice,
+    maxPrice,
   };
 }
 

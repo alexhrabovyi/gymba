@@ -77,11 +77,7 @@ export function getSubcategoryFilters(categoryId, subcategoryId) {
   return filters;
 }
 
-export function getFilteredProducts(categoryId, subcategoryId, searchParams) {
-  const category = products.find((c) => c.id === categoryId);
-  const subcategory = category.subcategories.find((s) => s.id === subcategoryId);
-  const subcategoryproducts = subcategory.products;
-
+function filterBySpecs(subcategoryproducts, searchParams) {
   let filters = {};
 
   searchParams.entries().forEach(([key, value]) => {
@@ -125,6 +121,34 @@ export function getFilteredProducts(categoryId, subcategoryId, searchParams) {
   });
 
   return filteredProducts;
+}
+
+function getMinAndMaxPrice(subcategoryproducts) {
+  const prices = subcategoryproducts.map((p) => +p.price);
+  prices.sort((a, b) => a - b);
+
+  const minPrice = prices[0];
+  const maxPrice = prices[prices.length - 1];
+
+  return {
+    minPrice,
+    maxPrice,
+  };
+}
+
+export function getFilteredProductsAndMinMaxPrice(categoryId, subcategoryId, searchParams) {
+  const category = products.find((c) => c.id === categoryId);
+  const subcategory = category.subcategories.find((s) => s.id === subcategoryId);
+  const subcategoryproducts = subcategory.products;
+
+  const filteredBySpecsProducts = filterBySpecs(subcategoryproducts, searchParams);
+  const { minPrice, maxPrice } = getMinAndMaxPrice(filteredBySpecsProducts);
+
+  return {
+    filteredProducts: filteredBySpecsProducts,
+    minPrice,
+    maxPrice,
+  };
 }
 // news
 

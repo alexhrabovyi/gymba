@@ -3,6 +3,7 @@ import { useMemo } from 'react';
 import { useLoaderData } from 'react-router-dom';
 import filterCls from './FilterBlock.module.scss';
 import FilterForm from './FilterForm/FilterForm.jsx';
+import FilterPriceForm from './FilterPriceForm/FilterPriceForm.jsx';
 
 export default function FilterBlock() {
   const { subcategoryFilters } = useLoaderData();
@@ -18,6 +19,7 @@ export default function FilterBlock() {
 
   return (
     <div className={filterCls.filterBlock}>
+      <FilterPriceForm />
       {filterElems}
     </div>
   );
