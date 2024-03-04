@@ -11,6 +11,7 @@
   transition: all .05 ease-in-out;
 
   &:hover {
+    z-index: 1;
     outline-color: $blue;
   }
 
@@ -21,10 +22,10 @@
 
 .iconButtonsBlock {
   align-self: flex-end;
+  margin-bottom: 10px;
+  gap: 12px;
 
   @include flex-builder(row, flex-start, center);
-
-  gap: 12px;
 }
 
 .iconButton {
@@ -45,6 +46,17 @@
   }
 }
 
+.icon {
+  width: 100%;
+  height: 100%;
+}
+
+.spinner {
+  width: 50%;
+  height: 50%;
+  fill: $blue;
+}
+
 .imageLink {
   width: 100%;
 
@@ -56,4 +68,50 @@
 .image {
   width: 100%;
   max-width: 180px;
+}
+
+.textLink {
+  padding-top: 30px;
+
+  // margin-top: 30px;
+}
+
+.priceAndCartBlock {
+  width: 100%;
+  margin-top: 24px;
+
+  @include flex-builder(row, space-between, center);
+}
+
+.oldPrice {
+  color: $blue;
+  font-family: Onest, sans-serif;
+  font-size: 14px;
+  text-decoration: line-through;
+}
+
+.price {
+  color: $black;
+  font-family: Onest, sans-serif;
+  font-size: 20px;
+  font-weight: 800;
+  gap: 6px;
+
+  @include flex-builder(row, flex-start, center);
+}
+
+.priceSpan {
+  font-size: 16px;
+  font-weight: 400;
+}
+
+.cartButton {
+  width: 48px;
+  height: 48px;
+}
+
+.cartIcon {
+  width: 24px;
+  height: 24px;
+  fill: $white;
 }

@@ -1,18 +1,18 @@
-import { useLoaderData } from 'react-router-dom';
+import { useLoaderData, useSearchParams } from 'react-router-dom';
 import classNames from 'classnames';
 import containerCls from '../../scss/_container.module.scss';
 import textCls from '../../scss/_text.module.scss';
 import productsCls from './Products.module.scss';
 import FilterBlock from './FilterBlock/FilterBlock.jsx';
 import ProductCard from './ProductCard/ProductCard.jsx';
+import Line from './images/line.svg';
+import Button from '../common/Button/Button.jsx';
 
 export default function Products() {
-  const { subcategory } = useLoaderData();
-  const { products } = subcategory;
+  const { subcategory, filteredProducts } = useLoaderData();
+  const [, setSearchParams] = useSearchParams();
 
-  console.log(products);
-
-  const productCards = products.map((p) => (
+  const productCards = filteredProducts.map((p) => (
     <ProductCard
       key={p.id}
       name={p.name}
@@ -37,7 +37,28 @@ export default function Products() {
       <div className={productsCls.filtersAndProducts}>
         <FilterBlock />
         <div className={productsCls.products}>
-          {productCards}
+          {productCards.length ? productCards : (
+            <div className={productsCls.noProductsBlock}>
+              <div className={productsCls.noProductsContent}>
+                <Line className={productsCls.noProductsLine} />
+                <p className={classNames(
+                  textCls.text,
+                  textCls.textFw800,
+                  textCls.text48px,
+                  productsCls.noProductsText,
+                )}
+                >
+                  Товары не найдены
+                </p>
+                <Button
+                  className={productsCls.resetButton}
+                  onClick={() => setSearchParams()}
+                >
+                  Сбросить фильтры
+                </Button>
+              </div>
+            </div>
+          )}
         </div>
       </div>
     </main>

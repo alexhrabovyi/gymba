@@ -3,7 +3,7 @@ import classNames from 'classnames';
 import buttonCls from './Button.module.scss';
 
 export default function Button({
-  className, type, children, id, onClick, ariaHidden = false,
+  className, type, children, id, onClick, ariaHidden = false, ariaLabel,
 }) {
   const buttonType = type || 'button';
 
@@ -14,6 +14,7 @@ export default function Button({
       className={classNames(className, buttonCls.button)}
       id={id}
       aria-hidden={ariaHidden}
+      aria-label={ariaLabel}
     >
       {children}
     </button>

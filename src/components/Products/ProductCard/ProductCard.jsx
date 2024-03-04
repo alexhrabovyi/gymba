@@ -1,5 +1,7 @@
 import { Suspense } from 'react';
 import { Await, Link } from 'react-router-dom';
+import classNames from 'classnames';
+import beautifyNum from '../../../utils/beautifyNum.js';
 import Spinner from '../../common/Spinner/Spinner.jsx';
 import DynamicImage from '../../common/DynamicImage/DynamicImage.jsx';
 import Button from '../../common/Button/Button.jsx';
@@ -20,14 +22,16 @@ export default function ProductCard({
         <button
           type="button"
           className={productCls.iconButton}
+          aria-label={`Добавить ${name} в сравнение`}
         >
-          <Compare />
+          <Compare className={productCls.icon} />
         </button>
         <button
           type="button"
           className={productCls.iconButton}
+          aria-label={`Добавить ${name} в избранное`}
         >
-          <Favorite />
+          <Favorite className={productCls.icon} />
         </button>
       </div>
       <Link
@@ -47,7 +51,7 @@ export default function ProductCard({
         </Suspense>
       </Link>
       <Link
-        className={linkCls.link}
+        className={classNames(linkCls.link, productCls.textLink)}
         to={id}
         alt={name}
       >
@@ -58,15 +62,19 @@ export default function ProductCard({
           {oldPrice && (
             <p className={productCls.oldPrice}>
               {oldPrice}
+              ₴/шт
             </p>
           )}
           <p className={productCls.price}>
-            {price}
+            {beautifyNum(price)}
             <span className={productCls.priceSpan}>₴/шт</span>
           </p>
         </div>
-        <Button className={productCls.cartButton}>
-          <Cart />
+        <Button
+          className={productCls.cartButton}
+          ariaLabel={`Добавить ${name} в корзину`}
+        >
+          <Cart className={productCls.cartIcon} />
         </Button>
       </div>
     </div>

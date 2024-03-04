@@ -39,7 +39,7 @@ export function getCategoryAndSubcategories(categoryId) {
   };
 }
 
-export function getCategoryAndSubcategoryAndProducts(categoryId, subcategoryId) {
+export function getCategoryAndSubcategory(categoryId, subcategoryId) {
   const category = products.find((c) => c.id === categoryId);
   const subcategory = category.subcategories.find((s) => s.id === subcategoryId);
 
@@ -50,6 +50,82 @@ export function getCategoryAndSubcategoryAndProducts(categoryId, subcategoryId) 
   };
 }
 
+export function getSubcategoryFilters(categoryId, subcategoryId) {
+  const subCategoryProducts = getCategoryAndSubcategory(categoryId, subcategoryId)
+    .subcategory.products;
+
+  const filters = {};
+
+  subCategoryProducts.forEach((p) => {
+    const specsFilters = p['specs-filters'];
+
+    Object.entries(specsFilters).forEach(([name, value]) => {
+      if (!filters[name]) {
+        filters[name] = new Set();
+      }
+
+      if (typeof value === 'string') {
+        filters[name].add(value);
+      } else {
+        value.forEach((v) => {
+          filters[name].add(v);
+        });
+      }
+    });
+  });
+
+  return filters;
+}
+
+export function getFilteredProducts(categoryId, subcategoryId, searchParams) {
+  const category = products.find((c) => c.id === categoryId);
+  const subcategory = category.subcategories.find((s) => s.id === subcategoryId);
+  const subcategoryproducts = subcategory.products;
+
+  let filters = {};
+
+  searchParams.entries().forEach(([key, value]) => {
+    if (!filters[key]) {
+      filters[key] = [];
+    }
+
+    filters[key].push(value);
+  });
+
+  filters = Object.entries(filters);
+
+  const filteredProducts = [];
+
+  subcategoryproducts.forEach((p) => {
+    const productFilters = p['specs-filters'];
+
+    let isSuitable = true;
+
+    filters.forEach(([name, value]) => {
+      if (productFilters[name]) {
+        if (typeof productFilters[name] === 'string') {
+          if (!value.includes(productFilters[name])) {
+            isSuitable = false;
+          }
+        } else if (typeof productFilters[name] === 'object') {
+          let includesSuitableValue = false;
+
+          productFilters[name].forEach((pfValue) => {
+            if (value.includes(pfValue)) includesSuitableValue = true;
+          });
+
+          isSuitable = includesSuitableValue;
+        }
+      } else {
+        isSuitable = false;
+      }
+    });
+
+    if (isSuitable) filteredProducts.push(p);
+  });
+
+  return filteredProducts;
+}
 // news
 
 export function getNewsPreviews() {

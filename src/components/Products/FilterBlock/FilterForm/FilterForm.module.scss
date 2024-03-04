@@ -47,3 +47,25 @@
 
   @include flex-builder(column, flex-start, flex-start);
 }
+
+.additionalButton {
+  padding: 2px 8px;
+  border: none;
+  border-top: 2px solid $blue;
+  border-bottom: 2px solid $blue;
+  margin-top: 15px;
+  background: none;
+  color: $black;
+  cursor: pointer;
+  font-family: Onest, sans-serif;
+  text-transform: uppercase;
+  transition: all .05s ease-in-out;
+
+  &:hover {
+    border-color: $dark-blue;
+  }
+
+  &:active {
+    border-color: $blue-active;
+  }
+}

@@ -1,3 +1,5 @@
+@import '../../scss/mixins';
+
 .main {
   margin-top: 68px;
   margin-bottom: 160px;
@@ -10,6 +12,7 @@
 
 .filtersAndProducts {
   display: grid;
+  align-items: start;
   column-gap: 24px;
   grid-template-columns: 312px 1fr;
 }
@@ -17,4 +20,37 @@
 .products {
   display: grid;
   grid-template-columns: 1fr 1fr 1fr;
+}
+
+.noProductsBlock {
+  padding-top: 50px;
+  grid-column: 1/4;
+
+  @include flex-builder(row, center, center)
+}
+
+.noProductsContent {
+  position: relative;
+
+  @include flex-builder(column, flex-start, center);
+
+  gap: 30px;
+}
+
+.noProductsLine {
+  position: absolute;
+  top: -30px;
+  left: -70px;
+  width: 100px;
+  height: auto;
+}
+
+.noProductsText {
+  text-transform: uppercase;
+}
+
+.resetButton {
+  width: 200px;
+  height: 50px;
+  font-size: 16px;
 }
