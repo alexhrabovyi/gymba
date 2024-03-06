@@ -77,7 +77,7 @@ export function getSubcategoryFilters(categoryId, subcategoryId) {
   return filters;
 }
 
-function filterBySpecs(subcategoryproducts, searchParams) {
+function filterBySpecs(subcategoryProducts, searchParams) {
   let filters = {};
 
   searchParams.entries().forEach(([key, value]) => {
@@ -92,7 +92,7 @@ function filterBySpecs(subcategoryproducts, searchParams) {
 
   const filteredProducts = [];
 
-  subcategoryproducts.forEach((p) => {
+  subcategoryProducts.forEach((p) => {
     const productFilters = p['specs-filters'];
 
     let isSuitable = true;
@@ -123,8 +123,8 @@ function filterBySpecs(subcategoryproducts, searchParams) {
   return filteredProducts;
 }
 
-function getMinAndMaxPrice(subcategoryproducts) {
-  const prices = subcategoryproducts.map((p) => +p.price);
+function getMinAndMaxPrice(subcategoryProducts) {
+  const prices = subcategoryProducts.map((p) => +p.price);
   prices.sort((a, b) => a - b);
 
   const minPrice = prices[0];
@@ -136,16 +136,41 @@ function getMinAndMaxPrice(subcategoryproducts) {
   };
 }
 
+function filterByPrice(subcategoryProducts, minPrice, maxPrice) {
+  return subcategoryProducts.filter((p) => +p.price >= minPrice && +p.price <= maxPrice);
+}
+
 export function getFilteredProductsAndMinMaxPrice(categoryId, subcategoryId, searchParams) {
   const category = products.find((c) => c.id === categoryId);
   const subcategory = category.subcategories.find((s) => s.id === subcategoryId);
-  const subcategoryproducts = subcategory.products;
+  const subcategoryProducts = subcategory.products;
 
-  const filteredBySpecsProducts = filterBySpecs(subcategoryproducts, searchParams);
+  let searchParamsMinPrice = searchParams.get('minPrice');
+  let searchParamsMaxPrice = searchParams.get('maxPrice');
+
+  searchParams.delete('minPrice');
+  searchParams.delete('maxPrice');
+
+  const filteredBySpecsProducts = filterBySpecs(subcategoryProducts, searchParams);
   const { minPrice, maxPrice } = getMinAndMaxPrice(filteredBySpecsProducts);
 
+  let filteredProducts;
+
+  if (searchParamsMinPrice !== null) {
+    searchParamsMinPrice = +searchParamsMinPrice;
+    searchParamsMaxPrice = +searchParamsMaxPrice;
+
+    filteredProducts = filterByPrice(
+      filteredBySpecsProducts,
+      searchParamsMinPrice,
+      searchParamsMaxPrice,
+    );
+  } else {
+    filteredProducts = filteredBySpecsProducts;
+  }
+
   return {
-    filteredProducts: filteredBySpecsProducts,
+    filteredProducts,
     minPrice,
     maxPrice,
   };

@@ -1,36 +1,92 @@
 /* eslint-disable jsx-a11y/control-has-associated-label */
 import {
-  useCallback, useLayoutEffect, useRef, useState,
+  useCallback, useEffect, useLayoutEffect, useRef, useState,
 } from 'react';
-import { useLoaderData } from 'react-router-dom';
+import { useLoaderData, useNavigation, useSearchParams } from 'react-router-dom';
 import classNames from 'classnames';
 import textCls from '../../../../scss/_text.module.scss';
 import filterCls from './FilterPriceForm.module.scss';
 import Chevron from './images/chevron.svg';
 
 export default function FilterPriceForm() {
+  const loaderData = useLoaderData();
+  const [searchParams, setSearchParams] = useSearchParams();
+  const navigation = useNavigation();
+
+  const [totalMinPrice, setTotalMinPrice] = useState(null);
+  const [totalMaxPrice, setTotalMaxPrice] = useState(null);
+
   const [isClosed, setIsClose] = useState(false);
+  const [formWasInteracted, setFormWasInteracted] = useState(false);
+  const [minInputValue, setMinInputValue] = useState('');
+  const [maxInputValue, setMaxInputValue] = useState('');
   const [currentMinPrice, setCurrentMinPrice] = useState(null);
   const [currentMaxPrice, setCurrentMaxPrice] = useState(null);
-  const [minButtonLeft, setMinButtonLeft] = useState(0);
-  const [maxButtonLeft, setMaxButtonLeft] = useState();
-  const loaderData = useLoaderData();
+  const [minButtonLeft, setMinButtonLeft] = useState(null);
+  const [maxButtonLeft, setMaxButtonLeft] = useState(null);
+
+  const formRef = useRef(null);
+  const contentRef = useRef(null);
   const minButtonRef = useRef(null);
   const maxButtonRef = useRef(null);
   const mainLineRef = useRef(null);
   const activeLineRef = useRef(null);
 
-  // const totalMinPrice = Number(loaderData.minPrice);
-  // const totalMaxPrice = Number(loaderData.maxPrice);
+  const getTotalPrices = useCallback(() => {
+    setTotalMinPrice(Number(loaderData.minPrice));
+    setTotalMaxPrice(Number(loaderData.maxPrice));
+  }, [loaderData]);
 
-  const totalMinPrice = 10;
-  const totalMaxPrice = 110;
+  useLayoutEffect(getTotalPrices, [getTotalPrices]);
+
+  const checkOnTotalPricesChange = useCallback(() => {
+    console.log(totalMinPrice);
+
+    if (totalMinPrice === Number(loaderData.minPrice)) {
+      if (totalMinPrice > currentMinPrice) setTotalMinPrice(currentMinPrice);
+    }
+
+    if (totalMaxPrice === Number(loaderData.maxPrice)) {
+      if (totalMaxPrice < currentMaxPrice) setTotalMaxPrice(currentMaxPrice);
+    }
+  }, [totalMinPrice, totalMaxPrice, currentMinPrice, currentMaxPrice, loaderData]);
+
+  useLayoutEffect(checkOnTotalPricesChange, [checkOnTotalPricesChange]);
+
+  const onNavigate = useCallback(() => {
+    if (navigation.state === 'loading') {
+      const urlSearchParams = new URLSearchParams(navigation.location.search);
+
+      if (urlSearchParams.has('minPrice')) {
+        const searchParamsMinPrice = Number(urlSearchParams.get('minPrice'));
+        const searchParamsMaxPrice = Number(urlSearchParams.get('maxPrice'));
+
+        if (searchParamsMinPrice !== currentMinPrice) {
+          setCurrentMinPrice(searchParamsMinPrice);
+          setMinInputValue(searchParamsMinPrice);
+        }
+
+        if (searchParamsMaxPrice !== currentMaxPrice) {
+          setCurrentMinPrice(currentMaxPrice);
+          setMaxInputValue(currentMaxPrice);
+        }
+      }
+    }
+  }, [navigation, currentMinPrice, currentMaxPrice]);
+
+  useLayoutEffect(onNavigate, [onNavigate]);
 
   const getMainLinePxWidth = useCallback(() => {
     const mainLine = mainLineRef.current;
 
     return mainLine.offsetWidth;
   }, []);
+
+  function getMainLineLeftCoord() {
+    const mainLine = mainLineRef.current;
+
+    return mainLine.getBoundingClientRect().left;
+  }
 
   const getRoundButtonPercentWidth = useCallback(() => {
     const roundButton = minButtonRef.current;
@@ -41,11 +97,76 @@ export default function FilterPriceForm() {
     return roundButtonPercentWidth;
   }, [getMainLinePxWidth]);
 
-  function getMainLineLeftCoord() {
-    const mainLine = mainLineRef.current;
+  // let totalMinPrice = Number(loaderData.minPrice);
+  // let totalMaxPrice = Number(loaderData.maxPrice);
 
-    return mainLine.getBoundingClientRect().left;
+  if (!formWasInteracted) {
+    if (searchParams.has('minPrice')) {
+      const searchParamsMinPrice = Number(searchParams.get('minPrice'));
+      const searchParamsMaxPrice = Number(searchParams.get('maxPrice'));
+
+      if (currentMinPrice !== searchParamsMinPrice) {
+        setCurrentMinPrice(searchParamsMinPrice);
+        setMinInputValue(searchParamsMinPrice);
+      }
+      if (currentMaxPrice !== searchParamsMaxPrice) {
+        setCurrentMaxPrice(searchParamsMaxPrice);
+        setMaxInputValue(searchParamsMaxPrice);
+      }
+    } else {
+      if (currentMinPrice !== totalMinPrice) {
+        setCurrentMinPrice(totalMinPrice);
+        setMinInputValue(totalMinPrice);
+      }
+      if (currentMaxPrice !== totalMaxPrice) {
+        setCurrentMaxPrice(totalMaxPrice);
+        setMaxInputValue(totalMaxPrice);
+      }
+    }
+  } else {
+    // if (totalMinPrice > currentMinPrice) totalMinPrice = currentMinPrice;
+    // if (totalMaxPrice < currentMaxPrice) totalMaxPrice = currentMaxPrice;
   }
+
+  const calcButtonLeft = useCallback((buttonType, value) => {
+    const roundButtonWidthInPercent = getRoundButtonPercentWidth();
+    const availableMainLineWidth = 100 - roundButtonWidthInPercent * 2;
+    const minMaxPriceDiff = totalMaxPrice - totalMinPrice;
+    const valueInPercent = ((value - totalMinPrice) / minMaxPriceDiff);
+
+    if (buttonType === 'min') {
+      const buttonLeft = valueInPercent * availableMainLineWidth;
+
+      setMinButtonLeft(Number(buttonLeft.toFixed(2)));
+    } else if (buttonType === 'max') {
+      const buttonLeft = valueInPercent * availableMainLineWidth + roundButtonWidthInPercent;
+
+      setMaxButtonLeft(Number(buttonLeft.toFixed(2)));
+    }
+  }, [getRoundButtonPercentWidth, totalMinPrice, totalMaxPrice]);
+
+  const calcButtonsLeft = useCallback(() => {
+    if (!formWasInteracted) {
+      const contentBlock = contentRef.current;
+      contentBlock.style.opacity = '';
+      contentBlock.style.pointerEvents = '';
+
+      if (currentMinPrice === currentMaxPrice) {
+        contentBlock.style.opacity = '0.5';
+        contentBlock.style.pointerEvents = 'none';
+      }
+    }
+
+    calcButtonLeft('min', currentMinPrice);
+    calcButtonLeft('max', currentMaxPrice);
+  }, [
+    formWasInteracted,
+    currentMinPrice,
+    currentMaxPrice,
+    calcButtonLeft,
+  ]);
+
+  useLayoutEffect(calcButtonsLeft, [calcButtonsLeft]);
 
   function calcCurrentMinMaxPrice(buttonType, leftInPercent) {
     const roundButtonWidthInPercent = getRoundButtonPercentWidth();
@@ -53,55 +174,28 @@ export default function FilterPriceForm() {
     const minMaxDiff = totalMaxPrice - totalMinPrice;
 
     if (buttonType === 'min') {
-      const result = ((leftInPercent / availableMainLineWidth) * minMaxDiff) + totalMinPrice;
+      let result = ((leftInPercent / availableMainLineWidth) * minMaxDiff) + totalMinPrice;
+      result = Number(result.toFixed());
 
-      setCurrentMinPrice(Number(result.toFixed()));
+      setCurrentMinPrice(result);
+      setMinInputValue(result);
     } else {
-      const result = (((leftInPercent - roundButtonWidthInPercent)
+      let result = (((leftInPercent - roundButtonWidthInPercent)
         / availableMainLineWidth) * minMaxDiff) + totalMinPrice;
+      result = Number(result.toFixed());
 
-      setCurrentMaxPrice(Number(result.toFixed()));
+      setCurrentMaxPrice(result);
+      setMaxInputValue(result);
     }
-  }
-
-  function calcButtonLeft(buttonType, value) {
-    const roundButtonWidthInPercent = getRoundButtonPercentWidth();
-    const minMaxPriceDiff = totalMaxPrice - totalMinPrice;
-    let buttonLeft = ((value - totalMinPrice) / minMaxPriceDiff) * 100;
-
-    if (buttonType === 'min') {
-      const maxLeft = 100 - roundButtonWidthInPercent * 2;
-
-      if (buttonLeft > maxLeft) buttonLeft = maxLeft;
-      setMinButtonLeft(buttonLeft);
-    } else if (buttonType === 'max') {
-      const minLeft = roundButtonWidthInPercent;
-      const maxLeft = 100 - roundButtonWidthInPercent;
-
-      if (buttonLeft > maxLeft) {
-        buttonLeft = maxLeft;
-      } else if (buttonLeft < minLeft) {
-        buttonLeft = minLeft;
-      }
-      setMaxButtonLeft(buttonLeft);
-    }
-  }
-
-  useLayoutEffect(() => {
-    setMaxButtonLeft(100 - getRoundButtonPercentWidth());
-  }, [getRoundButtonPercentWidth]);
-
-  if (currentMinPrice === null) {
-    setCurrentMinPrice(totalMinPrice);
-    setCurrentMaxPrice(totalMaxPrice);
   }
 
   function roundButtonOnDown(e) {
     e.preventDefault();
 
+    setFormWasInteracted(true);
+
     const { buttonType } = e.target.dataset;
     const button = buttonType === 'min' ? minButtonRef.current : maxButtonRef.current;
-    button.style.transition = '';
 
     const roundButtonWidthInPercent = getRoundButtonPercentWidth();
 
@@ -135,6 +229,8 @@ export default function FilterPriceForm() {
         buttonLeftInPercent = maxLeft;
       }
 
+      buttonLeftInPercent = Number(buttonLeftInPercent.toFixed(2));
+
       if (buttonType === 'min') {
         setMinButtonLeft(buttonLeftInPercent);
       } else {
@@ -146,51 +242,75 @@ export default function FilterPriceForm() {
 
     function roundButtonOnUp() {
       button.removeEventListener('pointermove', roundButtonOnMove);
-      button.style.transition = 'all .05s ease-in-out';
     }
 
     button.addEventListener('pointermove', roundButtonOnMove);
     button.addEventListener('pointerup', roundButtonOnUp, { once: true });
   }
 
+  function formOnSubmit(e) {
+    e.preventDefault();
+
+    searchParams.set('minPrice', currentMinPrice);
+    searchParams.set('maxPrice', currentMaxPrice);
+
+    setSearchParams(searchParams);
+  }
+
   function inputOnInput(e) {
-    const { inputType } = e.target.dataset;
+    const inputType = e.target.name;
     const { value } = e.target;
 
-    if (inputType === 'min') {
-      setCurrentMinPrice(value);
+    if (inputType === 'minPrice') {
+      setMinInputValue(value);
     } else {
-      setCurrentMaxPrice(value);
+      setMaxInputValue(value);
     }
   }
 
-  function inputOnBlur(e) {
-    const { inputType } = e.target.dataset;
-    let { value } = e.target;
+  function inputOnKeyDown(e) {
+    if (e.code === 'Enter') {
+      setFormWasInteracted(true);
 
-    if (inputType === 'min' && value > currentMaxPrice) {
-      value = currentMaxPrice;
-    } else if (inputType === 'max' && value < currentMinPrice) {
-      value = currentMinPrice;
-    } else if (value < totalMinPrice) {
-      value = totalMinPrice;
-    } else if (value > totalMaxPrice) {
-      value = totalMaxPrice;
+      const inputType = e.target.name;
+      let value = Number(e.target.value);
+
+      if (inputType === 'minPrice' && value > currentMaxPrice) {
+        value = currentMaxPrice;
+      } else if (inputType === 'maxPrice' && value < currentMinPrice) {
+        value = currentMinPrice;
+      } else if (value < totalMinPrice) {
+        value = totalMinPrice;
+      } else if (value > totalMaxPrice) {
+        value = totalMaxPrice;
+      }
+
+      if (inputType === 'minPrice') {
+        setMinInputValue(value);
+        setCurrentMinPrice(value);
+      } else {
+        setMaxInputValue(value);
+        setCurrentMaxPrice(value);
+      }
     }
-
-    value = Number(value);
-
-    if (inputType === 'min') {
-      setCurrentMinPrice(value);
-    } else {
-      setCurrentMaxPrice(value);
-    }
-
-    calcButtonLeft(inputType, value);
   }
+
+  const setupActiveLineStyles = useCallback(() => {
+    const width = maxButtonLeft - minButtonLeft;
+    const left = minButtonLeft;
+
+    activeLineRef.current.style.width = `${width}%`;
+    activeLineRef.current.style.left = `${left}%`;
+  }, [minButtonLeft, maxButtonLeft]);
+
+  useLayoutEffect(setupActiveLineStyles, [setupActiveLineStyles]);
 
   return (
-    <form className={filterCls.form}>
+    <form
+      ref={formRef}
+      onSubmit={formOnSubmit}
+      className={filterCls.form}
+    >
       <button
         type="button"
         className={filterCls.titleButton}
@@ -212,6 +332,7 @@ export default function FilterPriceForm() {
         />
       </button>
       <div
+        ref={contentRef}
         className={filterCls.content}
         style={{ display: isClosed ? 'none' : '' }}
       >
@@ -227,43 +348,37 @@ export default function FilterPriceForm() {
           <button
             ref={minButtonRef}
             onPointerDown={roundButtonOnDown}
-            type="button"
+            type="submit"
             data-button-type="min"
             className={filterCls.roundButton}
-            style={{
-              left: `${minButtonLeft}%`,
-              transition: 'all .05s ease-in-out',
-            }}
+            style={{ left: `${minButtonLeft}%` }}
           />
           <button
             ref={maxButtonRef}
             onPointerDown={roundButtonOnDown}
-            type="button"
+            type="submit"
             data-button-type="max"
             className={filterCls.roundButton}
-            style={{
-              left: `${maxButtonLeft}%`,
-              transition: 'all .05s ease-in-out',
-            }}
+            style={{ left: `${maxButtonLeft}%` }}
           />
         </div>
         <div className={filterCls.inputBlock}>
           <input
             onInput={inputOnInput}
-            onBlur={inputOnBlur}
+            onKeyDown={inputOnKeyDown}
             type="number"
-            data-input-type="min"
+            name="minPrice"
             className={filterCls.input}
-            value={currentMinPrice}
+            value={minInputValue}
           />
           <span className={filterCls.inputBlockSpan}>-</span>
           <input
             onInput={inputOnInput}
-            onBlur={inputOnBlur}
+            onKeyDown={inputOnKeyDown}
             type="number"
-            data-input-type="max"
+            name="maxPrice"
             className={filterCls.input}
-            value={currentMaxPrice}
+            value={maxInputValue}
           />
         </div>
       </div>
