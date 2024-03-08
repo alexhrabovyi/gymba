@@ -346,6 +346,12 @@ export default function FilterPriceForm() {
 
         currentMinPriceRef.current = searchParamsMinPrice;
         currentMaxPriceRef.current = searchParamsMaxPrice;
+
+        if (loaderMinPrice > searchParamsMinPrice) {
+          setTotalMinPrice(searchParamsMinPrice);
+        } else if (loaderMaxPrice < searchParamsMaxPrice) {
+          setTotalMaxPrice(searchParamsMaxPrice);
+        }
       } else {
         setCurrentMinPrice(loaderMinPrice);
         setCurrentMaxPrice(loaderMaxPrice);

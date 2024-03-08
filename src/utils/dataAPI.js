@@ -137,7 +137,37 @@ function getMinAndMaxPrice(subcategoryProducts) {
 }
 
 function filterByPrice(subcategoryProducts, minPrice, maxPrice) {
-  return subcategoryProducts.filter((p) => +p.price >= minPrice && +p.price <= maxPrice);
+  if (minPrice === null) return subcategoryProducts;
+
+  return subcategoryProducts.filter((p) => +p.price >= +minPrice && +p.price <= +maxPrice);
+}
+
+function sortByType(subcategoryProducts, sortType) {
+  let sortedProducts;
+
+  switch (sortType) {
+    case 'name-A-Z': {
+      sortedProducts = subcategoryProducts.sort((a, b) => a.name.localeCompare(b.name));
+      break;
+    }
+    case 'name-Z-A': {
+      sortedProducts = subcategoryProducts.sort((a, b) => -a.name.localeCompare(b.name));
+      break;
+    }
+    case 'price-down': {
+      sortedProducts = subcategoryProducts.sort((a, b) => +b.price - +a.price);
+      break;
+    }
+    case 'price-up': {
+      sortedProducts = subcategoryProducts.sort((a, b) => +a.price - +b.price);
+      break;
+    }
+    default: {
+      sortedProducts = subcategoryProducts;
+    }
+  }
+
+  return sortedProducts;
 }
 
 export function getFilteredProductsAndMinMaxPrice(categoryId, subcategoryId, searchParams) {
@@ -145,32 +175,24 @@ export function getFilteredProductsAndMinMaxPrice(categoryId, subcategoryId, sea
   const subcategory = category.subcategories.find((s) => s.id === subcategoryId);
   const subcategoryProducts = subcategory.products;
 
-  let searchParamsMinPrice = searchParams.get('minPrice');
-  let searchParamsMaxPrice = searchParams.get('maxPrice');
+  const searchParamsMinPrice = searchParams.get('minPrice');
+  const searchParamsMaxPrice = searchParams.get('maxPrice');
 
   searchParams.delete('minPrice');
   searchParams.delete('maxPrice');
 
-  const filteredBySpecsProducts = filterBySpecs(subcategoryProducts, searchParams);
-  const { minPrice, maxPrice } = getMinAndMaxPrice(filteredBySpecsProducts);
+  const sortBy = searchParams.get('sortBy');
+  searchParams.delete('sortBy');
 
-  let filteredProducts;
+  let filteredProducts = filterBySpecs(subcategoryProducts, searchParams);
+  const { minPrice, maxPrice } = getMinAndMaxPrice(filteredProducts);
 
-  if (searchParamsMinPrice !== null) {
-    searchParamsMinPrice = +searchParamsMinPrice;
-    searchParamsMaxPrice = +searchParamsMaxPrice;
+  filteredProducts = filterByPrice(filteredProducts, searchParamsMinPrice, searchParamsMaxPrice);
 
-    filteredProducts = filterByPrice(
-      filteredBySpecsProducts,
-      searchParamsMinPrice,
-      searchParamsMaxPrice,
-    );
-  } else {
-    filteredProducts = filteredBySpecsProducts;
-  }
+  const filteredAndSortedProducts = sortByType(filteredProducts, sortBy);
 
   return {
-    filteredProducts,
+    filteredAndSortedProducts,
     minPrice,
     maxPrice,
   };

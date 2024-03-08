@@ -11,7 +11,7 @@ export function loader({ params, request }) {
   const {
     minPrice,
     maxPrice,
-    filteredProducts,
+    filteredAndSortedProducts,
   } = getFilteredProductsAndMinMaxPrice(categoryId, subcategoryId, searchParams);
 
   return {
@@ -19,7 +19,7 @@ export function loader({ params, request }) {
     id: categoryAndSubcategory.id,
     subcategory: categoryAndSubcategory.subcategory,
     subcategoryFilters,
-    filteredProducts,
+    filteredAndSortedProducts,
     minPrice,
     maxPrice,
   };

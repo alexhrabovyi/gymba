@@ -3,16 +3,18 @@ import classNames from 'classnames';
 import containerCls from '../../scss/_container.module.scss';
 import textCls from '../../scss/_text.module.scss';
 import productsCls from './Products.module.scss';
+import SortBlock from './SortBlock/SortBlock.jsx';
 import FilterBlock from './FilterBlock/FilterBlock.jsx';
 import ProductCard from './ProductCard/ProductCard.jsx';
 import Line from './images/line.svg';
 import Button from '../common/Button/Button.jsx';
 
 export default function Products() {
-  const { subcategory, filteredProducts } = useLoaderData();
+  const { subcategory, filteredAndSortedProducts } = useLoaderData();
+  const productAmount = filteredAndSortedProducts.length;
   const [, setSearchParams] = useSearchParams();
 
-  const productCards = filteredProducts.map((p) => (
+  const productCards = filteredAndSortedProducts.map((p) => (
     <ProductCard
       key={p.id}
       name={p.name}
@@ -35,6 +37,19 @@ export default function Products() {
         {subcategory.name}
       </h1>
       <div className={productsCls.filtersAndProducts}>
+        <div className={productsCls.infoBlock}>
+          <p
+            className={classNames(textCls.text, textCls.textBlack)}
+            aria-atomic="true"
+            aria-live="assertive"
+          >
+            Всего товаров:
+            <span>
+              {` ${productAmount}`}
+            </span>
+          </p>
+        </div>
+        <SortBlock />
         <FilterBlock />
         <div className={productsCls.products}>
           {productCards.length ? productCards : (

@@ -13,7 +13,7 @@
 .filtersAndProducts {
   display: grid;
   align-items: start;
-  column-gap: 24px;
+  gap: 24px;
   grid-template-columns: 312px 1fr;
 }
 
