@@ -7,11 +7,14 @@ import productsCls from './Products.module.scss';
 import SortBlock from './SortBlock/SortBlock.jsx';
 import FilterBlock from './FilterBlock/FilterBlock.jsx';
 import ProductCard from './ProductCard/ProductCard.jsx';
+import PaginationBlock from './PaginationBlock/PaginationBlock.jsx';
 import Line from './images/line.svg';
 import Button from '../common/Button/Button.jsx';
 
 export default function Products() {
-  const { subcategory, filteredAndSortedProducts, productAmount } = useLoaderData();
+  const {
+    subcategory, filteredAndSortedProducts, productAmount, pageAmount,
+  } = useLoaderData();
   const [, setSearchParams] = useSearchParams();
 
   const [isProductCardsShort, setIsProductCardsShort] = useState(() => {
@@ -91,6 +94,11 @@ export default function Products() {
               </div>
             </div>
           )}
+        </div>
+        <div className={productsCls.paginationBlock}>
+          <PaginationBlock
+            pageAmount={pageAmount}
+          />
         </div>
       </div>
     </main>

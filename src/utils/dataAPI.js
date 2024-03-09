@@ -170,10 +170,20 @@ function sortByType(subcategoryProducts, sortType) {
   return sortedProducts;
 }
 
-function getProductsPerView(subcategoryProducts, perView) {
+function getPageAmount(productAmount, perView) {
   if (perView === null) perView = 12;
 
-  return subcategoryProducts.slice(0, +perView);
+  return Math.ceil(+productAmount / +perView);
+}
+
+function getProductsPerPage(subcategoryProducts, perView, pageNum, pageAmount) {
+  if (perView === null) perView = 12;
+  if (pageNum === null || pageNum > pageAmount) pageNum = 1;
+
+  const firstPageProduct = (+pageNum - 1) * +perView;
+  const lastPageProduct = +pageNum * +perView;
+
+  return subcategoryProducts.slice(firstPageProduct, lastPageProduct);
 }
 
 export function getFilteredProductsAndMinMaxPrice(categoryId, subcategoryId, searchParams) {
@@ -190,8 +200,11 @@ export function getFilteredProductsAndMinMaxPrice(categoryId, subcategoryId, sea
   const sortBy = searchParams.get('sortBy');
   searchParams.delete('sortBy');
 
-  const perView = searchParams.get('perView');
+  // const perView = searchParams.get('perView');
+  const perView = 1;
   searchParams.delete('perView');
+  const pageNum = searchParams.get('page');
+  searchParams.delete('page');
 
   let filteredProducts = filterBySpecs(subcategoryProducts, searchParams);
   const { minPrice, maxPrice } = getMinAndMaxPrice(filteredProducts);
@@ -201,16 +214,24 @@ export function getFilteredProductsAndMinMaxPrice(categoryId, subcategoryId, sea
   let filteredAndSortedProducts = sortByType(filteredProducts, sortBy);
 
   const productAmount = filteredAndSortedProducts.length;
+  const pageAmount = getPageAmount(productAmount, perView);
 
-  filteredAndSortedProducts = getProductsPerView(filteredAndSortedProducts, perView);
+  filteredAndSortedProducts = getProductsPerPage(
+    filteredAndSortedProducts,
+    perView,
+    pageNum,
+    pageAmount,
+  );
 
   return {
     filteredAndSortedProducts,
     minPrice,
     maxPrice,
     productAmount,
+    pageAmount,
   };
 }
+
 // news
 
 export function getNewsPreviews() {

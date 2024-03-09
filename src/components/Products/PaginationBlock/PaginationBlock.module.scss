@@ -1,0 +1,76 @@
+@import '../../../scss/mixins';
+@import '../../../scss/colors';
+
+.paginationBlock {
+  @include flex-builder(row, flex-start, center);
+}
+
+.paginationButton {
+  width: 56px;
+  height: 56px;
+  border: none;
+  background: $light-blue;
+  color: $black;
+  cursor: pointer;
+  font-family: Onest, sans-serif;
+  font-size: 16px;
+  transition: all .05s ease-in-out;
+
+  &:hover {
+    background: $blue;
+    color: $white;
+  }
+
+  &:active {
+    background: $dark-blue;
+    color: $white;
+  }
+
+  &_round {
+    border-radius: 4px;
+  }
+
+  &_active {
+    background: $blue;
+    color: $white;
+
+    &:hover {
+      background: $dark-blue;
+    }
+
+    &:active {
+      background: $blue-active;
+    }
+  }
+}
+
+.greyLine {
+  width: 1px;
+  height: 56px;
+  background-color: $dark-grey;
+}
+
+.additionalButton {
+  @include flex-builder(row, center, center);
+
+  width: 56px;
+  height: 56px;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  fill: $dark-grey;
+  transition: all .05s ease-in-out;
+
+  &:hover {
+    fill: $blue;
+  }
+
+  &:active {
+    fill: $dark-blue;
+  }
+}
+
+.icon {
+  width: 24px;
+  height: 24px;
+}
