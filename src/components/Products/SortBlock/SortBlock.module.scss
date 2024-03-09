@@ -1,0 +1,53 @@
+@import '../../../scss/mixins';
+@import '../../../scss/colors';
+
+.sortBlock {
+  @include flex-builder(row, space-between, center);
+}
+
+.productAppearanceOptions {
+  @include flex-builder(row, flex-start, center);
+
+  gap: 24px;
+}
+
+.buttonsBlock {
+  @include flex-builder(row, flex-start, center);
+
+  gap: 8px;
+}
+
+.iconButton {
+  width: 24px;
+  height: 24px;
+  border: none;
+  background: none;
+  cursor: pointer;
+  fill: rgb(194 203 211);
+  transition: all 0.05s ease-in-out;
+
+  &:hover {
+    fill: $blue;
+  }
+
+  &:active {
+    fill: $dark-blue;
+  }
+
+  &_active {
+    fill: $blue;
+
+    &:hover {
+      fill: $dark-blue;
+    }
+
+    &:active {
+      fill: $blue-active;
+    }
+  }
+}
+
+.buttonIcon {
+  width: 100%;
+  height: 100%;
+}

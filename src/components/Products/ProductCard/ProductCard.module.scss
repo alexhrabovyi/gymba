@@ -72,8 +72,6 @@
 
 .textLink {
   padding-top: 30px;
-
-  // margin-top: 30px;
 }
 
 .priceAndCartBlock {
@@ -114,4 +112,60 @@
   width: 24px;
   height: 24px;
   fill: $white;
+}
+
+// longCard
+
+.longCard {
+  display: grid;
+  width: 100%;
+  padding: 32px;
+  grid-template-columns: 212px 32px 1fr 84px 220px;
+  outline: 1px solid $dark-grey;
+  transition: all .05 ease-in-out;
+
+  &:hover {
+    z-index: 1;
+    outline-color: $blue;
+  }
+
+  &:active {
+    outline-color: $blue-active;
+  }
+}
+
+.longImageLink {
+  width: 100%;
+
+  @include flex-builder(row, center, center);
+}
+
+.longImage {
+  width: 100%;
+  max-width: 140px;
+}
+
+.nameAndIconButtons {
+  width: 100%;
+  grid-column: 3/4;
+
+  @include flex-builder(column, space-between, flex-start);
+}
+
+.longIconButtonsBlock {
+  @include flex-builder(row, flex-start, center);
+
+  gap: 12px;
+}
+
+.longPriceAndCartBlock {
+  width: 100%;
+  grid-column: 5/6;
+
+  @include flex-builder(column, space-between, flex-start);
+}
+
+.longCartButton {
+  width: 100%;
+  height: 48px;
 }

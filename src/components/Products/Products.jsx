@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { useLoaderData, useSearchParams } from 'react-router-dom';
 import classNames from 'classnames';
 import containerCls from '../../scss/_container.module.scss';
@@ -10,9 +11,19 @@ import Line from './images/line.svg';
 import Button from '../common/Button/Button.jsx';
 
 export default function Products() {
-  const { subcategory, filteredAndSortedProducts } = useLoaderData();
-  const productAmount = filteredAndSortedProducts.length;
+  const { subcategory, filteredAndSortedProducts, productAmount } = useLoaderData();
   const [, setSearchParams] = useSearchParams();
+
+  const [isProductCardsShort, setIsProductCardsShort] = useState(() => {
+    const localStorageValue = localStorage.getItem('productCardAppearance');
+
+    if (localStorageValue) {
+      if (localStorageValue === 'short') return true;
+      if (localStorageValue === 'long') return false;
+    }
+
+    return true;
+  });
 
   const productCards = filteredAndSortedProducts.map((p) => (
     <ProductCard
@@ -21,6 +32,7 @@ export default function Products() {
       id={p.id}
       price={p.price}
       oldPrice={p.oldPrice}
+      isShortCard={isProductCardsShort}
     />
   ));
 
@@ -49,9 +61,14 @@ export default function Products() {
             </span>
           </p>
         </div>
-        <SortBlock />
+        <SortBlock
+          isProductCardsShort={isProductCardsShort}
+          setIsProductCardsShort={setIsProductCardsShort}
+        />
         <FilterBlock />
-        <div className={productsCls.products}>
+        <div
+          className={isProductCardsShort ? productsCls.products : productsCls.products_long}
+        >
           {productCards.length ? productCards : (
             <div className={productsCls.noProductsBlock}>
               <div className={productsCls.noProductsContent}>

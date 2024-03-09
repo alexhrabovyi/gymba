@@ -12,11 +12,11 @@ import Favorite from './images/favorite.svg';
 import Cart from './images/cart.svg';
 
 export default function ProductCard({
-  name, id, price, oldPrice,
+  name, id, price, oldPrice, isShortCard,
 }) {
   const imgSrc = import(`./images/${id}.webp`);
 
-  return (
+  const card = isShortCard ? (
     <div className={productCls.card}>
       <div className={productCls.iconButtonsBlock}>
         <button
@@ -60,10 +60,10 @@ export default function ProductCard({
       <div className={productCls.priceAndCartBlock}>
         <div className={productCls.priceBlock}>
           {oldPrice && (
-            <p className={productCls.oldPrice}>
-              {oldPrice}
-              ₴/шт
-            </p>
+          <p className={productCls.oldPrice}>
+            {oldPrice}
+            ₴/шт
+          </p>
           )}
           <p className={productCls.price}>
             {beautifyNum(price)}
@@ -78,5 +78,71 @@ export default function ProductCard({
         </Button>
       </div>
     </div>
+  ) : (
+    <div className={productCls.longCard}>
+      <Link
+        className={productCls.longImageLink}
+        to={id}
+        alt={name}
+      >
+        <Suspense
+          fallback={<Spinner className={productCls.spinner} />}
+        >
+          <Await resolve={imgSrc}>
+            <DynamicImage
+              className={productCls.longImage}
+              alt={name}
+            />
+          </Await>
+        </Suspense>
+      </Link>
+      <div className={productCls.nameAndIconButtons}>
+        <Link
+          className={classNames(linkCls.link, productCls.longTextLink)}
+          to={id}
+          alt={name}
+        >
+          {name}
+        </Link>
+        <div className={productCls.longIconButtonsBlock}>
+          <button
+            type="button"
+            className={productCls.iconButton}
+            aria-label={`Добавить ${name} в сравнение`}
+          >
+            <Compare className={productCls.icon} />
+          </button>
+          <button
+            type="button"
+            className={productCls.iconButton}
+            aria-label={`Добавить ${name} в избранное`}
+          >
+            <Favorite className={productCls.icon} />
+          </button>
+        </div>
+      </div>
+      <div className={productCls.longPriceAndCartBlock}>
+        <div className={productCls.priceBlock}>
+          {oldPrice && (
+          <p className={productCls.oldPrice}>
+            {oldPrice}
+            ₴/шт
+          </p>
+          )}
+          <p className={productCls.price}>
+            {beautifyNum(price)}
+            <span className={productCls.priceSpan}>₴/шт</span>
+          </p>
+        </div>
+        <Button
+          className={productCls.longCartButton}
+          ariaLabel={`Добавить ${name} в корзину`}
+        >
+          В корзину
+        </Button>
+      </div>
+    </div>
   );
+
+  return card;
 }

@@ -349,7 +349,9 @@ export default function FilterPriceForm() {
 
         if (loaderMinPrice > searchParamsMinPrice) {
           setTotalMinPrice(searchParamsMinPrice);
-        } else if (loaderMaxPrice < searchParamsMaxPrice) {
+        }
+
+        if (loaderMaxPrice < searchParamsMaxPrice) {
           setTotalMaxPrice(searchParamsMaxPrice);
         }
       } else {
@@ -426,13 +428,25 @@ export default function FilterPriceForm() {
           setMaxInputValue(searchParamsMaxPrice);
           currentMaxPriceRef.current = searchParamsMaxPrice;
         }
-      } else if (new URLSearchParams(navigation.location.search).size === 0) {
-        setFormWasInteracted(false);
       }
     }
   }, [navigation, currentMinPrice, currentMaxPrice]);
 
   useLayoutEffect(onNavigate, [onNavigate]);
+
+  const onSearchParamsMiss = useCallback(() => {
+    if (!searchParams.has('minPrice')) {
+      setCurrentMinPrice(totalMinPrice || 0);
+      setMinInputValue(totalMinPrice || 0);
+      currentMinPriceRef.current = totalMinPrice || 0;
+
+      setCurrentMaxPrice(totalMaxPrice || 0);
+      setMaxInputValue(totalMaxPrice || 0);
+      currentMaxPriceRef.current = totalMaxPrice || 0;
+    }
+  }, [searchParams, totalMinPrice, totalMaxPrice]);
+
+  useLayoutEffect(onSearchParamsMiss, [onSearchParamsMiss]);
 
   return (
     <form

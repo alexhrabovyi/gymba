@@ -170,6 +170,12 @@ function sortByType(subcategoryProducts, sortType) {
   return sortedProducts;
 }
 
+function getProductsPerView(subcategoryProducts, perView) {
+  if (perView === null) perView = 12;
+
+  return subcategoryProducts.slice(0, +perView);
+}
+
 export function getFilteredProductsAndMinMaxPrice(categoryId, subcategoryId, searchParams) {
   const category = products.find((c) => c.id === categoryId);
   const subcategory = category.subcategories.find((s) => s.id === subcategoryId);
@@ -184,17 +190,25 @@ export function getFilteredProductsAndMinMaxPrice(categoryId, subcategoryId, sea
   const sortBy = searchParams.get('sortBy');
   searchParams.delete('sortBy');
 
+  const perView = searchParams.get('perView');
+  searchParams.delete('perView');
+
   let filteredProducts = filterBySpecs(subcategoryProducts, searchParams);
   const { minPrice, maxPrice } = getMinAndMaxPrice(filteredProducts);
 
   filteredProducts = filterByPrice(filteredProducts, searchParamsMinPrice, searchParamsMaxPrice);
 
-  const filteredAndSortedProducts = sortByType(filteredProducts, sortBy);
+  let filteredAndSortedProducts = sortByType(filteredProducts, sortBy);
+
+  const productAmount = filteredAndSortedProducts.length;
+
+  filteredAndSortedProducts = getProductsPerView(filteredAndSortedProducts, perView);
 
   return {
     filteredAndSortedProducts,
     minPrice,
     maxPrice,
+    productAmount,
   };
 }
 // news
