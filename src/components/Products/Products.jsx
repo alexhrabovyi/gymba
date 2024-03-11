@@ -6,6 +6,7 @@ import textCls from '../../scss/_text.module.scss';
 import productsCls from './Products.module.scss';
 import SortBlock from './SortBlock/SortBlock.jsx';
 import FilterBlock from './FilterBlock/FilterBlock.jsx';
+import AppliedFiltersBlock from './AppliedFiltersBlock/AppliedFiltersBlock.jsx';
 import ProductCard from './ProductCard/ProductCard.jsx';
 import PaginationBlock from './PaginationBlock/PaginationBlock.jsx';
 import Line from './images/line.svg';
@@ -72,6 +73,7 @@ export default function Products() {
         <div
           className={isProductCardsShort ? productsCls.products : productsCls.products_long}
         >
+          <AppliedFiltersBlock />
           {productCards.length ? productCards : (
             <div className={productsCls.noProductsBlock}>
               <div className={productsCls.noProductsContent}>
@@ -94,11 +96,11 @@ export default function Products() {
               </div>
             </div>
           )}
-        </div>
-        <div className={productsCls.paginationBlock}>
-          <PaginationBlock
-            pageAmount={pageAmount}
-          />
+          <div className={productsCls.paginationBlock}>
+            <PaginationBlock
+              pageAmount={pageAmount}
+            />
+          </div>
         </div>
       </div>
     </main>

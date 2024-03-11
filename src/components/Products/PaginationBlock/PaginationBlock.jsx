@@ -44,7 +44,6 @@ const PaginationBlock = memo(({ pageAmount }) => {
 
   function formOnSubmit(e) {
     e.preventDefault();
-    console.log('amogus');
 
     searchParams.set('page', currentPageNum);
     setSearchParams(searchParams);
@@ -103,77 +102,79 @@ const PaginationBlock = memo(({ pageAmount }) => {
     ));
   }
 
-  if (additionalStartBtnNeeded) {
-    buttons.unshift(
-      (
-        <button
-          key={1}
-          type="submit"
-          id={1}
-          onClick={() => setCurrentPageNum(1)}
-          className={classNames(
-            paginationCls.paginationButton,
-            paginationCls.paginationButton_round,
-          )}
-          aria-label={`Перейти на страницу товаров ${1}`}
-        >
-          {1}
-        </button>
-      ),
-      (
-        <button
-          key={additionalStartBtnId}
-          type="submit"
-          id={additionalStartBtnId}
-          onClick={() => setCurrentPageNum(additionalStartBtnId)}
-          className={paginationCls.additionalButton}
-          aria-label={`Перейти на страницу товаров ${additionalStartBtnId}`}
-        >
-          <ThreeDots className={paginationCls.icon} />
-        </button>
-      ),
-    );
-  }
-
-  if (additionalEndBtnNeeded) {
-    buttons.push(
-      (
-        <button
-          key={additionalEndBtnId}
-          type="submit"
-          id={additionalEndBtnId}
-          onClick={() => setCurrentPageNum(additionalEndBtnId)}
-          className={paginationCls.additionalButton}
-          aria-label={`Перейти на страницу товаров ${additionalEndBtnId}`}
-        >
-          <ThreeDots className={paginationCls.icon} />
-        </button>
-      ),
-      (
-        <button
-          key={pageAmount}
-          type="submit"
-          id={pageAmount}
-          onClick={() => setCurrentPageNum(pageAmount)}
-          className={classNames(
-            paginationCls.paginationButton,
-            paginationCls.paginationButton_round,
-          )}
-          aria-label={`Перейти на страницу товаров ${pageAmount}`}
-        >
-          {pageAmount}
-        </button>
-      ),
-    );
-  }
-
   return (
     <form
       ref={formRef}
       className={paginationCls.paginationBlock}
       onSubmit={formOnSubmit}
     >
+      {additionalStartBtnNeeded && (
+        <>
+          <button
+            type="submit"
+            id={1}
+            onClick={() => {
+              setCurrentPageNum(1);
+              searchParams.set('page', 1);
+              setSearchParams(searchParams);
+            }}
+            className={classNames(
+              paginationCls.paginationButton,
+              paginationCls.paginationButton_round,
+            )}
+            aria-label={`Перейти на страницу товаров ${1}`}
+          >
+            {1}
+          </button>
+          <button
+            type="submit"
+            id={additionalStartBtnId}
+            onClick={() => {
+              setCurrentPageNum(additionalStartBtnId);
+              searchParams.set('page', additionalStartBtnId);
+              setSearchParams(searchParams);
+            }}
+            className={paginationCls.additionalButton}
+            aria-label={`Перейти на страницу товаров ${additionalStartBtnId}`}
+          >
+            <ThreeDots className={paginationCls.icon} />
+          </button>
+        </>
+      )}
       {buttons}
+      {additionalEndBtnNeeded && (
+        <>
+          <button
+            type="submit"
+            id={additionalEndBtnId}
+            onClick={() => {
+              setCurrentPageNum(additionalEndBtnId);
+              searchParams.set('page', additionalEndBtnId);
+              setSearchParams(searchParams);
+            }}
+            className={paginationCls.additionalButton}
+            aria-label={`Перейти на страницу товаров ${additionalEndBtnId}`}
+          >
+            <ThreeDots className={paginationCls.icon} />
+          </button>
+          <button
+            type="submit"
+            id={pageAmount}
+            onClick={() => {
+              setCurrentPageNum(pageAmount);
+              searchParams.set('page', pageAmount);
+              setSearchParams(searchParams);
+            }}
+            className={classNames(
+              paginationCls.paginationButton,
+              paginationCls.paginationButton_round,
+            )}
+            aria-label={`Перейти на страницу товаров ${pageAmount}`}
+          >
+            {pageAmount}
+          </button>
+        </>
+      )}
     </form>
   );
 });

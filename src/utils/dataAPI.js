@@ -200,8 +200,7 @@ export function getFilteredProductsAndMinMaxPrice(categoryId, subcategoryId, sea
   const sortBy = searchParams.get('sortBy');
   searchParams.delete('sortBy');
 
-  // const perView = searchParams.get('perView');
-  const perView = 1;
+  const perView = searchParams.get('perView');
   searchParams.delete('perView');
   const pageNum = searchParams.get('page');
   searchParams.delete('page');
