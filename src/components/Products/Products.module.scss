@@ -1,8 +1,30 @@
 @import '../../scss/mixins';
+@import '../../scss/colors';
 
 .main {
   margin-top: 68px;
   margin-bottom: 160px;
+
+  @media (max-width: 1600px) {
+    margin-bottom: 140px;
+  }
+
+  @include media-l {
+    margin-bottom: 120px;
+  }
+
+  @include media-m {
+    margin-bottom: 100px;
+  }
+
+  @include media-s {
+    margin-top: 50px;
+    margin-bottom: 80px;
+  }
+
+  @include media-xs {
+    margin-top: 40px; 
+  }
 }
 
 .title {
@@ -10,23 +32,180 @@
   text-transform: uppercase;
 }
 
+.controlBlock {
+  display: grid;
+  width: 100%;
+  align-items: center;
+  margin-bottom: 24px;
+  column-gap: 1.83%;
+  grid-template-columns: 23.85% 1fr;
+
+  @media (max-width: 1600px) {
+    grid-template-columns: 260px 1fr;
+  }
+
+  @media (max-width: 1250px) {
+    grid-template-columns: 220px 1fr;
+  }
+
+  @include media-m {
+    @include flex-builder(row, space-between, center);
+  }
+}
+
+.infoBlock {
+  @include media-m {
+    @include flex-builder(row, flex-start, center);
+
+    gap: 15px;
+  }
+
+  @include media-s {
+    gap: 12px;
+  }
+}
+
+.filterButton {
+  width: 48px;
+  height: 48px;
+  border: none;
+  border-radius: 4px;
+  background: $blue;
+  fill: $white;
+  transition: all .05s ease-in-out;
+
+  &:hover {
+    background: $dark-blue;
+  }
+
+  &:active {
+    background: $blue-active;
+  }
+}
+
+.filterIcon {
+  width: 24px;
+  height: 24px;
+}
+
+.sortAndAppearanceBlock {
+  @include flex-builder(row, space-between, center);
+
+  @include media-m {
+    gap: 24px;
+  }
+
+  @include media-s {
+    gap: 16px;
+  }
+}
+
+.appearanceOptions {
+  @include flex-builder(row, flex-start, center);
+
+  gap: 24px;
+
+  @media (max-width: 1100px) {
+    gap: 12px;
+  }
+
+  @include media-m {
+    gap: 24px;
+  }
+
+  @include media-s {
+    gap: 16px;
+  }
+}
+
+.appearanceButtonBlock {
+  @include flex-builder(row, flex-start, center);
+
+  gap: 8px;
+}
+
+.iconButton {
+  width: 24px;
+  height: 24px;
+  border: none;
+  background: none;
+  cursor: pointer;
+  fill: rgb(194 203 211);
+  transition: all 0.05s ease-in-out;
+
+  &:hover {
+    fill: $blue;
+  }
+
+  &:active {
+    fill: $dark-blue;
+  }
+
+  &_active {
+    fill: $blue;
+
+    &:hover {
+      fill: $dark-blue;
+    }
+
+    &:active {
+      fill: $blue-active;
+    }
+  }
+}
+
+.buttonIcon {
+  width: 100%;
+  height: 100%;
+}
+
 .filtersAndProducts {
   display: grid;
   align-items: start;
-  gap: 24px;
-  grid-template-columns: 312px 1fr;
+  gap: 24px 1.83%;
+  grid-template-columns: 23.85% 1fr;
+
+  @media (max-width: 1600px) {
+    grid-template-columns: 260px 1fr;
+  }
+
+  @media (max-width: 1250px) {
+    grid-template-columns: 220px 1fr;
+  }
+
+  @include media-m {
+    grid-template-columns: 1fr;
+  }
 }
 
 .products {
   display: grid;
   grid-template-columns: 1fr 1fr 1fr;
+
+  @include media-s {
+    @include flex-builder(row, flex-start, stretch);
+
+    flex-wrap: wrap;
+  }
+
+  &_long {
+    @include media-xs {
+      @include flex-builder(row, flex-start, stretch);
+
+      flex-wrap: wrap;
+    }
+  }
 }
 
 .noProductsBlock {
-  padding-top: 50px;
+  padding-top: 70px;
   grid-column: 1/4;
 
-  @include flex-builder(row, center, center)
+  @include flex-builder(row, center, center);
+
+  @include media-s {
+    width: 100%;
+  }
 }
 
 .noProductsContent {
@@ -43,10 +222,39 @@
   left: -70px;
   width: 100px;
   height: auto;
+
+  @include media-l {
+    top: -25px;
+    left: -60px;
+    width: 80px;
+  }
+
+  @include media-s {
+    top: -20px;
+    left: -55px;
+    width: 70px;
+  }
+
+  @include media-xs {
+    display: none;
+  }
 }
 
 .noProductsText {
   text-transform: uppercase;
+
+  @include media-l {
+    font-size: 36px;
+  }
+
+  @include media-s {
+    font-size: 32px;
+  }
+
+  @include media-xs {
+    font-size: 28px;
+    text-align: center;
+  }
 }
 
 .resetButton {
@@ -58,4 +266,13 @@
 .paginationBlock {
   width: 100%;
   margin-top: 32px;
+  grid-column: 1/4;
+
+  @include media-m {
+    @include flex-builder(row, center, center);
+  }
+}
+
+.filterBlockInMenu {
+  width: 100%;
 }

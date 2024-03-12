@@ -80,7 +80,7 @@ export function getSubcategoryFilters(categoryId, subcategoryId) {
 function filterBySpecs(subcategoryProducts, searchParams) {
   let filters = {};
 
-  searchParams.entries().forEach(([key, value]) => {
+  Array.from(searchParams).forEach(([key, value]) => {
     if (!filters[key]) {
       filters[key] = [];
     }

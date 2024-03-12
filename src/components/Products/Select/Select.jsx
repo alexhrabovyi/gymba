@@ -3,7 +3,7 @@ import {
 } from 'react';
 import { useNavigation, useSearchParams } from 'react-router-dom';
 import classNames from 'classnames';
-import textCls from '../../../../scss/_text.module.scss';
+import textCls from '../../../scss/_text.module.scss';
 import selectCls from './Select.module.scss';
 import Chevron from './images/chevron.svg';
 
@@ -130,7 +130,7 @@ const Select = memo(({
       onSubmit={formOnSubmit}
       className={selectCls.selectForm}
     >
-      <p className={classNames(textCls.text, textCls.textBlack)}>
+      <p className={classNames(textCls.text, textCls.textBlack, selectCls.label)}>
         {`${label}:`}
       </p>
       <div className={selectCls.select}>

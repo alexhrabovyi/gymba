@@ -61,6 +61,10 @@
   text-transform: uppercase;
   transition: all .05s ease-in-out;
 
+  @include media-xs {
+    font-size: 14px;
+  }
+
   &:hover {
     border-color: $dark-blue;
   }

@@ -14,7 +14,18 @@
   cursor: pointer;
   font-family: Onest, sans-serif;
   font-size: 16px;
+  font-weight: 400;
   transition: all .05s ease-in-out;
+
+  @include media-s {
+    width: 48px;
+    height: 48px;
+  }
+
+  @include media-xs {
+    width: 40px;
+    height: 40px;
+  }
 
   &:hover {
     background: $blue;
@@ -48,6 +59,14 @@
   width: 1px;
   height: 56px;
   background-color: $dark-grey;
+
+  @include media-s {
+    height: 48px;
+  }
+
+  @include media-xs {
+    height: 40px;
+  }
 }
 
 .additionalButton {
@@ -61,6 +80,16 @@
   fill: $dark-grey;
   transition: all .05s ease-in-out;
 
+  @include media-s {
+    width: 48px;
+    height: 48px;
+  }
+
+  @include media-xs {
+    width: 40px;
+    height: 40px;
+  }
+
   &:hover {
     fill: $blue;
   }
@@ -73,4 +102,14 @@
 .icon {
   width: 24px;
   height: 24px;
+
+  @include media-s {
+    width: 22px;
+    height: 22px;
+  }
+
+  @include media-xs {
+    width: 20px;
+    height: 20px;
+  }
 }

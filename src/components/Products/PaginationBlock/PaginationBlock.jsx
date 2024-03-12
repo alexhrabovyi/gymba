@@ -5,12 +5,25 @@ import { useNavigation, useSearchParams } from 'react-router-dom';
 import classNames from 'classnames';
 import paginationCls from './PaginationBlock.module.scss';
 import ThreeDots from './images/threeDots.svg';
+import useOnResize from '../../../hooks/useOnResize.jsx';
 
 const PaginationBlock = memo(({ pageAmount }) => {
   const [searchParams, setSearchParams] = useSearchParams();
   const navigation = useNavigation();
 
   const formRef = useRef(null);
+
+  const [windowWidth, setWindowWidth] = useState();
+
+  const getWindowWidth = useCallback(() => {
+    setWindowWidth(window.innerWidth);
+  }, []);
+
+  useLayoutEffect(() => {
+    getWindowWidth();
+  }, [getWindowWidth]);
+
+  useOnResize(getWindowWidth);
 
   const [currentPageNum, setCurrentPageNum] = useState(() => {
     if (searchParams.has('page')) {
@@ -49,9 +62,19 @@ const PaginationBlock = memo(({ pageAmount }) => {
     setSearchParams(searchParams);
   }
 
-  const additionalBtnsAvailable = pageAmount > 9;
-  const additionalStartBtnNeeded = additionalBtnsAvailable && currentPageNum > 5;
-  const additionalEndBtnNeeded = additionalBtnsAvailable && currentPageNum <= pageAmount - 5;
+  let additionalBtnsAvailable;
+  let additionalStartBtnNeeded;
+  let additionalEndBtnNeeded;
+
+  if (windowWidth > 576) {
+    additionalBtnsAvailable = pageAmount > 9;
+    additionalStartBtnNeeded = additionalBtnsAvailable && currentPageNum > 5;
+    additionalEndBtnNeeded = additionalBtnsAvailable && currentPageNum <= pageAmount - 5;
+  } else {
+    additionalBtnsAvailable = pageAmount > 7;
+    additionalStartBtnNeeded = additionalBtnsAvailable && currentPageNum > 4;
+    additionalEndBtnNeeded = additionalBtnsAvailable && currentPageNum <= pageAmount - 4;
+  }
 
   let firstMainButtonId;
   let lastMainButtonId;
@@ -59,22 +82,42 @@ const PaginationBlock = memo(({ pageAmount }) => {
   let additionalStartBtnId;
   let additionalEndBtnId;
 
-  if (additionalBtnsAvailable && !additionalStartBtnNeeded) {
-    firstMainButtonId = 1;
-    lastMainButtonId = 7;
-    additionalEndBtnId = 8;
-  } else if (additionalBtnsAvailable && !additionalEndBtnNeeded) {
-    firstMainButtonId = pageAmount - 6;
-    lastMainButtonId = pageAmount;
-    additionalStartBtnId = firstMainButtonId - 1;
-  } else if (additionalStartBtnNeeded && additionalEndBtnNeeded) {
-    firstMainButtonId = currentPageNum - 2;
-    lastMainButtonId = currentPageNum + 2;
-    additionalStartBtnId = currentPageNum - 3;
-    additionalEndBtnId = currentPageNum + 3;
-  } else if (!additionalBtnsAvailable) {
-    firstMainButtonId = 1;
-    lastMainButtonId = pageAmount;
+  if (windowWidth > 576) {
+    if (additionalBtnsAvailable && !additionalStartBtnNeeded) {
+      firstMainButtonId = 1;
+      lastMainButtonId = 7;
+      additionalEndBtnId = 8;
+    } else if (additionalBtnsAvailable && !additionalEndBtnNeeded) {
+      firstMainButtonId = pageAmount - 6;
+      lastMainButtonId = pageAmount;
+      additionalStartBtnId = firstMainButtonId - 1;
+    } else if (additionalStartBtnNeeded && additionalEndBtnNeeded) {
+      firstMainButtonId = currentPageNum - 2;
+      lastMainButtonId = currentPageNum + 2;
+      additionalStartBtnId = currentPageNum - 3;
+      additionalEndBtnId = currentPageNum + 3;
+    } else if (!additionalBtnsAvailable) {
+      firstMainButtonId = 1;
+      lastMainButtonId = pageAmount;
+    }
+  } else if (windowWidth <= 576) {
+    if (additionalBtnsAvailable && !additionalStartBtnNeeded) {
+      firstMainButtonId = 1;
+      lastMainButtonId = 5;
+      additionalEndBtnId = 6;
+    } else if (additionalBtnsAvailable && !additionalEndBtnNeeded) {
+      firstMainButtonId = pageAmount - 4;
+      lastMainButtonId = pageAmount;
+      additionalStartBtnId = firstMainButtonId - 1;
+    } else if (additionalStartBtnNeeded && additionalEndBtnNeeded) {
+      firstMainButtonId = currentPageNum - 1;
+      lastMainButtonId = currentPageNum + 1;
+      additionalStartBtnId = currentPageNum - 2;
+      additionalEndBtnId = currentPageNum + 2;
+    } else if (!additionalBtnsAvailable) {
+      firstMainButtonId = 1;
+      lastMainButtonId = pageAmount;
+    }
   }
 
   const buttons = [];

@@ -24,7 +24,8 @@ export default function AppliedFiltersBlock() {
         className={appliedFiltersCls.button}
         aria-label="Удалить фильтр цен"
         onClick={() => {
-          searchParams.delete('minPrice', 'maxPrice');
+          searchParams.delete('minPrice');
+          searchParams.delete('maxPrice');
           setSearchParams(searchParams);
         }}
       >
