@@ -23,7 +23,7 @@ export default function Products() {
   const {
     subcategory, filteredAndSortedProducts, productAmount, pageAmount,
   } = useLoaderData();
-  const [, setSearchParams] = useSearchParams();
+  const [searchParams, setSearchParams] = useSearchParams();
 
   const [isFilterMenuOpen, setIsFilterMenuOpen] = useState(false);
   const [windowWidth, setWindowWidth] = useState();
@@ -207,7 +207,12 @@ export default function Products() {
                   </p>
                   <Button
                     className={productsCls.resetButton}
-                    onClick={() => setSearchParams()}
+                    onClick={() => {
+                      const newSearchParams = Array.from(searchParams).filter(([name]) => (
+                        name === 'perView' || name === 'sortBy'
+                      ));
+                      setSearchParams(newSearchParams);
+                    }}
                   >
                     Сбросить фильтры
                   </Button>

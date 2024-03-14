@@ -43,7 +43,7 @@ export default function AppliedFiltersBlock() {
       aria-label={`Удалить фильтр ${name} со значением ${value}`}
       onClick={() => {
         const newSearchParams = Array.from(searchParams).filter(([oldName, oldValue]) => (
-          oldName !== name || (oldName === name && oldValue !== value)
+          !(oldName === name && oldValue === value)
         ));
         setSearchParams(newSearchParams);
       }}
@@ -63,7 +63,7 @@ export default function AppliedFiltersBlock() {
       aria-label="Удалить все фильтры"
       onClick={() => {
         const newSearchParams = Array.from(searchParams).filter(([name]) => (
-          name === 'page' || name === 'perView' || name === 'sortBy'
+          name === 'perView' || name === 'sortBy'
         ));
         setSearchParams(newSearchParams);
       }}

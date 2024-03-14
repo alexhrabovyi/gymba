@@ -1,7 +1,5 @@
-import {
-  memo, useCallback, useEffect, useRef, useState,
-} from 'react';
-import { useNavigation, useSearchParams } from 'react-router-dom';
+import { memo, useRef, useState } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import classNames from 'classnames';
 import textCls from '../../../scss/_text.module.scss';
 import selectCls from './Select.module.scss';
@@ -10,41 +8,23 @@ import Chevron from './images/chevron.svg';
 const Select = memo(({
   label, options, defaultSelectedOptionId, searchParamName,
 }) => {
-  const navigation = useNavigation();
   const [searchParams, setSearchParams] = useSearchParams();
 
   const [isOpen, setIsOpen] = useState(false);
-  const [selectedOptionId, setSelectedOptionId] = useState(() => {
-    if (searchParams.has(searchParamName)) {
-      return searchParams.get(searchParamName);
-    }
-
-    return defaultSelectedOptionId;
-  });
+  const [selectedOptionId, setSelectedOptionId] = useState(defaultSelectedOptionId);
   const [focusedOptionIndex, setFocusedOptionIndex] = useState(-1);
 
   const openButtonRef = useRef(null);
   const listRef = useRef(null);
 
-  const navigationOnChange = useCallback(() => {
-    if (navigation.state === 'loading') {
-      const urlSearchParams = new URLSearchParams(navigation.location.search);
+  if (searchParams.has(searchParamName)) {
+    const searchParamValue = searchParams.get(searchParamName);
 
-      if (urlSearchParams.has(searchParamName)) {
-        setSelectedOptionId(urlSearchParams.get(searchParamName));
-      } else {
-        setSelectedOptionId(defaultSelectedOptionId);
-      }
+    if (searchParamValue !== selectedOptionId) {
+      setSelectedOptionId(searchParamValue);
     }
-  }, [navigation, searchParamName, defaultSelectedOptionId]);
-
-  useEffect(navigationOnChange, [navigationOnChange]);
-
-  function formOnSubmit(e) {
-    e.preventDefault();
-
-    searchParams.set(searchParamName, selectedOptionId);
-    setSearchParams(searchParams);
+  } else if (selectedOptionId !== defaultSelectedOptionId) {
+    setSelectedOptionId(defaultSelectedOptionId);
   }
 
   function openButtonOnClick() {
@@ -62,8 +42,13 @@ const Select = memo(({
     const option = e.target.closest('[role="option"]');
     if (!option) return;
 
-    setSelectedOptionId(option.id);
+    const newOptionId = option.id;
+
+    setSelectedOptionId(newOptionId);
     setIsOpen(false);
+
+    searchParams.set(searchParamName, newOptionId);
+    setSearchParams(searchParams);
 
     openButtonRef.current.focus();
   }
@@ -108,7 +93,7 @@ const Select = memo(({
   const optionButtons = options.map((p, i) => (
     <button
       key={p.id}
-      type="submit"
+      type="button"
       className={classNames(
         selectCls.option,
         selectedOptionId === p.id && selectCls.option_active,
@@ -127,7 +112,6 @@ const Select = memo(({
 
   return (
     <form
-      onSubmit={formOnSubmit}
       className={selectCls.selectForm}
     >
       <p className={classNames(textCls.text, textCls.textBlack, selectCls.label)}>

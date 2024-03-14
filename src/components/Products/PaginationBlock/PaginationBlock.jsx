@@ -1,5 +1,5 @@
 import {
-  memo, useState, Fragment, useCallback, useLayoutEffect, useEffect, useRef,
+  memo, useState, Fragment, useCallback, useLayoutEffect, useRef,
 } from 'react';
 import { useNavigation, useSearchParams } from 'react-router-dom';
 import classNames from 'classnames';
@@ -33,25 +33,27 @@ const PaginationBlock = memo(({ pageAmount }) => {
     return 1;
   });
 
-  useEffect(() => {
-    if (currentPageNum > pageAmount) {
-      setCurrentPageNum(1);
-      searchParams.set('page', 1);
-      setSearchParams(searchParams);
-    }
-  }, [currentPageNum, pageAmount, searchParams, setSearchParams]);
+  if (currentPageNum > pageAmount) {
+    setCurrentPageNum(1);
+    searchParams.delete('page');
+    setSearchParams(searchParams);
+  }
 
   const onNavigation = useCallback(() => {
     if (navigation.state === 'loading') {
       const urlSearchParams = new URLSearchParams(navigation.location.search);
 
       if (urlSearchParams.has('page')) {
-        setCurrentPageNum(+urlSearchParams.get('page'));
-      } else {
+        const searchParamValue = +urlSearchParams.get('page');
+
+        if (searchParamValue !== currentPageNum) {
+          setCurrentPageNum(searchParamValue);
+        }
+      } else if (currentPageNum !== 1) {
         setCurrentPageNum(1);
       }
     }
-  }, [navigation]);
+  }, [navigation, currentPageNum]);
 
   useLayoutEffect(onNavigation, [onNavigation]);
 

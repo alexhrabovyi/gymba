@@ -1,5 +1,6 @@
+/* eslint-disable consistent-return */
 import {
-  useCallback, useLayoutEffect, useRef, useState,
+  useCallback, useEffect, useLayoutEffect, useRef, useState,
 } from 'react';
 import { useLoaderData, useNavigation, useSearchParams } from 'react-router-dom';
 import classNames from 'classnames';
@@ -14,17 +15,17 @@ export default function FilterPriceForm() {
 
   const [isClosed, setIsClose] = useState(false);
   const [formWasInteracted, setFormWasInteracted] = useState(false);
+
+  const [prevLoaderMinPrice, setPrevLoaderMinPrice] = useState(null);
+  const [prevLoaderMaxPrice, setPrevLoaderMaxPrice] = useState(null);
   const [totalMinPrice, setTotalMinPrice] = useState(null);
   const [totalMaxPrice, setTotalMaxPrice] = useState(null);
-  const [currentMinPrice, setCurrentMinPrice] = useState();
+  const [currentMinPrice, setCurrentMinPrice] = useState(null);
   const [currentMaxPrice, setCurrentMaxPrice] = useState(null);
   const [minInputValue, setMinInputValue] = useState('');
   const [maxInputValue, setMaxInputValue] = useState('');
   const [minButtonLeft, setMinButtonLeft] = useState(null);
   const [maxButtonLeft, setMaxButtonLeft] = useState(null);
-
-  const currentMinPriceRef = useRef(null);
-  const currentMaxPriceRef = useRef(null);
 
   const contentRef = useRef(null);
   const mainLineRef = useRef(null);
@@ -32,8 +33,93 @@ export default function FilterPriceForm() {
   const minButtonRef = useRef(null);
   const maxButtonRef = useRef(null);
 
-  const loaderMinPrice = Number(loaderData.minPrice);
-  const loaderMaxPrice = Number(loaderData.maxPrice);
+  const loaderMinPrice = Number(loaderData.minPrice) || 0;
+  const loaderMaxPrice = Number(loaderData.maxPrice) || 0;
+
+  function setupPrices() {
+    if (prevLoaderMinPrice !== loaderMinPrice) setPrevLoaderMinPrice(loaderMinPrice);
+    if (prevLoaderMaxPrice !== loaderMaxPrice) setPrevLoaderMaxPrice(loaderMaxPrice);
+
+    if (!formWasInteracted) {
+      if (searchParams.has('minPrice')) {
+        const searchParamsMinPrice = Number(searchParams.get('minPrice'));
+        const searchParamsMaxPrice = Number(searchParams.get('maxPrice'));
+
+        if (loaderMinPrice > searchParamsMinPrice && prevLoaderMinPrice !== loaderMinPrice) {
+          setTotalMinPrice(searchParamsMinPrice);
+        } else if (loaderMinPrice < searchParamsMinPrice && prevLoaderMinPrice !== loaderMinPrice) {
+          setTotalMinPrice(loaderMinPrice);
+        }
+        if (loaderMaxPrice < searchParamsMaxPrice && prevLoaderMaxPrice !== loaderMaxPrice) {
+          setTotalMaxPrice(searchParamsMaxPrice);
+        } else if (loaderMaxPrice > searchParamsMaxPrice && prevLoaderMaxPrice !== loaderMaxPrice) {
+          setTotalMaxPrice(loaderMaxPrice);
+        }
+
+        if (searchParamsMinPrice !== currentMinPrice) {
+          setCurrentMinPrice(searchParamsMinPrice);
+          setMinInputValue(searchParamsMinPrice);
+        }
+        if (searchParamsMaxPrice !== currentMaxPrice) {
+          setCurrentMaxPrice(searchParamsMaxPrice);
+          setMaxInputValue(searchParamsMaxPrice);
+        }
+      } else {
+        if (totalMinPrice !== loaderMinPrice) setTotalMinPrice(loaderMinPrice);
+        if (totalMaxPrice !== loaderMaxPrice) setTotalMaxPrice(loaderMaxPrice);
+
+        if (currentMinPrice !== loaderMinPrice) {
+          setCurrentMinPrice(loaderMinPrice);
+          setMinInputValue(loaderMinPrice);
+        }
+        if (currentMaxPrice !== loaderMaxPrice) {
+          setCurrentMaxPrice(loaderMaxPrice);
+          setMaxInputValue(loaderMaxPrice);
+        }
+      }
+    } else {
+      if (loaderMinPrice > currentMinPrice && prevLoaderMinPrice !== loaderMinPrice) {
+        setTotalMinPrice(currentMinPrice);
+      } else if (loaderMinPrice < currentMinPrice && prevLoaderMinPrice !== loaderMinPrice) {
+        setTotalMinPrice(loaderMinPrice);
+      }
+
+      if (loaderMaxPrice < currentMaxPrice && prevLoaderMaxPrice !== loaderMaxPrice) {
+        setTotalMaxPrice(currentMaxPrice);
+      } else if (loaderMaxPrice > currentMaxPrice && prevLoaderMaxPrice !== loaderMaxPrice) {
+        setTotalMaxPrice(loaderMaxPrice);
+      }
+    }
+  }
+
+  setupPrices();
+
+  const interactedFormOnNavigate = useCallback(() => {
+    if (navigation.state === 'loading' && formWasInteracted) {
+      const urlSearchParams = new URLSearchParams(navigation.location.search);
+
+      if (urlSearchParams.has('minPrice')) {
+        const searchParamsMinPrice = Number(urlSearchParams.get('minPrice'));
+        const searchParamsMaxPrice = Number(urlSearchParams.get('maxPrice'));
+
+        if (searchParamsMinPrice !== currentMinPrice) {
+          setCurrentMinPrice(searchParamsMinPrice);
+          setMinInputValue(searchParamsMinPrice);
+        }
+
+        if (searchParamsMaxPrice !== currentMaxPrice) {
+          setCurrentMaxPrice(searchParamsMaxPrice);
+          setMaxInputValue(searchParamsMaxPrice);
+        }
+      } else {
+        setFormWasInteracted(false);
+      }
+    }
+  }, [navigation, currentMinPrice, currentMaxPrice, formWasInteracted]);
+
+  useLayoutEffect(interactedFormOnNavigate, [interactedFormOnNavigate]);
+
+  // helper functions
 
   const getMainLinePxWidth = useCallback(() => {
     const mainLine = mainLineRef.current;
@@ -49,6 +135,8 @@ export default function FilterPriceForm() {
     const roundButtonPercentWidth = (roundButtonPxWidth / mainLinePxWidth) * 100;
     return roundButtonPercentWidth;
   }, [getMainLinePxWidth]);
+
+  // calculation functions
 
   const calcAndUpdateButtonLeft = useCallback((buttonType, price) => {
     const roundButtonWidthInPercent = getRoundButtonPercentWidth();
@@ -83,7 +171,6 @@ export default function FilterPriceForm() {
 
       setCurrentMinPrice(result);
       setMinInputValue(result);
-      currentMinPriceRef.current = result;
     } else {
       let result = (((leftInPercent - roundButtonWidthInPercent)
         / availableMainLineWidth) * minMaxDiff) + totalMinPrice;
@@ -91,9 +178,53 @@ export default function FilterPriceForm() {
 
       setCurrentMaxPrice(result);
       setMaxInputValue(result);
-      currentMaxPriceRef.current = result;
     }
   }
+
+  const calcAndUpdateButtonsLeft = useCallback(() => {
+    calcAndUpdateButtonLeft('min', currentMinPrice);
+    calcAndUpdateButtonLeft('max', currentMaxPrice);
+  }, [currentMinPrice, currentMaxPrice, calcAndUpdateButtonLeft]);
+
+  useLayoutEffect(calcAndUpdateButtonsLeft, [calcAndUpdateButtonsLeft]);
+
+  // style functions
+
+  const makeInactiveOnSameValues = useCallback(() => {
+    if (formWasInteracted) return;
+
+    const contentBlock = contentRef.current;
+
+    if (loaderMinPrice === loaderMaxPrice
+      && currentMinPrice === loaderMinPrice
+      && currentMaxPrice === loaderMaxPrice) {
+      contentBlock.style.opacity = '0.5';
+      contentBlock.style.pointerEvents = 'none';
+    }
+
+    return () => {
+      if (loaderMinPrice === loaderMaxPrice
+        && currentMinPrice === loaderMinPrice
+        && currentMaxPrice === loaderMaxPrice) {
+        contentBlock.style.opacity = '';
+        contentBlock.style.pointerEvents = '';
+      }
+    };
+  }, [formWasInteracted, loaderMinPrice, loaderMaxPrice, currentMinPrice, currentMaxPrice]);
+
+  useEffect(makeInactiveOnSameValues, [makeInactiveOnSameValues]);
+
+  const setupActiveLineStyles = useCallback(() => {
+    const width = maxButtonLeft - minButtonLeft;
+    const left = minButtonLeft;
+
+    activeLineRef.current.style.width = `${width}%`;
+    activeLineRef.current.style.left = `${left}%`;
+  }, [minButtonLeft, maxButtonLeft]);
+
+  useLayoutEffect(setupActiveLineStyles, [setupActiveLineStyles]);
+
+  // user events
 
   function roundButtonOnDown(e) {
     e.preventDefault();
@@ -188,11 +319,9 @@ export default function FilterPriceForm() {
       if (inputType === 'minPrice') {
         setMinInputValue(value);
         setCurrentMinPrice(value);
-        currentMinPriceRef.current = value;
       } else {
         setMaxInputValue(value);
         setCurrentMaxPrice(value);
-        currentMaxPriceRef.current = value;
       }
     }
   }
@@ -211,7 +340,6 @@ export default function FilterPriceForm() {
 
         setCurrentMinPrice(newCurrentMin);
         setMinInputValue(newCurrentMin);
-        currentMinPriceRef.current = newCurrentMin;
       } else {
         let newCurrentMax = currentMaxPrice + 1;
 
@@ -219,7 +347,6 @@ export default function FilterPriceForm() {
 
         setCurrentMaxPrice(newCurrentMax);
         setMaxInputValue(newCurrentMax);
-        currentMaxPriceRef.current = newCurrentMax;
       }
     } else if (e.code === 'ArrowDown' || e.code === 'ArrowLeft') {
       e.preventDefault();
@@ -232,7 +359,6 @@ export default function FilterPriceForm() {
 
         setCurrentMinPrice(newCurrentMin);
         setMinInputValue(newCurrentMin);
-        currentMinPriceRef.current = newCurrentMin;
       } else {
         let newCurrentMax = currentMaxPrice - 1;
 
@@ -240,7 +366,6 @@ export default function FilterPriceForm() {
 
         setCurrentMaxPrice(newCurrentMax);
         setMaxInputValue(newCurrentMax);
-        currentMaxPriceRef.current = newCurrentMax;
       }
     } else if (e.code === 'PageUp') {
       e.preventDefault();
@@ -255,7 +380,6 @@ export default function FilterPriceForm() {
 
         setCurrentMinPrice(newCurrentMin);
         setMinInputValue(newCurrentMin);
-        currentMinPriceRef.current = newCurrentMin;
       } else {
         let newCurrentMax = Number((currentMaxPrice + fivePercentValue).toFixed(0));
 
@@ -263,7 +387,6 @@ export default function FilterPriceForm() {
 
         setCurrentMaxPrice(newCurrentMax);
         setMaxInputValue(newCurrentMax);
-        currentMaxPriceRef.current = newCurrentMax;
       }
     } else if (e.code === 'PageDown') {
       e.preventDefault();
@@ -278,7 +401,6 @@ export default function FilterPriceForm() {
 
         setCurrentMinPrice(newCurrentMin);
         setMinInputValue(newCurrentMin);
-        currentMinPriceRef.current = newCurrentMin;
       } else {
         let newCurrentMax = Number((currentMaxPrice - fivePercentValue).toFixed(0));
 
@@ -286,7 +408,6 @@ export default function FilterPriceForm() {
 
         setCurrentMaxPrice(newCurrentMax);
         setMaxInputValue(newCurrentMax);
-        currentMaxPriceRef.current = newCurrentMax;
       }
     } else if (e.code === 'Home') {
       e.preventDefault();
@@ -297,13 +418,11 @@ export default function FilterPriceForm() {
 
         setCurrentMinPrice(newCurrentMin);
         setMinInputValue(newCurrentMin);
-        currentMinPriceRef.current = newCurrentMin;
       } else {
         const newCurrentMax = totalMaxPrice;
 
         setCurrentMaxPrice(newCurrentMax);
         setMaxInputValue(newCurrentMax);
-        currentMaxPriceRef.current = newCurrentMax;
       }
     } else if (e.code === 'End') {
       e.preventDefault();
@@ -314,139 +433,14 @@ export default function FilterPriceForm() {
 
         setCurrentMinPrice(newCurrentMin);
         setMinInputValue(newCurrentMin);
-        currentMinPriceRef.current = newCurrentMin;
       } else {
         const newCurrentMax = currentMinPrice;
 
         setCurrentMaxPrice(newCurrentMax);
         setMaxInputValue(newCurrentMax);
-        currentMaxPriceRef.current = newCurrentMax;
       }
     }
   }
-
-  const formUninteractedOnLoaderPriceChange = useCallback(() => {
-    if (!formWasInteracted) {
-      const contentBlock = contentRef.current;
-      contentBlock.style.opacity = '';
-      contentBlock.style.pointerEvents = '';
-
-      setTotalMinPrice(loaderMinPrice);
-      setTotalMaxPrice(loaderMaxPrice);
-
-      if (searchParams.has('minPrice')) {
-        const searchParamsMinPrice = Number(searchParams.get('minPrice'));
-        const searchParamsMaxPrice = Number(searchParams.get('maxPrice'));
-
-        setCurrentMinPrice(searchParamsMinPrice);
-        setCurrentMaxPrice(searchParamsMaxPrice);
-
-        setMinInputValue(searchParamsMinPrice);
-        setMaxInputValue(searchParamsMaxPrice);
-
-        currentMinPriceRef.current = searchParamsMinPrice;
-        currentMaxPriceRef.current = searchParamsMaxPrice;
-
-        if (loaderMinPrice > searchParamsMinPrice) {
-          setTotalMinPrice(searchParamsMinPrice);
-        }
-
-        if (loaderMaxPrice < searchParamsMaxPrice) {
-          setTotalMaxPrice(searchParamsMaxPrice);
-        }
-      } else {
-        setCurrentMinPrice(loaderMinPrice);
-        setCurrentMaxPrice(loaderMaxPrice);
-
-        setMinInputValue(loaderMinPrice);
-        setMaxInputValue(loaderMaxPrice);
-
-        currentMinPriceRef.current = loaderMinPrice;
-        currentMaxPriceRef.current = loaderMaxPrice;
-      }
-
-      if (loaderMinPrice === loaderMaxPrice) {
-        contentBlock.style.opacity = '0.5';
-        contentBlock.style.pointerEvents = 'none';
-      }
-    }
-  }, [formWasInteracted, searchParams, loaderMinPrice, loaderMaxPrice]);
-
-  useLayoutEffect(formUninteractedOnLoaderPriceChange, [formUninteractedOnLoaderPriceChange]);
-
-  const formInteractedOnLoaderPriceChange = useCallback(() => {
-    if (!formWasInteracted) return;
-
-    if (loaderMinPrice > currentMinPriceRef.current) {
-      setTotalMinPrice(currentMinPriceRef.current);
-    } else {
-      setTotalMinPrice(loaderMinPrice);
-    }
-
-    if (loaderMaxPrice < currentMaxPriceRef.current) {
-      setTotalMaxPrice(currentMaxPriceRef.current);
-    } else {
-      setTotalMaxPrice(loaderMaxPrice);
-    }
-  }, [formWasInteracted, loaderMinPrice, loaderMaxPrice]);
-
-  useLayoutEffect(formInteractedOnLoaderPriceChange, [formInteractedOnLoaderPriceChange]);
-
-  const calcAndUpdateButtonsLeft = useCallback(() => {
-    calcAndUpdateButtonLeft('min', currentMinPrice);
-    calcAndUpdateButtonLeft('max', currentMaxPrice);
-  }, [currentMinPrice, currentMaxPrice, calcAndUpdateButtonLeft]);
-
-  useLayoutEffect(calcAndUpdateButtonsLeft, [calcAndUpdateButtonsLeft]);
-
-  const setupActiveLineStyles = useCallback(() => {
-    const width = maxButtonLeft - minButtonLeft;
-    const left = minButtonLeft;
-
-    activeLineRef.current.style.width = `${width}%`;
-    activeLineRef.current.style.left = `${left}%`;
-  }, [minButtonLeft, maxButtonLeft]);
-
-  useLayoutEffect(setupActiveLineStyles, [setupActiveLineStyles]);
-
-  const onNavigate = useCallback(() => {
-    if (navigation.state === 'loading') {
-      const urlSearchParams = new URLSearchParams(navigation.location.search);
-
-      if (urlSearchParams.has('minPrice')) {
-        const searchParamsMinPrice = Number(urlSearchParams.get('minPrice'));
-        const searchParamsMaxPrice = Number(urlSearchParams.get('maxPrice'));
-
-        if (searchParamsMinPrice !== currentMinPrice) {
-          setCurrentMinPrice(searchParamsMinPrice);
-          setMinInputValue(searchParamsMinPrice);
-          currentMinPriceRef.current = searchParamsMinPrice;
-        }
-
-        if (searchParamsMaxPrice !== currentMaxPrice) {
-          setCurrentMaxPrice(searchParamsMaxPrice);
-          setMaxInputValue(searchParamsMaxPrice);
-          currentMaxPriceRef.current = searchParamsMaxPrice;
-        }
-      }
-    }
-  }, [navigation, currentMinPrice, currentMaxPrice]);
-
-  useLayoutEffect(onNavigate, [onNavigate]);
-
-  const onSearchParamsMiss = useCallback(() => {
-    if (!searchParams.has('minPrice')) {
-      setCurrentMinPrice(totalMinPrice || 0);
-      setMinInputValue(totalMinPrice || 0);
-      currentMinPriceRef.current = totalMinPrice || 0;
-
-      setCurrentMaxPrice(totalMaxPrice || 0);
-      setMaxInputValue(totalMaxPrice || 0);
-      currentMaxPriceRef.current = totalMaxPrice || 0;
-    }
-  }, [searchParams, totalMinPrice, totalMaxPrice]);
-
-  useLayoutEffect(onSearchParamsMiss, [onSearchParamsMiss]);
 
   return (
     <form
