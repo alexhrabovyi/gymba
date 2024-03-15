@@ -1,4 +1,4 @@
-import { Suspense } from 'react';
+import { Suspense, useState } from 'react';
 import { Await, Link } from 'react-router-dom';
 import classNames from 'classnames';
 import DynamicImage from '../../common/DynamicImage/DynamicImage.jsx';
@@ -9,8 +9,8 @@ import linkCls from '../../../scss/_link.module.scss';
 export default function Category({ categoryProps, figureId }) {
   const { subcategories } = categoryProps;
 
-  const figureSrc = import(`./images/figure_${figureId}.svg?url`);
-  const imgSrc = import(`./images/product_${categoryProps.imgId}.png`);
+  const [figureSrc] = useState(() => import(`./images/figure_${figureId}.svg?url`));
+  const [imgSrc] = useState(() => import(`./images/product_${categoryProps.imgId}.png`));
 
   return (
     <nav className={categoryCls.category}>

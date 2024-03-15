@@ -231,6 +231,92 @@ export function getFilteredProductsAndMinMaxPrice(categoryId, subcategoryId, sea
   };
 }
 
+export function addIdToWishlist(categoryId, subcategoryId, productId) {
+  let wishlistIds = localStorage.getItem('wishlistIds');
+
+  if (wishlistIds === null) {
+    wishlistIds = [];
+    wishlistIds.push([categoryId, subcategoryId, productId]);
+    localStorage.setItem('wishlistIds', JSON.stringify(wishlistIds));
+  } else {
+    wishlistIds = JSON.parse(wishlistIds);
+
+    const isAlreadyExist = wishlistIds.find(([cId, subcId, pId]) => (cId === categoryId
+      && subcId === subcategoryId && pId === productId));
+
+    if (!isAlreadyExist) {
+      wishlistIds.push([categoryId, subcategoryId, productId]);
+      localStorage.setItem('wishlistIds', JSON.stringify(wishlistIds));
+    }
+  }
+}
+
+export function deleteFromWishlist(categoryId, subcategoryId, productId) {
+  const wishlistIds = JSON.parse(localStorage.getItem('wishlistIds')) || [];
+
+  const index = wishlistIds.findIndex(([cId, subcId, pId]) => (cId === categoryId
+    && subcId === subcategoryId && pId === productId));
+
+  if (index !== -1) wishlistIds.splice(index, 1);
+
+  localStorage.setItem('wishlistIds', JSON.stringify(wishlistIds));
+}
+
+export function getWishlistIds() {
+  const wishlistIds = JSON.parse(localStorage.getItem('wishlistIds')) || [];
+
+  return wishlistIds;
+}
+
+export function getWishlistAmount() {
+  const wishlistIds = JSON.parse(localStorage.getItem('wishlistIds')) || [];
+
+  return wishlistIds.length;
+}
+
+export function addIdToCart(categoryId, subcategoryId, productId) {
+  let cartIds = localStorage.getItem('cartIds');
+
+  if (cartIds === null) {
+    cartIds = [];
+    cartIds.push([categoryId, subcategoryId, productId]);
+    localStorage.setItem('cartIds', JSON.stringify(cartIds));
+  } else {
+    cartIds = JSON.parse(cartIds);
+
+    const isAlreadyExist = cartIds.find(([cId, subcId, pId]) => (cId === categoryId
+      && subcId === subcategoryId && pId === productId));
+
+    if (!isAlreadyExist) {
+      cartIds.push([categoryId, subcategoryId, productId]);
+      localStorage.setItem('cartIds', JSON.stringify(cartIds));
+    }
+  }
+}
+
+export function deleteFromCart(categoryId, subcategoryId, productId) {
+  const cartIds = JSON.parse(localStorage.getItem('cartIds')) || [];
+
+  const index = cartIds.findIndex(([cId, subcId, pId]) => (cId === categoryId
+    && subcId === subcategoryId && pId === productId));
+
+  if (index !== -1) cartIds.splice(index, 1);
+
+  localStorage.setItem('cartIds', JSON.stringify(cartIds));
+}
+
+export function getCartIds() {
+  const cartIds = JSON.parse(localStorage.getItem('cartIds')) || [];
+
+  return cartIds;
+}
+
+export function getCartAmount() {
+  const cartIds = JSON.parse(localStorage.getItem('cartIds')) || [];
+
+  return cartIds.length;
+}
+
 // news
 
 export function getNewsPreviews() {

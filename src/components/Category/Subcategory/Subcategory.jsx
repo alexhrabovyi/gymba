@@ -1,4 +1,4 @@
-import { Suspense, memo } from 'react';
+import { Suspense, memo, useState } from 'react';
 import { Await, Link } from 'react-router-dom';
 import Spinner from '../../common/Spinner/Spinner.jsx';
 import DynamicImage from '../../common/DynamicImage/DynamicImage.jsx';
@@ -8,7 +8,7 @@ import ArrowRight from './images/arrow-right.svg';
 const Subcategory = memo(({
   categoryId, id, name, imgId, imgAlt,
 }) => {
-  const imgSrc = import(`./images/${categoryId}_${imgId}.png`);
+  const [imgSrc] = useState(() => import(`./images/${categoryId}_${imgId}.png`));
 
   return (
     <Link

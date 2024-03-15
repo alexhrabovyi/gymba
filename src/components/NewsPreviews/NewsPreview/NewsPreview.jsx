@@ -1,4 +1,4 @@
-import { Suspense, memo } from 'react';
+import { Suspense, memo, useState } from 'react';
 import { Await, Link } from 'react-router-dom';
 import classNames from 'classnames';
 import Spinner from '../../common/Spinner/Spinner.jsx';
@@ -12,7 +12,7 @@ import ViewsIcon from './images/views.svg';
 const NewsPreview = memo(({
   name, id, date, views, previewImgId,
 }) => {
-  const imgSrc = import(`./images/preview_${previewImgId}.png`);
+  const [imgSrc] = useState(() => import(`./images/preview_${previewImgId}.png`));
 
   return (
     <div className={previewCls.preview}>

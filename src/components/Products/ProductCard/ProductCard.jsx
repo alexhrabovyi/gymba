@@ -1,5 +1,8 @@
-import { Suspense, memo } from 'react';
-import { Await, Link } from 'react-router-dom';
+/* eslint-disable react/jsx-no-bind */
+import {
+  Suspense, memo, useState, useEffect,
+} from 'react';
+import { Await, Link, useFetcher } from 'react-router-dom';
 import classNames from 'classnames';
 import beautifyNum from '../../../utils/beautifyNum.js';
 import Spinner from '../../common/Spinner/Spinner.jsx';
@@ -10,11 +13,86 @@ import productCls from './ProductCard.module.scss';
 import Compare from './images/compare.svg';
 import Favorite from './images/favorite.svg';
 import Cart from './images/cart.svg';
+import Mark from './images/mark.svg';
 
 const ProductCard = memo(({
-  name, id, price, oldPrice, isShortCard,
+  name, categoryId, subcategoryId, productId, price, oldPrice, isShortCard,
 }) => {
-  const imgSrc = import(`./images/${id}.webp`);
+  const wishlistFetcher = useFetcher();
+  const cartFetcher = useFetcher();
+
+  const [imgSrc] = useState(() => import(`./images/${productId}.webp`));
+  const [productInWishlist, setProductInWishlist] = useState(false);
+  const [productInCart, setProductInCart] = useState(false);
+
+  useEffect(() => {
+    if (wishlistFetcher.state === 'idle' && !wishlistFetcher.data) {
+      wishlistFetcher.load('../wishlist');
+    }
+  }, [wishlistFetcher]);
+
+  if (wishlistFetcher.data) {
+    const productInWishlistFromFetcher = wishlistFetcher
+      .data.wishlistIds.find(([cId, subcId, pId]) => (
+        cId === categoryId && subcId === subcategoryId && pId === productId
+      ));
+
+    if (productInWishlistFromFetcher !== productInWishlist) {
+      setProductInWishlist(productInWishlistFromFetcher);
+    }
+  }
+
+  useEffect(() => {
+    if (cartFetcher.state === 'idle' && !cartFetcher.data) {
+      cartFetcher.load('../cart');
+    }
+  }, [cartFetcher]);
+
+  if (cartFetcher.data) {
+    const productInCartFromFetcher = cartFetcher.data.cartIds.find(([cId, subcId, pId]) => (
+      cId === categoryId && subcId === subcategoryId && pId === productId
+    ));
+
+    if (productInCartFromFetcher !== productInCart) {
+      setProductInCart(productInCartFromFetcher);
+    }
+  }
+
+  function wishlistButtonOnClick() {
+    const data = JSON.stringify([categoryId, subcategoryId, productId]);
+
+    if (!productInWishlist) {
+      wishlistFetcher.submit(data, {
+        action: '../wishlist',
+        method: 'PATCH',
+        encType: 'application/json',
+      });
+    } else {
+      wishlistFetcher.submit(data, {
+        action: '../wishlist',
+        method: 'DELETE',
+        encType: 'application/json',
+      });
+    }
+  }
+
+  function cartButtonOnClick() {
+    const data = JSON.stringify([categoryId, subcategoryId, productId]);
+
+    if (!productInCart) {
+      cartFetcher.submit(data, {
+        action: '../cart',
+        method: 'PATCH',
+        encType: 'application/json',
+      });
+    } else {
+      cartFetcher.submit(data, {
+        action: '../cart',
+        method: 'DELETE',
+        encType: 'application/json',
+      });
+    }
+  }
 
   if (isShortCard) {
     return (
@@ -29,15 +107,19 @@ const ProductCard = memo(({
           </button>
           <button
             type="button"
-            className={productCls.iconButton}
-            aria-label={`Добавить ${name} в избранное`}
+            className={classNames(
+              productCls.iconButton,
+              productInWishlist && productCls.iconButton_active,
+            )}
+            aria-label={productInWishlist ? `Удалить ${name} из избранного` : `Добавить ${name} в избранное`}
+            onClick={wishlistButtonOnClick}
           >
             <Favorite className={productCls.icon} />
           </button>
         </div>
         <Link
           className={productCls.imageLink}
-          to={id}
+          to={productId}
           alt={name}
         >
           <Suspense
@@ -53,7 +135,7 @@ const ProductCard = memo(({
         </Link>
         <Link
           className={classNames(linkCls.link, productCls.textLink)}
-          to={id}
+          to={productId}
           alt={name}
         >
           {name}
@@ -73,9 +155,14 @@ const ProductCard = memo(({
           </div>
           <Button
             className={productCls.cartButton}
-            ariaLabel={`Добавить ${name} в корзину`}
+            ariaLabel={!productInCart ? `Добавить ${name} в корзину` : `Удалить ${name} из корзины`}
+            onClick={cartButtonOnClick}
           >
-            <Cart className={productCls.cartIcon} />
+            {!productInCart ? (
+              <Cart className={productCls.cartIcon} />
+            ) : (
+              <Mark className={productCls.cartIcon} />
+            )}
           </Button>
         </div>
       </div>
@@ -86,7 +173,7 @@ const ProductCard = memo(({
     <div className={productCls.longCard}>
       <Link
         className={productCls.longImageLink}
-        to={id}
+        to={productId}
         alt={name}
       >
         <Suspense
@@ -103,7 +190,7 @@ const ProductCard = memo(({
       <div className={productCls.nameAndIconButtons}>
         <Link
           className={classNames(linkCls.link, productCls.longTextLink)}
-          to={id}
+          to={productId}
           alt={name}
         >
           {name}
@@ -118,8 +205,12 @@ const ProductCard = memo(({
           </button>
           <button
             type="button"
-            className={productCls.iconButton}
-            aria-label={`Добавить ${name} в избранное`}
+            className={classNames(
+              productCls.iconButton,
+              productInWishlist && productCls.iconButton_active,
+            )}
+            aria-label={productInWishlist ? `Удалить ${name} из избранного` : `Добавить ${name} в избранное`}
+            onClick={wishlistButtonOnClick}
           >
             <Favorite className={productCls.icon} />
           </button>
@@ -140,9 +231,10 @@ const ProductCard = memo(({
         </div>
         <Button
           className={productCls.longCartButton}
-          ariaLabel={`Добавить ${name} в корзину`}
+          ariaLabel={!productInCart ? `Добавить ${name} в корзину` : `Удалить ${name} из корзины`}
+          onClick={cartButtonOnClick}
         >
-          В корзину
+          {!productInCart ? 'В корзину' : 'Удалить из корзины'}
         </Button>
       </div>
     </div>

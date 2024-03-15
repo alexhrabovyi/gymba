@@ -6,7 +6,7 @@ import {
   useCallback,
   useLayoutEffect,
 } from 'react';
-import { Link, useLoaderData } from 'react-router-dom';
+import { Link, useFetcher, useLoaderData } from 'react-router-dom';
 import classNames from 'classnames';
 import containerCls from '../../scss/_container.module.scss';
 import textCls from '../../scss/_text.module.scss';
@@ -32,6 +32,8 @@ import findAllInteractiveElements from '../../utils/findAllInteractiveElements.j
 
 export default function Header() {
   const categories = useLoaderData();
+  const wishlistFetcher = useFetcher();
+  const cartFetcher = useFetcher();
   const [activeCategory, setActiveCategory] = useState(categories[0]);
 
   const [isMainMenuOpen, setIsMainMenuOpen] = useState(false);
@@ -168,6 +170,34 @@ export default function Header() {
     setIsMainMenuOpen(false);
     setIsCategoryMenuOpen(false);
     setIsSubcategoryMenuOpen(false);
+  }
+
+  useEffect(() => {
+    if (wishlistFetcher.state === 'idle' && !wishlistFetcher.data) {
+      wishlistFetcher.load('../wishlist');
+    }
+  }, [wishlistFetcher]);
+
+  const [wishlistAmount, setWishlistAmount] = useState(null);
+
+  if (wishlistFetcher.data) {
+    if (wishlistFetcher.data.wishlistAmount !== wishlistAmount) {
+      setWishlistAmount(wishlistFetcher.data.wishlistAmount);
+    }
+  }
+
+  useEffect(() => {
+    if (cartFetcher.state === 'idle' && !cartFetcher.data) {
+      cartFetcher.load('../cart');
+    }
+  }, [cartFetcher]);
+
+  const [cartAmount, setCartAmount] = useState(null);
+
+  if (cartFetcher.data) {
+    if (cartFetcher.data.cartAmount !== cartAmount) {
+      setCartAmount(cartFetcher.data.cartAmount);
+    }
   }
 
   return (
@@ -326,8 +356,11 @@ export default function Header() {
                   <li>
                     <Link
                       to="/"
-                      className={classNames(headerCls.iconLink, headerCls.iconLinkWithCircle)}
-                      data-before={5}
+                      className={classNames(
+                        headerCls.iconLink,
+                        wishlistAmount && headerCls.iconLinkWithCircle,
+                      )}
+                      data-before={wishlistAmount}
                       aria-label="Понравившиеся товары"
                     >
                       <Favorite className={headerCls.iconInLink} />
@@ -338,8 +371,11 @@ export default function Header() {
                 <li>
                   <Link
                     to="/"
-                    className={classNames(headerCls.iconLink, headerCls.iconLinkWithCircle)}
-                    data-before={2}
+                    className={classNames(
+                      headerCls.iconLink,
+                      cartAmount && headerCls.iconLinkWithCircle,
+                    )}
+                    data-before={cartAmount}
                     aria-label="Корзина"
                   >
                     <Cart className={headerCls.iconInLink} />

@@ -21,7 +21,7 @@ import useOnResize from '../../hooks/useOnResize.jsx';
 
 export default function Products() {
   const {
-    subcategory, filteredAndSortedProducts, productAmount, pageAmount,
+    id, subcategory, filteredAndSortedProducts, productAmount, pageAmount,
   } = useLoaderData();
   const [searchParams, setSearchParams] = useSearchParams();
 
@@ -53,7 +53,9 @@ export default function Products() {
     <ProductCard
       key={p.id}
       name={p.name}
-      id={p.id}
+      categoryId={id}
+      subcategoryId={subcategory.id}
+      productId={p.id}
       price={p.price}
       oldPrice={p.oldPrice}
       isShortCard={windowWidth <= 576 ? true : isProductCardsShort}

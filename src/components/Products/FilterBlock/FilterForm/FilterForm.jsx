@@ -29,7 +29,7 @@ export default function FilterForm({ name, values, initIsClosed = false }) {
     const URLParams = new URLSearchParams();
     params.forEach((p) => URLParams.append(name, p));
 
-    searchParams.entries().forEach(([key, value]) => {
+    Array.from(searchParams).forEach(([key, value]) => {
       if (key !== name) {
         URLParams.append(key, value);
       }

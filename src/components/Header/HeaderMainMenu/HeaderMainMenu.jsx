@@ -1,7 +1,7 @@
 import {
   memo, useEffect, useRef, useState, useCallback, useLayoutEffect,
 } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useFetcher } from 'react-router-dom';
 import classNames from 'classnames';
 import headerMenuCls from './HeaderMainMenu.module.scss';
 import containerCls from '../../../scss/_container.module.scss';
@@ -19,6 +19,8 @@ import Chevron from '../images/chevron.svg';
 import findAllInteractiveElements from '../../../utils/findAllInteractiveElements.js';
 
 const HeaderMainMenu = memo(({ isMenuOpen, categories, catalogBtnOnClick }) => {
+  const fetcher = useFetcher();
+
   const menuRef = useRef(null);
   const [activeCategoryId, setActiveCategoryId] = useState(categories[0].id);
   const [windowWidth, setWindowWidth] = useState(null);
@@ -103,6 +105,20 @@ const HeaderMainMenu = memo(({ isMenuOpen, categories, catalogBtnOnClick }) => {
     if (isMenuOpen) menuRef.current.focus();
   }, [isMenuOpen]);
 
+  useEffect(() => {
+    if (fetcher.state === 'idle' && !fetcher.data) {
+      fetcher.load('../wishlist');
+    }
+  }, [fetcher]);
+
+  const [wishlistAmount, setWishlistAmount] = useState(null);
+
+  if (fetcher.data) {
+    if (fetcher.data.wishlistAmount !== wishlistAmount) {
+      setWishlistAmount(fetcher.data.wishlistAmount);
+    }
+  }
+
   return (
     <div
       ref={menuRef}
@@ -145,8 +161,11 @@ const HeaderMainMenu = memo(({ isMenuOpen, categories, catalogBtnOnClick }) => {
             <li>
               <Link
                 to="/"
-                className={classNames(headerMenuCls.iconLink, headerMenuCls.iconLinkWithCircle)}
-                data-before={5}
+                className={classNames(
+                  headerMenuCls.iconLink,
+                  wishlistAmount && headerMenuCls.iconLinkWithCircle,
+                )}
+                data-before={wishlistAmount}
                 aria-label="Понравившиеся товары"
               >
                 <Favorite className={headerMenuCls.iconInLink} />
@@ -248,8 +267,11 @@ const HeaderMainMenu = memo(({ isMenuOpen, categories, catalogBtnOnClick }) => {
             <li>
               <Link
                 to="/"
-                className={classNames(headerMenuCls.iconLink, headerMenuCls.iconLinkWithCircle)}
-                data-before={5}
+                className={classNames(
+                  headerMenuCls.iconLink,
+                  wishlistAmount && headerMenuCls.iconLinkWithCircle,
+                )}
+                data-before={wishlistAmount}
                 aria-label="Понравившиеся товары"
               >
                 <Favorite className={headerMenuCls.iconInLink} />
