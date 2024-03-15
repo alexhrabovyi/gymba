@@ -3,23 +3,29 @@ import BreadCrumbs from '../../components/BreadCrumbs/BreadCrumbs.jsx';
 import Products from '../../components/Products/Products.jsx';
 
 export function loader({ params, request }) {
-  const { categoryId, subcategoryId } = params;
+  const categoryIdParam = params.categoryId;
+  const subcategoryIdParam = params.subcategoryId;
   const { searchParams } = new URL(request.url);
 
-  const categoryAndSubcategory = getCategoryAndSubcategory(categoryId, subcategoryId);
-  const subcategoryFilters = getSubcategoryFilters(categoryId, subcategoryId);
+  const {
+    categoryName, categoryId, subcategory,
+  } = getCategoryAndSubcategory(categoryIdParam, subcategoryIdParam);
+
+  const subcategoryFilters = getSubcategoryFilters(categoryIdParam, subcategoryIdParam);
+
   const {
     minPrice,
     maxPrice,
     filteredAndSortedProducts,
     productAmount,
     pageAmount,
-  } = getFilteredProductsAndMinMaxPrice(categoryId, subcategoryId, searchParams);
+  } = getFilteredProductsAndMinMaxPrice(categoryIdParam, subcategoryIdParam, searchParams);
 
   return {
-    name: categoryAndSubcategory.name,
-    id: categoryAndSubcategory.id,
-    subcategory: categoryAndSubcategory.subcategory,
+    categoryName,
+    categoryId,
+    subcategoryName: subcategory.name,
+    subcategoryId: subcategory.id,
     subcategoryFilters,
     filteredAndSortedProducts,
     minPrice,

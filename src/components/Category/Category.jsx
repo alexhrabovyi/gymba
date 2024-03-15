@@ -7,7 +7,7 @@ import Subcategory from './Subcategory/Subcategory.jsx';
 
 export default function Category() {
   const category = useLoaderData();
-  const { subcategories } = category;
+  const { categoryName, categoryId, subcategories } = category;
 
   return (
     <main className={classNames(containerCls.container, categoryCls.main)}>
@@ -19,13 +19,13 @@ export default function Category() {
         categoryCls.title,
       )}
       >
-        {category.name}
+        {categoryName}
       </h1>
       <div className={categoryCls.subcategories}>
         {subcategories.map((s) => (
           <Subcategory
             key={s.id}
-            categoryId={category.id}
+            categoryId={categoryId}
             name={s.name}
             id={s.id}
             imgId={s.imgId}

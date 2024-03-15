@@ -7,9 +7,9 @@ import containerCls from '../../../scss/_container.module.scss';
 import subcategoryMenuCls from './HeaderSubcategoryMenu.module.scss';
 import linkCls from '../../../scss/_link.module.scss';
 import textCls from '../../../scss/_text.module.scss';
-import Chevron from '../images/chevron.svg';
+import ChevronRight from '../../../assets/images/icons/chevronRight.svg';
 import findAllInteractiveElements from '../../../utils/findAllInteractiveElements.js';
-import ArrowRight from '../images/arrow-right.svg';
+import ArrowRight from '../../../assets/images/icons/arrow-right.svg';
 
 const HeaderSubcategoryMenu = memo(({ isMenuOpen, category, backToCatalogOnClick }) => {
   const menuRef = useRef(null);
@@ -78,7 +78,7 @@ const HeaderSubcategoryMenu = memo(({ isMenuOpen, category, backToCatalogOnClick
         aria-label="Вернуться в меню каталога"
         aria-haspopup="dialog"
       >
-        <Chevron className={subcategoryMenuCls.backButtonChevron} />
+        <ChevronRight className={subcategoryMenuCls.backButtonChevron} />
         Каталог
       </button>
       <p className={classNames(

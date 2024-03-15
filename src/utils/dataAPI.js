@@ -33,8 +33,8 @@ export function getCategoryAndSubcategories(categoryId) {
   }));
 
   return {
-    name: category.name,
-    id: category.id,
+    categoryName: category.name,
+    categoryId: category.id,
     subcategories,
   };
 }
@@ -44,9 +44,23 @@ export function getCategoryAndSubcategory(categoryId, subcategoryId) {
   const subcategory = category.subcategories.find((s) => s.id === subcategoryId);
 
   return {
-    name: category.name,
-    id: category.id,
+    categoryName: category.name,
+    categoryId: category.id,
     subcategory,
+  };
+}
+
+export function getProduct(categoryId, subcategoryId, productId) {
+  const category = products.find((c) => c.id === categoryId);
+  const subcategory = category.subcategories.find((s) => s.id === subcategoryId);
+  const product = subcategory.products.find((p) => p.id === productId);
+
+  return {
+    categoryName: category.name,
+    categoryId: category.id,
+    subcategoryName: subcategory.name,
+    subcategoryId: subcategory.id,
+    product,
   };
 }
 

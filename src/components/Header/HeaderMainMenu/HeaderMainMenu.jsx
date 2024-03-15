@@ -11,11 +11,11 @@ import productImg from './images/product.png';
 import getScrollWidth from '../../../utils/getScrollWidth.jsx';
 import useOnResize from '../../../hooks/useOnResize.jsx';
 import User from '../images/user.svg';
-import Compare from '../images/compare.svg';
-import Favorite from '../images/favorite.svg';
+import Compare from '../../../assets/images/icons/compare.svg';
+import Favorite from '../../../assets/images/icons/favorite.svg';
 import Tag from '../images/tag.svg';
 import Phone from '../images/phone.svg';
-import Chevron from '../images/chevron.svg';
+import ChevronRight from '../../../assets/images/icons/chevronRight.svg';
 import findAllInteractiveElements from '../../../utils/findAllInteractiveElements.js';
 
 const HeaderMainMenu = memo(({ isMenuOpen, categories, catalogBtnOnClick }) => {
@@ -290,7 +290,7 @@ const HeaderMainMenu = memo(({ isMenuOpen, categories, catalogBtnOnClick }) => {
                 aria-label="Открыть меню каталога"
               >
                 Каталог
-                <Chevron className={headerMenuCls.catalogButtonChevron} />
+                <ChevronRight className={headerMenuCls.catalogButtonChevron} />
               </button>
             </li>
             <li>

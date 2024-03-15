@@ -1,6 +1,6 @@
 import classNames from 'classnames';
 import sliderButtonCls from './MainSliderButton.module.scss';
-import Arrow from './images/arrow.svg';
+import ChevronRight from '../../../assets/images/icons/chevronRight.svg';
 
 export default function SliderButton({ id, isInactive, isRight }) {
   return (
@@ -11,7 +11,7 @@ export default function SliderButton({ id, isInactive, isRight }) {
       disabled={isInactive}
       aria-hidden
     >
-      <Arrow
+      <ChevronRight
         className={classNames(sliderButtonCls.arrow, isRight && sliderButtonCls.arrow_right)}
       />
     </button>

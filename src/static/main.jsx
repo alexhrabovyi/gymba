@@ -6,6 +6,7 @@ import { HeaderAndFooterLayout, loader as HeaderAndFooterLayoutLoader } from '..
 import { Main, loader as mainLoader } from '../pages/Main/Main.jsx';
 import { CategoryPage, loader as categoryPageLoader } from '../pages/Category/Category.jsx';
 import { ProductsPage, loader as productsLoader } from '../pages/Products/Products.jsx';
+import { ProductPage, loader as productPageLoader } from '../pages/Product/Product.jsx';
 import { loader as wishlistLoader, action as wishlistAction } from '../pages/Wishlist/Wishlist.jsx';
 import { loader as cartLoader, action as cartAction } from '../pages/Cart/Cart.jsx';
 
@@ -28,6 +29,11 @@ const router = createBrowserRouter([
         path: ':categoryId/:subcategoryId',
         loader: productsLoader,
         element: <ProductsPage />,
+      },
+      {
+        path: ':categoryId/:subcategoryId/:productId',
+        loader: productPageLoader,
+        element: <ProductPage />,
       },
       {
         path: 'wishlist',

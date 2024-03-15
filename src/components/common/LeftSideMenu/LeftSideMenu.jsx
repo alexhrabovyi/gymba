@@ -8,7 +8,7 @@ import menuCls from './LeftSideMenu.module.scss';
 import useOnResize from '../../../hooks/useOnResize.jsx';
 import findAllInteractiveElements from '../../../utils/findAllInteractiveElements.js';
 import getScrollWidth from '../../../utils/getScrollWidth.jsx';
-import CrossIcon from './images/cross.svg';
+import CrossIcon from '../../../assets/images/icons/cross.svg';
 
 const LeftSideMenu = memo(({
   children, isMenuOpen, setIsMenuOpen, label,

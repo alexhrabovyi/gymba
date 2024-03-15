@@ -38,7 +38,7 @@
     @include flex-builder(row, center, center);
     
     &::before {
-      content: url("./images/mark.svg?url");
+      content: url("../../../../../assets/images/icons/mark.svg?url");
     }
   }
 }

@@ -3,7 +3,7 @@ import { useEffect, useRef, useState } from 'react';
 import classNames from 'classnames';
 import textCls from '../../../../scss/_text.module.scss';
 import filterCls from './FilterForm.module.scss';
-import Chevron from './images/chevron.svg';
+import ChevronUp from '../../../../assets/images/icons/chevronUp.svg';
 import FilterCheckbox from './FilterCheckbox/FilterCheckbox.jsx';
 
 export default function FilterForm({ name, values, initIsClosed = false }) {
@@ -90,7 +90,7 @@ export default function FilterForm({ name, values, initIsClosed = false }) {
         >
           {name}
         </p>
-        <Chevron className={classNames(
+        <ChevronUp className={classNames(
           filterCls.chevron,
           isClosed && filterCls.chevron_transformed,
         )}

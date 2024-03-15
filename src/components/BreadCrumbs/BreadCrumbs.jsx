@@ -17,13 +17,15 @@ export default function BreadCrumbs() {
     let to;
     let name;
 
-    if (k === 'categoryId') {
-      to = data.id;
-      name = data.name;
-    } else if (k === 'subcategoryId') {
-      to = data.subcategory.id;
-      name = data.subcategory.name;
+    if (k === 'categoryId' && !isLast) {
+      to = data.categoryId;
+      name = data.categoryName;
+    } else if (k === 'subcategoryId' && !isLast) {
+      to = `${data.categoryId}/${data.subcategoryId}`;
+      name = data.subcategoryName;
     }
+
+    if (!to) return;
 
     links.push((
       <Fragment key={to}>
@@ -38,9 +40,6 @@ export default function BreadCrumbs() {
             )}
             to={`/${to}`}
             alt={name}
-            disabled={isLast}
-            tabIndex={isLast ? '-1' : '0'}
-            aria-hidden={isLast}
           >
             {name}
           </Link>

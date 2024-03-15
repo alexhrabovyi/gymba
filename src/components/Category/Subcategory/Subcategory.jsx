@@ -3,7 +3,7 @@ import { Await, Link } from 'react-router-dom';
 import Spinner from '../../common/Spinner/Spinner.jsx';
 import DynamicImage from '../../common/DynamicImage/DynamicImage.jsx';
 import subcategoryCls from './Subcategory.module.scss';
-import ArrowRight from './images/arrow-right.svg';
+import ArrowRight from '../../../assets/images/icons/arrow-right.svg';
 
 const Subcategory = memo(({
   categoryId, id, name, imgId, imgAlt,

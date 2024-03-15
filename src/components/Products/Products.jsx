@@ -15,13 +15,18 @@ import LeftSideMenu from '../common/LeftSideMenu/LeftSideMenu.jsx';
 import CardsShortIcon from './images/productCardsShort.svg';
 import CardsLongIcon from './images/productCardsLong.svg';
 import FilterIcon from './images/filter.svg';
-import Line from './images/line.svg';
+import Line from '../../assets/images/icons/oblique.svg';
 import Button from '../common/Button/Button.jsx';
 import useOnResize from '../../hooks/useOnResize.jsx';
 
 export default function Products() {
   const {
-    id, subcategory, filteredAndSortedProducts, productAmount, pageAmount,
+    categoryId,
+    subcategoryName,
+    subcategoryId,
+    filteredAndSortedProducts,
+    productAmount,
+    pageAmount,
   } = useLoaderData();
   const [searchParams, setSearchParams] = useSearchParams();
 
@@ -53,8 +58,8 @@ export default function Products() {
     <ProductCard
       key={p.id}
       name={p.name}
-      categoryId={id}
-      subcategoryId={subcategory.id}
+      categoryId={categoryId}
+      subcategoryId={subcategoryId}
       productId={p.id}
       price={p.price}
       oldPrice={p.oldPrice}
@@ -111,7 +116,7 @@ export default function Products() {
           productsCls.title,
         )}
         >
-          {subcategory.name}
+          {subcategoryName}
         </h1>
         <div className={productsCls.controlBlock}>
           <div className={productsCls.infoBlock}>

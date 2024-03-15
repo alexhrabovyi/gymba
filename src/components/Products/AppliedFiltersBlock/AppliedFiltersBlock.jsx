@@ -1,7 +1,7 @@
 import { useSearchParams } from 'react-router-dom';
 import classNames from 'classnames';
 import appliedFiltersCls from './AppliedFiltersBlock.module.scss';
-import Cross from './images/cross.svg';
+import Cross from '../../../assets/images/icons/cross.svg';
 
 export default function AppliedFiltersBlock() {
   const [searchParams, setSearchParams] = useSearchParams();

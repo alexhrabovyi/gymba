@@ -31,11 +31,6 @@
   &:active {
     color: $blue-active;
   }
-
-  &_disabled {
-    color: $black;
-    pointer-events: none;
-  }
 }
 
 .circle {

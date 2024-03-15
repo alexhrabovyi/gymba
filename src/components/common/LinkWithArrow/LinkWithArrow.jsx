@@ -1,8 +1,8 @@
 import { Link } from 'react-router-dom';
 import classNames from 'classnames';
 import linkWithArrowCls from './LinkWithArrow.module.scss';
-import Oblique from './images/oblique.svg';
-import Arrow from './images/arrow.svg';
+import Oblique from '../../../assets/images/icons/oblique.svg';
+import ArrowRight from '../../../assets/images/icons/arrow-right.svg';
 
 export default function LinkWithArrow({
   to,
@@ -26,7 +26,7 @@ export default function LinkWithArrow({
     >
       <Oblique className={linkWithArrowCls.oblique} />
       {children}
-      <Arrow
+      <ArrowRight
         className={classNames(linkWithArrowCls.arrow, isWhite && linkWithArrowCls.arrow_white)}
       />
     </Link>

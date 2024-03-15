@@ -5,7 +5,7 @@ import {
 import categoryMenuCls from './HeaderCategoryMenu.module.scss';
 import containerCls from '../../../scss/_container.module.scss';
 import textCls from '../../../scss/_text.module.scss';
-import Chevron from '../images/chevron.svg';
+import ChevronRight from '../../../assets/images/icons/chevronRight.svg';
 import findAllInteractiveElements from '../../../utils/findAllInteractiveElements.js';
 
 const HeaderCategoryMenu = memo(({
@@ -79,7 +79,7 @@ const HeaderCategoryMenu = memo(({
         aria-label="Вернуться в меню навигации"
         aria-haspopup="dialog"
       >
-        <Chevron className={categoryMenuCls.backButtonChevron} />
+        <ChevronRight className={categoryMenuCls.backButtonChevron} />
         Меню
       </button>
       <p className={classNames(
@@ -106,7 +106,7 @@ const HeaderCategoryMenu = memo(({
                 aria-label={`Открыть меню категории ${c.name}`}
               >
                 {c.name}
-                <Chevron className={categoryMenuCls.categoryButtonChevron} />
+                <ChevronRight className={categoryMenuCls.categoryButtonChevron} />
               </button>
             </li>
           ))}

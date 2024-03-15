@@ -10,7 +10,7 @@ import NewsPreview from './NewsPreview/NewsPreview.jsx';
 import containerCls from '../../scss/_container.module.scss';
 import textCls from '../../scss/_text.module.scss';
 import newsCls from './NewsPreviews.module.scss';
-import ChevronRight from './images/chevronRight.svg';
+import BigChevronRight from '../../assets/images/icons/bigChevronRight.svg';
 
 export default function NewsPreviews() {
   const { news } = useLoaderData();
@@ -105,7 +105,7 @@ export default function NewsPreviews() {
               aria-hidden
               disabled={isPrevBtnInactive}
             >
-              <ChevronRight
+              <BigChevronRight
                 className={newsCls.chevronIcon}
               />
             </button>
@@ -122,7 +122,7 @@ export default function NewsPreviews() {
               aria-hidden
               disabled={isNextBtnInactive}
             >
-              <ChevronRight
+              <BigChevronRight
                 className={newsCls.chevronIcon}
               />
             </button>

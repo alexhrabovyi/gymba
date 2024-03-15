@@ -6,7 +6,7 @@ import { useLoaderData, useNavigation, useSearchParams } from 'react-router-dom'
 import classNames from 'classnames';
 import textCls from '../../../../scss/_text.module.scss';
 import filterCls from './FilterPriceForm.module.scss';
-import Chevron from './images/chevron.svg';
+import ChevronUp from '../../../../assets/images/icons/chevronUp.svg';
 
 export default function FilterPriceForm() {
   const loaderData = useLoaderData();
@@ -461,7 +461,7 @@ export default function FilterPriceForm() {
         >
           Цена, ₴
         </p>
-        <Chevron className={classNames(
+        <ChevronUp className={classNames(
           filterCls.chevron,
           isClosed && filterCls.chevron_transformed,
         )}

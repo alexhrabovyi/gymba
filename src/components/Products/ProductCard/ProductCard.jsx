@@ -10,10 +10,10 @@ import DynamicImage from '../../common/DynamicImage/DynamicImage.jsx';
 import Button from '../../common/Button/Button.jsx';
 import linkCls from '../../../scss/_link.module.scss';
 import productCls from './ProductCard.module.scss';
-import Compare from './images/compare.svg';
-import Favorite from './images/favorite.svg';
-import Cart from './images/cart.svg';
-import Mark from './images/mark.svg';
+import Compare from '../../../assets/images/icons/compare.svg';
+import Favorite from '../../../assets/images/icons/favorite.svg';
+import Cart from '../../../assets/images/icons/cart.svg';
+import Mark from '../../../assets/images/icons/mark.svg';
 
 const ProductCard = memo(({
   name, categoryId, subcategoryId, productId, price, oldPrice, isShortCard,
@@ -21,7 +21,7 @@ const ProductCard = memo(({
   const wishlistFetcher = useFetcher();
   const cartFetcher = useFetcher();
 
-  const [imgSrc] = useState(() => import(`./images/${productId}.webp`));
+  const [imgSrc] = useState(() => import(`../../../assets/images/productImgs/${productId}.webp`));
   const [productInWishlist, setProductInWishlist] = useState(false);
   const [productInCart, setProductInCart] = useState(false);
 

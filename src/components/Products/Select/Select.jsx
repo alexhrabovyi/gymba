@@ -3,7 +3,7 @@ import { useSearchParams } from 'react-router-dom';
 import classNames from 'classnames';
 import textCls from '../../../scss/_text.module.scss';
 import selectCls from './Select.module.scss';
-import Chevron from './images/chevron.svg';
+import ChevronUp from '../../../assets/images/icons/chevronUp.svg';
 
 const Select = memo(({
   label, options, defaultSelectedOptionId, searchParamName,
@@ -126,7 +126,7 @@ const Select = memo(({
           aria-label={`Відкрити селектор ${label}`}
         >
           {selectedOption.name}
-          <Chevron
+          <ChevronUp
             className={classNames(
               selectCls.chevron,
               isOpen && selectCls.chevron_active,
