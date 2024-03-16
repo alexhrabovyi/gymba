@@ -17,6 +17,10 @@
     font-size: 13px;
   }
 
+  &14px {
+    font-size: 14px;
+  }
+
   &18px {
     font-size: 18px;
   }
@@ -51,5 +55,9 @@
 
   &Black {
     color: $black;
+  }
+
+  &Grey {
+    color: $text-grey;
   }
 }

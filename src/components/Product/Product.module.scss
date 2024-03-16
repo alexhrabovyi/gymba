@@ -1,0 +1,231 @@
+@import '.././../scss/mixins';
+@import '.././../scss/colors';
+
+.main {
+  margin-top: 68px;
+  margin-bottom: 160px;
+
+  @include flex-builder(column, flex-start, flex-start);
+
+  @media (max-width: 1600px) {
+    margin-bottom: 140px;
+  }
+
+  @include media-l {
+    margin-bottom: 120px;
+  }
+
+  @include media-m {
+    margin-bottom: 100px;
+  }
+
+  @include media-s {
+    margin-top: 50px;
+    margin-bottom: 80px;
+  }
+
+  @include media-xs {
+    margin-top: 40px; 
+  }
+}
+
+.title {
+  text-transform: uppercase;
+}
+
+.additionalButtonsBlock {
+  width: 312px;
+  align-self: flex-end;
+  margin-top: 24px;
+  margin-bottom: 34px;
+
+  @include flex-builder(row, space-between, center);
+}
+
+.iconButton {
+  border: none;
+  background: none;
+  color: $text-grey;
+  cursor: pointer;
+  fill: rgb(194 203 211);
+  font-family: Onest, sans-serif;
+  font-size: 16px;
+  gap: 8px;
+  transition: all .05s ease-in-out;
+
+  @include flex-builder(row, flex-start, center);
+
+  &:hover {
+    color: $blue;
+    fill: $blue;
+  }
+
+  &:active {
+    color: $dark-blue;
+    fill: $dark-blue;
+  }
+
+  &_active {
+    color: $blue;
+    fill: $blue;
+
+    &:hover {
+      color: $dark-blue;
+      fill: $dark-blue;
+    }
+
+    &:active {
+      color: $blue-active;
+      fill: $blue-active;
+    }
+  }
+}
+
+.buttonIcon {
+  width: 24px;
+  height: 24px;
+}
+
+.mainBlock {
+  display: grid;
+  grid-template-columns: 1fr 123px 237px 99px 312px;
+}
+
+.imageBlock {
+  width: 100%;
+
+  @include flex-builder(row, flex-start, flex-start);
+
+  gap: 80px;
+}
+
+.imagePaginationBlock {
+  @include flex-builder(column, flex-start, center);
+
+  gap: 12px;
+}
+
+.paginationBtn {
+  width: 88px;
+  height: 88px;
+  border: 1px solid $dark-grey;
+  border-radius: 4px;
+  background: none;
+  cursor: pointer;
+  transition: all .05s ease-in-out;
+
+  @include flex-builder(row, center, center);
+
+  &:hover {
+    border-color: $blue;
+  }
+
+  &:active {
+    border-color: $dark-blue;
+  }
+
+  &_active {
+    border-color: $blue;
+
+    &:hover {
+      border-color: $dark-blue;
+    }
+
+    &:active {
+      border-color: $blue-active;
+    }
+  }
+}
+
+.paginationBtnSpinner {
+  width: 50%;
+  height: 50%;
+  fill: $blue;
+}
+
+.paginationBtnImg {
+  width: 70%;
+}
+
+.imageSliderBlock {
+  width: 100%;
+}
+
+.slide {
+  @include flex-builder(row, center, flex-start);
+
+  width: 100%;
+}
+
+.slideImgSpinner {
+  width: 25%;
+  height: 25%;
+  margin-top: 20%;
+  fill: $blue;
+}
+
+.slideImg {
+  width: 100%;
+}
+
+.mainSpecsBlock {
+  grid-column: 3/4;
+}
+
+.mainSpecsTitle {
+  margin-bottom: 12px;
+  text-transform: uppercase;
+}
+
+.mainSpecsList {
+  margin-bottom: 24px;
+  gap: 8px;
+  list-style: none;
+
+  @include flex-builder(column, flex-start, flex-start);
+}
+
+.mainSpec {
+  @include flex-builder(row, flex-start, center);
+
+  gap: 8px;
+}
+
+.priceAndCartBlock {
+  align-self: flex-start;
+  padding: 32px;
+  border-radius: 4px;
+  background: $light-blue;
+  grid-column: 5/6;
+}
+
+.oldPrice {
+  color: $blue;
+  font-family: Onest, sans-serif;
+  text-decoration: line-through;
+}
+
+.mainPriceBlock {
+  @include flex-builder(row, flex-start, center);
+
+  gap: 8px;
+}
+
+.discountBlock {
+  align-self: flex-start;
+  padding: 4px 8px;
+  border-radius: 4px;
+  margin-left: 10px;
+  background-color: $yellow;
+  color: $black;
+  font-family: Onest, sans-serif;
+  font-size: 16px;
+  transform: translateY(-50%);
+}
+
+.cartButton {
+  width: 100%;
+  height: 60px;
+  margin-top: 32px;
+  font-size: 16px;
+}

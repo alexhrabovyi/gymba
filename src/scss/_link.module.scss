@@ -26,4 +26,16 @@
   &21px {
     font-size: 21px;
   }
+
+  &Blue {
+    color: $blue;
+
+    &:hover {
+      color: $dark-blue;
+    }
+
+    &:active {
+      color: $blue-active;
+    }
+  }
 }
