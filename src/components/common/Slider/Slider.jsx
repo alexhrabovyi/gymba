@@ -1,6 +1,7 @@
+/* eslint-disable jsx-a11y/no-static-element-interactions */
 /* eslint-disable consistent-return */
 import {
-  useEffect, useState, memo, useRef,
+  useEffect, useState, memo, useRef, useMemo, useCallback,
 } from 'react';
 import sliderCls from './Slider.module.scss';
 
@@ -11,14 +12,51 @@ const Slider = memo(({
   perView = 1,
   btnPrevDetails,
   btnNextDetails,
+  customPagination,
 }) => {
   const [activeSlideId, setActiveSlideId] = useState(+initActiveSlideId);
   const containerRef = useRef(null);
   const wrapperRef = useRef(null);
+  const customPaginationBlockRef = useRef(null);
 
   const slideWidth = (100 - +gap * (+perView - 1)) / +perView;
   const gridTemplateColumns = `repeat(${slides.length}, ${slideWidth}%)`;
   const translateValue = -(activeSlideId * slideWidth + activeSlideId * +gap);
+
+  const setupCustomPaginationBlock = useMemo(() => {
+    if (!customPagination) return;
+
+    return (
+      <div
+        ref={customPaginationBlockRef}
+        className={customPagination.paginationBlockSelector}
+        onClick={(e) => {
+          const btn = e.target.closest('[data-pagination-id]');
+          if (!btn) return;
+
+          const newSlideId = +btn.dataset.paginationId;
+          setActiveSlideId(newSlideId);
+        }}
+      >
+        {customPagination.paginationButtons}
+      </div>
+    );
+  }, [customPagination]);
+
+  const toggleActiveCustomPaginationButton = useCallback(() => {
+    if (!customPagination) return;
+
+    const activePaginationBtn = customPaginationBlockRef.current.querySelector(`[data-pagination-id="${activeSlideId}"]`);
+    activePaginationBtn.classList.add(customPagination.paginationButtonActiveClass);
+
+    return () => {
+      if (!customPagination) return;
+
+      activePaginationBtn.classList.remove(customPagination.paginationButtonActiveClass);
+    };
+  }, [customPagination, activeSlideId]);
+
+  useEffect(toggleActiveCustomPaginationButton, [toggleActiveCustomPaginationButton]);
 
   useEffect(() => {
     if (!btnPrevDetails) return;
@@ -154,21 +192,24 @@ const Slider = memo(({
   }, [slides, activeSlideId, perView]);
 
   return (
-    <div ref={containerRef} className={sliderCls.container}>
-      <div
-        ref={wrapperRef}
-        className={sliderCls.wrapper}
-        style={
-          {
-            gridTemplateColumns,
-            gap: `${gap}%`,
-            transform: `translateX(${translateValue}%)`,
+    <>
+      {setupCustomPaginationBlock}
+      <div ref={containerRef} className={sliderCls.container}>
+        <div
+          ref={wrapperRef}
+          className={sliderCls.wrapper}
+          style={
+            {
+              gridTemplateColumns,
+              gap: `${gap}%`,
+              transform: `translateX(${translateValue}%)`,
+            }
           }
-        }
-      >
-        {slides}
+        >
+          {slides}
+        </div>
       </div>
-    </div>
+    </>
   );
 });
 

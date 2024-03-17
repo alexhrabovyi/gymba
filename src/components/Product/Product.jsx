@@ -1,9 +1,11 @@
+/* eslint-disable react/no-array-index-key */
 /* eslint-disable react/jsx-no-bind */
 import {
-  useState, useEffect, Suspense, useMemo,
+  useState, useEffect, Suspense, useMemo, useRef, useCallback,
 } from 'react';
 import { useLoaderData, useFetcher, Await } from 'react-router-dom';
 import classNames from 'classnames';
+import findAllInteractiveElements from '../../utils/findAllInteractiveElements.js';
 import Spinner from '../common/Spinner/Spinner.jsx';
 import DynamicImage from '../common/DynamicImage/DynamicImage.jsx';
 import Slider from '../common/Slider/Slider.jsx';
@@ -14,11 +16,16 @@ import linkCls from '../../scss/_link.module.scss';
 import productCls from './Product.module.scss';
 import Favorite from '../../assets/images/icons/favorite.svg';
 import Compare from '../../assets/images/icons/compare.svg';
+import InfoIcon from './images/info.svg';
+import Line from '../../assets/images/icons/oblique.svg';
 
 export default function Product() {
   const { categoryId, subcategoryId, product } = useLoaderData();
   const wishlistFetcher = useFetcher();
   const cartFetcher = useFetcher();
+
+  const descTabPanelRef = useRef();
+  const commentTabPanelRef = useRef();
 
   const [productInWishlist, setProductInWishlist] = useState(false);
   const [productInCart, setProductInCart] = useState(false);
@@ -35,6 +42,7 @@ export default function Product() {
 
     return result;
   });
+  const [isDescTabPanelActive, setIsDescTabPanelActive] = useState(true);
 
   useEffect(() => {
     if (wishlistFetcher.state === 'idle' && !wishlistFetcher.data) {
@@ -68,6 +76,30 @@ export default function Product() {
       setProductInCart(productInCartFromFetcher);
     }
   }
+
+  const disableTabPanelElements = useCallback(() => {
+    let interactiveElems;
+
+    if (isDescTabPanelActive) {
+      interactiveElems = findAllInteractiveElements(commentTabPanelRef.current);
+    } else {
+      interactiveElems = findAllInteractiveElements(descTabPanelRef.current);
+    }
+
+    interactiveElems.forEach((el) => {
+      el.tabIndex = '-1';
+      el.setAttribute('aria-hidden', true);
+    });
+
+    return () => {
+      interactiveElems.forEach((el) => {
+        el.tabIndex = '0';
+        el.setAttribute('aria-hidden', false);
+      });
+    };
+  }, [isDescTabPanelActive]);
+
+  useEffect(disableTabPanelElements, [disableTabPanelElements]);
 
   function wishlistButtonOnClick() {
     const data = JSON.stringify([categoryId, subcategoryId, product.id]);
@@ -105,12 +137,14 @@ export default function Product() {
     }
   }
 
-  const paginationBtns = useMemo(() => {
-    const result = imgSrcs.map(([key, src]) => (
+  const paginationBtns = useMemo(() => (
+    imgSrcs.map(([key, src], i) => (
       <button
         key={key}
         type="button"
         className={productCls.paginationBtn}
+        data-pagination-id={i}
+        aria-label={`Перейти к слайду ${i}`}
       >
         <Suspense
           fallback={<Spinner className={productCls.paginationBtnSpinner} />}
@@ -123,10 +157,14 @@ export default function Product() {
           </Await>
         </Suspense>
       </button>
-    ));
+    ))
+  ), [product, imgSrcs]);
 
-    return result;
-  }, [product, imgSrcs]);
+  const sliderCustomPaginationProps = useMemo(() => ({
+    paginationBlockSelector: productCls.imagePaginationBlock,
+    paginationButtons: paginationBtns,
+    paginationButtonActiveClass: productCls.paginationBtn_active,
+  }), [paginationBtns]);
 
   const slides = useMemo(() => {
     const result = imgSrcs.map(([key, src]) => (
@@ -183,12 +221,86 @@ export default function Product() {
     discountPercent = discountPercent.toFixed(0);
   }
 
+  const descriptionBlock = useMemo(() => {
+    if (!product.description) return;
+
+    return (
+      <div className={productCls.descriptionBlock}>
+        <p className={classNames(
+          textCls.text,
+          textCls.textFw800,
+          textCls.text32px,
+          textCls.textBlack,
+          productCls.descriptionSubtitle,
+        )}
+        >
+          О товаре
+        </p>
+        <p className={classNames(
+          textCls.text,
+          textCls.textBlack,
+        )}
+        >
+          {product.description}
+        </p>
+      </div>
+    );
+  }, [product]);
+
+  const specsBlock = useMemo(() => {
+    const allSpecs = Object.entries({ ...product['specs-filters'], ...product.specs });
+
+    return (
+      <div className={productCls.specsBlock}>
+        <p className={classNames(
+          textCls.text,
+          textCls.textFw800,
+          textCls.text24px,
+          textCls.textBlack,
+          productCls.specsTitle,
+        )}
+        >
+          Характеристики
+        </p>
+        <ul className={productCls.specsList}>
+          {allSpecs.map(([name, value], i) => {
+            if (typeof value === 'object') {
+              value = value.join(', ');
+            }
+
+            return (
+              <li
+                key={i}
+                className={productCls.spec}
+              >
+                <p className={classNames(
+                  textCls.text,
+                  textCls.textGrey,
+                )}
+                >
+                  {`${name}:`}
+                </p>
+                <p className={classNames(
+                  textCls.text,
+                  textCls.textBlack,
+                )}
+                >
+                  {value}
+                </p>
+              </li>
+            );
+          })}
+        </ul>
+      </div>
+    );
+  }, [product]);
+
   return (
     <main className={classNames(containerCls.container, productCls.main)}>
       <h1 className={classNames(
         textCls.text,
         textCls.textFw800,
-        textCls.text48px,
+        textCls.text38px,
         textCls.textBlackj,
         productCls.title,
       )}
@@ -219,16 +331,12 @@ export default function Product() {
         </button>
       </div>
       <div className={productCls.mainBlock}>
-        <div className={productCls.imageBlock}>
-          <div className={productCls.imagePaginationBlock}>
-            {paginationBtns}
-          </div>
-          <div className={productCls.imageSliderBlock}>
-            <Slider
-              slides={slides}
-              gap={20}
-            />
-          </div>
+        <div className={productCls.imageSliderBlock}>
+          <Slider
+            slides={slides}
+            gap={20}
+            customPagination={sliderCustomPaginationProps}
+          />
         </div>
         <div className={productCls.mainSpecsBlock}>
           <p className={classNames(
@@ -245,12 +353,13 @@ export default function Product() {
             {mainSpecsElems}
           </ul>
           <a
-            href="#specs"
+            href="#descriptionTabPanel"
             className={classNames(
               linkCls.link,
               linkCls.linkBlue,
             )}
             alt="Посмотреть все характеристики"
+            onClick={() => setIsDescTabPanelActive(true)}
           >
             Посмотреть все
           </a>
@@ -293,6 +402,123 @@ export default function Product() {
             {!productInCart ? 'Добавить в корзину' : 'В корзине'}
           </Button>
         </div>
+      </div>
+      <div
+        className={productCls.tabList}
+        role="tablist"
+      >
+        <button
+          type="button"
+          className={productCls.tabButton}
+          role="tab"
+          aria-selected={isDescTabPanelActive}
+          aria-controls="descriptionTabPanel"
+          aria-label="Показать панель Описание"
+          onClick={() => setIsDescTabPanelActive(true)}
+        >
+          Описание
+          <span
+            className={classNames(
+              productCls.tabButtonLine,
+              isDescTabPanelActive && productCls.tabButtonLine_active,
+            )}
+          />
+        </button>
+        <button
+          type="button"
+          className={productCls.tabButton}
+          role="tab"
+          aria-selected={!isDescTabPanelActive}
+          aria-controls="commentTabPanel"
+          aria-label="Показать панель Отзывы"
+          onClick={() => setIsDescTabPanelActive(false)}
+        >
+          Отзывы
+          <span
+            className={classNames(
+              productCls.tabButtonLine,
+              !isDescTabPanelActive && productCls.tabButtonLine_active,
+            )}
+          />
+        </button>
+      </div>
+      <div className={productCls.tabPanelsAndBannerBlock}>
+        <div className={productCls.tabPanels}>
+          <div
+            ref={descTabPanelRef}
+            className={classNames(
+              productCls.tabPanel,
+              isDescTabPanelActive && productCls.tabPanel_active,
+            )}
+            id="descriptionTabPanel"
+            role="tabpanel"
+          >
+            {descriptionBlock}
+            {specsBlock}
+          </div>
+          <div
+            ref={commentTabPanelRef}
+            className={classNames(
+              productCls.tabPanel,
+              !isDescTabPanelActive && productCls.tabPanel_active,
+            )}
+            id="commentTabPanel"
+            role="tabpanel"
+          >
+            <div className={productCls.noCommentsBlock}>
+              <div className={productCls.noCommentsTextBlock}>
+                <Line className={productCls.noCommentsLine} />
+                <p className={classNames(
+                  textCls.text,
+                  textCls.textFw800,
+                  textCls.text32px,
+                  productCls.noCommentsText,
+                )}
+                >
+                  Відгуків немає
+                </p>
+                <p className={classNames(
+                  textCls.text,
+                  textCls.text24px,
+                  textCls.textGrey,
+                )}
+                >
+                  Будьте першим, хто залише відгук!
+                </p>
+              </div>
+              <Button
+                className={productCls.commentButton}
+              >
+                Написати відгук
+              </Button>
+            </div>
+          </div>
+        </div>
+        <aside className={productCls.bannerBlock}>
+          <InfoIcon className={productCls.infoIcon} />
+          <p className={classNames(
+            textCls.text,
+            textCls.textFw800,
+            textCls.text18px,
+            textCls.textBlack,
+            productCls.bannerTitle,
+          )}
+          >
+            Есть вопросы по товару?
+          </p>
+          <p className={classNames(
+            textCls.text,
+            textCls.textBlack,
+          )}
+          >
+            Задайте их нам и мы поможем вам определиться с выбором.
+          </p>
+          <Button
+            className={productCls.bannerButton}
+          >
+            Связаться с нами
+          </Button>
+        </aside>
       </div>
     </main>
   );
