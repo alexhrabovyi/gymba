@@ -2,6 +2,7 @@ import classNames from 'classnames';
 import {
   memo, useRef, useEffect, useLayoutEffect,
 } from 'react';
+import useToggleInteractiveElements from '../../../hooks/useToggleInteractiveElements.jsx';
 import categoryMenuCls from './HeaderCategoryMenu.module.scss';
 import containerCls from '../../../scss/_container.module.scss';
 import textCls from '../../../scss/_text.module.scss';
@@ -33,26 +34,28 @@ const HeaderCategoryMenu = memo(({
     };
   }, [isMenuOpen]);
 
-  useEffect(() => {
-    let menuElements;
+  // useEffect(() => {
+  //   let menuElements;
 
-    if (!isMenuOpen) {
-      menuElements = findAllInteractiveElements(menuRef.current);
-      menuElements.forEach((el) => {
-        el.tabIndex = '-1';
-        el.ariaHidden = true;
-      });
-    }
+  //   if (!isMenuOpen) {
+  //     menuElements = findAllInteractiveElements(menuRef.current);
+  //     menuElements.forEach((el) => {
+  //       el.tabIndex = '-1';
+  //       el.ariaHidden = true;
+  //     });
+  //   }
 
-    return () => {
-      if (!isMenuOpen) {
-        menuElements.forEach((el) => {
-          el.tabIndex = '';
-          el.ariaHidden = false;
-        });
-      }
-    };
-  });
+  //   return () => {
+  //     if (!isMenuOpen) {
+  //       menuElements.forEach((el) => {
+  //         el.tabIndex = '';
+  //         el.ariaHidden = false;
+  //       });
+  //     }
+  //   };
+  // });
+
+  useToggleInteractiveElements(menuRef.current, isMenuOpen, 'category');
 
   useEffect(() => {
     if (isMenuOpen) menuRef.current.focus();

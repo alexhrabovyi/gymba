@@ -1,5 +1,5 @@
 import {
-  useState, useCallback, useLayoutEffect, useMemo,
+  useState, useCallback, useLayoutEffect, useMemo, useRef,
 } from 'react';
 import { useLoaderData, useSearchParams } from 'react-router-dom';
 import classNames from 'classnames';
@@ -29,6 +29,8 @@ export default function Products() {
     pageAmount,
   } = useLoaderData();
   const [searchParams, setSearchParams] = useSearchParams();
+
+  const openFilterMenuBtnRef = useRef();
 
   const [isFilterMenuOpen, setIsFilterMenuOpen] = useState(false);
   const [windowWidth, setWindowWidth] = useState();
@@ -122,6 +124,7 @@ export default function Products() {
           <div className={productsCls.infoBlock}>
             {windowWidth <= 1024 && (
             <button
+              ref={openFilterMenuBtnRef}
               type="button"
               className={productsCls.filterButton}
               aria-haspopup="dialog"
@@ -239,6 +242,7 @@ export default function Products() {
         isMenuOpen={isFilterMenuOpen}
         setIsMenuOpen={setIsFilterMenuOpen}
         label="Меню фільтрів"
+        openButton={openFilterMenuBtnRef.current}
       >
         <div className={productsCls.filterBlockInMenu}>
           <FilterBlock />

@@ -3,6 +3,7 @@ import classNames from 'classnames';
 import {
   memo, useRef, useEffect, useLayoutEffect,
 } from 'react';
+import useToggleInteractiveElements from '../../../hooks/useToggleInteractiveElements.jsx';
 import containerCls from '../../../scss/_container.module.scss';
 import subcategoryMenuCls from './HeaderSubcategoryMenu.module.scss';
 import linkCls from '../../../scss/_link.module.scss';
@@ -32,26 +33,28 @@ const HeaderSubcategoryMenu = memo(({ isMenuOpen, category, backToCatalogOnClick
     };
   }, [isMenuOpen]);
 
-  useEffect(() => {
-    let menuElements;
+  // useEffect(() => {
+  //   let menuElements;
 
-    if (!isMenuOpen) {
-      menuElements = findAllInteractiveElements(menuRef.current);
-      menuElements.forEach((el) => {
-        el.tabIndex = '-1';
-        el.ariaHidden = true;
-      });
-    }
+  //   if (!isMenuOpen) {
+  //     menuElements = findAllInteractiveElements(menuRef.current);
+  //     menuElements.forEach((el) => {
+  //       el.tabIndex = '-1';
+  //       el.ariaHidden = true;
+  //     });
+  //   }
 
-    return () => {
-      if (!isMenuOpen) {
-        menuElements.forEach((el) => {
-          el.tabIndex = '';
-          el.ariaHidden = false;
-        });
-      }
-    };
-  });
+  //   return () => {
+  //     if (!isMenuOpen) {
+  //       menuElements.forEach((el) => {
+  //         el.tabIndex = '';
+  //         el.ariaHidden = false;
+  //       });
+  //     }
+  //   };
+  // });
+
+  useToggleInteractiveElements(menuRef.current, isMenuOpen, 'subcategory');
 
   useEffect(() => {
     if (isMenuOpen) menuRef.current.focus();

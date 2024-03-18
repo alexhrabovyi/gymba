@@ -23,6 +23,7 @@ import Cart from '../../assets/images/icons/cart.svg';
 import HeaderMainMenu from './HeaderMainMenu/HeaderMainMenu.jsx';
 import getScrollwidth from '../../utils/getScrollWidth.jsx';
 import useOnResize from '../../hooks/useOnResize.jsx';
+import useHideScrollbarOnOpen from '../../hooks/useHideScrollbarOnOpen.jsx';
 import Button from '../common/Button/Button.jsx';
 import Input from '../common/Input/Input.jsx';
 import Search from './images/search.svg';
@@ -105,6 +106,8 @@ export default function Header() {
 
   useOnResize(getWindowWidth);
 
+  useHideScrollbarOnOpen(isAnyMenuOpen);
+
   const headerWrapperRef = useRef(null);
   const headerRef = useRef(null);
 
@@ -113,12 +116,8 @@ export default function Header() {
     const header = headerRef.current;
 
     if (isAnyMenuOpen) {
-      const scrollWidth = getScrollwidth();
-      document.body.style.paddingRight = `${scrollWidth}px`;
-      document.body.style.overflow = 'hidden';
-
       const paddingRight = +getComputedStyle(header).paddingRight.match(/\d+/)[0];
-      const newPaddingRight = paddingRight + scrollWidth;
+      const newPaddingRight = paddingRight + getScrollwidth();
 
       header.style.paddingRight = `${newPaddingRight}px`;
       header.style.width = `${window.innerWidth}px`;
@@ -127,8 +126,6 @@ export default function Header() {
     }
 
     return () => {
-      document.body.style.paddingRight = '';
-      document.body.style.overflowY = '';
       header.style.paddingRight = '';
       header.style.width = '';
       headerWrapper.style.width = '';
@@ -137,31 +134,40 @@ export default function Header() {
 
   const openMenuButtonRef = useRef(null);
 
+  // useEffect(() => {
+  //   const openMenuButton = openMenuButtonRef.current;
+  //   let nonDialogElements;
+
+  //   if (isAnyMenuOpen) {
+  //     nonDialogElements = Array.from(findAllInteractiveElements(document.body))
+  //       .filter((el) => !el.closest('[role="dialog"]'));
+
+  //     nonDialogElements.forEach((el) => {
+  //       el.tabIndex = '-1';
+  //       el.ariaHidden = true;
+  //     });
+
+  //     openMenuButton.tabIndex = '0';
+  //     openMenuButton.ariaHidden = false;
+  //   }
+
+  //   return () => {
+  //     if (isAnyMenuOpen) {
+  //       nonDialogElements.forEach((el) => {
+  //         el.tabIndex = '';
+  //         el.ariaHidden = '';
+  //       });
+  //     }
+  //   };
+  // }, [isAnyMenuOpen]);
+
   useEffect(() => {
     const openMenuButton = openMenuButtonRef.current;
-    let nonDialogElements;
 
     if (isAnyMenuOpen) {
-      nonDialogElements = Array.from(findAllInteractiveElements(document.body))
-        .filter((el) => !el.closest('[role="dialog"]'));
-
-      nonDialogElements.forEach((el) => {
-        el.tabIndex = '-1';
-        el.ariaHidden = true;
-      });
-
       openMenuButton.tabIndex = '0';
       openMenuButton.ariaHidden = false;
     }
-
-    return () => {
-      if (isAnyMenuOpen) {
-        nonDialogElements.forEach((el) => {
-          el.tabIndex = '';
-          el.ariaHidden = '';
-        });
-      }
-    };
   }, [isAnyMenuOpen]);
 
   function headerOnClick(e) {

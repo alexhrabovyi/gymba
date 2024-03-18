@@ -5,13 +5,13 @@ import {
 import classNames from 'classnames';
 import containerCls from '../../../scss/_container.module.scss';
 import menuCls from './LeftSideMenu.module.scss';
-import useOnResize from '../../../hooks/useOnResize.jsx';
-import findAllInteractiveElements from '../../../utils/findAllInteractiveElements.js';
-import getScrollWidth from '../../../utils/getScrollWidth.jsx';
+import useHideScrollbarOnOpen from '../../../hooks/useHideScrollbarOnOpen.jsx';
+import useCloseOnResize from '../../../hooks/useCloseOnResize.jsx';
+import useToggleInteractiveElements from '../../../hooks/useToggleInteractiveElements.jsx';
 import CrossIcon from '../../../assets/images/icons/cross.svg';
 
 const LeftSideMenu = memo(({
-  children, isMenuOpen, setIsMenuOpen, label,
+  children, isMenuOpen, setIsMenuOpen, label, openButton,
 }) => {
   const menuRef = useRef(null);
 
@@ -34,74 +34,9 @@ const LeftSideMenu = memo(({
 
   useLayoutEffect(calcMenuHeight, [calcMenuHeight]);
 
-  const hideScrollbarOnOpen = useCallback(() => {
-    if (isMenuOpen) {
-      const scrollWidth = getScrollWidth();
-      document.body.style.paddingRight = `${scrollWidth}px`;
-      document.body.style.overflow = 'hidden';
-    }
-
-    return () => {
-      document.body.style.paddingRight = '';
-      document.body.style.overflowY = '';
-    };
-  }, [isMenuOpen]);
-
-  useEffect(hideScrollbarOnOpen, [hideScrollbarOnOpen]);
-
-  const closeMenusOnResize = useCallback(() => {
-    setIsMenuOpen(false);
-  }, [setIsMenuOpen]);
-
-  useOnResize(closeMenusOnResize);
-
-  const makeMenuElementsDisabled = useCallback(() => {
-    let menuElements;
-
-    if (!isMenuOpen) {
-      menuElements = findAllInteractiveElements(menuRef.current);
-      menuElements.forEach((el) => {
-        el.tabIndex = '-1';
-        el.ariaHidden = true;
-      });
-    }
-
-    return () => {
-      if (!isMenuOpen) {
-        menuElements.forEach((el) => {
-          el.tabIndex = '';
-          el.ariaHidden = false;
-        });
-      }
-    };
-  }, [isMenuOpen]);
-
-  useEffect(makeMenuElementsDisabled, [makeMenuElementsDisabled]);
-
-  const makePageElementsDisabled = useCallback(() => {
-    let nonDialogElements;
-
-    if (isMenuOpen) {
-      nonDialogElements = Array.from(findAllInteractiveElements(document.body))
-        .filter((el) => !el.closest('[role="dialog"]'));
-
-      nonDialogElements.forEach((el) => {
-        el.tabIndex = '-1';
-        el.ariaHidden = true;
-      });
-    }
-
-    return () => {
-      if (isMenuOpen) {
-        nonDialogElements.forEach((el) => {
-          el.tabIndex = '';
-          el.ariaHidden = '';
-        });
-      }
-    };
-  }, [isMenuOpen]);
-
-  useEffect(makePageElementsDisabled, [makePageElementsDisabled]);
+  useHideScrollbarOnOpen(isMenuOpen);
+  useCloseOnResize(setIsMenuOpen);
+  useToggleInteractiveElements(menuRef.current, isMenuOpen);
 
   const focusOnOpen = useCallback(() => {
     if (isMenuOpen) menuRef.current.focus();
@@ -111,6 +46,7 @@ const LeftSideMenu = memo(({
 
   function backdropOnClick() {
     setIsMenuOpen(false);
+    openButton.focus();
   }
 
   return (
@@ -132,7 +68,10 @@ const LeftSideMenu = memo(({
           type="button"
           className={menuCls.closeButton}
           aria-label={`Закрыть ${label}`}
-          onClick={() => setIsMenuOpen(false)}
+          onClick={() => {
+            setIsMenuOpen(false);
+            openButton.focus();
+          }}
         >
           <CrossIcon className={menuCls.crossIcon} />
         </button>

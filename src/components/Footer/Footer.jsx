@@ -5,9 +5,9 @@ import classNames from 'classnames';
 import containerCls from '../../scss/_container.module.scss';
 import textCls from '../../scss/_text.module.scss';
 import footerCls from './Footer.module.scss';
-import Input from '../common/Input/Input.jsx';
 import Button from '../common/Button/Button.jsx';
 import ValidationForm from '../common/ValidationForm/ValidationForm.jsx';
+import InputWithErrorMessage from '../common/InputWithErrorMessage/InputWithErrorMessage.jsx';
 import logo from './images/logo.svg?url';
 
 export default function Footer() {
@@ -46,11 +46,12 @@ export default function Footer() {
           <label htmlFor="input_subscribe" className={classNames(textCls.text, textCls.textWhite)}>
             Подпишитесь на рассылку новостей, акций, спецпредложений
           </label>
-          <div className={footerCls.inputBLock}>
-            <Input
+          <div className={footerCls.footerWithButtonBlock}>
+            <InputWithErrorMessage
               type="email"
               name="subscribeEmail"
-              className={footerCls.input}
+              inputBlockClassName={footerCls.inputBLock}
+              inputClassName={footerCls.input}
               placeholder="Электронная почта"
               id="input_subscribe"
               required

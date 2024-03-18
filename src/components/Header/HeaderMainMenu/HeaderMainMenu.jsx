@@ -10,6 +10,7 @@ import textCls from '../../../scss/_text.module.scss';
 import productImg from './images/product.png';
 import getScrollWidth from '../../../utils/getScrollWidth.jsx';
 import useOnResize from '../../../hooks/useOnResize.jsx';
+import useToggleInteractiveElements from '../../../hooks/useToggleInteractiveElements.jsx';
 import User from '../images/user.svg';
 import Compare from '../../../assets/images/icons/compare.svg';
 import Favorite from '../../../assets/images/icons/favorite.svg';
@@ -72,26 +73,28 @@ const HeaderMainMenu = memo(({ isMenuOpen, categories, catalogBtnOnClick }) => {
     };
   }, [isMenuOpen]);
 
-  useEffect(() => {
-    let menuElements;
+  // useEffect(() => {
+  //   let menuElements;
 
-    if (!isMenuOpen) {
-      menuElements = findAllInteractiveElements(menuRef.current);
-      menuElements.forEach((el) => {
-        el.tabIndex = '-1';
-        el.ariaHidden = true;
-      });
-    }
+  //   if (!isMenuOpen) {
+  //     menuElements = findAllInteractiveElements(menuRef.current);
+  //     menuElements.forEach((el) => {
+  //       el.tabIndex = '-1';
+  //       el.ariaHidden = true;
+  //     });
+  //   }
 
-    return () => {
-      if (!isMenuOpen) {
-        menuElements.forEach((el) => {
-          el.tabIndex = '';
-          el.ariaHidden = false;
-        });
-      }
-    };
-  });
+  //   return () => {
+  //     if (!isMenuOpen) {
+  //       menuElements.forEach((el) => {
+  //         el.tabIndex = '';
+  //         el.ariaHidden = false;
+  //       });
+  //     }
+  //   };
+  // });
+
+  useToggleInteractiveElements(menuRef.current, isMenuOpen);
 
   function onPointerMoveHandler(e) {
     const link = e.target.closest('a');

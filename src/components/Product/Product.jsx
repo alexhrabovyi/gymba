@@ -3,13 +3,19 @@
 import {
   useState, useEffect, Suspense, useMemo, useRef, useCallback,
 } from 'react';
-import { useLoaderData, useFetcher, Await } from 'react-router-dom';
+import {
+  useLoaderData, useFetcher, Await, Link,
+} from 'react-router-dom';
 import classNames from 'classnames';
 import findAllInteractiveElements from '../../utils/findAllInteractiveElements.js';
 import Spinner from '../common/Spinner/Spinner.jsx';
 import DynamicImage from '../common/DynamicImage/DynamicImage.jsx';
 import Slider from '../common/Slider/Slider.jsx';
 import Button from '../common/Button/Button.jsx';
+import Popup from '../common/Popup/Popup.jsx';
+import ValidationForm from '../common/ValidationForm/ValidationForm.jsx';
+import InputWithErrorMessage from '../common/InputWithErrorMessage/InputWithErrorMessage.jsx';
+import TextAreaWithErrorMessage from '../common/TextareaWIthErrorMessage/TextareaWithErrorMessage.jsx';
 import containerCls from '../../scss/_container.module.scss';
 import textCls from '../../scss/_text.module.scss';
 import linkCls from '../../scss/_link.module.scss';
@@ -26,6 +32,8 @@ export default function Product() {
 
   const descTabPanelRef = useRef();
   const commentTabPanelRef = useRef();
+  const openCommentPopupBtnRef = useRef();
+  const openQuestionPopupBtnRef = useRef();
 
   const [productInWishlist, setProductInWishlist] = useState(false);
   const [productInCart, setProductInCart] = useState(false);
@@ -43,6 +51,8 @@ export default function Product() {
     return result;
   });
   const [isDescTabPanelActive, setIsDescTabPanelActive] = useState(true);
+  const [isCommentPopupActive, setIsCommentPopupActive] = useState(false);
+  const [isQuestionPopupActive, setIsQuestionPopupActive] = useState(false);
 
   useEffect(() => {
     if (wishlistFetcher.state === 'idle' && !wishlistFetcher.data) {
@@ -296,230 +306,380 @@ export default function Product() {
   }, [product]);
 
   return (
-    <main className={classNames(containerCls.container, productCls.main)}>
-      <h1 className={classNames(
-        textCls.text,
-        textCls.textFw800,
-        textCls.text38px,
-        textCls.textBlackj,
-        productCls.title,
-      )}
-      >
-        {product.name}
-      </h1>
-      <div className={productCls.additionalButtonsBlock}>
-        <button
-          type="button"
-          className={classNames(
-            productCls.iconButton,
-            productInWishlist && productCls.iconButton_active,
-          )}
-          onClick={wishlistButtonOnClick}
-          aria-label={productInWishlist ? `Удалить ${product.name} из избранного` : `Добавить ${product.name} в избранное`}
+    <>
+      <main className={classNames(containerCls.container, productCls.main)}>
+        <h1 className={classNames(
+          textCls.text,
+          textCls.textFw800,
+          textCls.text38px,
+          textCls.textBlackj,
+          productCls.title,
+        )}
         >
-          <Favorite className={productCls.buttonIcon} />
-          {!productInWishlist ? 'В избранное' : 'В избранном'}
-        </button>
-        <button
-          type="button"
-          className={classNames(
-            productCls.iconButton,
-          )}
-        >
-          <Compare className={productCls.buttonIcon} />
-          К сравнению
-        </button>
-      </div>
-      <div className={productCls.mainBlock}>
-        <div className={productCls.imageSliderBlock}>
-          <Slider
-            slides={slides}
-            gap={20}
-            customPagination={sliderCustomPaginationProps}
-          />
-        </div>
-        <div className={productCls.mainSpecsBlock}>
-          <p className={classNames(
-            textCls.text,
-            textCls.textFw800,
-            textCls.text14px,
-            textCls.textBlack,
-            productCls.mainSpecsTitle,
-          )}
-          >
-            Основные характеристики
-          </p>
-          <ul className={productCls.mainSpecsList}>
-            {mainSpecsElems}
-          </ul>
-          <a
-            href="#descriptionTabPanel"
+          {product.name}
+        </h1>
+        <div className={productCls.additionalButtonsBlock}>
+          <button
+            type="button"
             className={classNames(
-              linkCls.link,
-              linkCls.linkBlue,
+              productCls.iconButton,
+              productInWishlist && productCls.iconButton_active,
             )}
-            alt="Посмотреть все характеристики"
-            onClick={() => setIsDescTabPanelActive(true)}
+            onClick={wishlistButtonOnClick}
+            aria-label={productInWishlist ? `Удалить ${product.name} из избранного` : `Добавить ${product.name} в избранное`}
           >
-            Посмотреть все
-          </a>
+            <Favorite className={productCls.buttonIcon} />
+            {!productInWishlist ? 'В избранное' : 'В избранном'}
+          </button>
+          <button
+            type="button"
+            className={classNames(
+              productCls.iconButton,
+            )}
+          >
+            <Compare className={productCls.buttonIcon} />
+            К сравнению
+          </button>
         </div>
-        <div className={productCls.priceAndCartBlock}>
-          {product.oldPrice && (
-            <p className={productCls.oldPrice}>
-              {`${product.oldPrice} ₴/шт`}
-            </p>
-          )}
-          <div className={productCls.mainPriceBlock}>
+        <div className={productCls.mainBlock}>
+          <div className={productCls.imageSliderBlock}>
+            <Slider
+              slides={slides}
+              gap={20}
+              customPagination={sliderCustomPaginationProps}
+            />
+          </div>
+          <div className={productCls.mainSpecsBlock}>
             <p className={classNames(
               textCls.text,
               textCls.textFw800,
-              textCls.text48px,
+              textCls.text14px,
               textCls.textBlack,
-              product.mainPrice,
+              productCls.mainSpecsTitle,
             )}
             >
-              {product.price}
+              Основные характеристики
             </p>
-            <span className={classNames(
+            <ul className={productCls.mainSpecsList}>
+              {mainSpecsElems}
+            </ul>
+            <a
+              href="#descriptionTabPanel"
+              className={classNames(
+                linkCls.link,
+                linkCls.linkBlue,
+              )}
+              alt="Посмотреть все характеристики"
+              onClick={() => setIsDescTabPanelActive(true)}
+            >
+              Посмотреть все
+            </a>
+          </div>
+          <div className={productCls.priceAndCartBlock}>
+            {product.oldPrice && (
+            <p className={productCls.oldPrice}>
+              {`${product.oldPrice} ₴/шт`}
+            </p>
+            )}
+            <div className={productCls.mainPriceBlock}>
+              <p className={classNames(
+                textCls.text,
+                textCls.textFw800,
+                textCls.text48px,
+                textCls.textBlack,
+                product.mainPrice,
+              )}
+              >
+                {product.price}
+              </p>
+              <span className={classNames(
+                textCls.text,
+                textCls.textBlack,
+              )}
+              >
+                ₴/шт
+              </span>
+              {product.oldPrice && (
+              <div className={productCls.discountBlock}>
+                {`-${discountPercent}%`}
+              </div>
+              )}
+            </div>
+            <Button
+              className={productCls.cartButton}
+              ariaLabel={!productInCart ? `Добавить ${product.name} в корзину` : `Удалить ${product.name} из корзины`}
+              onClick={cartButtonOnClick}
+            >
+              {!productInCart ? 'Добавить в корзину' : 'В корзине'}
+            </Button>
+          </div>
+        </div>
+        <div
+          className={productCls.tabList}
+          role="tablist"
+        >
+          <button
+            type="button"
+            className={productCls.tabButton}
+            role="tab"
+            aria-selected={isDescTabPanelActive}
+            aria-controls="descriptionTabPanel"
+            aria-label="Показать панель Описание"
+            onClick={() => setIsDescTabPanelActive(true)}
+          >
+            Описание
+            <span
+              className={classNames(
+                productCls.tabButtonLine,
+                isDescTabPanelActive && productCls.tabButtonLine_active,
+              )}
+            />
+          </button>
+          <button
+            type="button"
+            className={productCls.tabButton}
+            role="tab"
+            aria-selected={!isDescTabPanelActive}
+            aria-controls="commentTabPanel"
+            aria-label="Показать панель Отзывы"
+            onClick={() => setIsDescTabPanelActive(false)}
+          >
+            Отзывы
+            <span
+              className={classNames(
+                productCls.tabButtonLine,
+                !isDescTabPanelActive && productCls.tabButtonLine_active,
+              )}
+            />
+          </button>
+        </div>
+        <div className={productCls.tabPanelsAndBannerBlock}>
+          <div className={productCls.tabPanels}>
+            <div
+              ref={descTabPanelRef}
+              className={classNames(
+                productCls.tabPanel,
+                isDescTabPanelActive && productCls.tabPanel_active,
+              )}
+              id="descriptionTabPanel"
+              role="tabpanel"
+            >
+              {descriptionBlock}
+              {specsBlock}
+            </div>
+            <div
+              ref={commentTabPanelRef}
+              className={classNames(
+                productCls.tabPanel,
+                !isDescTabPanelActive && productCls.tabPanel_active,
+              )}
+              id="commentTabPanel"
+              role="tabpanel"
+            >
+              <div className={productCls.noCommentsBlock}>
+                <div className={productCls.noCommentsTextBlock}>
+                  <Line className={productCls.noCommentsLine} />
+                  <p className={classNames(
+                    textCls.text,
+                    textCls.textFw800,
+                    textCls.text32px,
+                    productCls.noCommentsText,
+                  )}
+                  >
+                    Відгуків немає
+                  </p>
+                  <p className={classNames(
+                    textCls.text,
+                    textCls.text24px,
+                    textCls.textGrey,
+                  )}
+                  >
+                    Будьте першим, хто залише відгук!
+                  </p>
+                </div>
+                <Button
+                  ref={openCommentPopupBtnRef}
+                  className={productCls.commentButton}
+                  onClick={() => setIsCommentPopupActive(true)}
+                  aria-haspopup="dialog"
+                  aria-label="Відкрити вікно Написати відгук"
+                >
+                  Написати відгук
+                </Button>
+              </div>
+            </div>
+          </div>
+          <aside className={productCls.bannerBlock}>
+            <InfoIcon className={productCls.infoIcon} />
+            <p className={classNames(
+              textCls.text,
+              textCls.textFw800,
+              textCls.text18px,
+              textCls.textBlack,
+              productCls.bannerTitle,
+            )}
+            >
+              Есть вопросы по товару?
+            </p>
+            <p className={classNames(
               textCls.text,
               textCls.textBlack,
             )}
             >
-              ₴/шт
-            </span>
-            {product.oldPrice && (
-              <div className={productCls.discountBlock}>
-                {`-${discountPercent}%`}
-              </div>
-            )}
-          </div>
-          <Button
-            className={productCls.cartButton}
-            ariaLabel={!productInCart ? `Добавить ${product.name} в корзину` : `Удалить ${product.name} из корзины`}
-            onClick={cartButtonOnClick}
-          >
-            {!productInCart ? 'Добавить в корзину' : 'В корзине'}
-          </Button>
+              Задайте их нам и мы поможем вам определиться с выбором.
+            </p>
+            <Button
+              ref={openQuestionPopupBtnRef}
+              className={productCls.bannerButton}
+              onClick={() => setIsQuestionPopupActive(true)}
+              aria-haspopup="dialog"
+              aria-label="Відкрити вікно Задати питання"
+            >
+              Связаться с нами
+            </Button>
+          </aside>
         </div>
-      </div>
-      <div
-        className={productCls.tabList}
-        role="tablist"
+      </main>
+      <Popup
+        isActive={isCommentPopupActive}
+        setIsActive={setIsCommentPopupActive}
+        label="Вікно написати відгук"
+        openButton={openCommentPopupBtnRef.current}
       >
-        <button
-          type="button"
-          className={productCls.tabButton}
-          role="tab"
-          aria-selected={isDescTabPanelActive}
-          aria-controls="descriptionTabPanel"
-          aria-label="Показать панель Описание"
-          onClick={() => setIsDescTabPanelActive(true)}
-        >
-          Описание
-          <span
-            className={classNames(
-              productCls.tabButtonLine,
-              isDescTabPanelActive && productCls.tabButtonLine_active,
-            )}
-          />
-        </button>
-        <button
-          type="button"
-          className={productCls.tabButton}
-          role="tab"
-          aria-selected={!isDescTabPanelActive}
-          aria-controls="commentTabPanel"
-          aria-label="Показать панель Отзывы"
-          onClick={() => setIsDescTabPanelActive(false)}
-        >
-          Отзывы
-          <span
-            className={classNames(
-              productCls.tabButtonLine,
-              !isDescTabPanelActive && productCls.tabButtonLine_active,
-            )}
-          />
-        </button>
-      </div>
-      <div className={productCls.tabPanelsAndBannerBlock}>
-        <div className={productCls.tabPanels}>
-          <div
-            ref={descTabPanelRef}
-            className={classNames(
-              productCls.tabPanel,
-              isDescTabPanelActive && productCls.tabPanel_active,
-            )}
-            id="descriptionTabPanel"
-            role="tabpanel"
-          >
-            {descriptionBlock}
-            {specsBlock}
-          </div>
-          <div
-            ref={commentTabPanelRef}
-            className={classNames(
-              productCls.tabPanel,
-              !isDescTabPanelActive && productCls.tabPanel_active,
-            )}
-            id="commentTabPanel"
-            role="tabpanel"
-          >
-            <div className={productCls.noCommentsBlock}>
-              <div className={productCls.noCommentsTextBlock}>
-                <Line className={productCls.noCommentsLine} />
-                <p className={classNames(
-                  textCls.text,
-                  textCls.textFw800,
-                  textCls.text32px,
-                  productCls.noCommentsText,
-                )}
-                >
-                  Відгуків немає
-                </p>
-                <p className={classNames(
-                  textCls.text,
-                  textCls.text24px,
-                  textCls.textGrey,
-                )}
-                >
-                  Будьте першим, хто залише відгук!
-                </p>
-              </div>
-              <Button
-                className={productCls.commentButton}
-              >
-                Написати відгук
-              </Button>
-            </div>
-          </div>
-        </div>
-        <aside className={productCls.bannerBlock}>
-          <InfoIcon className={productCls.infoIcon} />
-          <p className={classNames(
+        <p
+          className={classNames(
             textCls.text,
             textCls.textFw800,
-            textCls.text18px,
-            textCls.textBlack,
-            productCls.bannerTitle,
+            textCls.text36px,
+            productCls.popupTitle,
           )}
-          >
-            Есть вопросы по товару?
-          </p>
-          <p className={classNames(
+        >
+          Оставить отзыв
+        </p>
+        <ValidationForm
+          className={productCls.popupForm}
+        >
+          <InputWithErrorMessage
+            type="text"
+            name="name"
+            inputClassName={productCls.input}
+            placeholder="Имя"
+            required
+          />
+          <InputWithErrorMessage
+            type="email"
+            name="email"
+            inputClassName={productCls.input}
+            placeholder="Электронная почта"
+            required
+          />
+          <TextAreaWithErrorMessage
+            name="comment"
+            textareaBlockClassName={productCls.textareaBlock}
+            textareaClassName={productCls.textarea}
+            placeholder="Впечатления о товаре"
+            required
+            textareaType="comment"
+          />
+          <div className={productCls.submitAndTermsBlock}>
+            <Button
+              type="submit"
+              className={productCls.submitButton}
+            >
+              Отправить
+            </Button>
+            <p className={classNames(
+              textCls.text,
+              textCls.text14px,
+              textCls.textBlack,
+            )}
+            >
+              Отправляя сообщение вы даете согласие на обработку&nbsp;
+              <Link
+                to="terms"
+                alt="Условия обработки персональных данных"
+                className={classNames(
+                  linkCls.link,
+                  linkCls.link14px,
+                  linkCls.linkBlue,
+                )}
+              >
+                персональных данных
+              </Link>
+            </p>
+          </div>
+        </ValidationForm>
+      </Popup>
+      <Popup
+        isActive={isQuestionPopupActive}
+        setIsActive={setIsQuestionPopupActive}
+        label="Вікно задати питання"
+        openButton={openQuestionPopupBtnRef.current}
+      >
+        <p
+          className={classNames(
             textCls.text,
-            textCls.textBlack,
+            textCls.textFw800,
+            textCls.text36px,
+            productCls.popupTitle,
           )}
-          >
-            Задайте их нам и мы поможем вам определиться с выбором.
-          </p>
-          <Button
-            className={productCls.bannerButton}
-          >
-            Связаться с нами
-          </Button>
-        </aside>
-      </div>
-    </main>
+        >
+          Задать вопрос
+        </p>
+        <ValidationForm
+          className={productCls.popupForm}
+        >
+          <InputWithErrorMessage
+            type="text"
+            name="name"
+            inputClassName={productCls.input}
+            placeholder="Имя"
+            required
+          />
+          <InputWithErrorMessage
+            type="email"
+            name="email"
+            inputClassName={productCls.input}
+            placeholder="Электронная почта"
+            required
+          />
+          <TextAreaWithErrorMessage
+            name="comment"
+            textareaBlockClassName={productCls.textareaBlock}
+            textareaClassName={productCls.textarea}
+            placeholder="Напишите ваш вопрос по товару"
+            required
+            textareaType="question"
+          />
+          <div className={productCls.submitAndTermsBlock}>
+            <Button
+              type="submit"
+              className={productCls.submitButton}
+            >
+              Отправить
+            </Button>
+            <p className={classNames(
+              textCls.text,
+              textCls.text14px,
+              textCls.textBlack,
+            )}
+            >
+              Отправляя сообщение вы даете согласие на обработку&nbsp;
+              <Link
+                to="terms"
+                alt="Условия обработки персональных данных"
+                className={classNames(
+                  linkCls.link,
+                  linkCls.link14px,
+                  linkCls.linkBlue,
+                )}
+              >
+                персональных данных
+              </Link>
+            </p>
+          </div>
+        </ValidationForm>
+      </Popup>
+    </>
   );
 }

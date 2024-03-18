@@ -6,15 +6,35 @@ import {
 } from 'react';
 import { Form } from 'react-router-dom';
 import ValidationError from '../../../utils/ValidationError.js';
-import validationFormCls from './ValidationForm.module.scss';
 
-const ValidationForm = memo(({ className, errorClassName = validationFormCls.error, children }) => {
+const ValidationForm = memo(({ className, children }) => {
   const formRef = useRef(null);
   const [inputs, setInputs] = useState([]);
+  const [textareas, setTextareas] = useState([]);
+
+  function markInvalid(input, errorMessage) {
+    input.parentElement.dataset.errorMessage = errorMessage;
+    input.style.backgroundColor = 'rgb(250 209 206)';
+    input.focus();
+
+    input.addEventListener('input', () => {
+      input.style.backgroundColor = '';
+      input.parentElement.removeAttribute('data-error-message');
+    }, { once: true });
+  }
 
   function validateEmail(input) {
     const regex = new RegExp("([!#-'*+/-9=?A-Z^-~-]+(\.[!#-'*+/-9=?A-Z^-~-]+)*|\"\(\[\]!#-[^-~ \t]|(\\[\t -~]))+\")@([!#-'*+/-9=?A-Z^-~-]+(\.[!#-'*+/-9=?A-Z^-~-]+)*|\[[\t -Z^-~]*])");
     return regex.test(input.value);
+  }
+
+  function validateName(input) {
+    const regex = new RegExp('^[а-яa-z]{2,}(\\s[а-яa-z]{2,})*$', 'i');
+    return regex.test(input.value);
+  }
+
+  function validateTextarea(textarea) {
+    return textarea.value.length > 5;
   }
 
   function validate(formData) {
@@ -22,18 +42,21 @@ const ValidationForm = memo(({ className, errorClassName = validationFormCls.err
       switch (input.type) {
         case 'email': {
           if (!validateEmail(input)) {
-            input.parentElement.dataset.errorMessage = 'Некорректный email';
-            input.classList.add(errorClassName);
-            input.focus();
-
-            input.addEventListener('input', () => {
-              input.classList.remove(errorClassName);
-              input.parentElement.removeAttribute('data-error-message');
-            }, { once: true });
-
+            markInvalid(input, 'Некорректный email');
             throw new ValidationError('Некорректный email');
           }
           formData.append(input.name, input.value);
+          break;
+        }
+        case 'text': {
+          if (input.name === 'name') {
+            if (!validateName(input)) {
+              markInvalid(input, 'Некорректное имя');
+              throw new ValidationError('Некорректное имя');
+            }
+
+            formData.append(input.name, input.value);
+          }
           break;
         }
         default: {
@@ -41,10 +64,40 @@ const ValidationForm = memo(({ className, errorClassName = validationFormCls.err
         }
       }
     });
+
+    textareas.forEach((textarea) => {
+      switch (textarea.dataset.textareaType) {
+        case 'comment': {
+          if (!validateTextarea(textarea)) {
+            markInvalid(textarea, 'Некорректный комментарий');
+            throw new ValidationError('Некорректный комментарий');
+          }
+
+          formData.append(textarea.name, textarea.value);
+          break;
+        }
+        case 'question': {
+          if (!validateTextarea(textarea)) {
+            markInvalid(textarea, 'Некорректный вопрос');
+            throw new ValidationError('Некорректный вопрос');
+          }
+
+          formData.append(textarea.name, textarea.value);
+          break;
+        }
+        default: {
+          formData.append(textarea.name, textarea.value);
+        }
+      }
+    });
   }
 
   useEffect(() => {
     setInputs(Array.from(formRef.current.querySelectorAll('input')));
+  }, []);
+
+  useEffect(() => {
+    setTextareas(Array.from(formRef.current.querySelectorAll('textarea')));
   }, []);
 
   function onSubmitHandler() {
