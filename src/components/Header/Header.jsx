@@ -29,7 +29,6 @@ import Input from '../common/Input/Input.jsx';
 import Search from './images/search.svg';
 import HeaderCategoryMenu from './HeaderCategoryMenu/HeaderCategoryMenu.jsx';
 import HeaderSubcategoryMenu from './HeaderSubcategoryMenu/HeaderSubcategoryMenu.jsx';
-import findAllInteractiveElements from '../../utils/findAllInteractiveElements.js';
 
 export default function Header() {
   const categories = useLoaderData();
@@ -134,41 +133,14 @@ export default function Header() {
 
   const openMenuButtonRef = useRef(null);
 
-  // useEffect(() => {
-  //   const openMenuButton = openMenuButtonRef.current;
-  //   let nonDialogElements;
-
-  //   if (isAnyMenuOpen) {
-  //     nonDialogElements = Array.from(findAllInteractiveElements(document.body))
-  //       .filter((el) => !el.closest('[role="dialog"]'));
-
-  //     nonDialogElements.forEach((el) => {
-  //       el.tabIndex = '-1';
-  //       el.ariaHidden = true;
-  //     });
-
-  //     openMenuButton.tabIndex = '0';
-  //     openMenuButton.ariaHidden = false;
-  //   }
-
-  //   return () => {
-  //     if (isAnyMenuOpen) {
-  //       nonDialogElements.forEach((el) => {
-  //         el.tabIndex = '';
-  //         el.ariaHidden = '';
-  //       });
-  //     }
-  //   };
-  // }, [isAnyMenuOpen]);
-
   useEffect(() => {
     const openMenuButton = openMenuButtonRef.current;
 
-    if (isAnyMenuOpen) {
+    if (isMainMenuOpen || isCategoryMenuOpen || isSubcategoryMenuOpen) {
       openMenuButton.tabIndex = '0';
       openMenuButton.ariaHidden = false;
     }
-  }, [isAnyMenuOpen]);
+  }, [isMainMenuOpen, isCategoryMenuOpen, isSubcategoryMenuOpen]);
 
   function headerOnClick(e) {
     if (!e.target.closest('a')) return;

@@ -1,11 +1,9 @@
 import { useCallback, useEffect } from 'react';
 import findAllInteractiveElements from '../utils/findAllInteractiveElements';
 
-export default function useToggleInteractiveElements(mainElement, isActive, text) {
-  console.log(text);
-
+export default function useToggleInteractiveElements(mainElementRef, isActive) {
   const disableInteractiveElements = useCallback(() => {
-    if (!mainElement) return;
+    const mainElement = mainElementRef.current;
 
     let noMainElements;
     let mainElements;
@@ -28,8 +26,6 @@ export default function useToggleInteractiveElements(mainElement, isActive, text
     }
 
     return () => {
-      if (!mainElement) return;
-
       if (isActive) {
         noMainElements.forEach((el) => {
           el.tabIndex = '';
@@ -42,7 +38,7 @@ export default function useToggleInteractiveElements(mainElement, isActive, text
         });
       }
     };
-  }, [mainElement, isActive]);
+  }, [mainElementRef, isActive]);
 
   useEffect(disableInteractiveElements, [disableInteractiveElements]);
 }

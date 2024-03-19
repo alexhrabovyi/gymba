@@ -12,6 +12,7 @@ import Spinner from '../common/Spinner/Spinner.jsx';
 import DynamicImage from '../common/DynamicImage/DynamicImage.jsx';
 import Slider from '../common/Slider/Slider.jsx';
 import Button from '../common/Button/Button.jsx';
+import RelatedProducts from './RelatedProducts/RelatedProducts.jsx';
 import Popup from '../common/Popup/Popup.jsx';
 import ValidationForm from '../common/ValidationForm/ValidationForm.jsx';
 import InputWithErrorMessage from '../common/InputWithErrorMessage/InputWithErrorMessage.jsx';
@@ -539,6 +540,11 @@ export default function Product() {
             </Button>
           </aside>
         </div>
+        <RelatedProducts
+          categoryId={categoryId}
+          subcategoryId={subcategoryId}
+          productId={product.id}
+        />
       </main>
       <Popup
         isActive={isCommentPopupActive}

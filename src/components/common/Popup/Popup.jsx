@@ -12,12 +12,12 @@ import Cross from '../../../assets/images/icons/cross.svg';
 const Popup = memo(({
   children, isActive = false, setIsActive, label, openButton,
 }) => {
-  const popupBackdropRef = useRef();
-  const popupRef = useRef();
+  const popupBackdropRef = useRef(null);
+  const popupRef = useRef(null);
 
   useCloseOnResize(setIsActive);
   useHideScrollbarOnOpen(isActive);
-  useToggleInteractiveElements(popupRef.current, isActive);
+  useToggleInteractiveElements(popupRef, isActive);
 
   const calcPopupHeight = useCallback(() => {
     const popup = popupRef.current;
@@ -40,11 +40,11 @@ const Popup = memo(({
 
   useLayoutEffect(calcPopupHeight, [calcPopupHeight]);
 
-  const focusOnOPen = useCallback(() => {
+  const focusOnOpen = useCallback(() => {
     if (isActive) popupRef.current.focus();
   }, [isActive]);
 
-  useEffect(focusOnOPen, [focusOnOPen]);
+  useEffect(focusOnOpen, [focusOnOpen]);
 
   function backdropOnClick(e) {
     if (e.target === popupBackdropRef.current) {

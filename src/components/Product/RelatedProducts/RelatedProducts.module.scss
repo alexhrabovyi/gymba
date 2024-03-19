@@ -1,0 +1,39 @@
+@import '../../../scss/colors';
+@import '../../../scss/mixins';
+
+.article {
+  margin-top: 160px;
+}
+
+.title {
+  margin-bottom: 48px;
+  text-transform: uppercase;
+}
+
+.sliderBlock {
+  position: relative;
+}
+
+.prevBtn {
+  position: absolute;
+  top: 50%;
+  left: -5%;
+  transform: translateY(-50%) rotate(180deg);
+}
+
+.nextBtn {
+  position: absolute;
+  top: 50%;
+  right: -5%;
+  transform: translateY(-50%);
+}
+
+.slide {
+  padding: 1px;
+
+  @include flex-builder(row, flex-start, stretch);
+
+  &:hover {
+    z-index: 1;
+  }
+}

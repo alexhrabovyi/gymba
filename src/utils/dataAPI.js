@@ -331,6 +331,14 @@ export function getCartAmount() {
   return cartIds.length;
 }
 
+export function getAnalogueProducts(categoryId, subcategoryId, productId) {
+  const { subcategories } = products.find((c) => c.id === categoryId);
+  const subcategoryProducts = (subcategories.find((s) => s.id === subcategoryId)).products
+    .filter((p) => p.id !== productId);
+  const randomProducts = (subcategoryProducts.sort(() => 0.5 - Math.random())).slice(0, 8);
+
+  return randomProducts;
+}
 // news
 
 export function getNewsPreviews() {

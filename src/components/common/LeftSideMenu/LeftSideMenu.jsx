@@ -13,6 +13,7 @@ import CrossIcon from '../../../assets/images/icons/cross.svg';
 const LeftSideMenu = memo(({
   children, isMenuOpen, setIsMenuOpen, label, openButton,
 }) => {
+  const menuBackdropRef = useRef(null);
   const menuRef = useRef(null);
 
   const calcMenuHeight = useCallback(() => {
@@ -36,7 +37,7 @@ const LeftSideMenu = memo(({
 
   useHideScrollbarOnOpen(isMenuOpen);
   useCloseOnResize(setIsMenuOpen);
-  useToggleInteractiveElements(menuRef.current, isMenuOpen);
+  useToggleInteractiveElements(menuRef, isMenuOpen);
 
   const focusOnOpen = useCallback(() => {
     if (isMenuOpen) menuRef.current.focus();
@@ -44,13 +45,22 @@ const LeftSideMenu = memo(({
 
   useEffect(focusOnOpen, [focusOnOpen]);
 
-  function backdropOnClick() {
-    setIsMenuOpen(false);
-    openButton.focus();
+  function backdropOnClick(e) {
+    if (e.target === menuBackdropRef.current) {
+      setIsMenuOpen(false);
+      openButton.focus();
+    }
   }
 
   return (
-    <>
+    <div
+      ref={menuBackdropRef}
+      className={classNames(
+        menuCls.backdrop,
+        isMenuOpen && menuCls.backdrop_active,
+      )}
+      onClick={backdropOnClick}
+    >
       <div
         ref={menuRef}
         className={classNames(
@@ -77,14 +87,7 @@ const LeftSideMenu = memo(({
         </button>
         {children}
       </div>
-      <div
-        className={classNames(
-          menuCls.backdrop,
-          isMenuOpen && menuCls.backdrop_active,
-        )}
-        onClick={backdropOnClick}
-      />
-    </>
+    </div>
   );
 });
 

@@ -7,10 +7,10 @@ import useOnResize from '../../hooks/useOnResize.jsx';
 import Slider from '../common/Slider/Slider.jsx';
 import LinkWithArrow from '../common/LinkWithArrow/LinkWithArrow.jsx';
 import NewsPreview from './NewsPreview/NewsPreview.jsx';
+import BigPrevNextButton from '../common/BigPrevNextButton/BigPrevNextButton.jsx';
 import containerCls from '../../scss/_container.module.scss';
 import textCls from '../../scss/_text.module.scss';
 import newsCls from './NewsPreviews.module.scss';
-import BigChevronRight from '../../assets/images/icons/bigChevronRight.svg';
 
 export default function NewsPreviews() {
   const { news } = useLoaderData();
@@ -92,40 +92,17 @@ export default function NewsPreviews() {
         )}
         {windowWidth <= 1360 && (
           <>
-            <button
+            <BigPrevNextButton
+              className={newsCls.sliderButtonPrev}
+              isInactive={isPrevBtnInactive}
+              isPrev
               id={btnPrevId}
-              type="button"
-              className={
-                classNames(
-                  newsCls.sliderButton,
-                  newsCls.sliderButton_prev,
-                  isPrevBtnInactive && newsCls.sliderButton_disabled,
-                )
-              }
-              aria-hidden
-              disabled={isPrevBtnInactive}
-            >
-              <BigChevronRight
-                className={newsCls.chevronIcon}
-              />
-            </button>
-            <button
+            />
+            <BigPrevNextButton
+              className={newsCls.sliderButtonNext}
+              isInactive={isNextBtnInactive}
               id={btnNextId}
-              type="button"
-              className={
-                classNames(
-                  newsCls.sliderButton,
-                  newsCls.sliderButton_next,
-                  isNextBtnInactive && newsCls.sliderButton_disabled,
-                )
-              }
-              aria-hidden
-              disabled={isNextBtnInactive}
-            >
-              <BigChevronRight
-                className={newsCls.chevronIcon}
-              />
-            </button>
+            />
           </>
         )}
       </div>

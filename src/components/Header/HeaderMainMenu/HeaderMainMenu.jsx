@@ -17,7 +17,6 @@ import Favorite from '../../../assets/images/icons/favorite.svg';
 import Tag from '../images/tag.svg';
 import Phone from '../images/phone.svg';
 import ChevronRight from '../../../assets/images/icons/chevronRight.svg';
-import findAllInteractiveElements from '../../../utils/findAllInteractiveElements.js';
 
 const HeaderMainMenu = memo(({ isMenuOpen, categories, catalogBtnOnClick }) => {
   const fetcher = useFetcher();
@@ -73,28 +72,7 @@ const HeaderMainMenu = memo(({ isMenuOpen, categories, catalogBtnOnClick }) => {
     };
   }, [isMenuOpen]);
 
-  // useEffect(() => {
-  //   let menuElements;
-
-  //   if (!isMenuOpen) {
-  //     menuElements = findAllInteractiveElements(menuRef.current);
-  //     menuElements.forEach((el) => {
-  //       el.tabIndex = '-1';
-  //       el.ariaHidden = true;
-  //     });
-  //   }
-
-  //   return () => {
-  //     if (!isMenuOpen) {
-  //       menuElements.forEach((el) => {
-  //         el.tabIndex = '';
-  //         el.ariaHidden = false;
-  //       });
-  //     }
-  //   };
-  // });
-
-  useToggleInteractiveElements(menuRef.current, isMenuOpen);
+  useToggleInteractiveElements(menuRef, isMenuOpen);
 
   function onPointerMoveHandler(e) {
     const link = e.target.closest('a');

@@ -49,67 +49,36 @@
   }
 }
 
-.sliderButton {
+.sliderButtonPrev {
   position: absolute;
   bottom: -80px;
-  width: 50px;
-  height: 50px;
-  border: none;
-  background: none;
-  cursor: pointer;
-  fill: $blue;
-  transition: all .05s ease-in-out;
+  left: 42%;
 
   @include media-s {
     bottom: 50%;
+    left: -25%;
   }
 
   @include media-xs {
     bottom: -80px;
-  }
-
-  &:hover {
-    fill: $dark-blue;
-  }
-
-  &:active {
-    fill: $blue-active;
-  }
-
-  &_disabled {
-    opacity: 0.7;
-    pointer-events: none;
-  }
-
-  &_prev {
-    left: 42%;
-    transform: rotate((180deg));
-
-    @include media-s {
-      left: -25%;
-    }
-
-    @include media-xs {
-      left: 30%;
-    }
-  }
-
-  &_next {
-    right: 42%;
-
-    @include media-s {
-      right: -25%;
-    }
-
-    @include media-xs {
-      right: 30%;
-    }
+    left: 30%;
   }
 }
 
-.chevronIcon {
-  width: 100%;
-  height: 100%;
+.sliderButtonNext {
+  position: absolute;
+  right: 42%;
+  bottom: -80px;
+
+  @include media-s {
+    right: -25%;
+    bottom: 50%;
+  }
+
+  @include media-xs {
+    right: 30%;
+    bottom: -80px;
+  }
 }
 
 .linkWithArrow {

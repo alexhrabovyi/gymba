@@ -7,7 +7,6 @@ import categoryMenuCls from './HeaderCategoryMenu.module.scss';
 import containerCls from '../../../scss/_container.module.scss';
 import textCls from '../../../scss/_text.module.scss';
 import ChevronRight from '../../../assets/images/icons/chevronRight.svg';
-import findAllInteractiveElements from '../../../utils/findAllInteractiveElements.js';
 
 const HeaderCategoryMenu = memo(({
   isMenuOpen,
@@ -34,28 +33,7 @@ const HeaderCategoryMenu = memo(({
     };
   }, [isMenuOpen]);
 
-  // useEffect(() => {
-  //   let menuElements;
-
-  //   if (!isMenuOpen) {
-  //     menuElements = findAllInteractiveElements(menuRef.current);
-  //     menuElements.forEach((el) => {
-  //       el.tabIndex = '-1';
-  //       el.ariaHidden = true;
-  //     });
-  //   }
-
-  //   return () => {
-  //     if (!isMenuOpen) {
-  //       menuElements.forEach((el) => {
-  //         el.tabIndex = '';
-  //         el.ariaHidden = false;
-  //       });
-  //     }
-  //   };
-  // });
-
-  useToggleInteractiveElements(menuRef.current, isMenuOpen, 'category');
+  useToggleInteractiveElements(menuRef, isMenuOpen);
 
   useEffect(() => {
     if (isMenuOpen) menuRef.current.focus();

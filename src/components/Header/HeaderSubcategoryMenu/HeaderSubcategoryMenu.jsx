@@ -9,7 +9,6 @@ import subcategoryMenuCls from './HeaderSubcategoryMenu.module.scss';
 import linkCls from '../../../scss/_link.module.scss';
 import textCls from '../../../scss/_text.module.scss';
 import ChevronRight from '../../../assets/images/icons/chevronRight.svg';
-import findAllInteractiveElements from '../../../utils/findAllInteractiveElements.js';
 import ArrowRight from '../../../assets/images/icons/arrow-right.svg';
 
 const HeaderSubcategoryMenu = memo(({ isMenuOpen, category, backToCatalogOnClick }) => {
@@ -33,28 +32,7 @@ const HeaderSubcategoryMenu = memo(({ isMenuOpen, category, backToCatalogOnClick
     };
   }, [isMenuOpen]);
 
-  // useEffect(() => {
-  //   let menuElements;
-
-  //   if (!isMenuOpen) {
-  //     menuElements = findAllInteractiveElements(menuRef.current);
-  //     menuElements.forEach((el) => {
-  //       el.tabIndex = '-1';
-  //       el.ariaHidden = true;
-  //     });
-  //   }
-
-  //   return () => {
-  //     if (!isMenuOpen) {
-  //       menuElements.forEach((el) => {
-  //         el.tabIndex = '';
-  //         el.ariaHidden = false;
-  //       });
-  //     }
-  //   };
-  // });
-
-  useToggleInteractiveElements(menuRef.current, isMenuOpen, 'subcategory');
+  useToggleInteractiveElements(menuRef, isMenuOpen);
 
   useEffect(() => {
     if (isMenuOpen) menuRef.current.focus();
