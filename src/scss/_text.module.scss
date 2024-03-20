@@ -31,18 +31,54 @@
 
   &24px {
     font-size: 24px;
+
+    @include media-xs {
+      font-size: 22px;
+    }
   }
 
   &32px {
     font-size: 32px;
+
+    @include media-s {
+      font-size: 26px;
+    }
+
+    @include media-xs {
+      font-size: 24px;
+    }
   }
 
   &36px {
     font-size: 36px;
+
+    @include media-m {
+      font-size: 30px;
+    }
+
+    @include media-s {
+      font-size: 28px;
+    }
+
+    @include media-xs {
+      font-size: 26px;
+    }
   }
 
   &38px {
     font-size: 38px;
+
+    @include media-m {
+      font-size: 34px;
+    }
+
+    @include media-s {
+      font-size: 30px;
+    }
+
+    @include media-xs {
+      font-size: 28px;
+    }
   }
 
   &48px {

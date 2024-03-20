@@ -33,8 +33,10 @@ const Popup = memo(({
     }
 
     return () => {
-      popup.style.height = '';
-      popup.style.overflowY = '';
+      if (isActive) {
+        popup.style.height = '';
+        popup.style.overflowY = '';
+      }
     };
   }, [isActive]);
 
@@ -64,9 +66,7 @@ const Popup = memo(({
     >
       <aside
         ref={popupRef}
-        className={classNames(
-          popupCls.popup,
-        )}
+        className={popupCls.popup}
         aria-hidden={!isActive}
         role="dialog"
         aria-modal

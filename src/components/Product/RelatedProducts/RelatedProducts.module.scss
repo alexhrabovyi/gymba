@@ -2,30 +2,86 @@
 @import '../../../scss/mixins';
 
 .article {
+  width: 100%;
   margin-top: 160px;
+
+  @media (max-width: 1600px) {
+    margin-top: 140px;
+  }
+
+  @include media-l {
+    margin-top: 120px;
+  }
+
+  @include media-m {
+    margin-top: 100px;
+  }
+
+  @include media-s {
+    margin-top: 80px;
+  }
+
 }
 
 .title {
   margin-bottom: 48px;
   text-transform: uppercase;
+
+  @include media-s {
+    margin-bottom: 40px;
+  }
+
+  @include media-xs {
+    margin-bottom: 30px;
+  }
 }
 
 .sliderBlock {
   position: relative;
+
+  @include media-m {
+    margin-bottom: 15%;
+  }
 }
 
 .prevBtn {
   position: absolute;
   top: 50%;
-  left: -5%;
+  left: -65px;
   transform: translateY(-50%) rotate(180deg);
+
+  @include media-m {
+    top: 115%;
+    left: 40%;
+  }
+
+  @include media-s {
+    left: 35%;
+  }
+
+  @media (max-width: 500px) {
+    left: 30%;
+  }
 }
 
 .nextBtn {
   position: absolute;
   top: 50%;
-  right: -5%;
+  right: -65px;
   transform: translateY(-50%);
+
+  @include media-m {
+    top: 115%;
+    right: 40%;
+  }
+
+  @include media-s {
+    right: 35%;
+  }
+
+  @media (max-width: 500px) {
+    right: 30%;
+  }
 }
 
 .slide {

@@ -20,10 +20,24 @@
 
 .popup {
   position: relative;
-  width: 750px;
+  width: 100%;
+  max-width: 750px;
   padding: 48px;
   border-radius: 4px;
   background: $white;
+
+  @include media-s {
+    padding: 5%;
+  }
+
+  @include media-m {
+    width: 85%;
+  }
+
+  @include media-xs {
+    width: 93%;
+    padding-top: 44px;
+  }
 }
 
 .closeButton {

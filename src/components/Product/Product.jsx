@@ -1,12 +1,13 @@
 /* eslint-disable react/no-array-index-key */
 /* eslint-disable react/jsx-no-bind */
 import {
-  useState, useEffect, Suspense, useMemo, useRef, useCallback,
+  useState, useEffect, Suspense, useMemo, useRef, useCallback, useLayoutEffect,
 } from 'react';
 import {
   useLoaderData, useFetcher, Await, Link,
 } from 'react-router-dom';
 import classNames from 'classnames';
+import useOnResize from '../../hooks/useOnResize.jsx';
 import findAllInteractiveElements from '../../utils/findAllInteractiveElements.js';
 import Spinner from '../common/Spinner/Spinner.jsx';
 import DynamicImage from '../common/DynamicImage/DynamicImage.jsx';
@@ -36,8 +37,6 @@ export default function Product() {
   const openCommentPopupBtnRef = useRef();
   const openQuestionPopupBtnRef = useRef();
 
-  const [productInWishlist, setProductInWishlist] = useState(false);
-  const [productInCart, setProductInCart] = useState(false);
   const [imgSrcs] = useState(() => {
     const result = [[product.id, import(`../../assets/images/productImgs/${product.id}.webp`)]];
 
@@ -51,9 +50,25 @@ export default function Product() {
 
     return result;
   });
+
+  const [windowWidth, setWindowWidth] = useState(null);
+
+  const getWindowWidth = useCallback(() => {
+    setWindowWidth(window.innerWidth);
+  }, []);
+
+  useLayoutEffect(() => {
+    getWindowWidth();
+  }, [getWindowWidth]);
+
+  useOnResize(getWindowWidth);
+
   const [isDescTabPanelActive, setIsDescTabPanelActive] = useState(true);
   const [isCommentPopupActive, setIsCommentPopupActive] = useState(false);
   const [isQuestionPopupActive, setIsQuestionPopupActive] = useState(false);
+
+  const [productInWishlist, setProductInWishlist] = useState(false);
+  const [productInCart, setProductInCart] = useState(false);
 
   useEffect(() => {
     if (wishlistFetcher.state === 'idle' && !wishlistFetcher.data) {
@@ -319,29 +334,31 @@ export default function Product() {
         >
           {product.name}
         </h1>
-        <div className={productCls.additionalButtonsBlock}>
-          <button
-            type="button"
-            className={classNames(
-              productCls.iconButton,
-              productInWishlist && productCls.iconButton_active,
-            )}
-            onClick={wishlistButtonOnClick}
-            aria-label={productInWishlist ? `Удалить ${product.name} из избранного` : `Добавить ${product.name} в избранное`}
-          >
-            <Favorite className={productCls.buttonIcon} />
-            {!productInWishlist ? 'В избранное' : 'В избранном'}
-          </button>
-          <button
-            type="button"
-            className={classNames(
-              productCls.iconButton,
-            )}
-          >
-            <Compare className={productCls.buttonIcon} />
-            К сравнению
-          </button>
-        </div>
+        {windowWidth > 576 && (
+          <div className={productCls.additionalButtonsBlock}>
+            <button
+              type="button"
+              className={classNames(
+                productCls.iconButton,
+                productInWishlist && productCls.iconButton_active,
+              )}
+              onClick={wishlistButtonOnClick}
+              aria-label={productInWishlist ? `Удалить ${product.name} из избранного` : `Добавить ${product.name} в избранное`}
+            >
+              <Favorite className={productCls.buttonIcon} />
+              {!productInWishlist ? 'В избранное' : 'В избранном'}
+            </button>
+            <button
+              type="button"
+              className={classNames(
+                productCls.iconButton,
+              )}
+            >
+              <Compare className={productCls.buttonIcon} />
+              К сравнению
+            </button>
+          </div>
+        )}
         <div className={productCls.mainBlock}>
           <div className={productCls.imageSliderBlock}>
             <Slider
@@ -376,6 +393,31 @@ export default function Product() {
               Посмотреть все
             </a>
           </div>
+          {windowWidth <= 576 && (
+          <div className={productCls.additionalButtonsBlock}>
+            <button
+              type="button"
+              className={classNames(
+                productCls.iconButton,
+                productInWishlist && productCls.iconButton_active,
+              )}
+              onClick={wishlistButtonOnClick}
+              aria-label={productInWishlist ? `Удалить ${product.name} из избранного` : `Добавить ${product.name} в избранное`}
+            >
+              <Favorite className={productCls.buttonIcon} />
+              {!productInWishlist ? 'В избранное' : 'В избранном'}
+            </button>
+            <button
+              type="button"
+              className={classNames(
+                productCls.iconButton,
+              )}
+            >
+              <Compare className={productCls.buttonIcon} />
+              К сравнению
+            </button>
+          </div>
+          )}
           <div className={productCls.priceAndCartBlock}>
             {product.oldPrice && (
             <p className={productCls.oldPrice}>

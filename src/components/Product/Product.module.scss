@@ -25,6 +25,8 @@
   }
 
   @include media-xs {
+    @include flex-builder(column, flex-start, center);
+
     margin-top: 40px; 
   }
 }
@@ -34,12 +36,51 @@
 }
 
 .additionalButtonsBlock {
-  width: 312px;
+  width: 23.85%;
   align-self: flex-end;
   margin-top: 24px;
   margin-bottom: 34px;
 
   @include flex-builder(row, space-between, center);
+
+  @media (max-width: 1800px) {
+    width: 26.85%;
+  }
+
+  @media (max-width: 1600px) {
+    width: 27.85%;
+  }
+
+  @include media-l {
+    width: 29.85%;
+  }
+
+  @media (max-width: 1250px) {
+    margin-bottom: 28px;
+  }
+
+  @media (max-width: 1100px) {
+    width: 30.85%;
+  }
+
+  @include media-m {
+    width: 40%;
+    max-width: 270px;
+  }
+
+  @include media-s {
+    width: 43%;
+    max-width: 240px;
+    margin-bottom: 24px;
+  }
+
+  @include media-xs {
+    width: 100%;
+    max-width: 350px;
+    flex-wrap: wrap;
+    margin: 0;
+    gap: 10px;
+  }
 }
 
 .iconButton {
@@ -79,17 +120,80 @@
       fill: $blue-active;
     }
   }
+
+  @media (max-width: 1250px) {
+    font-size: 14px;
+  }
+
+  @include media-s {
+    font-size: 12px;
+  }
+
+  @include media-xs {
+    font-size: 16px;
+  }
 }
 
 .buttonIcon {
   width: 24px;
   height: 24px;
+
+  @include media-s {
+    width: 20px;
+    height: 20px;
+  }
+
+  @include media-xs {
+    width: 24px;
+    height: 24px;
+  }
 }
 
 .mainBlock {
   display: grid;
   margin-bottom: 80px;
-  grid-template-columns: 1fr 123px 237px 99px 312px;
+  grid-template-columns: 1fr 9.4% 18.1% 7.56% 23.85%;
+
+  @media (max-width: 1800px) {
+    grid-template-columns: 1fr 7.4% 19.1% 3.56% 26.85%;
+  }
+
+  @media (max-width: 1600px) {
+    grid-template-columns: 1fr 6.4% 20.1% 3.56% 27.85%;
+  }
+
+  @include media-l {
+    grid-template-columns: 1fr 6.4% 22.1% 3.56% 29.85%;
+  }
+
+  @media (max-width: 1250px) {
+    margin-bottom: 70px;
+  }
+
+  @media (max-width: 1100px) {
+    grid-template-columns: 1fr 5% 24% 3.56% 30.85%;
+  }
+
+  @include media-m {
+    gap: 40px 10%;
+    grid-template-columns: 1fr 40%;
+    grid-template-rows: 180px auto;
+  }
+
+  @include media-s {
+    margin-bottom: 60px;
+    gap: 0 5%;
+    grid-template-columns: 1fr 43%;
+  }
+
+  @include media-xs {
+    width: 100%;
+    max-width: 350px;
+    margin-top: 40px;
+    grid-template-columns: 1fr;
+    grid-template-rows: auto;
+    row-gap: 35px;
+  }
 }
 
 .imageSliderBlock {
@@ -97,13 +201,42 @@
 
   @include flex-builder(row, flex-start, flex-start);
 
-  gap: 80px;
+  gap: 14.9%;
+
+  @media (max-width: 1600px) {
+    gap: 10%;
+  }
+
+  @include media-l {
+    @include flex-builder(column, flex-start, flex-start);
+
+    flex-direction: column-reverse;
+    gap: 5%;
+  }
+
+  @include media-m {
+    align-self: flex-start;
+    grid-column: 1/2;
+    grid-row: 1/3;
+  }
+
+  @include media-xs {
+    grid-row: 1/2;
+  }
 }
 
 .imagePaginationBlock {
   @include flex-builder(column, flex-start, center);
 
   gap: 12px;
+
+  @include media-l {
+    @include flex-builder(row, flex-start, center);
+  }
+
+  @include media-m {
+    margin-top: 10%;
+  }
 }
 
 .paginationBtn {
@@ -136,6 +269,11 @@
       border-color: $blue-active;
     }
   }
+
+  @media (max-width: 1600px) {
+    width: 70px;
+    height: 70px;
+  }
 }
 
 .paginationBtnSpinner {
@@ -163,10 +301,28 @@
 
 .slideImg {
   width: 100%;
+
+  @include media-xs {
+    max-width: 250px;
+  }
 }
 
 .mainSpecsBlock {
   grid-column: 3/4;
+
+  @include media-m {
+    grid-column: 2/3;
+    grid-row: 2/3;
+  }
+
+  @include media-s {
+    margin-top: 20px;
+  }
+
+  @include media-xs {
+    margin-top: 0;
+    grid-column: 1/2;
+  }
 }
 
 .mainSpecsTitle {
@@ -190,10 +346,26 @@
 
 .priceAndCartBlock {
   align-self: flex-start;
-  padding: 32px;
+  padding: 10.25%;
   border-radius: 4px;
   background: $light-blue;
   grid-column: 5/6;
+
+  @media (max-width: 1600px) {
+    padding: 8%;
+  }
+
+  @include media-m {
+    width: 100%;
+    padding: 5%;
+    grid-column: 2/3;
+    grid-row: 1/2;
+  }
+
+  @include media-xs {
+    grid-column: 1/2;
+    grid-row: 4/5;
+  }
 }
 
 .oldPrice {
@@ -225,6 +397,12 @@
   height: 60px;
   margin-top: 32px;
   font-size: 16px;
+
+  @media (max-width: 1100px) {
+    height: 48px;
+    margin-top: 24px;
+    font-size: 14px;
+  }
 }
 
 .tabList {
@@ -248,6 +426,11 @@
   font-weight: 800;
   text-transform: uppercase;
   transition: all .05s ease-in-out;
+
+  @include media-xs {
+    padding-bottom: 18px;
+    font-size: 16px;
+  }
 }
 
 .tabButtonLine {
@@ -266,26 +449,71 @@
 .tabPanelsAndBannerBlock {
   display: grid;
   width: 100%;
-  justify-content: space-between;
-  padding-top: 60px;
-  grid-template-columns: 872px 312px;
+  margin-top: 60px;
+  gap: 9.48%;
+  grid-template-columns: 1fr 312px;
+
+  @include media-l {
+    gap: 7%;
+    grid-template-columns: 1fr 29.4%;
+  }
+
+  @include media-m {
+    gap: 80px;
+    grid-template-columns: 1fr;
+  }
+
+  @include media-s {
+    margin-top: 50px;
+  }
+
+  @include media-xs {
+    margin-top: 40px;
+  }
 }
 
 .tabPanel {
   display: none;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: flex-start;
 
   &_active {
-    display: block;
+    display: flex;
   }
 }
 
 .descriptionBlock {
   margin-bottom: 68px;
+
+  @include media-m {
+    width: 100%;
+    max-width: 700px;
+    align-self: center;
+  }
+
+  @include media-s {
+    margin-bottom: 60px;
+  }
+
+  @include media-xs {
+    margin-bottom: 50px;
+  }
 }
 
 .descriptionSubtitle {
   margin-bottom: 16px;
   text-transform: uppercase;
+}
+
+.specsBlock {
+  width: 100%;
+
+  @include media-m {
+    width: 100%;
+    max-width: 700px;
+    align-self: center;
+  }
 }
 
 .specsTitle {
@@ -303,13 +531,23 @@
 .spec {
   display: grid;
   width: 100%;
+  gap: 10px;
   grid-template-columns: 50% 50%;
 }
 
 .noCommentsBlock {
+  width: 100%;
   padding-top: 70px;
 
   @include flex-builder(column, flex-start, center);
+
+  @include media-m {
+    padding-top: 50px;
+  }
+
+  @include media-s {
+    padding-top: 40px;
+  }
 }
 
 .noCommentsTextBlock {
@@ -338,6 +576,10 @@
   }
 
   @include media-xs {
+    left: -40px;
+  }
+
+  @media (max-width: 500px) {
     display: none;
   }
 }
@@ -348,16 +590,28 @@
 }
 
 .commentButton {
-  width: 180px;
+  width: 200px;
   height: 48px;
   margin-top: 20px;
+  font-size: 16px;
 }
 
 .bannerBlock {
   align-self: flex-start;
-  padding: 32px;
+  padding: 10.25%;
   border: 1px solid $dark-grey;
   border-radius: 4px;
+
+  @include media-l {
+    padding: 7%;
+  }
+
+  @include media-m {
+    width: 100%;
+    max-width: 312px;
+    padding: 32px;
+    justify-self: center;
+  }
 }
 
 .infoIcon {
@@ -375,6 +629,7 @@
   width: 100%;
   height: 48px;
   margin-top: 32px;
+  font-size: 14px;
 }
 
 .popupTitle {
@@ -385,8 +640,12 @@
 .popupForm {
   display: grid;
   width: 100%;
-  gap: 32px 16px;
+  gap: 36px 16px;
   grid-template-columns: 1fr 1fr;
+
+  @include media-s {
+    grid-template-columns: 1fr;
+  }
 }
 
 .input {
@@ -404,6 +663,10 @@
 
 .textareaBlock {
   grid-column: 1/3;
+
+  @include media-s {
+    grid-column: 1/2;
+  }
 }
 
 .textarea {
@@ -424,10 +687,22 @@
   grid-column: 1/3;
 
   @include flex-builder(row, flex-start, center);
+
+  @include media-s {
+    gap: 5%;
+    grid-column: 1/2;
+
+    @include flex-builder(row, space-between, flex-start);
+  }
 }
 
 .submitButton {
   width: 162px;
   height: 60px;
+  flex-shrink: 0;
   font-size: 16px;
+
+  @include media-xs {
+    width: 140px;
+  }
 }

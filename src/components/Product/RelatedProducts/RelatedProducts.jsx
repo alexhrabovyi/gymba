@@ -1,8 +1,9 @@
 import {
-  memo, useEffect, useMemo, useState,
+  memo, useEffect, useMemo, useState, useCallback, useLayoutEffect,
 } from 'react';
 import { useFetcher } from 'react-router-dom';
 import classNames from 'classnames';
+import useOnResize from '../../../hooks/useOnResize.jsx';
 import ProductCard from '../../ProductCard/ProductCard.jsx';
 import Slider from '../../common/Slider/Slider.jsx';
 import BigPrevNextButton from '../../common/BigPrevNextButton/BigPrevNextButton.jsx';
@@ -15,6 +16,18 @@ const RelatedProducts = memo(({ categoryId, subcategoryId, productId }) => {
   const [products, setProducts] = useState();
   const [isBtnPrevInactive, setIsBtnPrevInactive] = useState(true);
   const [isBtnNextInactive, setIsBtnNextInactive] = useState(false);
+
+  const [windowWidth, setWindowWidth] = useState(null);
+
+  const getWindowWidth = useCallback(() => {
+    setWindowWidth(window.innerWidth);
+  }, []);
+
+  useLayoutEffect(() => {
+    getWindowWidth();
+  }, [getWindowWidth]);
+
+  useOnResize(getWindowWidth);
 
   useEffect(() => {
     if (fetcher.state === 'idle' && !products) {
@@ -67,6 +80,12 @@ const RelatedProducts = memo(({ categoryId, subcategoryId, productId }) => {
     toggleInactive: setIsBtnNextInactive,
   }), []);
 
+  let perView = 4;
+
+  if (windowWidth <= 1100) perView = 3;
+  if (windowWidth <= 768) perView = 2;
+  if (windowWidth <= 430) perView = 1;
+
   return (
     <article className={relatedProductsCls.article}>
       <p className={classNames(
@@ -83,7 +102,7 @@ const RelatedProducts = memo(({ categoryId, subcategoryId, productId }) => {
         <Slider
           slides={productSlides}
           gap="0"
-          perView={4}
+          perView={perView}
           btnPrevDetails={btnPrevDetails}
           btnNextDetails={btnNextDetails}
         />

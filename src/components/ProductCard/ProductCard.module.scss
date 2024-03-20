@@ -18,11 +18,6 @@
   &:active {
     outline-color: $blue-active;
   }
-
-  @include media-s {
-    width: 50%;
-    padding: 3%;
-  }
 }
 
 .iconButtonsBlock {

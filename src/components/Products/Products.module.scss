@@ -183,16 +183,13 @@
   grid-template-columns: 1fr 1fr 1fr;
 
   @include media-s {
-    @include flex-builder(row, flex-start, stretch);
-
-    flex-wrap: wrap;
+    grid-template-columns: 1fr 1fr;
   }
 
   &_long {
     @include media-xs {
-      @include flex-builder(row, flex-start, stretch);
-
-      flex-wrap: wrap;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
     }
   }
 }
@@ -270,7 +267,7 @@
   grid-column: 1/4;
 
   @include media-m {
-    @include flex-builder(row, center, center);
+    grid-column: 1/3;
   }
 }
 
