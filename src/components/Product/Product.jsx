@@ -18,6 +18,7 @@ import Popup from '../common/Popup/Popup.jsx';
 import ValidationForm from '../common/ValidationForm/ValidationForm.jsx';
 import InputWithErrorMessage from '../common/InputWithErrorMessage/InputWithErrorMessage.jsx';
 import TextAreaWithErrorMessage from '../common/TextareaWIthErrorMessage/TextareaWithErrorMessage.jsx';
+import Gallery from './Gallery/Gallery.jsx';
 import containerCls from '../../scss/_container.module.scss';
 import textCls from '../../scss/_text.module.scss';
 import linkCls from '../../scss/_link.module.scss';
@@ -66,6 +67,8 @@ export default function Product() {
   const [isDescTabPanelActive, setIsDescTabPanelActive] = useState(true);
   const [isCommentPopupActive, setIsCommentPopupActive] = useState(false);
   const [isQuestionPopupActive, setIsQuestionPopupActive] = useState(false);
+  const [isGalleryOpen, setIsGalleryOpen] = useState(false);
+  const [galleryActiveSlideId, setGalleryActiveSlideId] = useState(0);
 
   const [productInWishlist, setProductInWishlist] = useState(false);
   const [productInCart, setProductInCart] = useState(false);
@@ -126,6 +129,36 @@ export default function Product() {
   }, [isDescTabPanelActive]);
 
   useEffect(disableTabPanelElements, [disableTabPanelElements]);
+
+  const imgIdsForGallery = useMemo(() => {
+    const result = [product.id];
+
+    const { additionalImgs } = product;
+
+    if (additionalImgs) {
+      additionalImgs.forEach((additionalImg) => result.push(additionalImg));
+    }
+
+    return result;
+  }, [product]);
+
+  const slideImgBtnOnClick = useCallback((e) => {
+    const el = document.elementFromPoint(e.clientX, e.clientY);
+    const btn = el.closest('[data-gallery-btn]');
+    if (!btn) return;
+
+    const { slideId } = btn.dataset;
+    setIsGalleryOpen(true);
+    setGalleryActiveSlideId(slideId);
+  }, []);
+
+  useEffect(() => {
+    document.addEventListener('click', slideImgBtnOnClick);
+
+    return () => {
+      document.removeEventListener('click', slideImgBtnOnClick);
+    };
+  }, [slideImgBtnOnClick]);
 
   function wishlistButtonOnClick() {
     const data = JSON.stringify([categoryId, subcategoryId, product.id]);
@@ -192,22 +225,62 @@ export default function Product() {
     paginationButtonActiveClass: productCls.paginationBtn_active,
   }), [paginationBtns]);
 
+  // const slides = useMemo(() => {
+  //   const result = imgSrcs.map(([key, src]) => (
+  //     <div
+  //       key={key}
+  //       className={productCls.slide}
+  //     >
+  //       <button
+  //         type="button"
+  //         className={productCls.galleryButton}
+  //         data-gallery-btn
+  //         data-img-src={src}
+  //         data-img-alt={product.name}
+  //         aria-label="Открыть картинку на весь экран"
+  //       >
+  //         <Suspense
+  //           fallback={<Spinner className={productCls.slideImgSpinner} />}
+  //         >
+  //           <Await resolve={src}>
+  //             <DynamicImage
+  //               className={productCls.slideImg}
+  //               alt={product.name}
+  //             />
+  //           </Await>
+  //         </Suspense>
+  //       </button>
+  //     </div>
+  //   ));
+
+  //   return result;
+  // }, [product, imgSrcs]);
+
   const slides = useMemo(() => {
-    const result = imgSrcs.map(([key, src]) => (
+    const result = imgSrcs.map(([id, src], i) => (
       <div
-        key={key}
+        key={id}
         className={productCls.slide}
       >
-        <Suspense
-          fallback={<Spinner className={productCls.slideImgSpinner} />}
+        <button
+          type="button"
+          className={productCls.galleryButton}
+          data-gallery-btn
+          data-slide-id={i}
+          aria-haspopup="dialog"
+          aria-label="Открыть картинку на весь экран"
         >
-          <Await resolve={src}>
-            <DynamicImage
-              className={productCls.slideImg}
-              alt={product.name}
-            />
-          </Await>
-        </Suspense>
+          <Suspense
+            fallback={<Spinner className={productCls.slideImgSpinner} />}
+          >
+            <Await resolve={src}>
+              <DynamicImage
+                className={productCls.slideImg}
+                alt={product.name}
+              />
+            </Await>
+          </Suspense>
+        </button>
       </div>
     ));
 
@@ -728,6 +801,13 @@ export default function Product() {
           </div>
         </ValidationForm>
       </Popup>
+      <Gallery
+        imgIds={imgIdsForGallery}
+        isOpen={isGalleryOpen}
+        setIsOpen={setIsGalleryOpen}
+        activeSlideId={galleryActiveSlideId}
+        productName={product.name}
+      />
     </>
   );
 }

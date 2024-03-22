@@ -1,0 +1,116 @@
+@import '../../../scss/colors';
+@import '../../../scss/mixins';
+
+.backdrop {
+  position: fixed;
+  z-index: 2000;
+  display: grid;
+  overflow: auto;
+  background: rgb(9 31 58 / 76%);
+  grid-template-rows: 10% auto 10%;
+  inset: 0;
+  opacity: 0;
+  place-items: center center;
+  pointer-events: none;
+  transition: opacity .25s ease-in-out;
+
+  &_active {
+    opacity: 1;
+    pointer-events: all;
+  }
+}
+
+.sliderBlock {
+  position: relative;
+  width: 50%;
+  grid-row: 2/3;
+
+  @include media-l {
+    width: 60%;
+  }
+
+  @include media-m {
+    width: 70%;
+  }
+
+  @include media-s {
+    width: 75%;
+  }
+
+  @include media-xs {
+    width: 90%;
+  }
+}
+
+.slide {
+  @include flex-builder(row, center, flex-start);
+}
+
+.slideImg {
+  width: 100%;
+}
+
+.sliderBtn {
+  position: absolute;
+  top: 50%;
+  width: 80px;
+  height: 80px;
+  fill: $white;
+
+  &:hover {
+    fill: $white-hover;
+  }
+
+  &:active {
+    fill: $white-active;
+  }
+
+  @include media-m {
+    width: 70px;
+    height: 70px;
+  }
+
+  @include media-s {
+    width: 60px;
+    height: 60px;
+  }
+
+  @include media-xs {
+    top: 110%;
+    width: 50px;
+    height: 50px;
+  }
+}
+
+.prevBtn {
+  left: -150px;
+
+  @include media-m {
+    left: -15%;
+  }
+
+  @include media-s {
+    left: -13%;
+  }
+
+  @include media-xs {
+    left: 30%;
+  }
+
+}
+
+.nextBtn {
+  right: -150px;
+
+  @include media-m {
+    right: -15%;
+  }
+  
+  @include media-s {
+    right: -13%;
+  }
+
+  @include media-xs {
+    right: 30%;
+  }
+}
