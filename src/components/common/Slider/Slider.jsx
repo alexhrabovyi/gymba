@@ -118,8 +118,6 @@ const Slider = memo(({
       let previousTranslateValue;
       let newTranslateValue;
 
-      wrapper.setPointerCapture(e.pointerId);
-
       function onPointerMove(onPointerMoveEvent) {
         const pointerMoveXCoord = onPointerMoveEvent.clientX;
         const pointerXCoordDiff = pointerMoveXCoord - pointerDownXCoord;
@@ -142,7 +140,7 @@ const Slider = memo(({
       }
 
       function onPointerUp(onPointerUpEvent) {
-        wrapper.removeEventListener('pointermove', onPointerMove);
+        document.removeEventListener('pointermove', onPointerMove);
         wrapper.style.transitionDuration = '1s';
 
         const minDiff = container.offsetWidth * 0.05;
@@ -180,8 +178,8 @@ const Slider = memo(({
         }
       }
 
-      wrapper.addEventListener('pointermove', onPointerMove);
-      wrapper.addEventListener('pointerup', onPointerUp, { once: true });
+      document.addEventListener('pointermove', onPointerMove);
+      document.addEventListener('pointerup', onPointerUp, { once: true });
     }
 
     wrapper.addEventListener('pointerdown', onPointerDown);

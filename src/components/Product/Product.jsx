@@ -51,8 +51,16 @@ export default function Product() {
 
     return result;
   });
-
   const [windowWidth, setWindowWidth] = useState(null);
+  const [productInWishlist, setProductInWishlist] = useState(false);
+  const [productInCart, setProductInCart] = useState(false);
+  const [isDescTabPanelActive, setIsDescTabPanelActive] = useState(true);
+  const [isCommentPopupActive, setIsCommentPopupActive] = useState(false);
+  const [isQuestionPopupActive, setIsQuestionPopupActive] = useState(false);
+  const [isGalleryOpen, setIsGalleryOpen] = useState(false);
+  const [galleryActiveSlideId, setGalleryActiveSlideId] = useState(0);
+
+  // helper functions
 
   const getWindowWidth = useCallback(() => {
     setWindowWidth(window.innerWidth);
@@ -64,14 +72,7 @@ export default function Product() {
 
   useOnResize(getWindowWidth);
 
-  const [isDescTabPanelActive, setIsDescTabPanelActive] = useState(true);
-  const [isCommentPopupActive, setIsCommentPopupActive] = useState(false);
-  const [isQuestionPopupActive, setIsQuestionPopupActive] = useState(false);
-  const [isGalleryOpen, setIsGalleryOpen] = useState(false);
-  const [galleryActiveSlideId, setGalleryActiveSlideId] = useState(0);
-
-  const [productInWishlist, setProductInWishlist] = useState(false);
-  const [productInCart, setProductInCart] = useState(false);
+  // fetch functions
 
   useEffect(() => {
     if (wishlistFetcher.state === 'idle' && !wishlistFetcher.data) {
@@ -105,60 +106,6 @@ export default function Product() {
       setProductInCart(productInCartFromFetcher);
     }
   }
-
-  const disableTabPanelElements = useCallback(() => {
-    let interactiveElems;
-
-    if (isDescTabPanelActive) {
-      interactiveElems = findAllInteractiveElements(commentTabPanelRef.current);
-    } else {
-      interactiveElems = findAllInteractiveElements(descTabPanelRef.current);
-    }
-
-    interactiveElems.forEach((el) => {
-      el.tabIndex = '-1';
-      el.setAttribute('aria-hidden', true);
-    });
-
-    return () => {
-      interactiveElems.forEach((el) => {
-        el.tabIndex = '0';
-        el.setAttribute('aria-hidden', false);
-      });
-    };
-  }, [isDescTabPanelActive]);
-
-  useEffect(disableTabPanelElements, [disableTabPanelElements]);
-
-  const imgIdsForGallery = useMemo(() => {
-    const result = [product.id];
-
-    const { additionalImgs } = product;
-
-    if (additionalImgs) {
-      additionalImgs.forEach((additionalImg) => result.push(additionalImg));
-    }
-
-    return result;
-  }, [product]);
-
-  const slideImgBtnOnClick = useCallback((e) => {
-    const el = document.elementFromPoint(e.clientX, e.clientY);
-    const btn = el.closest('[data-gallery-btn]');
-    if (!btn) return;
-
-    const { slideId } = btn.dataset;
-    setIsGalleryOpen(true);
-    setGalleryActiveSlideId(slideId);
-  }, []);
-
-  useEffect(() => {
-    document.addEventListener('click', slideImgBtnOnClick);
-
-    return () => {
-      document.removeEventListener('click', slideImgBtnOnClick);
-    };
-  }, [slideImgBtnOnClick]);
 
   function wishlistButtonOnClick() {
     const data = JSON.stringify([categoryId, subcategoryId, product.id]);
@@ -196,6 +143,8 @@ export default function Product() {
     }
   }
 
+  // main slider functions
+
   const paginationBtns = useMemo(() => (
     imgSrcs.map(([key, src], i) => (
       <button
@@ -225,37 +174,6 @@ export default function Product() {
     paginationButtonActiveClass: productCls.paginationBtn_active,
   }), [paginationBtns]);
 
-  // const slides = useMemo(() => {
-  //   const result = imgSrcs.map(([key, src]) => (
-  //     <div
-  //       key={key}
-  //       className={productCls.slide}
-  //     >
-  //       <button
-  //         type="button"
-  //         className={productCls.galleryButton}
-  //         data-gallery-btn
-  //         data-img-src={src}
-  //         data-img-alt={product.name}
-  //         aria-label="Открыть картинку на весь экран"
-  //       >
-  //         <Suspense
-  //           fallback={<Spinner className={productCls.slideImgSpinner} />}
-  //         >
-  //           <Await resolve={src}>
-  //             <DynamicImage
-  //               className={productCls.slideImg}
-  //               alt={product.name}
-  //             />
-  //           </Await>
-  //         </Suspense>
-  //       </button>
-  //     </div>
-  //   ));
-
-  //   return result;
-  // }, [product, imgSrcs]);
-
   const slides = useMemo(() => {
     const result = imgSrcs.map(([id, src], i) => (
       <div
@@ -265,8 +183,17 @@ export default function Product() {
         <button
           type="button"
           className={productCls.galleryButton}
-          data-gallery-btn
-          data-slide-id={i}
+          onPointerDown={(downEvent) => {
+            const startX = downEvent.clientX;
+
+            document.addEventListener('pointerup', (upEvent) => {
+              const endX = upEvent.clientX;
+              if (Math.abs(startX - endX) > 5) return;
+
+              setIsGalleryOpen(true);
+              setGalleryActiveSlideId(i);
+            }, { once: true });
+          }}
           aria-haspopup="dialog"
           aria-label="Открыть картинку на весь экран"
         >
@@ -286,6 +213,8 @@ export default function Product() {
 
     return result;
   }, [product, imgSrcs]);
+
+  // mainSpecs and price functions
 
   const mainSpecsElems = useMemo(() => {
     const { mainSpecs } = product;
@@ -319,6 +248,34 @@ export default function Product() {
     discountPercent = ((product.oldPrice - product.price) / product.oldPrice) * 100;
     discountPercent = discountPercent.toFixed(0);
   }
+
+  // tabs function
+
+  const disableTabPanelElements = useCallback(() => {
+    let interactiveElems;
+
+    if (isDescTabPanelActive) {
+      interactiveElems = findAllInteractiveElements(commentTabPanelRef.current);
+    } else {
+      interactiveElems = findAllInteractiveElements(descTabPanelRef.current);
+    }
+
+    interactiveElems.forEach((el) => {
+      el.tabIndex = '-1';
+      el.setAttribute('aria-hidden', true);
+    });
+
+    return () => {
+      interactiveElems.forEach((el) => {
+        el.tabIndex = '0';
+        el.setAttribute('aria-hidden', false);
+      });
+    };
+  }, [isDescTabPanelActive]);
+
+  useEffect(disableTabPanelElements, [disableTabPanelElements]);
+
+  // descritption and specs block
 
   const descriptionBlock = useMemo(() => {
     if (!product.description) return;
@@ -392,6 +349,20 @@ export default function Product() {
         </ul>
       </div>
     );
+  }, [product]);
+
+  // gallery popup functions
+
+  const imgIdsForGallery = useMemo(() => {
+    const result = [product.id];
+
+    const { additionalImgs } = product;
+
+    if (additionalImgs) {
+      additionalImgs.forEach((additionalImg) => result.push(additionalImg));
+    }
+
+    return result;
   }, [product]);
 
   return (
