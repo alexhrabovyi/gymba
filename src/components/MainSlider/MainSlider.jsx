@@ -7,8 +7,7 @@ import SliderButton from './MainSliderButton/MainSliderButton.jsx';
 import Slider from '../common/Slider/Slider.jsx';
 
 export default function MainSlider() {
-  const [isPrevBtnInactive, setIsPrevBtnInactive] = useState(true);
-  const [isNextBtnInactive, setIsNextBtnInactive] = useState(false);
+  const [activeSlideId, setActiveSlideId] = useState(0);
 
   const slides = useMemo(() => [
     <Slide
@@ -37,31 +36,25 @@ export default function MainSlider() {
     </Slide>,
   ], []);
 
-  const btnPrevId = 'mainSliderBtnPrev';
-  const btnNextId = 'mainSliderBtnNext';
-
-  const btnPrevDetails = useMemo(() => ({
-    id: btnPrevId,
-    toggleInactive: setIsPrevBtnInactive,
-  }), []);
-
-  const btnNextDetails = useMemo(() => ({
-    id: btnNextId,
-    toggleInactive: setIsNextBtnInactive,
-  }), []);
-
   return (
     <section className={classNames(containerCls.container, mainSliderCls.mainSlider)}>
       <div className={mainSliderCls.slider}>
         <div className={mainSliderCls.buttonBlock}>
-          <SliderButton id={btnPrevId} isInactive={isPrevBtnInactive} />
-          <SliderButton id={btnNextId} isInactive={isNextBtnInactive} isRight />
+          <SliderButton
+            isInactive={activeSlideId === 0}
+            onClick={() => setActiveSlideId((id) => id - 1)}
+          />
+          <SliderButton
+            isInactive={activeSlideId === slides.length - 1}
+            isRight
+            onClick={() => setActiveSlideId((id) => id + 1)}
+          />
         </div>
         <Slider
+          activeSlideId={activeSlideId}
+          setActiveSlideId={setActiveSlideId}
           slides={slides}
           gap="1.5"
-          btnPrevDetails={btnPrevDetails}
-          btnNextDetails={btnNextDetails}
         />
       </div>
     </section>

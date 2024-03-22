@@ -54,11 +54,11 @@ export default function Product() {
   const [windowWidth, setWindowWidth] = useState(null);
   const [productInWishlist, setProductInWishlist] = useState(false);
   const [productInCart, setProductInCart] = useState(false);
+  const [activeSlideId, setActiveSlideId] = useState(0);
   const [isDescTabPanelActive, setIsDescTabPanelActive] = useState(true);
   const [isCommentPopupActive, setIsCommentPopupActive] = useState(false);
   const [isQuestionPopupActive, setIsQuestionPopupActive] = useState(false);
   const [isGalleryOpen, setIsGalleryOpen] = useState(false);
-  const [galleryActiveSlideId, setGalleryActiveSlideId] = useState(0);
 
   // helper functions
 
@@ -150,8 +150,11 @@ export default function Product() {
       <button
         key={key}
         type="button"
-        className={productCls.paginationBtn}
-        data-pagination-id={i}
+        className={classNames(
+          productCls.paginationBtn,
+          i === activeSlideId && productCls.paginationBtn_active,
+        )}
+        onClick={() => setActiveSlideId(i)}
         aria-label={`Перейти к слайду ${i}`}
       >
         <Suspense
@@ -166,16 +169,10 @@ export default function Product() {
         </Suspense>
       </button>
     ))
-  ), [product, imgSrcs]);
-
-  const sliderCustomPaginationProps = useMemo(() => ({
-    paginationBlockSelector: productCls.imagePaginationBlock,
-    paginationButtons: paginationBtns,
-    paginationButtonActiveClass: productCls.paginationBtn_active,
-  }), [paginationBtns]);
+  ), [imgSrcs, activeSlideId, product]);
 
   const slides = useMemo(() => {
-    const result = imgSrcs.map(([id, src], i) => (
+    const result = imgSrcs.map(([id, src]) => (
       <div
         key={id}
         className={productCls.slide}
@@ -191,7 +188,6 @@ export default function Product() {
               if (Math.abs(startX - endX) > 5) return;
 
               setIsGalleryOpen(true);
-              setGalleryActiveSlideId(i);
             }, { once: true });
           }}
           aria-haspopup="dialog"
@@ -405,10 +401,14 @@ export default function Product() {
         )}
         <div className={productCls.mainBlock}>
           <div className={productCls.imageSliderBlock}>
+            <div className={productCls.imagePaginationBlock}>
+              {paginationBtns}
+            </div>
             <Slider
+              activeSlideId={activeSlideId}
+              setActiveSlideId={setActiveSlideId}
               slides={slides}
               gap={20}
-              customPagination={sliderCustomPaginationProps}
             />
           </div>
           <div className={productCls.mainSpecsBlock}>
@@ -776,7 +776,8 @@ export default function Product() {
         imgIds={imgIdsForGallery}
         isOpen={isGalleryOpen}
         setIsOpen={setIsGalleryOpen}
-        activeSlideId={galleryActiveSlideId}
+        activeSlideId={activeSlideId}
+        setActiveSlideId={setActiveSlideId}
         productName={product.name}
       />
     </>

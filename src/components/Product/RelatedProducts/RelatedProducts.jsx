@@ -13,11 +13,9 @@ import relatedProductsCls from './RelatedProducts.module.scss';
 const RelatedProducts = memo(({ categoryId, subcategoryId, productId }) => {
   const fetcher = useFetcher();
 
-  const [products, setProducts] = useState();
-  const [isBtnPrevInactive, setIsBtnPrevInactive] = useState(true);
-  const [isBtnNextInactive, setIsBtnNextInactive] = useState(false);
-
   const [windowWidth, setWindowWidth] = useState(null);
+  const [products, setProducts] = useState();
+  const [activeSlideId, setActiveSlideId] = useState(0);
 
   const getWindowWidth = useCallback(() => {
     setWindowWidth(window.innerWidth);
@@ -67,24 +65,15 @@ const RelatedProducts = memo(({ categoryId, subcategoryId, productId }) => {
     ));
   }, [products, categoryId, subcategoryId]);
 
-  const prevBtnId = 'relatedSliderBtnPrev';
-  const nextBtnId = 'relatedSliderBtnNext';
-
-  const btnPrevDetails = useMemo(() => ({
-    id: prevBtnId,
-    toggleInactive: setIsBtnPrevInactive,
-  }), []);
-
-  const btnNextDetails = useMemo(() => ({
-    id: nextBtnId,
-    toggleInactive: setIsBtnNextInactive,
-  }), []);
-
   let perView = 4;
 
   if (windowWidth <= 1100) perView = 3;
   if (windowWidth <= 768) perView = 2;
   if (windowWidth <= 430) perView = 1;
+
+  if (productSlides.length !== 0 && activeSlideId > productSlides.length - perView) {
+    setActiveSlideId(productSlides.length - perView);
+  }
 
   return (
     <article className={relatedProductsCls.article}>
@@ -100,22 +89,22 @@ const RelatedProducts = memo(({ categoryId, subcategoryId, productId }) => {
       </p>
       <div className={relatedProductsCls.sliderBlock}>
         <Slider
+          activeSlideId={activeSlideId}
+          setActiveSlideId={setActiveSlideId}
           slides={productSlides}
           gap="0"
           perView={perView}
-          btnPrevDetails={btnPrevDetails}
-          btnNextDetails={btnNextDetails}
         />
         <BigPrevNextButton
           className={relatedProductsCls.prevBtn}
-          isInactive={isBtnPrevInactive}
+          isInactive={activeSlideId === 0}
           isPrev
-          id={prevBtnId}
+          onClick={() => setActiveSlideId((id) => id - 1)}
         />
         <BigPrevNextButton
           className={relatedProductsCls.nextBtn}
-          isInactive={isBtnNextInactive}
-          id={nextBtnId}
+          isInactive={activeSlideId === (productSlides.length - perView || 0)}
+          onClick={() => setActiveSlideId((id) => id + 1)}
         />
       </div>
     </article>

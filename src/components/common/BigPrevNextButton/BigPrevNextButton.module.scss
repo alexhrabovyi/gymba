@@ -20,6 +20,10 @@
   &_disabled {
     opacity: 0.7;
     pointer-events: none;
+
+    &:hover {
+      opacity: 0.7;
+    }
   }
 
   &_prev {

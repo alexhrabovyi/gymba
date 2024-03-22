@@ -3,7 +3,7 @@ import buttonCls from './BigPrevNextButton.module.scss';
 import BigChevronRight from '../../../assets/images/icons/bigChevronRight.svg';
 
 export default function BigPrevNextButton({
-  className, isInactive, isPrev = false, id, label,
+  className, isInactive, isPrev = false, id, onClick, label,
 }) {
   if (!label && isPrev) {
     label = 'Показать предыдущий слайд';
@@ -23,6 +23,7 @@ export default function BigPrevNextButton({
           isInactive && buttonCls.button_disabled,
         )
       }
+      onClick={onClick}
       aria-hidden={isInactive}
       disabled={isInactive}
       aria-label={label}

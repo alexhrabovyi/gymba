@@ -15,8 +15,7 @@ import newsCls from './NewsPreviews.module.scss';
 export default function NewsPreviews() {
   const { news } = useLoaderData();
   const [windowWidth, setWindowWidth] = useState();
-  const [isPrevBtnInactive, setIsPrevBtnInactive] = useState(true);
-  const [isNextBtnInactive, setIsNextBtnInactive] = useState(false);
+  const [activeSlideId, setActiveSlideId] = useState(0);
 
   const getWindowWidth = useCallback(() => {
     setWindowWidth(window.innerWidth);
@@ -36,18 +35,14 @@ export default function NewsPreviews() {
     />
   )), [news]);
 
-  const btnPrevId = 'newsSliderBtnPrev';
-  const btnNextId = 'newsSliderBtnNext';
+  let perView = 3;
 
-  const btnPrevDetails = useMemo(() => ({
-    id: btnPrevId,
-    toggleInactive: setIsPrevBtnInactive,
-  }), []);
+  if (windowWidth <= 1024) perView = 2;
+  if (windowWidth <= 768) perView = 1;
 
-  const btnNextDetails = useMemo(() => ({
-    id: btnNextId,
-    toggleInactive: setIsNextBtnInactive,
-  }), []);
+  if (activeSlideId > previews.length - perView) {
+    setActiveSlideId(previews.length - perView);
+  }
 
   return (
     <article className={classNames(containerCls.container, newsCls.article)}>
@@ -63,45 +58,27 @@ export default function NewsPreviews() {
       </h2>
       <div className={newsCls.previews}>
         {windowWidth > 1360 && previews}
-        {windowWidth <= 1360 && windowWidth > 1024 && (
+        {windowWidth <= 1360 && (
           <Slider
+            activeSlideId={activeSlideId}
+            setActiveSlideId={setActiveSlideId}
             slides={previews}
             gap="5"
-            perView="3"
-            btnPrevDetails={btnPrevDetails}
-            btnNextDetails={btnNextDetails}
-          />
-        )}
-        {windowWidth <= 1024 && windowWidth > 768 && (
-          <Slider
-            slides={previews}
-            gap="5"
-            perView="2"
-            btnPrevDetails={btnPrevDetails}
-            btnNextDetails={btnNextDetails}
-          />
-        )}
-        {windowWidth <= 768 && (
-          <Slider
-            slides={previews}
-            gap="5"
-            perView="1"
-            btnPrevDetails={btnPrevDetails}
-            btnNextDetails={btnNextDetails}
+            perView={perView}
           />
         )}
         {windowWidth <= 1360 && (
           <>
             <BigPrevNextButton
               className={newsCls.sliderButtonPrev}
-              isInactive={isPrevBtnInactive}
+              isInactive={activeSlideId === 0}
               isPrev
-              id={btnPrevId}
+              onClick={() => setActiveSlideId((id) => id - 1)}
             />
             <BigPrevNextButton
               className={newsCls.sliderButtonNext}
-              isInactive={isNextBtnInactive}
-              id={btnNextId}
+              isInactive={activeSlideId === previews.length - perView}
+              onClick={() => setActiveSlideId((id) => id + 1)}
             />
           </>
         )}

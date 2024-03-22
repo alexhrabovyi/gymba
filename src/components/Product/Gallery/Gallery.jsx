@@ -1,7 +1,7 @@
 /* eslint-disable react/no-array-index-key */
 /* eslint-disable jsx-a11y/no-static-element-interactions */
 import {
-  memo, useRef, Suspense, useMemo, useState,
+  memo, useRef, Suspense, useMemo,
 } from 'react';
 import { Await } from 'react-router-dom';
 import classNames from 'classnames';
@@ -14,16 +14,13 @@ import useToggleInteractiveElements from '../../../hooks/useToggleInteractiveEle
 import galleryCls from './Gallery.module.scss';
 
 const Gallery = memo(({
-  imgIds, isOpen = false, setIsOpen, activeSlideId, productName,
+  imgIds, isOpen = false, setIsOpen, activeSlideId, setActiveSlideId, productName,
 }) => {
   const backdropRef = useRef(null);
   const sliderBlockRef = useRef(null);
 
   useHideScrollbarOnOpen(isOpen);
   useToggleInteractiveElements(sliderBlockRef, isOpen);
-
-  const [isBtnPrevInactive, setIsBtnPrevInactive] = useState(false);
-  const [isBtnNextInactive, setIsBtnNextInactive] = useState(false);
 
   function backdropOnClick(e) {
     if (e.target === backdropRef.current) setIsOpen(false);
@@ -49,19 +46,6 @@ const Gallery = memo(({
     </div>
   ));
 
-  const prevBtnId = 'gallerySliderBtnPrev';
-  const nextBtnId = 'gallerySliderBtnNext';
-
-  const btnPrevDetails = useMemo(() => ({
-    id: prevBtnId,
-    toggleInactive: setIsBtnPrevInactive,
-  }), []);
-
-  const btnNextDetails = useMemo(() => ({
-    id: nextBtnId,
-    toggleInactive: setIsBtnNextInactive,
-  }), []);
-
   return (
     <div
       ref={backdropRef}
@@ -81,29 +65,27 @@ const Gallery = memo(({
         tabIndex={isOpen ? '0' : '-1'}
       >
         <Slider
-          key={activeSlideId}
           slides={slides}
           gap={20}
-          initActiveSlideId={activeSlideId}
-          btnPrevDetails={btnPrevDetails}
-          btnNextDetails={btnNextDetails}
+          activeSlideId={activeSlideId}
+          setActiveSlideId={setActiveSlideId}
         />
         <BigPrevNextButton
           className={classNames(
             galleryCls.sliderBtn,
             galleryCls.prevBtn,
           )}
-          isInactive={isBtnPrevInactive}
+          isInactive={activeSlideId === 0}
           isPrev
-          id={prevBtnId}
+          onClick={() => setActiveSlideId((id) => id - 1)}
         />
         <BigPrevNextButton
           className={classNames(
             galleryCls.sliderBtn,
             galleryCls.nextBtn,
           )}
-          isInactive={isBtnNextInactive}
-          id={nextBtnId}
+          isInactive={activeSlideId === slides.length - 1}
+          onClick={() => setActiveSlideId((id) => id + 1)}
         />
       </aside>
     </div>
