@@ -11,6 +11,7 @@ import Slider from '../../common/Slider/Slider.jsx';
 import BigPrevNextButton from '../../common/BigPrevNextButton/BigPrevNextButton.jsx';
 import useHideScrollbarOnOpen from '../../../hooks/useHideScrollbarOnOpen.jsx';
 import useToggleInteractiveElements from '../../../hooks/useToggleInteractiveElements.jsx';
+import backdropCls from '../../../scss/_backdrop.module.scss';
 import galleryCls from './Gallery.module.scss';
 
 const Gallery = memo(({
@@ -50,8 +51,9 @@ const Gallery = memo(({
     <div
       ref={backdropRef}
       className={classNames(
+        backdropCls.backdrop,
         galleryCls.backdrop,
-        isOpen && galleryCls.backdrop_active,
+        isOpen && backdropCls.backdrop_active,
       )}
       onClick={backdropOnClick}
     >

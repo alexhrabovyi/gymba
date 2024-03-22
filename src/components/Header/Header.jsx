@@ -11,6 +11,7 @@ import classNames from 'classnames';
 import containerCls from '../../scss/_container.module.scss';
 import textCls from '../../scss/_text.module.scss';
 import linkCls from '../../scss/_link.module.scss';
+import backdropCls from '../../scss/_backdrop.module.scss';
 import headerCls from './Header.module.scss';
 import Logo from './images/logo.svg';
 import LogoSmall from './images/logoSmall.svg';
@@ -389,8 +390,9 @@ export default function Header() {
       </div>
       <div
         className={classNames(
+          backdropCls.backdrop,
           headerCls.backdrop,
-          isAnyMenuOpen && headerCls.backdrop_active,
+          isAnyMenuOpen && backdropCls.backdrop_active,
         )}
         onClick={backdropOnClick}
       />

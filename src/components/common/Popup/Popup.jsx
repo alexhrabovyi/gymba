@@ -6,6 +6,7 @@ import classNames from 'classnames';
 import useCloseOnResize from '../../../hooks/useCloseOnResize.jsx';
 import useHideScrollbarOnOpen from '../../../hooks/useHideScrollbarOnOpen.jsx';
 import useToggleInteractiveElements from '../../../hooks/useToggleInteractiveElements.jsx';
+import backdropCls from '../../../scss/_backdrop.module.scss';
 import popupCls from './Popup.module.scss';
 import Cross from '../../../assets/images/icons/cross.svg';
 
@@ -59,8 +60,9 @@ const Popup = memo(({
     <div
       ref={popupBackdropRef}
       className={classNames(
+        backdropCls.backdrop,
         popupCls.popupBackdrop,
-        isActive && popupCls.popupBackdrop_active,
+        isActive && backdropCls.backdrop_active,
       )}
       onClick={backdropOnClick}
     >

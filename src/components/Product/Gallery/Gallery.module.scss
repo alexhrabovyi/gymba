@@ -2,22 +2,10 @@
 @import '../../../scss/mixins';
 
 .backdrop {
-  position: fixed;
-  z-index: 2000;
   display: grid;
   overflow: auto;
-  background: rgb(9 31 58 / 76%);
   grid-template-rows: 10% auto 10%;
-  inset: 0;
-  opacity: 0;
   place-items: center center;
-  pointer-events: none;
-  transition: opacity .25s ease-in-out;
-
-  &_active {
-    opacity: 1;
-    pointer-events: all;
-  }
 }
 
 .sliderBlock {

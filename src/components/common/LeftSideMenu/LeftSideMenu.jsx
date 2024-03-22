@@ -3,8 +3,10 @@ import {
   memo, useRef, useCallback, useLayoutEffect, useEffect,
 } from 'react';
 import classNames from 'classnames';
+import backdropCls from '../../../scss/_backdrop.module.scss';
 import containerCls from '../../../scss/_container.module.scss';
 import menuCls from './LeftSideMenu.module.scss';
+import useOnResize from '../../../hooks/useOnResize.jsx';
 import useHideScrollbarOnOpen from '../../../hooks/useHideScrollbarOnOpen.jsx';
 import useCloseOnResize from '../../../hooks/useCloseOnResize.jsx';
 import useToggleInteractiveElements from '../../../hooks/useToggleInteractiveElements.jsx';
@@ -19,21 +21,20 @@ const LeftSideMenu = memo(({
   const calcMenuHeight = useCallback(() => {
     const menu = menuRef.current;
 
-    if (isMenuOpen) {
-      const maximumMenuHeight = window.innerHeight;
-      const realMenuHeight = menu.scrollHeight;
+    const maximumMenuHeight = window.innerHeight;
+    const realMenuHeight = menu.scrollHeight;
 
-      menu.style.overflowY = realMenuHeight > maximumMenuHeight && 'scroll';
-      menu.style.height = `${maximumMenuHeight}px`;
-    }
+    menu.style.overflowY = realMenuHeight > maximumMenuHeight ? 'scroll' : 'hidden';
+    menu.style.height = `${maximumMenuHeight}px`;
 
     return () => {
       menu.style.height = '';
       menu.style.overflowY = '';
     };
-  }, [isMenuOpen]);
+  }, []);
 
   useLayoutEffect(calcMenuHeight, [calcMenuHeight]);
+  useOnResize(calcMenuHeight);
 
   useHideScrollbarOnOpen(isMenuOpen);
   useCloseOnResize(setIsMenuOpen);
@@ -56,8 +57,8 @@ const LeftSideMenu = memo(({
     <div
       ref={menuBackdropRef}
       className={classNames(
-        menuCls.backdrop,
-        isMenuOpen && menuCls.backdrop_active,
+        backdropCls.backdrop,
+        isMenuOpen && backdropCls.backdrop_active,
       )}
       onClick={backdropOnClick}
     >
