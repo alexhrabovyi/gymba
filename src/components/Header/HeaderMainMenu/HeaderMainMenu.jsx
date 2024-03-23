@@ -17,6 +17,7 @@ import Favorite from '../../../assets/images/icons/favorite.svg';
 import Tag from '../images/tag.svg';
 import Phone from '../images/phone.svg';
 import ChevronRight from '../../../assets/images/icons/chevronRight.svg';
+import useFetcherLoad from '../../../hooks/useFetcherLoad.jsx';
 
 const HeaderMainMenu = memo(({ isMenuOpen, categories, catalogBtnOnClick }) => {
   const fetcher = useFetcher();
@@ -86,11 +87,7 @@ const HeaderMainMenu = memo(({ isMenuOpen, categories, catalogBtnOnClick }) => {
     if (isMenuOpen) menuRef.current.focus();
   }, [isMenuOpen]);
 
-  useEffect(() => {
-    if (fetcher.state === 'idle' && !fetcher.data) {
-      fetcher.load('../wishlist');
-    }
-  }, [fetcher]);
+  useFetcherLoad(fetcher, '../wishlist');
 
   const [wishlistAmount, setWishlistAmount] = useState(null);
 

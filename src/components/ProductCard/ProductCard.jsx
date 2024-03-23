@@ -1,9 +1,10 @@
 /* eslint-disable react/jsx-no-bind */
 import {
-  Suspense, memo, useState, useEffect,
+  Suspense, memo, useState,
 } from 'react';
 import { Await, Link, useFetcher } from 'react-router-dom';
 import classNames from 'classnames';
+import useFetcherLoad from '../../hooks/useFetcherLoad.jsx';
 import beautifyNum from '../../utils/beautifyNum.js';
 import Spinner from '../common/Spinner/Spinner.jsx';
 import DynamicImage from '../common/DynamicImage/DynamicImage.jsx';
@@ -25,11 +26,7 @@ const ProductCard = memo(({
   const [productInWishlist, setProductInWishlist] = useState(false);
   const [productInCart, setProductInCart] = useState(false);
 
-  useEffect(() => {
-    if (wishlistFetcher.state === 'idle' && !wishlistFetcher.data) {
-      wishlistFetcher.load('../wishlist');
-    }
-  }, [wishlistFetcher]);
+  useFetcherLoad(wishlistFetcher, '../wishlist');
 
   if (wishlistFetcher.data) {
     const productInWishlistFromFetcher = wishlistFetcher
@@ -42,11 +39,7 @@ const ProductCard = memo(({
     }
   }
 
-  useEffect(() => {
-    if (cartFetcher.state === 'idle' && !cartFetcher.data) {
-      cartFetcher.load('../cart');
-    }
-  }, [cartFetcher]);
+  useFetcherLoad(cartFetcher, '../cart');
 
   if (cartFetcher.data) {
     const productInCartFromFetcher = cartFetcher.data.cartIds.find(([cId, subcId, pId]) => (
@@ -94,6 +87,8 @@ const ProductCard = memo(({
     }
   }
 
+  const productLink = `/${categoryId}/${subcategoryId}/${productId}`;
+
   if (isShortCard) {
     return (
       <div className={productCls.card}>
@@ -119,7 +114,7 @@ const ProductCard = memo(({
         </div>
         <Link
           className={productCls.imageLink}
-          to={productId}
+          to={productLink}
           alt={name}
         >
           <Suspense
@@ -135,7 +130,7 @@ const ProductCard = memo(({
         </Link>
         <Link
           className={classNames(linkCls.link, productCls.textLink)}
-          to={productId}
+          to={productLink}
           alt={name}
         >
           {name}
@@ -173,7 +168,7 @@ const ProductCard = memo(({
     <div className={productCls.longCard}>
       <Link
         className={productCls.longImageLink}
-        to={productId}
+        to={productLink}
         alt={name}
       >
         <Suspense
@@ -190,7 +185,7 @@ const ProductCard = memo(({
       <div className={productCls.nameAndIconButtons}>
         <Link
           className={classNames(linkCls.link, productCls.longTextLink)}
-          to={productId}
+          to={productLink}
           alt={name}
         >
           {name}

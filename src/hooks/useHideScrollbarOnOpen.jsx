@@ -10,8 +10,10 @@ export default function useHideScrollbarOnOpen(isOpen) {
     }
 
     return () => {
-      document.body.style.paddingRight = '';
-      document.body.style.overflowY = '';
+      if (isOpen) {
+        document.body.style.paddingRight = '';
+        document.body.style.overflow = '';
+      }
     };
   }, [isOpen]);
 

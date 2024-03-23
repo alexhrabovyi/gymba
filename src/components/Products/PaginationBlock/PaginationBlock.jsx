@@ -1,5 +1,5 @@
 import {
-  memo, useState, Fragment, useCallback, useLayoutEffect, useRef,
+  memo, useState, Fragment, useCallback, useLayoutEffect, useEffect, useRef,
 } from 'react';
 import { useNavigation, useSearchParams } from 'react-router-dom';
 import classNames from 'classnames';
@@ -33,7 +33,7 @@ const PaginationBlock = memo(({ pageAmount }) => {
     return 1;
   });
 
-  if (currentPageNum > pageAmount) {
+  if (currentPageNum > pageAmount && pageAmount !== 0) {
     setCurrentPageNum(1);
     searchParams.delete('page');
     setSearchParams(searchParams);
@@ -55,7 +55,7 @@ const PaginationBlock = memo(({ pageAmount }) => {
     }
   }, [navigation, currentPageNum]);
 
-  useLayoutEffect(onNavigation, [onNavigation]);
+  useEffect(onNavigation, [onNavigation]);
 
   function formOnSubmit(e) {
     e.preventDefault();

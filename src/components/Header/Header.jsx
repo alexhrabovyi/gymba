@@ -30,6 +30,7 @@ import Input from '../common/Input/Input.jsx';
 import Search from './images/search.svg';
 import HeaderCategoryMenu from './HeaderCategoryMenu/HeaderCategoryMenu.jsx';
 import HeaderSubcategoryMenu from './HeaderSubcategoryMenu/HeaderSubcategoryMenu.jsx';
+import useFetcherLoad from '../../hooks/useFetcherLoad.jsx';
 
 export default function Header() {
   const categories = useLoaderData();
@@ -151,11 +152,7 @@ export default function Header() {
     setIsSubcategoryMenuOpen(false);
   }
 
-  useEffect(() => {
-    if (wishlistFetcher.state === 'idle' && !wishlistFetcher.data) {
-      wishlistFetcher.load('../wishlist');
-    }
-  }, [wishlistFetcher]);
+  useFetcherLoad(wishlistFetcher, '../wishlist');
 
   const [wishlistAmount, setWishlistAmount] = useState(null);
 
@@ -165,11 +162,7 @@ export default function Header() {
     }
   }
 
-  useEffect(() => {
-    if (cartFetcher.state === 'idle' && !cartFetcher.data) {
-      cartFetcher.load('../cart');
-    }
-  }, [cartFetcher]);
+  useFetcherLoad(cartFetcher, '../cart');
 
   const [cartAmount, setCartAmount] = useState(null);
 

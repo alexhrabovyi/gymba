@@ -8,6 +8,7 @@ import {
 } from 'react-router-dom';
 import classNames from 'classnames';
 import useOnResize from '../../hooks/useOnResize.jsx';
+import useFetcherLoad from '../../hooks/useFetcherLoad.jsx';
 import findAllInteractiveElements from '../../utils/findAllInteractiveElements.js';
 import Spinner from '../common/Spinner/Spinner.jsx';
 import DynamicImage from '../common/DynamicImage/DynamicImage.jsx';
@@ -39,19 +40,7 @@ export default function Product() {
   const openCommentPopupBtnRef = useRef();
   const openQuestionPopupBtnRef = useRef();
 
-  const [imgSrcs] = useState(() => {
-    const result = [[product.id, import(`../../assets/images/productImgs/${product.id}.webp`)]];
-
-    const { additionalImgs } = product;
-
-    if (additionalImgs) {
-      additionalImgs.forEach((additionalSrc) => {
-        result.push([additionalSrc, import(`../../assets/images/productImgs/${additionalSrc}.webp`)]);
-      });
-    }
-
-    return result;
-  });
+  const [imgSrcs, setImgSrcs] = useState([]);
   const [windowWidth, setWindowWidth] = useState(null);
   const [productInWishlist, setProductInWishlist] = useState(false);
   const [productInCart, setProductInCart] = useState(false);
@@ -76,11 +65,7 @@ export default function Product() {
 
   // fetch functions
 
-  useEffect(() => {
-    if (wishlistFetcher.state === 'idle' && !wishlistFetcher.data) {
-      wishlistFetcher.load('../wishlist');
-    }
-  }, [wishlistFetcher]);
+  useFetcherLoad(wishlistFetcher, '../wishlist');
 
   if (wishlistFetcher.data) {
     const productInWishlistFromFetcher = wishlistFetcher
@@ -93,11 +78,7 @@ export default function Product() {
     }
   }
 
-  useEffect(() => {
-    if (cartFetcher.state === 'idle' && !cartFetcher.data) {
-      cartFetcher.load('../cart');
-    }
-  }, [cartFetcher]);
+  useFetcherLoad(cartFetcher, '../cart');
 
   if (cartFetcher.data) {
     const productInCartFromFetcher = cartFetcher.data.cartIds.find(([cId, subcId, pId]) => (
@@ -147,6 +128,22 @@ export default function Product() {
   }
 
   // main slider functions
+
+  const downloadImages = useCallback(() => {
+    const srcs = [[product.id, import(`../../assets/images/productImgs/${product.id}.webp`)]];
+
+    const { additionalImgs } = product;
+
+    if (additionalImgs) {
+      additionalImgs.forEach((additionalSrc) => {
+        srcs.push([additionalSrc, import(`../../assets/images/productImgs/${additionalSrc}.webp`)]);
+      });
+    }
+
+    setImgSrcs(srcs);
+  }, [product]);
+
+  useEffect(downloadImages, [downloadImages]);
 
   const paginationBtns = useMemo(() => (
     imgSrcs.map(([key, src], i) => (

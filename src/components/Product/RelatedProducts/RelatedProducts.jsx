@@ -13,6 +13,7 @@ import relatedProductsCls from './RelatedProducts.module.scss';
 const RelatedProducts = memo(({ categoryId, subcategoryId, productId }) => {
   const fetcher = useFetcher();
 
+  const [currentProductId, setCurrentProductId] = useState(productId);
   const [windowWidth, setWindowWidth] = useState(null);
   const [products, setProducts] = useState();
   const [activeSlideId, setActiveSlideId] = useState(0);
@@ -28,7 +29,7 @@ const RelatedProducts = memo(({ categoryId, subcategoryId, productId }) => {
   useOnResize(getWindowWidth);
 
   useEffect(() => {
-    if (fetcher.state === 'idle' && !products) {
+    if ((fetcher.state === 'idle' && !products) || currentProductId !== productId) {
       const data = JSON.stringify([categoryId, subcategoryId, productId]);
 
       fetcher.submit(data, {
@@ -36,8 +37,10 @@ const RelatedProducts = memo(({ categoryId, subcategoryId, productId }) => {
         method: 'POST',
         encType: 'application/json',
       });
+
+      setCurrentProductId(productId);
     }
-  }, [fetcher, categoryId, subcategoryId, productId, products]);
+  }, [fetcher, products, currentProductId, categoryId, subcategoryId, productId]);
 
   useEffect(() => {
     if (fetcher.data && fetcher.data !== products) setProducts(fetcher.data);
