@@ -13,6 +13,7 @@ import Spinner from '../common/Spinner/Spinner.jsx';
 import DynamicImage from '../common/DynamicImage/DynamicImage.jsx';
 import Slider from '../common/Slider/Slider.jsx';
 import Button from '../common/Button/Button.jsx';
+import AddToCartBanner from './AddToCartBanner/AddToCartBanner.jsx';
 import RelatedProducts from './RelatedProducts/RelatedProducts.jsx';
 import Popup from '../common/Popup/Popup.jsx';
 import ValidationForm from '../common/ValidationForm/ValidationForm.jsx';
@@ -55,6 +56,7 @@ export default function Product() {
   const [productInWishlist, setProductInWishlist] = useState(false);
   const [productInCart, setProductInCart] = useState(false);
   const [activeSlideId, setActiveSlideId] = useState(0);
+  const [isCartBannerActive, setIsCartBannerActive] = useState(false);
   const [isDescTabPanelActive, setIsDescTabPanelActive] = useState(true);
   const [isCommentPopupActive, setIsCommentPopupActive] = useState(false);
   const [isQuestionPopupActive, setIsQuestionPopupActive] = useState(false);
@@ -134,6 +136,7 @@ export default function Product() {
         method: 'PATCH',
         encType: 'application/json',
       });
+      setIsCartBannerActive(true);
     } else {
       cartFetcher.submit(data, {
         action: '../cart',
@@ -492,13 +495,19 @@ export default function Product() {
               </div>
               )}
             </div>
-            <Button
-              className={productCls.cartButton}
-              ariaLabel={!productInCart ? `Добавить ${product.name} в корзину` : `Удалить ${product.name} из корзины`}
-              onClick={cartButtonOnClick}
-            >
-              {!productInCart ? 'Добавить в корзину' : 'В корзине'}
-            </Button>
+            <div className={productCls.cartBtnAndBannerBlock}>
+              <Button
+                className={productCls.cartButton}
+                ariaLabel={!productInCart ? `Добавить ${product.name} в корзину` : `Удалить ${product.name} из корзины`}
+                onClick={cartButtonOnClick}
+              >
+                {!productInCart ? 'Добавить в корзину' : 'В корзине'}
+              </Button>
+              <AddToCartBanner
+                isActive={isCartBannerActive}
+                setIsActive={setIsCartBannerActive}
+              />
+            </div>
           </div>
         </div>
         <div

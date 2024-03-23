@@ -42,4 +42,16 @@
       color: $blue-active;
     }
   }
+
+  &White {
+    color: $white;
+
+    &:hover {
+      color: $white-hover;
+    }
+
+    &:active {
+      color: $white-active;
+    }
+  } 
 }

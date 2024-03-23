@@ -1,0 +1,50 @@
+@import '../../../scss/mixins';
+@import '../../../scss/colors';
+
+.banner {
+  position: absolute;
+  z-index: 10;
+  bottom: -20px;
+  left: 50%;
+  width: 200px;
+  height: 40px;
+  border-radius: 8px;
+  background: $blue;
+  opacity: 0;
+  pointer-events: none;
+  transform: translate(-50%, 100%);
+  transition: all .25s ease-in-out;
+
+  @include flex-builder(row, center, center);
+
+  &_active {
+    opacity: 1;
+    pointer-events: all;
+  }
+}
+
+.triangle {
+  position: absolute;
+  top: -10px;
+  display: block;
+  width: 0;
+  height: 0;
+  border-width: 0 5px 10px;
+  border-style: solid;
+  border-color: transparent transparent $blue transparent;
+}
+
+.link {
+  color: $white;
+  font-family: Onest, sans-serif;
+  font-size: 18px;
+  transition: all .05s ease-in-out;
+
+  &:hover {
+    color: rgb(241 241 241);
+  }
+
+  &:active {
+    color: rgb(231 231 231);
+  }
+}
