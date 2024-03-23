@@ -1,6 +1,7 @@
-/* eslint-disable jsx-a11y/no-static-element-interactions */
-/* eslint-disable consistent-return */
-import { useEffect, memo, useRef } from 'react';
+/* eslint-disable react-hooks/exhaustive-deps */
+import {
+  memo, useCallback, useEffect, useRef,
+} from 'react';
 import sliderCls from './Slider.module.scss';
 
 const Slider = memo(({
@@ -17,98 +18,116 @@ const Slider = memo(({
   const gridTemplateColumns = `repeat(${slides.length}, ${slideWidth}%)`;
   const translateValue = -(activeSlideId * slideWidth + activeSlideId * +gap);
 
-  useEffect(() => {
+  const addIdToSlides = useCallback(() => {
+    const slideElements = Array.from(wrapperRef.current.children);
+
+    slideElements.forEach((slide, i) => slide.setAttribute('data-slide-id', i));
+  }, [slides]);
+
+  useEffect(addIdToSlides, [addIdToSlides]);
+
+  function onPointerDown(e) {
+    e.preventDefault();
+
     const container = containerRef.current;
     const wrapper = wrapperRef.current;
     const lastSlide = wrapper.lastElementChild;
 
-    function onPointerDown(e) {
-      e.preventDefault();
+    const initialTranslateValueInPercents = wrapper.style.transform;
 
-      const initialTranslateValueInPercents = wrapper.style.transform;
+    wrapper.style.transitionDuration = '0s';
 
-      wrapper.style.transitionDuration = '0s';
+    const pointerDownXCoord = e.clientX;
 
-      const pointerDownXCoord = e.clientX;
+    const containerLeftCoord = container.getBoundingClientRect().left;
+    const wrapperLeftCoord = wrapper.getBoundingClientRect().left;
 
-      const containerLeftCoord = container.getBoundingClientRect().left;
-      const wrapperLeftCoord = wrapper.getBoundingClientRect().left;
+    const initTranslateValue = wrapperLeftCoord - containerLeftCoord;
 
-      const initTranslateValue = wrapperLeftCoord - containerLeftCoord;
+    let previousTranslateValue;
+    let newTranslateValue;
 
-      let previousTranslateValue;
-      let newTranslateValue;
+    function onPointerMove(onPointerMoveEvent) {
+      const pointerMoveXCoord = onPointerMoveEvent.clientX;
+      const pointerXCoordDiff = pointerMoveXCoord - pointerDownXCoord;
 
-      function onPointerMove(onPointerMoveEvent) {
-        const pointerMoveXCoord = onPointerMoveEvent.clientX;
-        const pointerXCoordDiff = pointerMoveXCoord - pointerDownXCoord;
+      newTranslateValue = initTranslateValue + pointerXCoordDiff;
 
-        newTranslateValue = initTranslateValue + pointerXCoordDiff;
+      const lastSlideRightCoord = lastSlide.getBoundingClientRect().right;
+      const containerRightCoord = container.getBoundingClientRect().right;
 
-        const lastSlideRightCoord = lastSlide.getBoundingClientRect().right;
-        const containerRightCoord = container.getBoundingClientRect().right;
-
-        if (newTranslateValue > 0) {
-          newTranslateValue /= 4;
-        } else if (Math.floor(lastSlideRightCoord) < Math.floor(containerRightCoord)) {
-          newTranslateValue = (newTranslateValue
-            - previousTranslateValue) / 4 + previousTranslateValue;
-        } else {
-          previousTranslateValue = newTranslateValue;
-        }
-
-        wrapper.style.transform = `translateX(${newTranslateValue}px)`;
+      if (newTranslateValue > 0) {
+        newTranslateValue /= 4;
+      } else if (Math.floor(lastSlideRightCoord) < Math.floor(containerRightCoord)) {
+        newTranslateValue = (newTranslateValue
+          - previousTranslateValue) / 4 + previousTranslateValue;
+      } else {
+        previousTranslateValue = newTranslateValue;
       }
 
-      function onPointerUp(onPointerUpEvent) {
-        document.removeEventListener('pointermove', onPointerMove);
-        wrapper.style.transitionDuration = '1s';
-
-        const minDiff = container.offsetWidth * 0.05;
-
-        const pointerUpXCoord = onPointerUpEvent.clientX;
-        const finalpointerXCoordDiff = pointerUpXCoord - pointerDownXCoord;
-
-        const lastSlideRightCoord = lastSlide.getBoundingClientRect().right;
-        const containerRightCoord = container.getBoundingClientRect().right;
-
-        if (
-          Math.abs(finalpointerXCoordDiff) > minDiff
-          && newTranslateValue < 0
-          && lastSlideRightCoord > containerRightCoord
-        ) {
-          if (finalpointerXCoordDiff < 0) {
-            setActiveSlideId((prevSlideId) => prevSlideId + 1);
-          } else if (finalpointerXCoordDiff > 0) {
-            setActiveSlideId((prevSlideId) => prevSlideId - 1);
-          }
-        } else if (newTranslateValue > 0 && activeSlideId !== 0) {
-          setActiveSlideId(0);
-        } else if (
-          lastSlideRightCoord < containerRightCoord
-          && activeSlideId !== slides.length - 1
-        ) {
-          const newSlideId = slides.length - perView;
-          if (newSlideId === activeSlideId) {
-            wrapper.style.transform = initialTranslateValueInPercents;
-          } else {
-            setActiveSlideId(slides.length - perView);
-          }
-        } else {
-          wrapper.style.transform = initialTranslateValueInPercents;
-        }
-      }
-
-      document.addEventListener('pointermove', onPointerMove);
-      document.addEventListener('pointerup', onPointerUp, { once: true });
+      wrapper.style.transform = `translateX(${newTranslateValue}px)`;
     }
 
-    wrapper.addEventListener('pointerdown', onPointerDown);
+    function onPointerUp(onPointerUpEvent) {
+      document.removeEventListener('pointermove', onPointerMove);
+      wrapper.style.transitionDuration = '1s';
 
-    return () => {
-      wrapper.removeEventListener('pointerdown', onPointerDown);
-    };
-  }, [slides, activeSlideId, setActiveSlideId, perView]);
+      const minDiff = container.offsetWidth * 0.05;
+
+      const pointerUpXCoord = onPointerUpEvent.clientX;
+      const finalpointerXCoordDiff = pointerUpXCoord - pointerDownXCoord;
+
+      const lastSlideRightCoord = lastSlide.getBoundingClientRect().right;
+      const containerRightCoord = container.getBoundingClientRect().right;
+
+      if (
+        Math.abs(finalpointerXCoordDiff) > minDiff
+        && newTranslateValue < 0
+        && lastSlideRightCoord > containerRightCoord
+      ) {
+        const containerCoords = container.getBoundingClientRect();
+        const containerY = containerCoords.top + 1;
+
+        if (finalpointerXCoordDiff < 0) {
+          let containerRightX = containerCoords.right - 1;
+          let lastVisibleSlide = document.elementFromPoint(containerRightX, containerY).closest('[data-slide-id]');
+
+          if (!lastVisibleSlide) {
+            containerRightX -= containerCoords.width * (+gap / 100);
+            lastVisibleSlide = document.elementFromPoint(containerRightX, containerY).closest('[data-slide-id]');
+          }
+
+          const lastVisibleSlideId = +lastVisibleSlide.dataset.slideId;
+          const newActiveSlideId = lastVisibleSlideId - (perView - 1);
+
+          setActiveSlideId(newActiveSlideId);
+        } else if (finalpointerXCoordDiff > 0) {
+          let containerLeftX = containerCoords.left + 1;
+          let firstVisibleSlide = document.elementFromPoint(containerLeftX, containerY).closest('[data-slide-id]');
+
+          if (!firstVisibleSlide) {
+            containerLeftX += containerCoords.width * (+gap / 100);
+            firstVisibleSlide = document.elementFromPoint(containerLeftX, containerY).closest('[data-slide-id]');
+          }
+
+          const firstVisibleSlideId = +firstVisibleSlide.dataset.slideId;
+          setActiveSlideId(firstVisibleSlideId);
+        }
+      } else if (newTranslateValue > 0 && activeSlideId !== 0) {
+        setActiveSlideId(0);
+      } else if (
+        lastSlideRightCoord < containerRightCoord
+        && activeSlideId !== slides.length - perView
+      ) {
+        setActiveSlideId(slides.length - perView);
+      } else {
+        wrapper.style.transform = initialTranslateValueInPercents;
+      }
+    }
+
+    document.addEventListener('pointermove', onPointerMove);
+    document.addEventListener('pointerup', onPointerUp, { once: true });
+  }
 
   return (
     <div ref={containerRef} className={sliderCls.container}>
@@ -122,6 +141,7 @@ const Slider = memo(({
               transform: `translateX(${translateValue}%)`,
             }
           }
+        onPointerDown={onPointerDown}
       >
         {slides}
       </div>
