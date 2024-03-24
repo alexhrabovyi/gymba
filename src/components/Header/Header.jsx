@@ -8,41 +8,133 @@ import {
 } from 'react';
 import { Link, useFetcher, useLoaderData } from 'react-router-dom';
 import classNames from 'classnames';
+import useScrollToTop from '../../hooks/useScrollToTop.jsx';
+import useHideScrollbarOnOpen from '../../hooks/useHideScrollbarOnOpen.jsx';
+import useOnResize from '../../hooks/useOnResize.jsx';
+import getScrollWidth from '../../utils/getScrollWidth.jsx';
+import useFetcherLoad from '../../hooks/useFetcherLoad.jsx';
+import Input from '../common/Input/Input.jsx';
+import Button from '../common/Button/Button.jsx';
+import HeaderMainMenu from './HeaderMainMenu/HeaderMainMenu.jsx';
+import HeaderCategoryMenu from './HeaderCategoryMenu/HeaderCategoryMenu.jsx';
+import HeaderSubcategoryMenu from './HeaderSubcategoryMenu/HeaderSubcategoryMenu.jsx';
 import containerCls from '../../scss/_container.module.scss';
 import textCls from '../../scss/_text.module.scss';
 import linkCls from '../../scss/_link.module.scss';
 import backdropCls from '../../scss/_backdrop.module.scss';
 import headerCls from './Header.module.scss';
 import Logo from './images/logo.svg';
-import LogoSmall from './images/logoSmall.svg';
 import Tag from './images/tag.svg';
 import Phone from './images/phone.svg';
+import LogoSmall from './images/logoSmall.svg';
+import Search from './images/search.svg';
 import User from './images/user.svg';
 import Compare from '../../assets/images/icons/compare.svg';
 import Favorite from '../../assets/images/icons/favorite.svg';
 import Cart from '../../assets/images/icons/cart.svg';
-import HeaderMainMenu from './HeaderMainMenu/HeaderMainMenu.jsx';
-import getScrollwidth from '../../utils/getScrollWidth.jsx';
-import useOnResize from '../../hooks/useOnResize.jsx';
-import useHideScrollbarOnOpen from '../../hooks/useHideScrollbarOnOpen.jsx';
-import Button from '../common/Button/Button.jsx';
-import Input from '../common/Input/Input.jsx';
-import Search from './images/search.svg';
-import HeaderCategoryMenu from './HeaderCategoryMenu/HeaderCategoryMenu.jsx';
-import HeaderSubcategoryMenu from './HeaderSubcategoryMenu/HeaderSubcategoryMenu.jsx';
-import useFetcherLoad from '../../hooks/useFetcherLoad.jsx';
 
 export default function Header() {
   const categories = useLoaderData();
   const wishlistFetcher = useFetcher();
   const cartFetcher = useFetcher();
-  const [activeCategory, setActiveCategory] = useState(categories[0]);
 
+  const headerWrapperRef = useRef(null);
+  const headerRef = useRef(null);
+  const openMenuButtonRef = useRef(null);
+
+  const [activeCategory, setActiveCategory] = useState(categories[0]);
   const [isMainMenuOpen, setIsMainMenuOpen] = useState(false);
   const [isCategoryMenuOpen, setIsCategoryMenuOpen] = useState(false);
   const [isSubcategoryMenuOpen, setIsSubcategoryMenuOpen] = useState(false);
+  const [wishlistAmount, setWishlistAmount] = useState(null);
+  const [cartAmount, setCartAmount] = useState(null);
+  const [windowWidth, setWindowWidth] = useState(null);
 
   const isAnyMenuOpen = isMainMenuOpen || isCategoryMenuOpen || isSubcategoryMenuOpen;
+
+  // setup functions
+
+  useScrollToTop();
+  useHideScrollbarOnOpen(isAnyMenuOpen);
+
+  const getWindowWidth = useCallback(() => {
+    setWindowWidth(window.innerWidth);
+  }, []);
+
+  useLayoutEffect(getWindowWidth, [getWindowWidth]);
+  useOnResize(getWindowWidth);
+
+  const setupHeaderAndHeaderWrapperStyles = useCallback(() => {
+    const headerWrapper = headerWrapperRef.current;
+    const header = headerRef.current;
+
+    header.style.paddingRight = '';
+    header.style.width = '';
+    headerWrapper.style.width = '';
+
+    if (isAnyMenuOpen) {
+      const headerPaddingRight = +getComputedStyle(header).paddingRight.match(/\d+/)[0];
+      const newHeaderPaddingRight = headerPaddingRight + getScrollWidth();
+
+      setTimeout(() => {
+        header.style.paddingRight = `${newHeaderPaddingRight}px`;
+        header.style.width = `${window.innerWidth}px`;
+        headerWrapper.style.width = `${window.innerWidth}px`;
+      });
+    }
+  }, [isAnyMenuOpen]);
+
+  useLayoutEffect(setupHeaderAndHeaderWrapperStyles, [setupHeaderAndHeaderWrapperStyles]);
+  useOnResize(setupHeaderAndHeaderWrapperStyles);
+
+  const closeAdditionalMenusOnResize = useCallback(() => {
+    if (window.innerWidth > 1024 && isCategoryMenuOpen) {
+      setIsCategoryMenuOpen(false);
+    } else if (window.innerWidth > 1024 && isSubcategoryMenuOpen) {
+      setIsSubcategoryMenuOpen(false);
+    }
+  }, [isCategoryMenuOpen, isSubcategoryMenuOpen]);
+
+  useOnResize(closeAdditionalMenusOnResize);
+
+  const keepOpenMenuBtnEnabled = useCallback(() => {
+    const openMenuButton = openMenuButtonRef.current;
+
+    if (isMainMenuOpen || isCategoryMenuOpen || isSubcategoryMenuOpen) {
+      openMenuButton.tabIndex = '0';
+      openMenuButton.ariaHidden = false;
+    }
+  }, [isMainMenuOpen, isCategoryMenuOpen, isSubcategoryMenuOpen]);
+
+  useEffect(keepOpenMenuBtnEnabled, [keepOpenMenuBtnEnabled]);
+
+  // fetcher functions
+
+  useFetcherLoad(wishlistFetcher, '../wishlist');
+
+  if (wishlistFetcher.data) {
+    if (wishlistFetcher.data.wishlistAmount !== wishlistAmount) {
+      setWishlistAmount(wishlistFetcher.data.wishlistAmount);
+    }
+  }
+
+  useFetcherLoad(cartFetcher, '../cart');
+
+  if (cartFetcher.data) {
+    if (cartFetcher.data.cartAmount !== cartAmount) {
+      setCartAmount(cartFetcher.data.cartAmount);
+    }
+  }
+
+  // event functions
+
+  function headerOnClick(e) {
+    if (!e.target.closest('a')) return;
+
+    setIsMainMenuOpen(false);
+    setIsCategoryMenuOpen(false);
+    setIsSubcategoryMenuOpen(false);
+  }
 
   function menuBtnOnClick() {
     if (!isAnyMenuOpen) {
@@ -85,91 +177,6 @@ export default function Header() {
     setIsMainMenuOpen(false);
     setIsCategoryMenuOpen(false);
     setIsSubcategoryMenuOpen(false);
-  }
-
-  const closeMenusOnResize = useCallback(() => {
-    setIsMainMenuOpen(false);
-    setIsCategoryMenuOpen(false);
-    setIsSubcategoryMenuOpen(false);
-  }, []);
-
-  useOnResize(closeMenusOnResize);
-
-  const [windowWidth, setWindowWidth] = useState(null);
-
-  const getWindowWidth = useCallback(() => {
-    setWindowWidth(window.innerWidth);
-  }, []);
-
-  useLayoutEffect(() => {
-    getWindowWidth();
-  }, [getWindowWidth]);
-
-  useOnResize(getWindowWidth);
-
-  useHideScrollbarOnOpen(isAnyMenuOpen);
-
-  const headerWrapperRef = useRef(null);
-  const headerRef = useRef(null);
-
-  useEffect(() => {
-    const headerWrapper = headerWrapperRef.current;
-    const header = headerRef.current;
-
-    if (isAnyMenuOpen) {
-      const paddingRight = +getComputedStyle(header).paddingRight.match(/\d+/)[0];
-      const newPaddingRight = paddingRight + getScrollwidth();
-
-      header.style.paddingRight = `${newPaddingRight}px`;
-      header.style.width = `${window.innerWidth}px`;
-
-      headerWrapper.style.width = `${window.innerWidth}px`;
-    }
-
-    return () => {
-      header.style.paddingRight = '';
-      header.style.width = '';
-      headerWrapper.style.width = '';
-    };
-  }, [isAnyMenuOpen]);
-
-  const openMenuButtonRef = useRef(null);
-
-  useEffect(() => {
-    const openMenuButton = openMenuButtonRef.current;
-
-    if (isMainMenuOpen || isCategoryMenuOpen || isSubcategoryMenuOpen) {
-      openMenuButton.tabIndex = '0';
-      openMenuButton.ariaHidden = false;
-    }
-  }, [isMainMenuOpen, isCategoryMenuOpen, isSubcategoryMenuOpen]);
-
-  function headerOnClick(e) {
-    if (!e.target.closest('a')) return;
-
-    setIsMainMenuOpen(false);
-    setIsCategoryMenuOpen(false);
-    setIsSubcategoryMenuOpen(false);
-  }
-
-  useFetcherLoad(wishlistFetcher, '../wishlist');
-
-  const [wishlistAmount, setWishlistAmount] = useState(null);
-
-  if (wishlistFetcher.data) {
-    if (wishlistFetcher.data.wishlistAmount !== wishlistAmount) {
-      setWishlistAmount(wishlistFetcher.data.wishlistAmount);
-    }
-  }
-
-  useFetcherLoad(cartFetcher, '../cart');
-
-  const [cartAmount, setCartAmount] = useState(null);
-
-  if (cartFetcher.data) {
-    if (cartFetcher.data.cartAmount !== cartAmount) {
-      setCartAmount(cartFetcher.data.cartAmount);
-    }
   }
 
   return (
@@ -253,6 +260,7 @@ export default function Header() {
                   : isAnyMenuOpen ? 'Закрыть каталог' : 'Открыть каталог'
               }
               aria-haspopup="dialog"
+              data-open-menu-btn
             >
               <svg className={headerCls.burger} viewBox="0 0 100 100">
                 <path

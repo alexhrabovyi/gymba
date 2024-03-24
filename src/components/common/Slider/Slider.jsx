@@ -86,7 +86,10 @@ const Slider = memo(({
         && lastSlideRightCoord > containerRightCoord
       ) {
         const containerCoords = container.getBoundingClientRect();
-        const containerY = containerCoords.top + 1;
+        let containerY = containerCoords.top + 1;
+        if (containerY < 0) containerY = containerCoords.bottom - 1;
+
+        wrapperRef.current.style.zIndex = '10000';
 
         if (finalpointerXCoordDiff < 0) {
           let containerRightX = containerCoords.right - 1;
@@ -101,6 +104,7 @@ const Slider = memo(({
           const newActiveSlideId = lastVisibleSlideId - (perView - 1);
 
           setActiveSlideId(newActiveSlideId);
+          wrapperRef.current.style.zIndex = '';
         } else if (finalpointerXCoordDiff > 0) {
           let containerLeftX = containerCoords.left + 1;
           let firstVisibleSlide = document.elementFromPoint(containerLeftX, containerY).closest('[data-slide-id]');
@@ -112,6 +116,7 @@ const Slider = memo(({
 
           const firstVisibleSlideId = +firstVisibleSlide.dataset.slideId;
           setActiveSlideId(firstVisibleSlideId);
+          wrapperRef.current.style.zIndex = '';
         }
       } else if (newTranslateValue > 0 && activeSlideId !== 0) {
         setActiveSlideId(0);

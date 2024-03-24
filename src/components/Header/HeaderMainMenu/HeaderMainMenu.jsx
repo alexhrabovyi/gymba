@@ -3,28 +3,30 @@ import {
 } from 'react';
 import { Link, useFetcher } from 'react-router-dom';
 import classNames from 'classnames';
-import headerMenuCls from './HeaderMainMenu.module.scss';
+import useOnResize from '../../../hooks/useOnResize.jsx';
+import findAllInteractiveElements from '../../../utils/findAllInteractiveElements.js';
+import getScrollWidth from '../../../utils/getScrollWidth.jsx';
+import useFetcherLoad from '../../../hooks/useFetcherLoad.jsx';
 import containerCls from '../../../scss/_container.module.scss';
 import linkCls from '../../../scss/_link.module.scss';
 import textCls from '../../../scss/_text.module.scss';
-import productImg from './images/product.png';
-import getScrollWidth from '../../../utils/getScrollWidth.jsx';
-import useOnResize from '../../../hooks/useOnResize.jsx';
-import useToggleInteractiveElements from '../../../hooks/useToggleInteractiveElements.jsx';
+import headerMenuCls from './HeaderMainMenu.module.scss';
 import User from '../images/user.svg';
 import Compare from '../../../assets/images/icons/compare.svg';
 import Favorite from '../../../assets/images/icons/favorite.svg';
+import productImg from './images/product.png';
+import ChevronRight from '../../../assets/images/icons/chevronRight.svg';
 import Tag from '../images/tag.svg';
 import Phone from '../images/phone.svg';
-import ChevronRight from '../../../assets/images/icons/chevronRight.svg';
-import useFetcherLoad from '../../../hooks/useFetcherLoad.jsx';
 
 const HeaderMainMenu = memo(({ isMenuOpen, categories, catalogBtnOnClick }) => {
   const fetcher = useFetcher();
 
   const menuRef = useRef(null);
+
   const [activeCategoryId, setActiveCategoryId] = useState(categories[0].id);
   const [windowWidth, setWindowWidth] = useState(null);
+  const [wishlistAmount, setWishlistAmount] = useState(null);
 
   const activeCategory = categories.find((c) => c.id === activeCategoryId);
   const { subcategories } = activeCategory;
@@ -33,55 +35,84 @@ const HeaderMainMenu = memo(({ isMenuOpen, categories, catalogBtnOnClick }) => {
     setWindowWidth(window.innerWidth);
   }, []);
 
-  useLayoutEffect(() => {
-    getWindowWidth();
-  }, [getWindowWidth]);
-
+  useLayoutEffect(getWindowWidth, [getWindowWidth]);
   useOnResize(getWindowWidth);
 
-  useEffect(() => {
+  function useToggleInteractiveElements() {
+    if (menuRef.current) {
+      const mainElement = menuRef.current;
+
+      const noMainElements = Array.from(findAllInteractiveElements(document.body))
+        .filter((el) => !el.closest('[role="dialog"]'));
+      const mainElements = Array.from(findAllInteractiveElements(mainElement));
+
+      if (isMenuOpen) {
+        noMainElements.forEach((el) => {
+          el.tabIndex = '-1';
+          el.ariaHidden = true;
+        });
+
+        mainElements.forEach((el) => {
+          el.tabIndex = '0';
+          el.ariaHidden = false;
+        });
+      } else {
+        noMainElements.forEach((el) => {
+          el.tabIndex = '';
+          el.ariaHidden = false;
+        });
+
+        mainElements.forEach((el) => {
+          el.tabIndex = '-1';
+          el.ariaHidden = true;
+        });
+      }
+
+      const openMenuBtn = document.querySelector('[ data-open-menu-btn]');
+      openMenuBtn.tabIndex = '0';
+      openMenuBtn.ariaHidden = false;
+    }
+  }
+
+  useToggleInteractiveElements();
+
+  const setupMenuPadding = useCallback(() => {
     const menu = menuRef.current;
 
-    if (isMenuOpen) {
+    menu.style.paddingRight = '';
+
+    if (isMenuOpen && window.innerWidth > 1024) {
       const menuPadding = +getComputedStyle(menu).paddingRight.match(/\d+/)[0];
       const newMenuPadding = getScrollWidth() + menuPadding;
       menu.style.paddingRight = `${newMenuPadding}px`;
     }
-
-    return () => {
-      menu.style.paddingRight = '';
-    };
   }, [isMenuOpen]);
 
-  useLayoutEffect(() => {
+  useLayoutEffect(setupMenuPadding, [setupMenuPadding]);
+  useOnResize(setupMenuPadding);
+
+  const setupMenuHeight = useCallback(() => {
     const menu = menuRef.current;
 
+    menu.style.overflowY = '';
+    menu.style.height = '';
+
     if (window.innerWidth <= 1024) {
-      const headerHeight = menu.offsetTop;
-      const windowHeight = window.innerHeight;
+      setTimeout(() => {
+        const headerHeight = menu.offsetTop;
+        const windowHeight = window.innerHeight;
 
-      const maximumMenuHeight = windowHeight - headerHeight;
-      const realMenuHeight = menu.scrollHeight;
+        const maximumMenuHeight = windowHeight - headerHeight;
+        const realMenuHeight = menu.scrollHeight;
 
-      menu.style.overflowY = realMenuHeight > maximumMenuHeight && 'scroll';
-      menu.style.height = `${maximumMenuHeight}px`;
+        menu.style.overflowY = realMenuHeight > maximumMenuHeight && 'scroll';
+        menu.style.height = `${maximumMenuHeight}px`;
+      });
     }
+  }, []);
 
-    return () => {
-      menu.style.height = '';
-      menu.style.overflowY = '';
-    };
-  }, [isMenuOpen]);
-
-  useToggleInteractiveElements(menuRef, isMenuOpen);
-
-  function onPointerMoveHandler(e) {
-    const link = e.target.closest('a');
-    if (!link) return;
-
-    const id = link.dataset.categoryId;
-    setActiveCategoryId(id);
-  }
+  useLayoutEffect(setupMenuHeight, [setupMenuHeight]);
+  useOnResize(setupMenuHeight);
 
   useEffect(() => {
     if (isMenuOpen) menuRef.current.focus();
@@ -89,12 +120,18 @@ const HeaderMainMenu = memo(({ isMenuOpen, categories, catalogBtnOnClick }) => {
 
   useFetcherLoad(fetcher, '../wishlist');
 
-  const [wishlistAmount, setWishlistAmount] = useState(null);
-
   if (fetcher.data) {
     if (fetcher.data.wishlistAmount !== wishlistAmount) {
       setWishlistAmount(fetcher.data.wishlistAmount);
     }
+  }
+
+  function onPointerMoveHandler(e) {
+    const link = e.target.closest('a');
+    if (!link) return;
+
+    const id = link.dataset.categoryId;
+    setActiveCategoryId(id);
   }
 
   return (

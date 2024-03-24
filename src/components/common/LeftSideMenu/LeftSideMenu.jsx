@@ -3,13 +3,12 @@ import {
   memo, useRef, useCallback, useLayoutEffect, useEffect,
 } from 'react';
 import classNames from 'classnames';
+import useHideScrollbarOnOpen from '../../../hooks/useHideScrollbarOnOpen.jsx';
+import useToggleInteractiveElements from '../../../hooks/useToggleInteractiveElements.jsx';
+import useOnResize from '../../../hooks/useOnResize.jsx';
 import backdropCls from '../../../scss/_backdrop.module.scss';
 import containerCls from '../../../scss/_container.module.scss';
 import menuCls from './LeftSideMenu.module.scss';
-import useOnResize from '../../../hooks/useOnResize.jsx';
-import useHideScrollbarOnOpen from '../../../hooks/useHideScrollbarOnOpen.jsx';
-import useCloseOnResize from '../../../hooks/useCloseOnResize.jsx';
-import useToggleInteractiveElements from '../../../hooks/useToggleInteractiveElements.jsx';
 import CrossIcon from '../../../assets/images/icons/cross.svg';
 
 const LeftSideMenu = memo(({
@@ -18,27 +17,24 @@ const LeftSideMenu = memo(({
   const menuBackdropRef = useRef(null);
   const menuRef = useRef(null);
 
+  useHideScrollbarOnOpen(isMenuOpen);
+  useToggleInteractiveElements(menuRef, isMenuOpen);
+
   const calcMenuHeight = useCallback(() => {
     const menu = menuRef.current;
+
+    menu.style.height = '';
+    menu.style.overflowY = '';
 
     const maximumMenuHeight = window.innerHeight;
     const realMenuHeight = menu.scrollHeight;
 
     menu.style.overflowY = realMenuHeight > maximumMenuHeight ? 'scroll' : 'hidden';
     menu.style.height = `${maximumMenuHeight}px`;
-
-    return () => {
-      menu.style.height = '';
-      menu.style.overflowY = '';
-    };
   }, []);
 
   useLayoutEffect(calcMenuHeight, [calcMenuHeight]);
   useOnResize(calcMenuHeight);
-
-  useHideScrollbarOnOpen(isMenuOpen);
-  useCloseOnResize(setIsMenuOpen);
-  useToggleInteractiveElements(menuRef, isMenuOpen);
 
   const focusOnOpen = useCallback(() => {
     if (isMenuOpen) menuRef.current.focus();

@@ -3,6 +3,8 @@
 
 .popupBackdrop {
   @include flex-builder(row, center, center);
+
+  padding: 5% 0;
 }
 
 .popup {

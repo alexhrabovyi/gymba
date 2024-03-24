@@ -1,4 +1,4 @@
-import { memo, useRef, useState } from 'react';
+import { memo, useCallback, useEffect, useRef, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import classNames from 'classnames';
 import textCls from '../../../scss/_text.module.scss';
@@ -15,7 +15,22 @@ const Select = memo(({
   const [focusedOptionIndex, setFocusedOptionIndex] = useState(-1);
 
   const openButtonRef = useRef(null);
+  const selectRef = useRef(null);
   const listRef = useRef(null);
+
+  const closeOnClick = useCallback(() => {
+    if (isOpen) {
+      setTimeout(() => {
+        document.addEventListener('click', (e) => {
+          if (e.target.closest('[data-select]') !== selectRef.current) {
+            setIsOpen(false);
+          }
+        }, { once: true });
+      });
+    }
+  }, [isOpen]);
+
+  useEffect(closeOnClick, [closeOnClick]);
 
   if (searchParams.has(searchParamName)) {
     const searchParamValue = searchParams.get(searchParamName);
@@ -117,7 +132,11 @@ const Select = memo(({
       <p className={classNames(textCls.text, textCls.textBlack, selectCls.label)}>
         {`${label}:`}
       </p>
-      <div className={selectCls.select}>
+      <div
+        ref={selectRef}
+        className={selectCls.select}
+        data-select
+      >
         <button
           ref={openButtonRef}
           className={selectCls.openButton}

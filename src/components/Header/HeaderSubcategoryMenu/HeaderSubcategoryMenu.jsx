@@ -1,38 +1,44 @@
 import { Link } from 'react-router-dom';
 import classNames from 'classnames';
 import {
-  memo, useRef, useEffect, useLayoutEffect,
+  memo, useRef, useEffect, useLayoutEffect, useCallback,
 } from 'react';
 import useToggleInteractiveElements from '../../../hooks/useToggleInteractiveElements.jsx';
+import useOnResize from '../../../hooks/useOnResize.jsx';
 import containerCls from '../../../scss/_container.module.scss';
-import subcategoryMenuCls from './HeaderSubcategoryMenu.module.scss';
-import linkCls from '../../../scss/_link.module.scss';
 import textCls from '../../../scss/_text.module.scss';
+import linkCls from '../../../scss/_link.module.scss';
+import subcategoryMenuCls from './HeaderSubcategoryMenu.module.scss';
 import ChevronRight from '../../../assets/images/icons/chevronRight.svg';
 import ArrowRight from '../../../assets/images/icons/arrow-right.svg';
 
 const HeaderSubcategoryMenu = memo(({ isMenuOpen, category, backToCatalogOnClick }) => {
   const menuRef = useRef(null);
+
   const { subcategories } = category;
 
-  useLayoutEffect(() => {
-    const menu = menuRef.current;
-    const headerHeight = menu.offsetTop;
-    const windowHeight = window.innerHeight;
-
-    const maximumMenuHeight = windowHeight - headerHeight;
-    const realMenuHeight = menu.scrollHeight;
-
-    menu.style.overflowY = realMenuHeight > maximumMenuHeight && 'scroll';
-    menu.style.height = `${maximumMenuHeight}px`;
-
-    return () => {
-      menu.style.height = '';
-      menu.style.overflowY = '';
-    };
-  }, [isMenuOpen]);
-
   useToggleInteractiveElements(menuRef, isMenuOpen);
+
+  const setupMenuHeight = useCallback(() => {
+    const menu = menuRef.current;
+
+    menu.style.overflowY = '';
+    menu.style.height = '';
+
+    setTimeout(() => {
+      const headerHeight = menu.offsetTop;
+      const windowHeight = window.innerHeight;
+
+      const maximumMenuHeight = windowHeight - headerHeight;
+      const realMenuHeight = menu.scrollHeight;
+
+      menu.style.overflowY = realMenuHeight > maximumMenuHeight && 'scroll';
+      menu.style.height = `${maximumMenuHeight}px`;
+    });
+  }, []);
+
+  useLayoutEffect(setupMenuHeight, [setupMenuHeight]);
+  useOnResize(setupMenuHeight);
 
   useEffect(() => {
     if (isMenuOpen) menuRef.current.focus();

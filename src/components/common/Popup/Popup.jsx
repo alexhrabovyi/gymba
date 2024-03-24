@@ -3,12 +3,13 @@ import {
   memo, useCallback, useEffect, useRef, useLayoutEffect,
 } from 'react';
 import classNames from 'classnames';
-import useCloseOnResize from '../../../hooks/useCloseOnResize.jsx';
 import useHideScrollbarOnOpen from '../../../hooks/useHideScrollbarOnOpen.jsx';
 import useToggleInteractiveElements from '../../../hooks/useToggleInteractiveElements.jsx';
 import backdropCls from '../../../scss/_backdrop.module.scss';
 import popupCls from './Popup.module.scss';
 import Cross from '../../../assets/images/icons/cross.svg';
+
+import useOnResize from '../../../hooks/useOnResize.jsx';
 
 const Popup = memo(({
   children, isActive = false, setIsActive, label, openButton,
@@ -16,32 +17,26 @@ const Popup = memo(({
   const popupBackdropRef = useRef(null);
   const popupRef = useRef(null);
 
-  useCloseOnResize(setIsActive);
   useHideScrollbarOnOpen(isActive);
   useToggleInteractiveElements(popupRef, isActive);
 
   const calcPopupHeight = useCallback(() => {
     const popup = popupRef.current;
 
-    if (isActive) {
-      const maximumPopupHeight = window.innerHeight;
-      const realPopupHeight = popup.scrollHeight;
+    popup.style.height = '';
+    popup.style.overflowY = '';
 
-      if (realPopupHeight > maximumPopupHeight) {
-        popup.style.height = `${maximumPopupHeight}px`;
-        popup.style.overflowY = realPopupHeight > maximumPopupHeight && 'scroll';
-      }
+    const maximumPopupHeight = window.innerHeight - window.innerHeight * 0.1;
+    const realPopupHeight = popup.scrollHeight;
+
+    if (realPopupHeight > maximumPopupHeight) {
+      popup.style.height = `${maximumPopupHeight}px`;
+      popup.style.overflowY = realPopupHeight > maximumPopupHeight && 'scroll';
     }
-
-    return () => {
-      if (isActive) {
-        popup.style.height = '';
-        popup.style.overflowY = '';
-      }
-    };
-  }, [isActive]);
+  }, []);
 
   useLayoutEffect(calcPopupHeight, [calcPopupHeight]);
+  useOnResize(calcPopupHeight);
 
   const focusOnOpen = useCallback(() => {
     if (isActive) popupRef.current.focus();

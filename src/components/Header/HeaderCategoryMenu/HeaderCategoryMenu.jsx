@@ -1,11 +1,12 @@
 import classNames from 'classnames';
 import {
-  memo, useRef, useEffect, useLayoutEffect,
+  memo, useRef, useEffect, useLayoutEffect, useCallback,
 } from 'react';
 import useToggleInteractiveElements from '../../../hooks/useToggleInteractiveElements.jsx';
-import categoryMenuCls from './HeaderCategoryMenu.module.scss';
+import useOnResize from '../../../hooks/useOnResize.jsx';
 import containerCls from '../../../scss/_container.module.scss';
 import textCls from '../../../scss/_text.module.scss';
+import categoryMenuCls from './HeaderCategoryMenu.module.scss';
 import ChevronRight from '../../../assets/images/icons/chevronRight.svg';
 
 const HeaderCategoryMenu = memo(({
@@ -16,24 +17,28 @@ const HeaderCategoryMenu = memo(({
 }) => {
   const menuRef = useRef(null);
 
-  useLayoutEffect(() => {
-    const menu = menuRef.current;
-    const headerHeight = menu.offsetTop;
-    const windowHeight = window.innerHeight;
-
-    const maximumMenuHeight = windowHeight - headerHeight;
-    const realMenuHeight = menu.scrollHeight;
-
-    menu.style.overflowY = realMenuHeight > maximumMenuHeight && 'scroll';
-    menu.style.height = `${maximumMenuHeight}px`;
-
-    return () => {
-      menu.style.height = '';
-      menu.style.overflowY = '';
-    };
-  }, [isMenuOpen]);
-
   useToggleInteractiveElements(menuRef, isMenuOpen);
+
+  const setupMenuHeight = useCallback(() => {
+    const menu = menuRef.current;
+
+    menu.style.overflowY = '';
+    menu.style.height = '';
+
+    setTimeout(() => {
+      const headerHeight = menu.offsetTop;
+      const windowHeight = window.innerHeight;
+
+      const maximumMenuHeight = windowHeight - headerHeight;
+      const realMenuHeight = menu.scrollHeight;
+
+      menu.style.overflowY = realMenuHeight > maximumMenuHeight && 'scroll';
+      menu.style.height = `${maximumMenuHeight}px`;
+    });
+  }, []);
+
+  useLayoutEffect(setupMenuHeight, [setupMenuHeight]);
+  useOnResize(setupMenuHeight);
 
   useEffect(() => {
     if (isMenuOpen) menuRef.current.focus();

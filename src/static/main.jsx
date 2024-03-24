@@ -9,7 +9,7 @@ import { ProductsPage, loader as productsLoader } from '../pages/Products/Produc
 import { ProductPage, loader as productPageLoader } from '../pages/Product/Product.jsx';
 import { loader as wishlistLoader, action as wishlistAction } from '../pages/Wishlist/Wishlist.jsx';
 import { loader as cartLoader, action as cartAction } from '../pages/Cart/Cart.jsx';
-import { action as getAnalogueProductsAction } from '../pages/GetAnalogueProducts/GetAnalogueProducts.jsx';
+import { loader as getAnalogueProductsLoader, action as getAnalogueProductsAction } from '../pages/GetAnalogueProducts/GetAnalogueProducts.jsx';
 
 const router = createBrowserRouter([
   {
@@ -49,6 +49,7 @@ const router = createBrowserRouter([
       {
         path: 'getAnalogueProducts',
         action: getAnalogueProductsAction,
+        loader: getAnalogueProductsLoader,
       },
     ],
   },
