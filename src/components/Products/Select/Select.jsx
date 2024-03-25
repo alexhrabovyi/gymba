@@ -1,4 +1,6 @@
-import { memo, useCallback, useEffect, useRef, useState } from 'react';
+import {
+  memo, useCallback, useEffect, useRef, useState,
+} from 'react';
 import { useSearchParams } from 'react-router-dom';
 import classNames from 'classnames';
 import textCls from '../../../scss/_text.module.scss';

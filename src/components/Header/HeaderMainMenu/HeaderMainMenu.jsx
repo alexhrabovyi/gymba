@@ -175,7 +175,7 @@ const HeaderMainMenu = memo(({ isMenuOpen, categories, catalogBtnOnClick }) => {
             </li>
             <li>
               <Link
-                to="/"
+                to="/wishlist"
                 className={classNames(
                   headerMenuCls.iconLink,
                   wishlistAmount && headerMenuCls.iconLinkWithCircle,
@@ -281,7 +281,7 @@ const HeaderMainMenu = memo(({ isMenuOpen, categories, catalogBtnOnClick }) => {
             </li>
             <li>
               <Link
-                to="/"
+                to="/wishlist"
                 className={classNames(
                   headerMenuCls.iconLink,
                   wishlistAmount && headerMenuCls.iconLinkWithCircle,

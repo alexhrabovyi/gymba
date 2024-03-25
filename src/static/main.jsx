@@ -7,7 +7,7 @@ import { Main, loader as mainLoader } from '../pages/Main/Main.jsx';
 import { CategoryPage, loader as categoryPageLoader } from '../pages/Category/Category.jsx';
 import { ProductsPage, loader as productsLoader } from '../pages/Products/Products.jsx';
 import { ProductPage, loader as productPageLoader } from '../pages/Product/Product.jsx';
-import { loader as wishlistLoader, action as wishlistAction } from '../pages/Wishlist/Wishlist.jsx';
+import { WishlistPage, loader as wishlistLoader, action as wishlistAction } from '../pages/Wishlist/Wishlist.jsx';
 import { loader as cartLoader, action as cartAction } from '../pages/Cart/Cart.jsx';
 import { loader as getAnalogueProductsLoader, action as getAnalogueProductsAction } from '../pages/GetAnalogueProducts/GetAnalogueProducts.jsx';
 
@@ -40,6 +40,7 @@ const router = createBrowserRouter([
         path: 'wishlist',
         loader: wishlistLoader,
         action: wishlistAction,
+        element: <WishlistPage />,
       },
       {
         path: 'cart',

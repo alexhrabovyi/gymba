@@ -5,7 +5,7 @@ import { useNavigation, useSearchParams } from 'react-router-dom';
 import classNames from 'classnames';
 import paginationCls from './PaginationBlock.module.scss';
 import ThreeDots from './images/threeDots.svg';
-import useOnResize from '../../../hooks/useOnResize.jsx';
+import useOnResize from '../../hooks/useOnResize.jsx';
 
 const PaginationBlock = memo(({ pageAmount }) => {
   const [searchParams, setSearchParams] = useSearchParams();

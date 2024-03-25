@@ -335,7 +335,7 @@ export default function Header() {
                   </li>
                   <li>
                     <Link
-                      to="/"
+                      to="/wishlist"
                       className={classNames(
                         headerCls.iconLink,
                         wishlistAmount && headerCls.iconLinkWithCircle,

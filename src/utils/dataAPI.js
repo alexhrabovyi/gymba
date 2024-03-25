@@ -276,6 +276,10 @@ export function deleteFromWishlist(categoryId, subcategoryId, productId) {
   localStorage.setItem('wishlistIds', JSON.stringify(wishlistIds));
 }
 
+export function deleteAllFromWishlist() {
+  localStorage.removeItem('wishlistIds');
+}
+
 export function getWishlistIds() {
   const wishlistIds = JSON.parse(localStorage.getItem('wishlistIds')) || [];
 
@@ -286,6 +290,32 @@ export function getWishlistAmount() {
   const wishlistIds = JSON.parse(localStorage.getItem('wishlistIds')) || [];
 
   return wishlistIds.length;
+}
+
+export function getAllWishlistProducts() {
+  const wishlistIds = getWishlistIds();
+  const wishlistProducts = wishlistIds.map((ids) => getProduct(...ids));
+
+  return wishlistProducts;
+}
+
+export function getWishlistProductsPerPageAndPageAmount(pageNum) {
+  const perView = 12;
+  const allWishlistProducts = getAllWishlistProducts();
+  const wishlistProductsAmount = allWishlistProducts.length;
+  const pageAmount = getPageAmount(wishlistProductsAmount, perView);
+
+  if (pageNum === null || pageNum > pageAmount) pageNum = 1;
+
+  const firstPageProduct = (+pageNum - 1) * perView;
+  const lastPageProduct = +pageNum * perView;
+
+  const wishlistProducts = allWishlistProducts.slice(firstPageProduct, lastPageProduct);
+
+  return {
+    wishlistProducts,
+    pageAmount,
+  };
 }
 
 export function addIdToCart(categoryId, subcategoryId, productId) {
