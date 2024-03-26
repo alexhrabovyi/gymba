@@ -8,7 +8,7 @@ import { CategoryPage, loader as categoryPageLoader } from '../pages/Category/Ca
 import { ProductsPage, loader as productsLoader } from '../pages/Products/Products.jsx';
 import { ProductPage, loader as productPageLoader } from '../pages/Product/Product.jsx';
 import { WishlistPage, loader as wishlistLoader, action as wishlistAction } from '../pages/Wishlist/Wishlist.jsx';
-import { loader as cartLoader, action as cartAction } from '../pages/Cart/Cart.jsx';
+import { CartPage, loader as cartLoader, action as cartAction } from '../pages/Cart/Cart.jsx';
 import { loader as getAnalogueProductsLoader, action as getAnalogueProductsAction } from '../pages/GetAnalogueProducts/GetAnalogueProducts.jsx';
 
 const router = createBrowserRouter([
@@ -46,6 +46,7 @@ const router = createBrowserRouter([
         path: 'cart',
         loader: cartLoader,
         action: cartAction,
+        element: <CartPage />,
       },
       {
         path: 'getAnalogueProducts',

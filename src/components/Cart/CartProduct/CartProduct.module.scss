@@ -1,0 +1,272 @@
+@import '../../../scss/mixins';
+@import '../../../scss/colors';
+
+.product {
+  display: grid;
+  width: 100%;
+  align-items: center;
+  padding: 24px;
+  grid-template-columns: 11.11% 16px 37.14% 5.4% min-content 5.4%  14.29% 5.4%  min-content 1fr min-content;
+  outline: 1px solid $dark-grey;
+  transition: all .05s ease-in-out;
+
+  @include media-l {
+    padding: 18px;
+    grid-template-columns: 11.11% 16px 38.14% 4% min-content 4%  15.29% 4%  min-content minmax(3%, 1fr) min-content;
+  }
+
+  @media (max-width: 1250px) {
+    padding: 14px;
+    grid-template-columns: 11.11% 16px 38.14% 3% min-content 3%  15.29% 3%  min-content minmax(3%, 1fr) min-content;
+  }
+
+  @include media-m {
+    padding: 2.77%;
+    grid-template-columns: 15% 5% 1fr 5% min-content 5% min-content;
+  }
+
+  @include media-s {
+    padding: 2%;
+    grid-template-columns: 20% 5% 1fr 5% min-content 5% min-content;
+    row-gap: 15px;
+  }
+
+  @include media-xs {
+    padding: 5%;
+    grid-template-columns: 1fr 5% 123px 5% 1fr;
+  }
+
+  &:hover {
+    z-index: 1;
+    outline-color: $blue;
+  }
+
+  &:active {
+    outline-color: $blue-active;
+  }
+}
+
+.imgLink {
+  grid-column: 1/2;
+
+  @include flex-builder(row, center, center);
+
+  @include media-m {
+    grid-row: 1/2;
+  }
+
+  @include media-xs {
+    margin-bottom: 15px;
+    grid-column: 1/6;
+    grid-row: 2/3;
+  }
+}
+
+.spinner {
+width: 50%;
+height: 50%;
+fill: $blue;
+
+@include media-xs {
+  width: 20%;
+  height: 20%;
+}
+}
+
+.image {
+  width: 80%;
+
+  @include media-xs {
+    width: 60%;
+  }
+}
+
+.textLink {
+  grid-column: 3/4;
+
+  @include media-m {
+    grid-row: 1/2;
+  }
+
+  @include media-s {
+    grid-column: 3/6;
+  }
+
+  @include media-xs {
+    margin-bottom: 5px;
+    grid-column: 1/6;
+    grid-row: 3/4;
+  }
+}
+
+.priceBlock {
+  grid-column: 5/6;
+
+  @include flex-builder(column, flex-start, flex-start);
+
+  white-space: nowrap;
+
+  @include media-m {
+    grid-column: 5/6;
+    grid-row: 1/2;
+  }
+
+  @include media-s {
+    grid-column: 1/2;
+    grid-row: 2/3;
+    justify-self: center;
+  }
+
+  @include media-xs {
+    margin-right: auto;
+    grid-column: 1/2;
+    grid-row: 4/5;
+  }
+}
+
+.oldPrice {
+  color: $blue;
+  font-family: Onest, sans-serif;
+  font-size: 14px;
+  text-decoration: line-through;
+}
+
+.price {
+  color: $black;
+  font-family: Onest, sans-serif;
+  font-size: 20px;
+  font-weight: 800;
+  gap: 6px;
+
+  @include flex-builder(row, flex-start, center);
+
+  @include media-xs {
+    font-size: 18px;
+  }
+}
+
+.priceSpan {
+  font-size: 16px;
+  font-weight: 400;
+}
+
+.amountControlBlock {
+  padding: 12px 16px;
+  border-radius: 4px;
+  background-color: $light-blue;
+  gap: 5px;
+  grid-column: 7/8;
+
+  @include flex-builder(row, space-between, center);
+
+  @include media-l {
+    padding: 12px;
+  }
+
+  @include media-m {
+    width: 100%;
+    max-width: 180px;
+    padding: 12px 16px;
+    grid-column: 3/4;
+    grid-row: 2/3;
+    justify-self: flex-end;
+  }
+
+  @include media-s {
+    justify-self: center;
+  }
+
+  @include media-xs {
+    padding: 6px;
+    grid-column: 3/4;
+    grid-row: 4/5;
+  }
+}
+
+.amountButton {
+  width: 36px;
+  height: 36px;
+  flex-shrink: 0;
+  border: none;
+  border-radius: 4px;
+  background: $white;
+  color: $blue;
+  cursor: pointer;
+  font-family: Onest,sans-serif;
+  font-size: 24px;
+  transition: all .05s ease-in-out;
+
+  @include flex-builder(row, center, center);
+
+  &:hover {
+    background: $white-hover;
+  }
+
+  &:active {
+    background: $white-active;
+  }
+
+  &_inactive {
+    color: rgb(194 203 211);
+    pointer-events: none;
+  }
+}
+
+.amountNum {
+  flex-shrink: 0;
+  color: $black;
+  font-family: Onest, sans-serif;
+  font-size: 16px;
+}
+
+.totalPriceBlock {
+  grid-column: 9/10;
+  white-space: nowrap;
+
+  @include media-m {
+    grid-column: 5/8;
+    grid-row: 2/3;
+  }
+
+  @include media-xs {
+    grid-column: 5/6;
+    grid-row: 4/5;
+  }
+}
+
+.deleteButton {
+  border: none;
+  background: none;
+  cursor: pointer;
+  fill: rgb(194 203 211);
+  grid-column: 11/12;
+  transition: all .05s ease-in-out;
+
+  @include media-m {
+    grid-column: 7/8;
+    grid-row: 1/3;
+  }
+
+  @include media-s {
+    grid-column: 7/8;
+    grid-row: 1/2;
+  }
+
+  @include media-xs {
+    grid-column: 1/6;
+    justify-self: flex-end;
+  }
+
+  &:hover {
+    fill: $blue;
+  }
+
+  &:active {
+    fill: $dark-blue;
+  }
+}
+
+.binIcon {
+  width: 18px;
+  height: 20px;
+}

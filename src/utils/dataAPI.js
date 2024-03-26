@@ -1,3 +1,4 @@
+/* eslint-disable no-return-assign */
 import products from './products.json';
 import news from './news.json';
 
@@ -323,7 +324,7 @@ export function addIdToCart(categoryId, subcategoryId, productId) {
 
   if (cartIds === null) {
     cartIds = [];
-    cartIds.push([categoryId, subcategoryId, productId]);
+    cartIds.push([categoryId, subcategoryId, productId, { amount: 1 }]);
     localStorage.setItem('cartIds', JSON.stringify(cartIds));
   } else {
     cartIds = JSON.parse(cartIds);
@@ -332,7 +333,7 @@ export function addIdToCart(categoryId, subcategoryId, productId) {
       && subcId === subcategoryId && pId === productId));
 
     if (!isAlreadyExist) {
-      cartIds.push([categoryId, subcategoryId, productId]);
+      cartIds.push([categoryId, subcategoryId, productId, { amount: 1 }]);
       localStorage.setItem('cartIds', JSON.stringify(cartIds));
     }
   }
@@ -349,6 +350,10 @@ export function deleteFromCart(categoryId, subcategoryId, productId) {
   localStorage.setItem('cartIds', JSON.stringify(cartIds));
 }
 
+export function deleteAllFromCart() {
+  localStorage.removeItem('cartIds');
+}
+
 export function getCartIds() {
   const cartIds = JSON.parse(localStorage.getItem('cartIds')) || [];
 
@@ -356,9 +361,51 @@ export function getCartIds() {
 }
 
 export function getCartAmount() {
-  const cartIds = JSON.parse(localStorage.getItem('cartIds')) || [];
+  const cartIds = getCartIds();
 
   return cartIds.length;
+}
+
+export function editProductAmountInCart(categoryId, subcategoryId, productId, newAmount) {
+  const cartIds = getCartIds();
+
+  const cartObj = cartIds.find(([cId, subcId, pId]) => cId === categoryId
+    && subcId === subcategoryId && pId === productId);
+  cartObj[3] = newAmount;
+
+  localStorage.setItem('cartIds', JSON.stringify(cartIds));
+}
+
+function getCartProducts() {
+  const cartIds = getCartIds();
+
+  const cartProducts = cartIds.map(([categoryId, subcategoryId, productId, amountObj]) => {
+    const product = getProduct(categoryId, subcategoryId, productId);
+    const { amount } = amountObj;
+    const totalPrice = +product.product.price * +amount;
+
+    return {
+      ...product,
+      amount,
+      totalPrice,
+    };
+  });
+
+  return cartProducts;
+}
+
+function getCartTotalPrice(cartProducts) {
+  return cartProducts.reduce((totalPrice, cP) => totalPrice += cP.totalPrice, 0);
+}
+
+export function getCartProductsAndTotalPrice() {
+  const cartProducts = getCartProducts();
+  const totalPrice = getCartTotalPrice(cartProducts);
+
+  return {
+    cartProducts,
+    totalPrice,
+  };
 }
 
 export function getAnalogueProducts(categoryId, subcategoryId, productId) {

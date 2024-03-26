@@ -1,0 +1,137 @@
+@import '../../scss/mixins';
+@import '../../scss/colors';
+
+.main {
+  margin-top: 68px;
+  margin-bottom: 160px;
+
+  @media (max-width: 1600px) {
+    margin-bottom: 140px;
+  }
+
+  @include media-l {
+    margin-bottom: 120px;
+  }
+
+  @include media-m {
+    margin-bottom: 100px;
+  }
+
+  @include media-s {
+    margin-top: 50px;
+    margin-bottom: 80px;
+  }
+
+  @include media-xs {
+    margin-top: 40px; 
+  }
+}
+
+.titleAndButtonBlock {
+  @include flex-builder(row, space-between, center);
+
+  margin-bottom: 48px;
+
+  @include media-xs {
+    @include flex-builder(column, flex-start, flex-start);
+
+    gap: 25px;
+  }
+}
+
+.title {
+  text-transform: uppercase;
+}
+
+.deleteBtn {
+  border: none;
+  background: none;
+  color: $text-grey;
+  cursor: pointer;
+  fill: rgb(194 203 211);
+  font-size: 16px;
+  gap: 15px;
+  transition: all .05s ease-in-out;
+
+  @include flex-builder(row, flex-start, center);
+
+  &:hover {
+    color: $blue;
+    fill: $blue;
+  }
+
+  &:active {
+    color: $dark-blue;
+    fill: $dark-blue;
+  }
+}
+
+.binIcon {
+  width: 18px;
+  height: 20px;
+}
+
+.productBlock {
+  @include flex-builder(column, flex-start, flex-start);
+}
+
+.totalPriceAndCheckoutBtnBlock { 
+  width: 100%;
+  margin-top: 48px;
+  gap: 11.31%;
+
+  @include flex-builder(row, flex-end, center);
+
+  @include media-m {
+    gap: 8%;
+  }
+
+  @include media-s {
+    max-width: 540px;
+    margin-right: auto;
+    margin-left: auto;
+
+    @include flex-builder(row, space-between, center);
+  }
+
+  @media (max-width: 500px) {
+    @include flex-builder(column, flex-start, center);
+
+    gap: 30px;
+  }
+}
+
+.totalPriceBlock {
+  @include flex-builder(column, flex-start, flex-start);
+
+  gap: 4px;
+
+  @media (max-width: 500px) {
+    @include flex-builder(row, center, center);
+
+    gap: 30px;
+  }
+}
+
+.totalPriceSpan {
+  margin-left: 6px;
+  font-size: 18px;
+}
+
+.checkoutButton {
+  width: 312px;
+  height: 60px;
+  font-size: 16px;
+
+  @include media-l {
+    width: 280px;
+  }
+
+  @include media-m {
+    width: 260px;
+  }
+
+  @include media-xs {
+    width: 220px;
+  }
+}

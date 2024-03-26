@@ -350,7 +350,7 @@ export default function Header() {
                 )}
                 <li>
                   <Link
-                    to="/"
+                    to="/cart"
                     className={classNames(
                       headerCls.iconLink,
                       cartAmount && headerCls.iconLinkWithCircle,
