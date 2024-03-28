@@ -34,6 +34,7 @@ export default function Product() {
   const { categoryId, subcategoryId, product } = useLoaderData();
   const wishlistFetcher = useFetcher();
   const cartFetcher = useFetcher();
+  const compareFetcher = useFetcher();
 
   const descTabPanelRef = useRef();
   const commentTabPanelRef = useRef();
@@ -44,6 +45,7 @@ export default function Product() {
   const [windowWidth, setWindowWidth] = useState(null);
   const [productInWishlist, setProductInWishlist] = useState(false);
   const [productInCart, setProductInCart] = useState(false);
+  const [productInCompare, setProductInCompare] = useState(false);
   const [activeSlideId, setActiveSlideId] = useState(0);
   const [isCartBannerActive, setIsCartBannerActive] = useState(false);
   const [isDescTabPanelActive, setIsDescTabPanelActive] = useState(true);
@@ -65,7 +67,7 @@ export default function Product() {
 
   // fetch functions
 
-  useFetcherLoad(wishlistFetcher, '../wishlist');
+  useFetcherLoad(wishlistFetcher, '/wishlist');
 
   if (wishlistFetcher.data) {
     const productInWishlistFromFetcher = wishlistFetcher
@@ -78,7 +80,7 @@ export default function Product() {
     }
   }
 
-  useFetcherLoad(cartFetcher, '../cart');
+  useFetcherLoad(cartFetcher, '/cart');
 
   if (cartFetcher.data) {
     const productInCartFromFetcher = cartFetcher.data.cartIds.find((cId) => (
@@ -91,18 +93,31 @@ export default function Product() {
     }
   }
 
+  useFetcherLoad(compareFetcher, '/compare');
+
+  if (compareFetcher.data) {
+    const productInCompareFromFetcher = compareFetcher
+      .data.compareIds.find(([cId, subcId, pId]) => (
+        cId === categoryId && subcId === subcategoryId && pId === product.id
+      ));
+
+    if (productInCompareFromFetcher !== productInCompare) {
+      setProductInCompare(productInCompareFromFetcher);
+    }
+  }
+
   function wishlistButtonOnClick() {
     const data = JSON.stringify([categoryId, subcategoryId, product.id]);
 
     if (!productInWishlist) {
       wishlistFetcher.submit(data, {
-        action: '../wishlist',
+        action: '/wishlist',
         method: 'PATCH',
         encType: 'application/json',
       });
     } else {
       wishlistFetcher.submit(data, {
-        action: '../wishlist',
+        action: '/wishlist',
         method: 'DELETE',
         encType: 'application/json',
       });
@@ -114,14 +129,32 @@ export default function Product() {
 
     if (!productInCart) {
       cartFetcher.submit(data, {
-        action: '../cart',
+        action: '/cart',
         method: 'PATCH',
         encType: 'application/json',
       });
       setIsCartBannerActive(true);
     } else {
       cartFetcher.submit(data, {
-        action: '../cart',
+        action: '/cart',
+        method: 'DELETE',
+        encType: 'application/json',
+      });
+    }
+  }
+
+  function compareButtonOnClick() {
+    const data = JSON.stringify([categoryId, subcategoryId, product.id]);
+
+    if (!productInCompare) {
+      compareFetcher.submit(data, {
+        action: '/compare',
+        method: 'PATCH',
+        encType: 'application/json',
+      });
+    } else {
+      compareFetcher.submit(data, {
+        action: '/compare',
         method: 'DELETE',
         encType: 'application/json',
       });
@@ -393,10 +426,13 @@ export default function Product() {
               type="button"
               className={classNames(
                 productCls.iconButton,
+                productInCompare && productCls.iconButton_active,
               )}
+              onClick={compareButtonOnClick}
+              aria-label={productInCompare ? `Удалить ${product.name} из сравнения` : `Добавить ${product.name} в сравнение`}
             >
               <Compare className={productCls.buttonIcon} />
-              К сравнению
+              {!productInCompare ? ' К сравнению' : 'В cравнении'}
             </button>
           </div>
         )}

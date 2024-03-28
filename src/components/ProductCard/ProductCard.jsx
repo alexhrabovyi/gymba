@@ -21,12 +21,14 @@ const ProductCard = memo(({
 }) => {
   const wishlistFetcher = useFetcher();
   const cartFetcher = useFetcher();
+  const compareFetcher = useFetcher();
 
   const [imgSrc] = useState(() => import(`../../assets/images/productImgs/${productId}.webp`));
   const [productInWishlist, setProductInWishlist] = useState(false);
   const [productInCart, setProductInCart] = useState(false);
+  const [productInCompare, setProductInCompare] = useState(false);
 
-  useFetcherLoad(wishlistFetcher, '../wishlist');
+  useFetcherLoad(wishlistFetcher, '/wishlist');
 
   if (wishlistFetcher.data) {
     const productInWishlistFromFetcher = wishlistFetcher
@@ -39,7 +41,7 @@ const ProductCard = memo(({
     }
   }
 
-  useFetcherLoad(cartFetcher, '../cart');
+  useFetcherLoad(cartFetcher, '/cart');
 
   if (cartFetcher.data) {
     const productInCartFromFetcher = cartFetcher.data.cartIds.find((cId) => (
@@ -52,18 +54,31 @@ const ProductCard = memo(({
     }
   }
 
+  useFetcherLoad(compareFetcher, '/compare');
+
+  if (compareFetcher.data) {
+    const productInCompareFromFetcher = compareFetcher
+      .data.compareIds.find(([cId, subcId, pId]) => (
+        cId === categoryId && subcId === subcategoryId && pId === productId
+      ));
+
+    if (productInCompareFromFetcher !== productInCompare) {
+      setProductInCompare(productInCompareFromFetcher);
+    }
+  }
+
   function wishlistButtonOnClick() {
     const data = JSON.stringify([categoryId, subcategoryId, productId]);
 
     if (!productInWishlist) {
       wishlistFetcher.submit(data, {
-        action: '../wishlist',
+        action: '/wishlist',
         method: 'PATCH',
         encType: 'application/json',
       });
     } else {
       wishlistFetcher.submit(data, {
-        action: '../wishlist',
+        action: '/wishlist',
         method: 'DELETE',
         encType: 'application/json',
       });
@@ -75,13 +90,31 @@ const ProductCard = memo(({
 
     if (!productInCart) {
       cartFetcher.submit(data, {
-        action: '../cart',
+        action: '/cart',
         method: 'PATCH',
         encType: 'application/json',
       });
     } else {
       cartFetcher.submit(data, {
-        action: '../cart',
+        action: '/cart',
+        method: 'DELETE',
+        encType: 'application/json',
+      });
+    }
+  }
+
+  function compareButtonOnClick() {
+    const data = JSON.stringify([categoryId, subcategoryId, productId]);
+
+    if (!productInCompare) {
+      compareFetcher.submit(data, {
+        action: '/compare',
+        method: 'PATCH',
+        encType: 'application/json',
+      });
+    } else {
+      compareFetcher.submit(data, {
+        action: '/compare',
         method: 'DELETE',
         encType: 'application/json',
       });
@@ -96,8 +129,12 @@ const ProductCard = memo(({
         <div className={productCls.iconButtonsBlock}>
           <button
             type="button"
-            className={productCls.iconButton}
-            aria-label={`Добавить ${name} в сравнение`}
+            className={classNames(
+              productCls.iconButton,
+              productInCompare && productCls.iconButton_active,
+            )}
+            aria-label={productInCompare ? `Удалить ${name} из сравнения` : `Добавить ${name} в сравнение`}
+            onClick={compareButtonOnClick}
           >
             <Compare className={productCls.icon} />
           </button>
@@ -194,8 +231,12 @@ const ProductCard = memo(({
         <div className={productCls.longIconButtonsBlock}>
           <button
             type="button"
-            className={productCls.iconButton}
-            aria-label={`Добавить ${name} в сравнение`}
+            className={classNames(
+              productCls.iconButton,
+              productInCompare && productCls.iconButton_active,
+            )}
+            aria-label={productInCompare ? `Удалить ${name} из сравнения` : `Добавить ${name} в сравнение`}
+            onClick={compareButtonOnClick}
           >
             <Compare className={productCls.icon} />
           </button>

@@ -20,13 +20,15 @@ import Tag from '../images/tag.svg';
 import Phone from '../images/phone.svg';
 
 const HeaderMainMenu = memo(({ isMenuOpen, categories, catalogBtnOnClick }) => {
-  const fetcher = useFetcher();
+  const wishlistFetcher = useFetcher();
+  const compareFetcher = useFetcher();
 
   const menuRef = useRef(null);
 
   const [activeCategoryId, setActiveCategoryId] = useState(categories[0].id);
   const [windowWidth, setWindowWidth] = useState(null);
   const [wishlistAmount, setWishlistAmount] = useState(null);
+  const [compareAmount, setCompareAmount] = useState(null);
 
   const activeCategory = categories.find((c) => c.id === activeCategoryId);
   const { subcategories } = activeCategory;
@@ -118,11 +120,19 @@ const HeaderMainMenu = memo(({ isMenuOpen, categories, catalogBtnOnClick }) => {
     if (isMenuOpen) menuRef.current.focus();
   }, [isMenuOpen]);
 
-  useFetcherLoad(fetcher, '../wishlist');
+  useFetcherLoad(wishlistFetcher, '/wishlist');
 
-  if (fetcher.data) {
-    if (fetcher.data.wishlistAmount !== wishlistAmount) {
-      setWishlistAmount(fetcher.data.wishlistAmount);
+  if (wishlistFetcher.data) {
+    if (wishlistFetcher.data.wishlistAmount !== wishlistAmount) {
+      setWishlistAmount(wishlistFetcher.data.wishlistAmount);
+    }
+  }
+
+  useFetcherLoad(compareFetcher, '/compare');
+
+  if (compareFetcher.data) {
+    if (compareFetcher.data.compareAmount !== compareAmount) {
+      setCompareAmount(compareFetcher.data.compareAmount);
     }
   }
 
@@ -166,8 +176,12 @@ const HeaderMainMenu = memo(({ isMenuOpen, categories, catalogBtnOnClick }) => {
             </li>
             <li>
               <Link
-                to="/"
-                className={headerMenuCls.iconLink}
+                to="/compare"
+                className={classNames(
+                  headerMenuCls.iconLink,
+                  compareAmount && headerMenuCls.iconLinkWithCircle,
+                )}
+                data-before={compareAmount}
                 aria-label="Сравнить товары"
               >
                 <Compare className={headerMenuCls.iconInLink} />
@@ -272,8 +286,12 @@ const HeaderMainMenu = memo(({ isMenuOpen, categories, catalogBtnOnClick }) => {
             </li>
             <li>
               <Link
-                to="/"
-                className={headerMenuCls.iconLink}
+                to="/compare"
+                className={classNames(
+                  headerMenuCls.iconLink,
+                  compareAmount && headerMenuCls.iconLinkWithCircle,
+                )}
+                data-before={compareAmount}
                 aria-label="Сравнить товары"
               >
                 <Compare className={headerMenuCls.iconInLink} />

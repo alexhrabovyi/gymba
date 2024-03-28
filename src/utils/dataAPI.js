@@ -288,7 +288,7 @@ export function getWishlistIds() {
 }
 
 export function getWishlistAmount() {
-  const wishlistIds = JSON.parse(localStorage.getItem('wishlistIds')) || [];
+  const wishlistIds = getWishlistIds();
 
   return wishlistIds.length;
 }
@@ -416,6 +416,93 @@ export function getCartProductsAndTotalPrice() {
     cartProducts,
     totalPrice,
   };
+}
+
+export function addIdToCompare(categoryId, subcategoryId, productId) {
+  let compareIds = localStorage.getItem('compareIds');
+
+  if (compareIds === null) {
+    compareIds = [];
+    compareIds.push([categoryId, subcategoryId, productId]);
+    localStorage.setItem('compareIds', JSON.stringify(compareIds));
+  } else {
+    compareIds = JSON.parse(compareIds);
+
+    const isAlreadyExist = compareIds.find((cId, subcId, pId) => (cId === categoryId
+      && subcId === subcategoryId && pId === productId));
+
+    if (!isAlreadyExist) {
+      compareIds.push([categoryId, subcategoryId, productId]);
+      localStorage.setItem('compareIds', JSON.stringify(compareIds));
+    }
+  }
+}
+
+export function deleteFromCompare(categoryId, subcategoryId, productId) {
+  const compareIds = JSON.parse(localStorage.getItem('compareIds')) || [];
+
+  const index = compareIds.findIndex(([cId, subcId, pId]) => (cId === categoryId
+    && subcId === subcategoryId && pId === productId));
+
+  if (index !== -1) compareIds.splice(index, 1);
+
+  localStorage.setItem('compareIds', JSON.stringify(compareIds));
+}
+
+export function deleteAllFromCompare() {
+  localStorage.removeItem('compareIds');
+}
+
+export function getCompareIds() {
+  const compareIds = JSON.parse(localStorage.getItem('compareIds')) || [];
+
+  return compareIds;
+}
+
+export function getCompareAmount() {
+  const compareIds = getCompareIds();
+
+  return compareIds.length;
+}
+
+export function getCompareSubcategoriesBtnInfo() {
+  const compareIds = getCompareIds();
+
+  const uniqueCompareCategoryAndSubcategory = [];
+  compareIds.forEach(([cId, subcId]) => {
+    const isAlreadyExist = uniqueCompareCategoryAndSubcategory
+      .find(([uCId, uSubcId]) => uCId === cId && uSubcId === subcId);
+
+    if (!isAlreadyExist) uniqueCompareCategoryAndSubcategory.push([cId, subcId]);
+  });
+
+  const compareSubcategoriesBtnInfo = uniqueCompareCategoryAndSubcategory.map(([cId, subcId]) => {
+    const { categoryId, subcategory } = getCategoryAndSubcategory(cId, subcId);
+
+    return {
+      categoryId,
+      subcategoryId: subcategory.id,
+      subcategoryName: subcategory.name,
+    };
+  });
+
+  return compareSubcategoriesBtnInfo;
+}
+
+export function deleteSubcFromCompare(categoryId, subcategoryId) {
+  const compareIds = getCompareIds().filter(([cId, subcId]) => cId !== categoryId
+    || (cId === categoryId && subcId !== subcategoryId));
+
+  localStorage.setItem('compareIds', JSON.stringify(compareIds));
+}
+
+export function getCompareProductCards(categoryId, subcategoryId) {
+  const compareIds = getCompareIds()
+    .filter(([cId, subcId]) => cId === categoryId && subcId === subcategoryId);
+
+  const productCards = compareIds.map(([cId, subcId, pId]) => getProduct(cId, subcId, pId));
+
+  return productCards;
 }
 
 export function getAnalogueProducts(categoryId, subcategoryId, productId) {

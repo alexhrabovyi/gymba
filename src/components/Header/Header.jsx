@@ -37,6 +37,7 @@ export default function Header() {
   const categories = useLoaderData();
   const wishlistFetcher = useFetcher();
   const cartFetcher = useFetcher();
+  const compareFetcher = useFetcher();
 
   const headerWrapperRef = useRef(null);
   const headerRef = useRef(null);
@@ -47,6 +48,7 @@ export default function Header() {
   const [isCategoryMenuOpen, setIsCategoryMenuOpen] = useState(false);
   const [isSubcategoryMenuOpen, setIsSubcategoryMenuOpen] = useState(false);
   const [wishlistAmount, setWishlistAmount] = useState(null);
+  const [compareAmount, setCompareAmount] = useState(null);
   const [cartAmount, setCartAmount] = useState(null);
   const [windowWidth, setWindowWidth] = useState(null);
 
@@ -110,7 +112,7 @@ export default function Header() {
 
   // fetcher functions
 
-  useFetcherLoad(wishlistFetcher, '../wishlist');
+  useFetcherLoad(wishlistFetcher, '/wishlist');
 
   if (wishlistFetcher.data) {
     if (wishlistFetcher.data.wishlistAmount !== wishlistAmount) {
@@ -118,11 +120,19 @@ export default function Header() {
     }
   }
 
-  useFetcherLoad(cartFetcher, '../cart');
+  useFetcherLoad(cartFetcher, '/cart');
 
   if (cartFetcher.data) {
     if (cartFetcher.data.cartAmount !== cartAmount) {
       setCartAmount(cartFetcher.data.cartAmount);
+    }
+  }
+
+  useFetcherLoad(compareFetcher, '/compare');
+
+  if (compareFetcher.data) {
+    if (compareFetcher.data.compareAmount !== compareAmount) {
+      setCompareAmount(compareFetcher.data.compareAmount);
     }
   }
 
@@ -326,8 +336,12 @@ export default function Header() {
                   </li>
                   <li>
                     <Link
-                      to="/"
-                      className={headerCls.iconLink}
+                      to="/compare"
+                      className={classNames(
+                        headerCls.iconLink,
+                        compareAmount && headerCls.iconLinkWithCircle,
+                      )}
+                      data-before={compareAmount}
                       aria-label="Сравнить товары"
                     >
                       <Compare className={headerCls.iconInLink} />
