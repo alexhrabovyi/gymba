@@ -15,7 +15,7 @@ export default function CartProduct({
   const [imgSrc] = useState(() => import(`../../../assets/images/productImgs/${productId}.webp`));
 
   function submitNewAmount(newAmount) {
-    const data = JSON.stringify([categoryId, subcategoryId, productId, { amount: newAmount }]);
+    const data = JSON.stringify([categoryId, subcategoryId, productId, newAmount]);
 
     fetcher.submit(data, {
       action: '/cart',

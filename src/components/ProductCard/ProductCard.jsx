@@ -42,8 +42,9 @@ const ProductCard = memo(({
   useFetcherLoad(cartFetcher, '../cart');
 
   if (cartFetcher.data) {
-    const productInCartFromFetcher = cartFetcher.data.cartIds.find(([cId, subcId, pId]) => (
-      cId === categoryId && subcId === subcategoryId && pId === productId
+    const productInCartFromFetcher = cartFetcher.data.cartIds.find((cId) => (
+      cId.categoryId === categoryId
+        && cId.subcategoryId === subcategoryId && cId.productId === productId
     ));
 
     if (productInCartFromFetcher !== productInCart) {

@@ -8,6 +8,7 @@ import containerCls from '../../scss/_container.module.scss';
 import textCls from '../../scss/_text.module.scss';
 import cartCls from './Cart.module.scss';
 import BinIcon from '../../assets/images/icons/bin.svg';
+import Line from '../../assets/images/icons/oblique.svg';
 
 export default function Cart() {
   const { cartProducts, totalPrice } = useLoaderData();
@@ -69,9 +70,32 @@ export default function Cart() {
         )}
       </div>
       <div className={cartCls.productBlock}>
-        {products}
+        {products.length ? products : (
+          <div className={cartCls.noProductBlock}>
+            <div className={cartCls.noProductContent}>
+              <Line className={cartCls.noProductLine} />
+              <p className={classNames(
+                textCls.text,
+                textCls.textFw800,
+                textCls.text32px,
+                cartCls.noProductText,
+              )}
+              >
+                Кошик порожній
+              </p>
+              <p className={classNames(
+                textCls.text,
+                textCls.text24px,
+                textCls.textGrey,
+              )}
+              >
+                Це варто виправити!
+              </p>
+            </div>
+          </div>
+        )}
       </div>
-      {products.length && (
+      {products.length > 0 && (
       <div className={cartCls.totalPriceAndCheckoutBtnBlock}>
         <div className={cartCls.totalPriceBlock}>
           <p className={classNames(

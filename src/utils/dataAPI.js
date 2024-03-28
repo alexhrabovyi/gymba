@@ -324,16 +324,26 @@ export function addIdToCart(categoryId, subcategoryId, productId) {
 
   if (cartIds === null) {
     cartIds = [];
-    cartIds.push([categoryId, subcategoryId, productId, { amount: 1 }]);
+    cartIds.push({
+      categoryId,
+      subcategoryId,
+      productId,
+      amount: 1,
+    });
     localStorage.setItem('cartIds', JSON.stringify(cartIds));
   } else {
     cartIds = JSON.parse(cartIds);
 
-    const isAlreadyExist = cartIds.find(([cId, subcId, pId]) => (cId === categoryId
-      && subcId === subcategoryId && pId === productId));
+    const isAlreadyExist = cartIds.find((cId) => (cId.categoryId === categoryId
+      && cId.subcategoryId === subcategoryId && cId.productId === productId));
 
     if (!isAlreadyExist) {
-      cartIds.push([categoryId, subcategoryId, productId, { amount: 1 }]);
+      cartIds.push({
+        categoryId,
+        subcategoryId,
+        productId,
+        amount: 1,
+      });
       localStorage.setItem('cartIds', JSON.stringify(cartIds));
     }
   }
@@ -342,8 +352,8 @@ export function addIdToCart(categoryId, subcategoryId, productId) {
 export function deleteFromCart(categoryId, subcategoryId, productId) {
   const cartIds = JSON.parse(localStorage.getItem('cartIds')) || [];
 
-  const index = cartIds.findIndex(([cId, subcId, pId]) => (cId === categoryId
-    && subcId === subcategoryId && pId === productId));
+  const index = cartIds.findIndex((cId) => (cId.categoryId === categoryId
+    && cId.subcategoryId === subcategoryId && cId.productId === productId));
 
   if (index !== -1) cartIds.splice(index, 1);
 
@@ -369,9 +379,9 @@ export function getCartAmount() {
 export function editProductAmountInCart(categoryId, subcategoryId, productId, newAmount) {
   const cartIds = getCartIds();
 
-  const cartObj = cartIds.find(([cId, subcId, pId]) => cId === categoryId
-    && subcId === subcategoryId && pId === productId);
-  cartObj[3] = newAmount;
+  const cartObj = cartIds.find((cId) => cId.categoryId === categoryId
+    && cId.subcategoryId === subcategoryId && cId.productId === productId);
+  cartObj.amount = newAmount;
 
   localStorage.setItem('cartIds', JSON.stringify(cartIds));
 }
@@ -379,9 +389,9 @@ export function editProductAmountInCart(categoryId, subcategoryId, productId, ne
 function getCartProducts() {
   const cartIds = getCartIds();
 
-  const cartProducts = cartIds.map(([categoryId, subcategoryId, productId, amountObj]) => {
-    const product = getProduct(categoryId, subcategoryId, productId);
-    const { amount } = amountObj;
+  const cartProducts = cartIds.map((cId) => {
+    const product = getProduct(cId.categoryId, cId.subcategoryId, cId.productId);
+    const { amount } = cId;
     const totalPrice = +product.product.price * +amount;
 
     return {

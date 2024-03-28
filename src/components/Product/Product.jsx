@@ -81,8 +81,9 @@ export default function Product() {
   useFetcherLoad(cartFetcher, '../cart');
 
   if (cartFetcher.data) {
-    const productInCartFromFetcher = cartFetcher.data.cartIds.find(([cId, subcId, pId]) => (
-      cId === categoryId && subcId === subcategoryId && pId === product.id
+    const productInCartFromFetcher = cartFetcher.data.cartIds.find((cId) => (
+      cId.categoryId === categoryId
+        && cId.subcategoryId === subcategoryId && cId.productId === product.id
     ));
 
     if (productInCartFromFetcher !== productInCart) {

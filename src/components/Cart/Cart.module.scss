@@ -75,6 +75,60 @@
   @include flex-builder(column, flex-start, flex-start);
 }
 
+.noProductBlock {
+  width: 100%;
+  padding-top: 70px;
+
+  @include flex-builder(row, center, center);
+
+  @include media-m {
+    padding-top: 50px;
+  }
+
+  @include media-s {
+    padding-top: 40px;
+  }
+}
+
+.noProductContent {
+  position: relative;
+  text-align: center;
+}
+
+.noProductLine {
+  position: absolute;
+  top: -30px;
+  left: -90px;
+  width: 100px;
+  height: auto;
+  fill: $blue;
+
+  @include media-l {
+    top: -25px;
+    left: -60px;
+    width: 80px;
+  }
+
+  @include media-s {
+    top: -20px;
+    left: -65px;
+    width: 70px;
+  }
+
+  @include media-xs {
+    left: -60px;
+  }
+
+  @media (max-width: 500px) {
+    display: none;
+  }
+}
+
+.noProductText {
+  margin-bottom: 7px;
+  text-transform: uppercase;
+}
+
 .totalPriceAndCheckoutBtnBlock { 
   width: 100%;
   margin-top: 48px;
