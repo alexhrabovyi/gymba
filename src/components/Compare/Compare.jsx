@@ -10,6 +10,7 @@ import compareCls from './Compare.module.scss';
 import CrossIcon from '../../assets/images/icons/cross.svg';
 import BinIcon from '../../assets/images/icons/bin.svg';
 import ChevronIcon from '../../assets/images/icons/chevronRight.svg';
+import Line from '../../assets/images/icons/oblique.svg';
 
 export default function Compare() {
   const { compareSubcategoriesBtnInfo } = useLoaderData();
@@ -313,7 +314,7 @@ export default function Compare() {
       const cells = value.map((v, i) => (
         <td
           key={productIds[i]}
-          headers={name}
+          headers={name.split(' ').join('')}
           className={compareCls.valueCell}
         >
           {v}
@@ -324,7 +325,7 @@ export default function Compare() {
         <Fragment key={name}>
           <tr className={compareCls.specsTableHeaderRow}>
             <th
-              id={name}
+              id={name.split(' ').join('')}
               className={compareCls.specsTableTh}
             >
               {name}
@@ -445,6 +446,7 @@ export default function Compare() {
                   displayedSpecsType === 'all' && compareCls.specsControlBtn_active,
                 )}
                 onClick={() => setDisplayedSpecsType('all')}
+                aria-label="Показать все характеристики"
               >
                 Все характеристики
               </button>
@@ -455,6 +457,7 @@ export default function Compare() {
                   displayedSpecsType === 'similar' && compareCls.specsControlBtn_active,
                 )}
                 onClick={() => setDisplayedSpecsType('similar')}
+                aria-label="Показать характеристики, которые сходятся"
               >
                 Сходства
               </button>
@@ -465,12 +468,37 @@ export default function Compare() {
                   displayedSpecsType === 'differ' && compareCls.specsControlBtn_active,
                 )}
                 onClick={() => setDisplayedSpecsType('differ')}
+                aria-label="Показать характеристики, которые разнятся"
               >
                 Отличия
               </button>
             </div>
           </div>
         </>
+        )}
+        {productCardObjs.length === 0 && (
+          <div className={compareCls.noProductBlock}>
+            <div className={compareCls.noProductContent}>
+              <Line className={compareCls.noProductLine} />
+              <p className={classNames(
+                textCls.text,
+                textCls.textFw800,
+                textCls.text32px,
+                compareCls.noProductText,
+              )}
+              >
+                Немає товарів для порівняння
+              </p>
+              <p className={classNames(
+                textCls.text,
+                textCls.text24px,
+                textCls.textGrey,
+              )}
+              >
+                Завжди є, що порівняти!
+              </p>
+            </div>
+          </div>
         )}
       </div>
       {productCardObjs.length > 0 && (
@@ -495,14 +523,3 @@ export default function Compare() {
     </main>
   );
 }
-
-// localStorage.setItem('compareIds', JSON.stringify([
-//   ["enamels", "alkyd_enamels", "emal-alkidnaya-pf-116-akvarel-zebra-811-belyy-mat-2-8-kg"],
-//   ['enamels', 'acrylic_enamels', 'test'],
-//   ['enamels', 'nitro_enamels', 'test'],
-//   ['enamels', 'oil_paints', 'test'],
-//   ['enamels', 'soils_gf_ge', 'test'],
-//   ['paints', 'waterdispersion_paints', 'test'],
-//   ['wood_protection', 'for_wood', 'test'],
-//   ['foams_sealants_glue', 'foams', 'test'],
-// ]));

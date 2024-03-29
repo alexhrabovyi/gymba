@@ -37,8 +37,9 @@
   @include flex-builder(row, space-between, center);
 
   margin-bottom: 48px;
+  gap: 7%;
 
-  @include media-xs {
+  @include media-s {
     @include flex-builder(column, flex-start, flex-start);
 
     gap: 25px;
@@ -50,6 +51,7 @@
 }
 
 .deleteBtn {
+  flex-shrink: 0;
   border: none;
   background: none;
   color: $text-grey;
@@ -83,6 +85,23 @@
   gap: 7%;
 
   @include flex-builder(row, space-between, center);
+
+  @include media-l {
+    gap: 5%;
+  }
+
+  @include media-m {
+    gap: 3%;
+  }
+
+  @include media-s {
+    margin-bottom: 28px;
+  }
+
+  @include media-xs {
+    margin-bottom: 24px;
+    gap: 20px;
+  }
 }
 
 .subcategoryBtnBlock {
@@ -90,9 +109,16 @@
 
   flex-wrap: wrap;
   gap: 12px;
+
+  @include media-s {
+    flex-wrap: nowrap;
+    padding-bottom: 10px;
+    overflow-x: auto;
+  }
 }
 
 .subcategoryBtn {
+  flex-shrink: 0;
   padding: 9px 12px;
   border-radius: 4px;
   background: $light-blue;
@@ -182,6 +208,19 @@
   grid-auto-columns: 25%;
   overflow-x: auto;
   scroll-behavior: auto;
+
+  @include media-m {
+    grid-auto-columns: 33.33%;
+  }
+
+  @include media-s {
+    margin-bottom: 80px;
+    grid-auto-columns: 50%;
+  }
+
+  @include media-xs {
+    margin-bottom: 60px;
+  }
 }
 
 .productCard {
@@ -190,10 +229,66 @@
   @include flex-builder(row, flex-start, stretch);
 }
 
+.noProductBlock {
+  width: 100%;
+  padding-top: 70px;
+
+  @include flex-builder(row, center, center);
+
+  @include media-m {
+    padding-top: 50px;
+  }
+
+  @include media-s {
+    padding-top: 40px;
+  }
+}
+
+.noProductContent {
+  position: relative;
+  text-align: center;
+}
+
+.noProductLine {
+  position: absolute;
+  top: -30px;
+  left: -90px;
+  width: 100px;
+  height: auto;
+  fill: $blue;
+
+  @include media-l {
+    top: -25px;
+    left: -60px;
+    width: 80px;
+  }
+
+  @include media-s {
+    top: -20px;
+    left: -55px;
+    width: 70px;
+  }
+
+  @include media-xs {
+    display: none;
+  }
+}
+
+.noProductText {
+  margin-bottom: 7px;
+  text-transform: uppercase;
+}
+
 .specsTitleAndControlBtnBlock {
   @include flex-builder(row, space-between, center);
 
   margin-bottom: 32px;
+
+  @include media-s {
+    @include flex-builder(column, flex-start, flex-start);
+
+    gap: 20px;
+  }
 }
 
 .subtitle {
@@ -282,6 +377,18 @@
   display: block;
   margin-top: 24px;
   margin-bottom: 16px;
+
+  @include media-m {
+    margin-top: 22px;
+  }
+
+  @include media-s {
+    margin-top: 20px;
+  }
+
+  @include media-xs {
+    margin-top: 18px;
+  }
 }
 
 .specsTableTh {
@@ -290,14 +397,34 @@
 }
 
 .specsValueRow {
-  display: block;
   display: grid;
-  padding-bottom: 24px;
-  border-bottom: 1px solid rgb(203 213 224);
+  width: 100%;
   grid-auto-columns: 25%;
+
+  @include media-m {
+    grid-auto-columns: 33.33%;
+  }
+
+  @include media-s {
+    grid-auto-columns: 50%;
+  }
 }
 
 .valueCell {
   padding-right: 25px;
+  padding-bottom: 24px;
+  border-bottom: 1px solid rgb(203 213 224);
   grid-row: 1/2;
+
+  @include media-m {
+    padding-bottom: 22px;
+  }
+
+  @include media-s {
+    margin-bottom: 20px;
+  }
+
+  @include media-xs {
+    margin-bottom: 18px;
+  }
 }
