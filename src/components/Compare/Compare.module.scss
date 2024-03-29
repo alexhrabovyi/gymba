@@ -11,6 +11,26 @@
   @include media-xs {
     margin-top: 40px; 
   }
+
+  &_marginBottom {
+    padding-bottom: 160px;
+  
+    @media (max-width: 1600px) {
+      padding-bottom: 140px;
+    }
+  
+    @include media-l {
+      padding-bottom: 120px;
+    }
+  
+    @include media-m {
+      padding-bottom: 100px;
+    }
+  
+    @include media-s {
+      padding-bottom: 80px;
+    }
+  }
 }
 
 .titleAndButtonBlock {
@@ -251,6 +271,11 @@
   font-size: 16px;
   overflow-x: auto;
   scroll-behavior: auto;
+}
+
+.specsTableTBody {
+  display: block;
+  width: 100%;
 }
 
 .specsTableHeaderRow {

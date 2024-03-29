@@ -1,4 +1,3 @@
-/* eslint-disable react-hooks/exhaustive-deps */
 import {
   useState, useMemo, useEffect, useCallback, Fragment, useRef,
 } from 'react';
@@ -20,41 +19,57 @@ export default function Compare() {
   const productBlockRef = useRef();
   const specsTableRef = useRef();
 
-  const [activeSubcategoryId, setActiveSubcategoryId] = useState(
-    () => compareSubcategoriesBtnInfo[0]?.subcategoryId,
-  );
+  const [activeSubcategoryId, setActiveSubcategoryId] = useState(() => (
+    compareSubcategoriesBtnInfo[0]?.subcategoryId
+  ));
   const [searchParamsString, setSearchParamsString] = useState(null);
   const [prevSearchParamsString, setPrevSearchParamsString] = useState(null);
   const [productCardObjs, setProductCardObjs] = useState([]);
+  const [displayedSpecsType, setDisplayedSpecsType] = useState('all');
 
   // basic setup functions
 
   const activeSubcategoryBtnIndex = compareSubcategoriesBtnInfo
     .findIndex(({ subcategoryId }) => subcategoryId === activeSubcategoryId);
   const activeSubcategoryCategory = (
-    compareSubcategoriesBtnInfo[activeSubcategoryBtnIndex].categoryId
+    compareSubcategoriesBtnInfo[activeSubcategoryBtnIndex]?.categoryId
   );
 
-  function setupSearchParamsString() {
-    const newSearchParamsString = new URLSearchParams({
-      categoryId: activeSubcategoryCategory,
-      subcategoryId: activeSubcategoryId,
-    }).toString();
+  const updateActiveSubcategoryId = useCallback(() => {
+    const isActiveSubcategoryStillExist = compareSubcategoriesBtnInfo
+      .find(({ subcategoryId }) => subcategoryId === activeSubcategoryId);
 
-    if (newSearchParamsString !== searchParamsString) {
-      setSearchParamsString(newSearchParamsString);
+    if (!isActiveSubcategoryStillExist && compareSubcategoriesBtnInfo) {
+      setActiveSubcategoryId(compareSubcategoriesBtnInfo[0]?.subcategoryId);
     }
+  }, [compareSubcategoriesBtnInfo, activeSubcategoryId]);
 
-    if (prevSearchParamsString === null) {
-      setPrevSearchParamsString(newSearchParamsString);
+  useEffect(updateActiveSubcategoryId, [updateActiveSubcategoryId]);
+
+  function setupSearchParamsString() {
+    if (activeSubcategoryId !== null) {
+      const newSearchParamsString = new URLSearchParams({
+        categoryId: activeSubcategoryCategory,
+        subcategoryId: activeSubcategoryId,
+      }).toString();
+
+      if (newSearchParamsString !== searchParamsString) {
+        setSearchParamsString(newSearchParamsString);
+      }
+
+      if (prevSearchParamsString === null) {
+        setPrevSearchParamsString(newSearchParamsString);
+      }
     }
   }
 
   setupSearchParamsString();
 
   const resetScrollLeftOnNewCards = useCallback(() => {
-    productBlockRef.current.scrollLeft = 0;
-    specsTableRef.current.scrollLeft = 0;
+    if (productCardObjs.length) {
+      productBlockRef.current.scrollLeft = 0;
+      specsTableRef.current.scrollLeft = 0;
+    }
   }, [productCardObjs]);
 
   useEffect(resetScrollLeftOnNewCards, [resetScrollLeftOnNewCards]);
@@ -62,7 +77,8 @@ export default function Compare() {
   // fetch functions
 
   const initialRequestCompareProducts = useCallback(() => {
-    if (getCompareProductsFetcher.state === 'idle' && !getCompareProductsFetcher.data) {
+    if (getCompareProductsFetcher.state === 'idle' && !getCompareProductsFetcher.data
+      && searchParamsString !== null) {
       const action = `/getCompareProducts?${searchParamsString}`;
 
       getCompareProductsFetcher.load(action);
@@ -234,34 +250,75 @@ export default function Compare() {
           productSpecFilterValue = '-';
         }
 
+        if (typeof productSpecFilterValue === 'object') {
+          productSpecFilterValue = productSpecFilterValue.sort((a, b) => a.localeCompare(b)).join(', ');
+        }
+
         nameAndValues[name].push(productSpecFilterValue);
       });
     });
 
-    console.log(nameAndValues);
-
     return nameAndValues;
   }, [productCardObjs, allSpecFilterNames]);
 
-  const tableRows = useMemo(() => {
+  const sortedSpecFilterNameAndValue = useMemo(() => {
     if (!allSpecFilterNamesAndValues) return;
+    let sortedNameAndValue;
+
+    if (displayedSpecsType === 'all') {
+      sortedNameAndValue = allSpecFilterNamesAndValues;
+    } else if (displayedSpecsType === 'similar') {
+      const result = {};
+
+      Object.entries(allSpecFilterNamesAndValues).forEach(([name, value]) => {
+        const firstValue = value[0];
+
+        let allSimilar = true;
+
+        value.slice(1).forEach((v) => {
+          if (v !== firstValue) allSimilar = false;
+        });
+
+        if (allSimilar) result[name] = value;
+      });
+
+      sortedNameAndValue = result;
+    } else if (displayedSpecsType === 'differ') {
+      const result = {};
+
+      Object.entries(allSpecFilterNamesAndValues).forEach(([name, value]) => {
+        const firstValue = value[0];
+
+        let notSimilar = false;
+
+        value.slice(1).forEach((v) => {
+          if (v !== firstValue) notSimilar = true;
+        });
+
+        if (notSimilar) result[name] = value;
+      });
+
+      sortedNameAndValue = result;
+    }
+
+    return sortedNameAndValue;
+  }, [allSpecFilterNamesAndValues, displayedSpecsType]);
+
+  const tableRows = useMemo(() => {
+    if (!sortedSpecFilterNameAndValue) return;
 
     const productIds = productCardObjs.map(({ product }) => product.id);
 
-    const rows = Object.entries(allSpecFilterNamesAndValues).map(([name, value]) => {
-      const cells = value.map((v, i) => {
-        if (typeof v === 'object') v = v.sort((a, b) => a.localeCompare(b)).join(', ');
-
-        return (
-          <td
-            key={productIds[i]}
-            headers={name}
-            className={compareCls.valueCell}
-          >
-            {v}
-          </td>
-        );
-      });
+    const rows = Object.entries(sortedSpecFilterNameAndValue).map(([name, value]) => {
+      const cells = value.map((v, i) => (
+        <td
+          key={productIds[i]}
+          headers={name}
+          className={compareCls.valueCell}
+        >
+          {v}
+        </td>
+      ));
 
       return (
         <Fragment key={name}>
@@ -281,10 +338,14 @@ export default function Compare() {
     });
 
     return rows;
-  }, [allSpecFilterNamesAndValues, productCardObjs]);
+  }, [sortedSpecFilterNameAndValue, productCardObjs]);
 
   return (
-    <main className={compareCls.main}>
+    <main className={classNames(
+      compareCls.main,
+      productCardObjs.length === 0 && compareCls.main_marginBottom,
+    )}
+    >
       <div className={classNames(
         containerCls.container,
         compareCls.controlAndProductBlock,
@@ -315,111 +376,122 @@ export default function Compare() {
           </button>
           )}
         </div>
-        <div className={compareCls.subcategoryBtnAndControlBtnBlock}>
-          <div className={compareCls.subcategoryBtnBlock}>
-            {subcategoryBtns}
+        {productCardObjs.length > 0 && (
+        <>
+          <div className={compareCls.subcategoryBtnAndControlBtnBlock}>
+            <div className={compareCls.subcategoryBtnBlock}>
+              {subcategoryBtns}
+            </div>
+            {subcategoryBtns.length > 1 && (
+            <div className={compareCls.controlBtnBlock}>
+              <button
+                type="button"
+                className={classNames(
+                  compareCls.controlButton,
+                  isPrevControlBtnDisabled && compareCls.controlButton_disabled,
+                )}
+                onClick={prevControlButtonOnClick}
+                disabled={isPrevControlBtnDisabled}
+                aria-disabled={isPrevControlBtnDisabled}
+                tabIndex={isPrevControlBtnDisabled ? -1 : 0}
+                aria-label="Показать предыдущую категорию"
+              >
+                <ChevronIcon className={compareCls.chevronIcon} />
+              </button>
+              <button
+                type="button"
+                className={classNames(
+                  compareCls.controlButton,
+                  isNextControlBtnDisabled && compareCls.controlButton_disabled,
+                )}
+                onClick={nextControlButtonOnClick}
+                disabled={isNextControlBtnDisabled}
+                aria-disabled={isNextControlBtnDisabled}
+                tabIndex={isNextControlBtnDisabled ? -1 : 0}
+                aria-label="Показать следующую категорию"
+              >
+                <ChevronIcon className={classNames(
+                  compareCls.chevronIcon,
+                  compareCls.chevronIcon_next,
+                )}
+                />
+              </button>
+            </div>
+            )}
           </div>
-          {subcategoryBtns.length > 1 && (
-          <div className={compareCls.controlBtnBlock}>
-            <button
-              type="button"
-              className={classNames(
-                compareCls.controlButton,
-                isPrevControlBtnDisabled && compareCls.controlButton_disabled,
-              )}
-              onClick={prevControlButtonOnClick}
-              disabled={isPrevControlBtnDisabled}
-              aria-disabled={isPrevControlBtnDisabled}
-              tabIndex={isPrevControlBtnDisabled ? -1 : 0}
-              aria-label="Показать предыдущую категорию"
-            >
-              <ChevronIcon className={compareCls.chevronIcon} />
-            </button>
-            <button
-              type="button"
-              className={classNames(
-                compareCls.controlButton,
-                isNextControlBtnDisabled && compareCls.controlButton_disabled,
-              )}
-              onClick={nextControlButtonOnClick}
-              disabled={isNextControlBtnDisabled}
-              aria-disabled={isNextControlBtnDisabled}
-              tabIndex={isNextControlBtnDisabled ? -1 : 0}
-              aria-label="Показать следующую категорию"
-            >
-              <ChevronIcon className={classNames(
-                compareCls.chevronIcon,
-                compareCls.chevronIcon_next,
-              )}
-              />
-            </button>
-          </div>
-          )}
-        </div>
-        <div
-          ref={productBlockRef}
-          className={compareCls.productBlock}
-          onScroll={productBlockOnScroll}
-        >
-          {productCards}
-        </div>
-        <div className={compareCls.specsTitleAndControlBtnBlock}>
-          <h2 className={classNames(
-            textCls.text,
-            textCls.textFw800,
-            textCls.text24px,
-            textCls.textBlack,
-            compareCls.subtitle,
-          )}
+          <div
+            ref={productBlockRef}
+            className={compareCls.productBlock}
+            onScroll={productBlockOnScroll}
           >
-            Характеристики
-          </h2>
-          <div className={compareCls.specsControlBtnBlock}>
-            <button
-              type="button"
-              className={classNames(
-                compareCls.specsControlBtn,
-                compareCls.specsControlBtn_active,
-              )}
-            >
-              Все характеристики
-            </button>
-            <button
-              type="button"
-              className={classNames(
-                compareCls.specsControlBtn,
-                compareCls.specsControlBtn_active,
-              )}
-            >
-              Сходства
-            </button>
-            <button
-              type="button"
-              className={classNames(
-                compareCls.specsControlBtn,
-                compareCls.specsControlBtn_active,
-              )}
-            >
-              Отличия
-            </button>
+            {productCards}
           </div>
-        </div>
+          <div className={compareCls.specsTitleAndControlBtnBlock}>
+            <h2 className={classNames(
+              textCls.text,
+              textCls.textFw800,
+              textCls.text24px,
+              textCls.textBlack,
+              compareCls.subtitle,
+            )}
+            >
+              Характеристики
+            </h2>
+            <div className={compareCls.specsControlBtnBlock}>
+              <button
+                type="button"
+                className={classNames(
+                  compareCls.specsControlBtn,
+                  displayedSpecsType === 'all' && compareCls.specsControlBtn_active,
+                )}
+                onClick={() => setDisplayedSpecsType('all')}
+              >
+                Все характеристики
+              </button>
+              <button
+                type="button"
+                className={classNames(
+                  compareCls.specsControlBtn,
+                  displayedSpecsType === 'similar' && compareCls.specsControlBtn_active,
+                )}
+                onClick={() => setDisplayedSpecsType('similar')}
+              >
+                Сходства
+              </button>
+              <button
+                type="button"
+                className={classNames(
+                  compareCls.specsControlBtn,
+                  displayedSpecsType === 'differ' && compareCls.specsControlBtn_active,
+                )}
+                onClick={() => setDisplayedSpecsType('differ')}
+              >
+                Отличия
+              </button>
+            </div>
+          </div>
+        </>
+        )}
       </div>
-      <div className={classNames(
-        containerCls.container,
-        compareCls.specsBlock,
-      )}
-      >
-        <table
-          ref={specsTableRef}
-          className={compareCls.specsTable}
-          onScroll={specsTableOnScroll}
+      {productCardObjs.length > 0 && (
+        <div className={classNames(
+          containerCls.container,
+          compareCls.specsBlock,
+        )}
         >
-          <tbody>
-            {tableRows}
-          </tbody>
-        </table>
-      </div>
+          <table
+            ref={specsTableRef}
+            className={compareCls.specsTable}
+            onScroll={specsTableOnScroll}
+          >
+            <tbody
+              className={compareCls.specsTableTBody}
+            >
+              {tableRows}
+            </tbody>
+          </table>
+        </div>
+      )}
     </main>
   );
 }
