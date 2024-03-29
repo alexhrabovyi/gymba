@@ -1,5 +1,6 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import {
-  useState, useMemo, useEffect, useCallback,
+  useState, useMemo, useEffect, useCallback, Fragment, useRef,
 } from 'react';
 import { useFetcher, useLoaderData } from 'react-router-dom';
 import classNames from 'classnames';
@@ -15,6 +16,9 @@ export default function Compare() {
   const { compareSubcategoriesBtnInfo } = useLoaderData();
   const compareFetcher = useFetcher();
   const getCompareProductsFetcher = useFetcher();
+
+  const productBlockRef = useRef();
+  const specsTableRef = useRef();
 
   const [activeSubcategoryId, setActiveSubcategoryId] = useState(
     () => compareSubcategoriesBtnInfo[0]?.subcategoryId,
@@ -40,18 +44,40 @@ export default function Compare() {
     if (newSearchParamsString !== searchParamsString) {
       setSearchParamsString(newSearchParamsString);
     }
+
+    if (prevSearchParamsString === null) {
+      setPrevSearchParamsString(newSearchParamsString);
+    }
   }
 
   setupSearchParamsString();
 
+  const resetScrollLeftOnNewCards = useCallback(() => {
+    productBlockRef.current.scrollLeft = 0;
+    specsTableRef.current.scrollLeft = 0;
+  }, [productCardObjs]);
+
+  useEffect(resetScrollLeftOnNewCards, [resetScrollLeftOnNewCards]);
+
   // fetch functions
-  const requestCompareProducts = useCallback(() => {
-    if (prevSearchParamsString !== searchParamsString) {
+
+  const initialRequestCompareProducts = useCallback(() => {
+    if (getCompareProductsFetcher.state === 'idle' && !getCompareProductsFetcher.data) {
       const action = `/getCompareProducts?${searchParamsString}`;
 
       getCompareProductsFetcher.load(action);
+    }
+  }, [getCompareProductsFetcher, searchParamsString]);
 
+  useEffect(initialRequestCompareProducts, [initialRequestCompareProducts]);
+
+  const requestCompareProducts = useCallback(() => {
+    if (prevSearchParamsString !== searchParamsString) {
       setPrevSearchParamsString(searchParamsString);
+
+      const action = `/getCompareProducts?${searchParamsString}`;
+
+      getCompareProductsFetcher.load(action);
     }
   }, [prevSearchParamsString, searchParamsString, getCompareProductsFetcher]);
 
@@ -90,6 +116,20 @@ export default function Compare() {
     setActiveSubcategoryId(
       compareSubcategoriesBtnInfo[activeSubcategoryBtnIndex + 1].subcategoryId,
     );
+  }
+
+  function productBlockOnScroll() {
+    const productBlock = productBlockRef.current;
+    const specsTable = specsTableRef.current;
+
+    specsTable.scrollLeft = productBlock.scrollLeft;
+  }
+
+  function specsTableOnScroll() {
+    const productBlock = productBlockRef.current;
+    const specsTable = specsTableRef.current;
+
+    productBlock.scrollLeft = specsTable.scrollLeft;
   }
 
   // setup subcategory buttons and control buttons
@@ -144,22 +184,26 @@ export default function Compare() {
 
   const productCards = useMemo(() => (
     productCardObjs.map((pC) => (
-      <ProductCard
+      <div
         key={pC.product.id}
-        name={pC.product.name}
-        categoryId={pC.categoryId}
-        subcategoryId={pC.subcategoryId}
-        productId={pC.product.id}
-        price={pC.product.price}
-        oldPrice={pC.product.oldPrice}
-        isShortCard
-      />
+        className={compareCls.productCard}
+      >
+        <ProductCard
+          name={pC.product.name}
+          categoryId={pC.categoryId}
+          subcategoryId={pC.subcategoryId}
+          productId={pC.product.id}
+          price={pC.product.price}
+          oldPrice={pC.product.oldPrice}
+          isShortCard
+        />
+      </div>
     ))
   ), [productCardObjs]);
 
   // setup specs
 
-  const allSpecsFilters = useMemo(() => {
+  const allSpecFilterNames = useMemo(() => {
     if (!productCardObjs.length) return;
 
     const filters = new Set();
@@ -172,6 +216,72 @@ export default function Compare() {
 
     return Array.from(filters).sort((a, b) => a.localeCompare(b));
   }, [productCardObjs]);
+
+  const allSpecFilterNamesAndValues = useMemo(() => {
+    if (!allSpecFilterNames) return;
+
+    const nameAndValues = {};
+
+    allSpecFilterNames.forEach((n) => { nameAndValues[n] = []; });
+
+    productCardObjs.forEach(({ product }) => {
+      const productSpecsFilters = product['specs-filters'];
+
+      allSpecFilterNames.forEach((name) => {
+        let productSpecFilterValue = productSpecsFilters[name];
+
+        if (productSpecFilterValue === undefined) {
+          productSpecFilterValue = '-';
+        }
+
+        nameAndValues[name].push(productSpecFilterValue);
+      });
+    });
+
+    console.log(nameAndValues);
+
+    return nameAndValues;
+  }, [productCardObjs, allSpecFilterNames]);
+
+  const tableRows = useMemo(() => {
+    if (!allSpecFilterNamesAndValues) return;
+
+    const productIds = productCardObjs.map(({ product }) => product.id);
+
+    const rows = Object.entries(allSpecFilterNamesAndValues).map(([name, value]) => {
+      const cells = value.map((v, i) => {
+        if (typeof v === 'object') v = v.sort((a, b) => a.localeCompare(b)).join(', ');
+
+        return (
+          <td
+            key={productIds[i]}
+            headers={name}
+            className={compareCls.valueCell}
+          >
+            {v}
+          </td>
+        );
+      });
+
+      return (
+        <Fragment key={name}>
+          <tr className={compareCls.specsTableHeaderRow}>
+            <th
+              id={name}
+              className={compareCls.specsTableTh}
+            >
+              {name}
+            </th>
+          </tr>
+          <tr className={compareCls.specsValueRow}>
+            {cells}
+          </tr>
+        </Fragment>
+      );
+    });
+
+    return rows;
+  }, [allSpecFilterNamesAndValues, productCardObjs]);
 
   return (
     <main className={compareCls.main}>
@@ -218,13 +328,12 @@ export default function Compare() {
                 isPrevControlBtnDisabled && compareCls.controlButton_disabled,
               )}
               onClick={prevControlButtonOnClick}
+              disabled={isPrevControlBtnDisabled}
+              aria-disabled={isPrevControlBtnDisabled}
+              tabIndex={isPrevControlBtnDisabled ? -1 : 0}
               aria-label="Показать предыдущую категорию"
             >
-              <ChevronIcon className={classNames(
-                compareCls.chevronIcon,
-                compareCls.chevronIcon_prev,
-              )}
-              />
+              <ChevronIcon className={compareCls.chevronIcon} />
             </button>
             <button
               type="button"
@@ -233,14 +342,25 @@ export default function Compare() {
                 isNextControlBtnDisabled && compareCls.controlButton_disabled,
               )}
               onClick={nextControlButtonOnClick}
+              disabled={isNextControlBtnDisabled}
+              aria-disabled={isNextControlBtnDisabled}
+              tabIndex={isNextControlBtnDisabled ? -1 : 0}
               aria-label="Показать следующую категорию"
             >
-              <ChevronIcon className={compareCls.chevronIcon} />
+              <ChevronIcon className={classNames(
+                compareCls.chevronIcon,
+                compareCls.chevronIcon_next,
+              )}
+              />
             </button>
           </div>
           )}
         </div>
-        <div className={compareCls.productBlock}>
+        <div
+          ref={productBlockRef}
+          className={compareCls.productBlock}
+          onScroll={productBlockOnScroll}
+        >
           {productCards}
         </div>
         <div className={compareCls.specsTitleAndControlBtnBlock}>
@@ -290,7 +410,15 @@ export default function Compare() {
         compareCls.specsBlock,
       )}
       >
-        
+        <table
+          ref={specsTableRef}
+          className={compareCls.specsTable}
+          onScroll={specsTableOnScroll}
+        >
+          <tbody>
+            {tableRows}
+          </tbody>
+        </table>
       </div>
     </main>
   );

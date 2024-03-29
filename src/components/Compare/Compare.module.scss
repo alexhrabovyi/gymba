@@ -3,23 +3,9 @@
 
 .main {
   margin-top: 68px;
-  margin-bottom: 160px;
-
-  @media (max-width: 1600px) {
-    margin-bottom: 140px;
-  }
-
-  @include media-l {
-    margin-bottom: 120px;
-  }
-
-  @include media-m {
-    margin-bottom: 100px;
-  }
 
   @include media-s {
     margin-top: 50px;
-    margin-bottom: 80px;
   }
 
   @include media-xs {
@@ -69,4 +55,224 @@
 .binIcon {
   width: 18px;
   height: 20px;
+}
+
+.subcategoryBtnAndControlBtnBlock {
+  width: 100%;
+  margin-bottom: 32px;
+  gap: 7%;
+
+  @include flex-builder(row, space-between, center);
+}
+
+.subcategoryBtnBlock {
+  @include flex-builder(row, flex-start, center);
+
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.subcategoryBtn {
+  padding: 9px 12px;
+  border-radius: 4px;
+  background: $light-blue;
+  color: $black;
+  cursor: pointer;
+  fill: $text-grey;
+  font-family: Onest, sans-serif;
+  font-size: 16px;
+  gap: 8px;
+  transition: all .05s ease-in-out;
+
+  @include flex-builder(row, flex-start, center);
+
+  &:hover {
+    background-color: $dark-grey;
+  }
+
+  &_active {
+    background-color: $blue;
+    color: $white;
+    fill: $white;
+
+    &:hover {
+      background-color: $dark-blue;
+    }
+
+    &:active {
+      background-color: $blue-active;
+    }
+  }
+}
+
+.deleteSubcBtn {
+  width: 16px;
+  height: 16px;
+  border: none;
+  background: none;
+  cursor: pointer;
+}
+
+.crossIcon {
+  width: 100%;
+  height: 100%;
+}
+
+.controlBtnBlock {
+  @include flex-builder(row, flex-start, center);
+
+  gap: 12px;
+}
+
+.controlButton {
+  width: 56px;
+  height: 56px;
+  border: none;
+  border-radius: 4px;
+  background: $light-blue;
+  cursor: pointer;
+  fill: $blue;
+  transition: all .05s ease-in-out;
+
+  @include flex-builder(row, center, center);
+
+  &:hover {
+    background-color: $dark-grey;
+  }
+
+  &_disabled {
+  opacity: 0.6;
+    pointer-events: none;
+  }
+}
+
+.chevronIcon {
+  width: 24px;
+  height: 24px;
+
+  &_next {
+    transform: rotate(180deg);
+  }
+}
+
+.productBlock {
+  display: grid;
+  padding: 2px;
+  margin-bottom: 100px;
+  grid-auto-columns: 25%;
+  overflow-x: auto;
+  scroll-behavior: auto;
+}
+
+.productCard {
+  grid-row: 1/2;
+
+  @include flex-builder(row, flex-start, stretch);
+}
+
+.specsTitleAndControlBtnBlock {
+  @include flex-builder(row, space-between, center);
+
+  margin-bottom: 32px;
+}
+
+.subtitle {
+  text-transform: uppercase;
+}
+
+.specsControlBtnBlock {
+  @include flex-builder(row, flex-start, center);
+
+  gap: 24px;
+}
+
+.specsControlBtn {
+  padding-bottom: 4px;
+  border: none;
+  background: none;
+  color: $black;
+  cursor: pointer;
+  font-family: Onest, sans-serif;
+  font-size: 16px;
+  transition: all .05s ease-in-out;
+
+  &:hover {
+    color: $blue;
+  }
+
+  &:active {
+    color: $blue-active;
+  }
+
+  &_active {
+    border-bottom: 2px solid $blue;
+    color: $blue;
+
+    &:hover {
+      border-color: $dark-blue;
+      color: $dark-blue;
+    }
+
+    &:active {
+      border-color: $blue-active;
+      color: $blue-active;
+    }
+  }
+}
+
+.specsBlock {
+  width: 100%;
+  padding-top: 8px;
+  padding-bottom: 160px;
+  background: $light-blue;
+
+  @media (max-width: 1600px) {
+    padding-bottom: 140px;
+  }
+
+  @include media-l {
+    padding-bottom: 120px;
+  }
+
+  @include media-m {
+    padding-bottom: 100px;
+  }
+
+  @include media-s {
+    padding-bottom: 80px;
+  }
+}
+
+.specsTable {
+  display: block;
+  width: 100%;
+  color: $black;
+  font-family: Onest, sans-serif;
+  font-size: 16px;
+  overflow-x: auto;
+  scroll-behavior: auto;
+}
+
+.specsTableHeaderRow {
+  display: block;
+  margin-top: 24px;
+  margin-bottom: 16px;
+}
+
+.specsTableTh {
+  font-weight: 800;
+  text-transform: uppercase;
+}
+
+.specsValueRow {
+  display: block;
+  display: grid;
+  padding-bottom: 24px;
+  border-bottom: 1px solid rgb(203 213 224);
+  grid-auto-columns: 25%;
+}
+
+.valueCell {
+  padding-right: 25px;
+  grid-row: 1/2;
 }
