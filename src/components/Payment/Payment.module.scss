@@ -1,0 +1,106 @@
+@import '.././../scss/mixins';
+@import '.././../scss/colors';
+
+.main {
+  margin-top: 68px;
+  margin-bottom: 160px;
+
+  @media (max-width: 1600px) {
+    margin-bottom: 140px;
+  }
+
+  @include media-l {
+    margin-bottom: 120px;
+  }
+
+  @include media-m {
+    margin-bottom: 100px;
+  }
+
+  @include media-s {
+    margin-top: 50px;
+    margin-bottom: 80px;
+  }
+
+  @include media-xs {
+    margin-top: 40px; 
+  }
+}
+
+.title {
+  margin-bottom: 48px;
+  text-transform: uppercase;
+}
+
+.methodBlocks {
+  display: grid;
+  width: 100%;
+  gap: 24px;
+  grid-template-columns: 1fr 1fr;
+
+  @include media-s {
+    gap: 32px;
+    grid-template-columns: 1fr;
+    justify-items: center;
+  }
+}
+
+.methodBlock {
+  width: 100%;
+  padding: 32px;
+  border: 1px solid $dark-grey;
+  border-radius: 4px;
+
+  @include media-l {
+    padding: 24px;
+  }
+
+  @include media-s {
+    max-width: 350px;
+  }
+
+  @include media-s {
+    padding: 32px;
+  }
+}
+
+.methodIcon {
+  width: 100px;
+  height: 100px;
+  margin-bottom: 32px;
+}
+
+.subtitle {
+  margin-bottom: 48px;
+  text-transform: uppercase;
+}
+
+.methodList {
+  gap: 32px;
+  list-style: none;
+
+  @include flex-builder(column, flex-start, flex-start);
+}
+
+.methodListElement {
+  @include flex-builder(row, flex-start, flex-start);
+
+  gap: 16px;
+}
+
+.lineIcon {
+  width: 16px;
+  height: 16px;
+  flex-shrink: 0;
+  fill: $blue;
+}
+
+.methodListElementTextBlock {
+  @include flex-builder(column, flex-start, flex-start);
+
+  gap: 11px;
+}
+
+.methodListElementTitle {
+  text-transform: uppercase;
+}
