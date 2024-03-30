@@ -1,0 +1,154 @@
+@import '.././../scss/mixins';
+@import '.././../scss/colors';
+
+.main {
+  margin-top: 68px;
+  margin-bottom: 160px;
+
+  @include flex-builder(column, flex-start, center);
+
+  @media (max-width: 1600px) {
+    margin-bottom: 140px;
+  }
+
+  @include media-l {
+    margin-bottom: 120px;
+  }
+
+  @include media-m {
+    margin-bottom: 100px;
+  }
+
+  @include media-s {
+    margin-top: 50px;
+    margin-bottom: 80px;
+  }
+
+  @include media-xs {
+    margin-top: 40px; 
+  }
+}
+
+.title {
+  margin-bottom: 48px;
+  text-transform: uppercase;
+}
+
+.addressCard {
+  width: 100%;
+  max-width: 650px;
+  padding: 32px;
+  border: 1px solid $dark-grey;
+  border-radius: 4px;
+  margin-bottom: 160px;
+
+  @include flex-builder(column, flex-start, flex-start);
+
+  @include media-l {
+    margin-bottom: 140px;
+  }
+
+  @include media-m {
+    margin-bottom: 120px;
+  }
+
+  @include media-s {
+    padding: 24px;
+    margin-bottom: 80px;
+  }
+
+  @include media-xs {
+    margin-bottom: 60px;
+  }
+}
+
+.img {
+  width: 100%;
+  max-width: 326px;
+  align-self: center;
+  margin-bottom: 48px;
+}
+
+.addressCardTextBlocks {
+  @include flex-builder(column, flex-start, flex-start);
+
+  gap: 32px;
+
+  @include media-s {
+    gap: 24px;
+  }
+}
+
+.addressCardTextBlock {
+  @include flex-builder(column, flex-start, flex-start);
+
+  gap: 8px;
+}
+
+.addressLink {
+  color: $black;
+  font-family: Onest, sans-serif;
+  font-size: 21px;
+  text-decoration: none;
+  transition: all ease-in-out .05s;
+
+  &:hover {
+    color: $blue;
+  }
+
+  &:active {
+    color: $dark-blue;
+  }
+
+  @include media-xs {
+    font-size: 18px;
+  }
+}
+
+.addressCardText {
+  @include media-xs {
+    font-size: 18px;
+  }
+}
+
+.openingHoursBlock {
+  margin-top: 24px;
+
+  @include flex-builder(row, flex-start, center);
+
+  gap: 12px;
+}
+
+.subtitle {
+  margin-bottom: 32px;
+  text-transform: uppercase;
+}
+
+.infoTable {
+  width: 100%;
+  max-width: 650px;
+  font-family: Onest, sans-serif;
+  font-size: 16px;
+}
+
+.tableRow {
+  @include flex-builder(row, flex-start, flex-start);
+
+  padding-top: 16px;
+  padding-bottom: 32px;
+  border-top: 1px solid $dark-grey;
+  gap: 5%;
+}
+
+.rowHeader {
+  display: flex;
+  width: 30%;
+  flex-shrink: 0;
+  color: $text-grey;
+  font-weight: 400;
+  text-align: left;
+
+  @include media-xs {
+    width: 50%;
+  }
+}
