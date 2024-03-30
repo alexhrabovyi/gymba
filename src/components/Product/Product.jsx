@@ -15,11 +15,13 @@ import DynamicImage from '../common/DynamicImage/DynamicImage.jsx';
 import Slider from '../common/Slider/Slider.jsx';
 import Button from '../common/Button/Button.jsx';
 import AddToCartBanner from './AddToCartBanner/AddToCartBanner.jsx';
+import AskQuestionBanner from '../common/AskQuestionBanner/AskQuestionBanner.jsx';
 import RelatedProducts from './RelatedProducts/RelatedProducts.jsx';
 import Popup from '../common/Popup/Popup.jsx';
 import ValidationForm from '../common/ValidationForm/ValidationForm.jsx';
 import InputWithErrorMessage from '../common/InputWithErrorMessage/InputWithErrorMessage.jsx';
 import TextAreaWithErrorMessage from '../common/TextareaWIthErrorMessage/TextareaWithErrorMessage.jsx';
+import AskQuestionPopup from '../common/AskQuestionPopup/AskQuestionPopup.jsx';
 import Gallery from './Gallery/Gallery.jsx';
 import containerCls from '../../scss/_container.module.scss';
 import textCls from '../../scss/_text.module.scss';
@@ -27,7 +29,6 @@ import linkCls from '../../scss/_link.module.scss';
 import productCls from './Product.module.scss';
 import Favorite from '../../assets/images/icons/favorite.svg';
 import Compare from '../../assets/images/icons/compare.svg';
-import InfoIcon from './images/info.svg';
 import Line from '../../assets/images/icons/oblique.svg';
 
 export default function Product() {
@@ -395,6 +396,12 @@ export default function Product() {
     return result;
   }, [product]);
 
+  // other event functions
+
+  function askQuestionBtnOnClick() {
+    setIsQuestionPopupActive(true);
+  }
+
   return (
     <>
       <main className={classNames(containerCls.container, productCls.main)}>
@@ -640,33 +647,12 @@ export default function Product() {
             </div>
           </div>
           <aside className={productCls.bannerBlock}>
-            <InfoIcon className={productCls.infoIcon} />
-            <p className={classNames(
-              textCls.text,
-              textCls.textFw800,
-              textCls.text18px,
-              textCls.textBlack,
-              productCls.bannerTitle,
-            )}
-            >
-              Есть вопросы по товару?
-            </p>
-            <p className={classNames(
-              textCls.text,
-              textCls.textBlack,
-            )}
-            >
-              Задайте их нам и мы поможем вам определиться с выбором.
-            </p>
-            <Button
+            <AskQuestionBanner
+              title="Есть вопросы по товару?"
+              subtitle="Задайте их нам и мы поможем вам определиться с выбором."
+              btnOnClick={askQuestionBtnOnClick}
               ref={openQuestionPopupBtnRef}
-              className={productCls.bannerButton}
-              onClick={() => setIsQuestionPopupActive(true)}
-              aria-haspopup="dialog"
-              aria-label="Відкрити вікно Задати питання"
-            >
-              Связаться с нами
-            </Button>
+            />
           </aside>
         </div>
         <RelatedProducts
@@ -745,76 +731,11 @@ export default function Product() {
           </div>
         </ValidationForm>
       </Popup>
-      <Popup
+      <AskQuestionPopup
         isActive={isQuestionPopupActive}
         setIsActive={setIsQuestionPopupActive}
-        label="Вікно задати питання"
-        openButton={openQuestionPopupBtnRef.current}
-      >
-        <p
-          className={classNames(
-            textCls.text,
-            textCls.textFw800,
-            textCls.text36px,
-            productCls.popupTitle,
-          )}
-        >
-          Задать вопрос
-        </p>
-        <ValidationForm
-          className={productCls.popupForm}
-        >
-          <InputWithErrorMessage
-            type="text"
-            name="name"
-            inputClassName={productCls.input}
-            placeholder="Имя"
-            required
-          />
-          <InputWithErrorMessage
-            type="email"
-            name="email"
-            inputClassName={productCls.input}
-            placeholder="Электронная почта"
-            required
-          />
-          <TextAreaWithErrorMessage
-            name="comment"
-            textareaBlockClassName={productCls.textareaBlock}
-            textareaClassName={productCls.textarea}
-            placeholder="Напишите ваш вопрос по товару"
-            required
-            textareaType="question"
-          />
-          <div className={productCls.submitAndTermsBlock}>
-            <Button
-              type="submit"
-              className={productCls.submitButton}
-            >
-              Отправить
-            </Button>
-            <p className={classNames(
-              textCls.text,
-              textCls.text14px,
-              textCls.textBlack,
-            )}
-            >
-              Отправляя сообщение вы даете согласие на обработку&nbsp;
-              <Link
-                to="terms"
-                alt="Условия обработки персональных данных"
-                className={classNames(
-                  linkCls.link,
-                  linkCls.link14px,
-                  linkCls.linkBlue,
-                )}
-              >
-                персональных данных
-              </Link>
-            </p>
-          </div>
-        </ValidationForm>
-      </Popup>
+        openButtonRef={openQuestionPopupBtnRef}
+      />
       <Gallery
         imgIds={imgIdsForGallery}
         isOpen={isGalleryOpen}

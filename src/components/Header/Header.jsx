@@ -232,7 +232,7 @@ export default function Header() {
             <nav className={headerCls.linkListTopNav}>
               <ul className={headerCls.linkList}>
                 <li>
-                  <Link to="/" className={linkCls.link} alt="Доставка">Доставка</Link>
+                  <Link to="/delivery" className={linkCls.link} alt="Доставка">Доставка</Link>
                 </li>
                 <li>
                   <Link to="/" className={linkCls.link} alt="Оплата">Оплата</Link>

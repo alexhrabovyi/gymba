@@ -9,17 +9,45 @@ export default function LinkWithArrow({
   alt,
   className,
   isWhite,
+  arrowDown,
   children,
+  isAnchorNavigation = false,
 }) {
+  if (isAnchorNavigation) {
+    return (
+      <a
+        href={to}
+        className={
+      classNames(
+        linkWithArrowCls.link,
+        isWhite && linkWithArrowCls.link_white,
+        className,
+      )
+      }
+        alt={alt}
+        aria-label={alt}
+      >
+        <Oblique className={linkWithArrowCls.oblique} />
+        {children}
+        <ArrowRight
+          className={classNames(
+            linkWithArrowCls.arrow,
+            isWhite && linkWithArrowCls.arrow_white,
+            arrowDown && linkWithArrowCls.arrow_down,
+          )}
+        />
+      </a>
+    );
+  }
   return (
     <Link
       to={to}
       className={
-        classNames(
-          linkWithArrowCls.link,
-          isWhite && linkWithArrowCls.link_white,
-          className,
-        )
+      classNames(
+        linkWithArrowCls.link,
+        isWhite && linkWithArrowCls.link_white,
+        className,
+      )
       }
       alt={alt}
       aria-label={alt}
@@ -27,7 +55,11 @@ export default function LinkWithArrow({
       <Oblique className={linkWithArrowCls.oblique} />
       {children}
       <ArrowRight
-        className={classNames(linkWithArrowCls.arrow, isWhite && linkWithArrowCls.arrow_white)}
+        className={classNames(
+          linkWithArrowCls.arrow,
+          isWhite && linkWithArrowCls.arrow_white,
+          arrowDown && linkWithArrowCls.arrow_down,
+        )}
       />
     </Link>
   );

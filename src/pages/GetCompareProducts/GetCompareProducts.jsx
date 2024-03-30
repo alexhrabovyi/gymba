@@ -10,3 +10,7 @@ export function loader({ request }) {
 
   return { productCards };
 }
+
+export function GetCompareProducts() {
+  throw new Error('Not Found');
+}

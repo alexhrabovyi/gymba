@@ -44,6 +44,10 @@
   &_white {
     fill: $white;
   }
+
+  &_down {
+    transform: rotate(90deg);
+  }
 }
 
 .link {

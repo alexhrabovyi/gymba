@@ -1,0 +1,184 @@
+@import '.././../scss/mixins';
+@import '.././../scss/colors';
+
+.main {
+  margin-top: 68px;
+  margin-bottom: 160px;
+
+  @media (max-width: 1600px) {
+    margin-bottom: 140px;
+  }
+
+  @include media-l {
+    margin-bottom: 120px;
+  }
+
+  @include media-m {
+    margin-bottom: 100px;
+  }
+
+  @include media-s {
+    margin-top: 50px;
+    margin-bottom: 80px;
+  }
+
+  @include media-xs {
+    margin-top: 40px; 
+  }
+}
+
+.mainBanner {
+  width: 100%;
+  height: 600px;
+  padding: 4.59%;
+  background: url('./images/banner.png') no-repeat top right $light-blue;
+
+  @media (max-width: 1600px) {
+    height: 520px;
+  }
+
+  @include media-l {
+    height: 500px;
+  }
+
+  @media (max-width: 1250px) {
+    background: url('./images/banner.png') no-repeat top right -90px $light-blue;
+  }
+
+  @media (max-width: 1100px) {
+    background: url('./images/banner.png') no-repeat top right -180px $light-blue;
+  }
+
+  @include media-m {
+    height: 450px;
+  }
+
+  @media (max-width: 865px) {
+    background: url('./images/banner.png') no-repeat top right -250px $light-blue;
+  }
+
+  @include media-s {
+    height: 400px;
+    background: url('./images/banner.png') no-repeat top right -300px $light-blue;
+  }
+
+  @include media-xs {
+    height: 350px;
+  }
+
+  @media (max-width: 500px) {
+    background: url('./images/banner.png') no-repeat top right -400px $light-blue;
+  }
+}
+
+.mainBannerContent {
+  display: grid;
+  max-width: 600px;
+  height: 100%;
+  font-size: 21px;
+  grid-template-columns: 1fr;
+  grid-template-rows: min-content min-content 1fr;
+
+  @include media-s {
+    max-width: 400px;
+  }
+
+  @include media-xs {
+    max-width: 300px;
+    font-size: 18px;
+  }
+}
+
+.mainTitle {
+  margin-bottom: 16px;
+  text-transform: uppercase;
+}
+
+.LinkWithArrow {
+  align-self: flex-end;
+}
+
+.infoAndQuestionBannerBlock {
+  display: grid;
+  width: 100%;
+  margin-top: 160px;
+  gap: 9.48%;
+  grid-template-columns: 1fr 312px;
+
+  @include media-l {
+    margin-top: 140px;
+    gap: 7%;
+    grid-template-columns: 1fr 29.4%;
+  }
+
+  @include media-m {
+    margin-top: 120px;
+    gap: 80px;
+    grid-template-columns: 1fr;
+  }
+
+  @include media-s {
+    margin-top: 100px;
+  }
+
+  @include media-xs {
+    margin-top: 80px;
+  }
+}
+
+.infoBlocks {
+  @include flex-builder(column, flex-start, flex-start);
+
+  gap: 100px;
+
+  @include media-s {
+    gap: 80px;
+  }
+
+  @include media-xs {
+    gap: 60px;
+  }
+}
+
+.infoBlock {
+  @include flex-builder(column, flex-start, flex-start);
+
+  gap: 24px;
+}
+
+.subtitle {
+  text-transform: uppercase;
+}
+
+.infoBlockList {
+  gap: 16px;
+  list-style: none;
+
+  @include flex-builder(column, flex-start, flex-start);
+}
+
+.infoBlockListChild {
+  @include flex-builder(row, flex-start, flex-start);
+
+  color: $black;
+  font-family: Onest, sans-serif;
+  font-size: 18px;
+  gap: 16px;
+}
+
+.lineIcon {
+  width: 16px;
+  height: 16px;
+  flex-shrink: 0;
+  fill: $blue;
+}
+
+.questionBannerBlock {
+  align-self: flex-start;
+
+  @include media-m {
+    width: 100%;
+    max-width: 312px;
+    justify-self: center;
+  }
+}

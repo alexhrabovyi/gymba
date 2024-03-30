@@ -10,8 +10,9 @@ import { ProductPage, loader as productPageLoader } from '../pages/Product/Produ
 import { WishlistPage, loader as wishlistLoader, action as wishlistAction } from '../pages/Wishlist/Wishlist.jsx';
 import { CartPage, loader as cartLoader, action as cartAction } from '../pages/Cart/Cart.jsx';
 import { ComparePage, loader as compareLoader, action as compareAction } from '../pages/Compare/Compare.jsx';
+import { DeliveryPage } from '../pages/Delivery/Delivery.jsx';
 import { loader as getAnalogueProductsLoader, action as getAnalogueProductsAction } from '../pages/GetAnalogueProducts/GetAnalogueProducts.jsx';
-import { loader as getCompareProductsLoader } from '../pages/GetCompareProducts/GetCompareProducts.jsx';
+import { GetCompareProducts, loader as getCompareProductsLoader } from '../pages/GetCompareProducts/GetCompareProducts.jsx';
 
 const router = createBrowserRouter([
   {
@@ -57,6 +58,10 @@ const router = createBrowserRouter([
         element: <ComparePage />,
       },
       {
+        path: 'delivery',
+        element: <DeliveryPage />,
+      },
+      {
         path: 'getAnalogueProducts',
         action: getAnalogueProductsAction,
         loader: getAnalogueProductsLoader,
@@ -64,6 +69,7 @@ const router = createBrowserRouter([
       {
         path: 'getCompareProducts',
         loader: getCompareProductsLoader,
+        element: <GetCompareProducts />,
       },
     ],
   },

@@ -327,7 +327,7 @@ const HeaderMainMenu = memo(({ isMenuOpen, categories, catalogBtnOnClick }) => {
               </button>
             </li>
             <li>
-              <Link to="/" className={classNames(linkCls.link, linkCls.link18px)} alt="Доставка">Доставка</Link>
+              <Link to="/delivery" className={classNames(linkCls.link, linkCls.link18px)} alt="Доставка">Доставка</Link>
             </li>
             <li>
               <Link to="/" className={classNames(linkCls.link, linkCls.link18px)} alt="Оплата">Оплата</Link>

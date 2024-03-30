@@ -86,10 +86,14 @@ export default function CartProduct({
           onClick={() => {
             submitNewAmount(amount - 1);
           }}
+          aria-label="Уменьшить количество товара на один"
         >
           -
         </button>
-        <span className={productCls.amountNum}>
+        <span
+          className={productCls.amountNum}
+          aria-live="polite"
+        >
           {amount}
         </span>
         <button
@@ -98,6 +102,7 @@ export default function CartProduct({
           onClick={() => {
             submitNewAmount(amount + 1);
           }}
+          aria-label="Увеличить количество товара на один"
         >
           +
         </button>
@@ -112,6 +117,7 @@ export default function CartProduct({
         type="button"
         className={productCls.deleteButton}
         onClick={deleteBtnOnClick}
+        aria-label={`Удалить ${name} из корзины`}
       >
         <BinIcon
           className={productCls.binIcon}
