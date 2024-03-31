@@ -1,23 +1,23 @@
 import { Suspense, memo, useState } from 'react';
 import { Await, Link } from 'react-router-dom';
 import classNames from 'classnames';
-import Spinner from '../../common/Spinner/Spinner.jsx';
-import DynamicImage from '../../common/DynamicImage/DynamicImage.jsx';
+import Spinner from '../Spinner/Spinner.jsx';
+import DynamicImage from '../DynamicImage/DynamicImage.jsx';
 import beautifyNum from '../../../utils/beautifyNum.js';
 import textCls from '../../../scss/_text.module.scss';
 import linkCls from '../../../scss/_link.module.scss';
 import previewCls from './NewsPreview.module.scss';
-import ViewsIcon from './images/views.svg';
+import ViewsIcon from '../../../assets/images/icons/views.svg';
 
 const NewsPreview = memo(({
-  name, id, date, views, previewImgId,
+  name, id, date, views,
 }) => {
-  const [imgSrc] = useState(() => import(`./images/preview_${previewImgId}.png`));
+  const [imgSrc] = useState(() => import(`../../../assets/images/newsImgs/${id}.png`));
 
   return (
     <div className={previewCls.preview}>
       <Link
-        to={`news/${id}`}
+        to={`/news/${id}`}
         className={previewCls.imgLink}
         alt={name}
       >
@@ -48,7 +48,7 @@ const NewsPreview = memo(({
         </div>
       </div>
       <Link
-        to={`news/${id}`}
+        to={`/news/${id}`}
         className={classNames(linkCls.link, linkCls.link21px)}
         alt={name}
       >

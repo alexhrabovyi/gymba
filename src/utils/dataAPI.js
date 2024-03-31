@@ -515,14 +515,42 @@ export function getAnalogueProducts(categoryId, subcategoryId, productId) {
 }
 // news
 
-export function getNewsPreviews() {
-  const newsPrevies = news.map((n) => ({
+function getAllNewsPreviews() {
+  const newsPreviews = news.map((n) => ({
     name: n.name,
     id: n.id,
     date: n.date,
     views: n.views,
-    previewImgId: n.previewImgId,
   }));
 
-  return newsPrevies;
+  return newsPreviews;
+}
+
+export function getFourNewsPreviews() {
+  const newsPreviews = getAllNewsPreviews().slice(0, 4);
+
+  return newsPreviews;
+}
+
+function getNewsPreviewsPerPage(allNewsPreviews, pageAmount, perView, pageNum) {
+  if (pageNum === null || pageNum > pageAmount) pageNum = 1;
+
+  const firstPageNewsPreview = (+pageNum - 1) * +perView;
+  const lastPageNewsPreview = +pageNum * +perView;
+
+  return allNewsPreviews.slice(firstPageNewsPreview, lastPageNewsPreview);
+}
+
+export function getNewsPreviewsPerPageAndPageAmount(pageNum) {
+  const allNewsPreviews = getAllNewsPreviews();
+  const allNewsPreviewsAmount = allNewsPreviews.length;
+  const perView = 12;
+
+  const pageAmount = getPageAmount(allNewsPreviewsAmount, perView);
+  const newsPreviewsPerPage = getNewsPreviewsPerPage(allNewsPreviews, pageAmount, perView, pageNum);
+
+  return {
+    pageAmount,
+    newsPreviews: newsPreviewsPerPage,
+  };
 }

@@ -235,7 +235,7 @@ export default function Header() {
                   <Link to="/delivery" className={linkCls.link} alt="Доставка">Доставка</Link>
                 </li>
                 <li>
-                  <Link to="/" className={linkCls.link} alt="Оплата">Оплата</Link>
+                  <Link to="/payment" className={linkCls.link} alt="Оплата">Оплата</Link>
                 </li>
                 <li>
                   <Link to="/" className={linkCls.link} alt="Прайс-лист">Прайс-лист</Link>
@@ -247,10 +247,10 @@ export default function Header() {
                   <Link to="/" className={linkCls.link} alt="Вакансии">Вакансии</Link>
                 </li>
                 <li>
-                  <Link to="/" className={linkCls.link} alt="Новости">Новости</Link>
+                  <Link to="/news" className={linkCls.link} alt="Новости">Новости</Link>
                 </li>
                 <li>
-                  <Link to="/" className={linkCls.link} alt="Контакты">Контакты</Link>
+                  <Link to="/contacts" className={linkCls.link} alt="Контакты">Контакты</Link>
                 </li>
               </ul>
             </nav>

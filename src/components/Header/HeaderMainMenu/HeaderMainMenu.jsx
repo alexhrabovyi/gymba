@@ -330,7 +330,7 @@ const HeaderMainMenu = memo(({ isMenuOpen, categories, catalogBtnOnClick }) => {
               <Link to="/delivery" className={classNames(linkCls.link, linkCls.link18px)} alt="Доставка">Доставка</Link>
             </li>
             <li>
-              <Link to="/" className={classNames(linkCls.link, linkCls.link18px)} alt="Оплата">Оплата</Link>
+              <Link to="/payment" className={classNames(linkCls.link, linkCls.link18px)} alt="Оплата">Оплата</Link>
             </li>
             <li>
               <Link to="/" className={classNames(linkCls.link, linkCls.link18px)} alt="Прайс-лист">Прайс-лист</Link>
@@ -342,10 +342,10 @@ const HeaderMainMenu = memo(({ isMenuOpen, categories, catalogBtnOnClick }) => {
               <Link to="/" className={classNames(linkCls.link, linkCls.link18px)} alt="Вакансии">Вакансии</Link>
             </li>
             <li>
-              <Link to="/" className={classNames(linkCls.link, linkCls.link18px)} alt="Новости">Новости</Link>
+              <Link to="/news" className={classNames(linkCls.link, linkCls.link18px)} alt="Новости">Новости</Link>
             </li>
             <li>
-              <Link to="/" className={classNames(linkCls.link, linkCls.link18px)} alt="Контакты">Контакты</Link>
+              <Link to="/contacts" className={classNames(linkCls.link, linkCls.link18px)} alt="Контакты">Контакты</Link>
             </li>
           </ul>
         </nav>

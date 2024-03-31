@@ -2,6 +2,7 @@
 @import '../../../scss/colors';
 
 .preview {
+  width: 100%;
   @include flex-builder(column, flex-start, flex-start);
 }
 

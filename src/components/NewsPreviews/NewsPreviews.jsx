@@ -6,7 +6,7 @@ import classNames from 'classnames';
 import useOnResize from '../../hooks/useOnResize.jsx';
 import Slider from '../common/Slider/Slider.jsx';
 import LinkWithArrow from '../common/LinkWithArrow/LinkWithArrow.jsx';
-import NewsPreview from './NewsPreview/NewsPreview.jsx';
+import NewsPreview from '../common/NewsPreview/NewsPreview.jsx';
 import BigPrevNextButton from '../common/BigPrevNextButton/BigPrevNextButton.jsx';
 import containerCls from '../../scss/_container.module.scss';
 import textCls from '../../scss/_text.module.scss';
@@ -31,7 +31,6 @@ export default function NewsPreviews() {
       id={n.id}
       date={n.date}
       views={n.views}
-      previewImgId={n.previewImgId}
     />
   )), [news]);
 

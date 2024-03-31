@@ -1,0 +1,65 @@
+@import '.././../scss/mixins';
+@import '.././../scss/colors';
+
+.main {
+  margin-top: 68px;
+  margin-bottom: 160px;
+
+  @media (max-width: 1600px) {
+    margin-bottom: 140px;
+  }
+
+  @include media-l {
+    margin-bottom: 120px;
+  }
+
+  @include media-m {
+    margin-bottom: 100px;
+  }
+
+  @include media-s {
+    margin-top: 50px;
+    margin-bottom: 80px;
+  }
+
+  @include media-xs {
+    margin-top: 40px; 
+  }
+}
+
+.title {
+  text-transform: uppercase;
+  margin-bottom: 48px;
+}
+
+.newsPreviews {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  row-gap: 90px;
+  column-gap: 24px;
+
+  @media (max-width: 1250px) {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  @media (max-width: 865px) {
+    grid-template-columns: repeat(2, 1fr);
+    row-gap: 70px;
+  }
+
+  @media (max-width: 450px) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.paginationBlock {
+  margin-top: 120px;
+
+  @include media-l {
+    margin-top: 90px;
+  }
+
+  @media (max-width: 865px) {
+  margin-top: 70px;
+  }
+}
