@@ -14,6 +14,7 @@ import { DeliveryPage } from '../pages/Delivery/Delivery.jsx';
 import { PaymentPage } from '../pages/Payment/Payment.jsx';
 import { ContactsPage } from '../pages/Contacts/Contacts.jsx';
 import { NewsPage, loader as newsPageLoader } from '../pages/News/News.jsx';
+import { NewsArticlePage, loader as newsArticleLoader } from '../pages/NewsArticle/NewsArticle.jsx';
 import { loader as getAnalogueProductsLoader, action as getAnalogueProductsAction } from '../pages/GetAnalogueProducts/GetAnalogueProducts.jsx';
 import { GetCompareProducts, loader as getCompareProductsLoader } from '../pages/GetCompareProducts/GetCompareProducts.jsx';
 
@@ -73,9 +74,14 @@ const router = createBrowserRouter([
         element: <ContactsPage />,
       },
       {
-        loader: newsPageLoader,
         path: 'news',
+        loader: newsPageLoader,
         element: <NewsPage />,
+      },
+      {
+        path: 'news/:articleId',
+        loader: newsArticleLoader,
+        element: <NewsArticlePage />,
       },
       {
         path: 'getAnalogueProducts',

@@ -1,0 +1,358 @@
+@import '.././../scss/mixins';
+@import '.././../scss/colors';
+
+.main {
+  margin-top: 68px;
+  margin-bottom: 160px;
+  color: $black;
+  font-family: Onest, sans-serif;
+
+  @media (max-width: 1600px) {
+    margin-bottom: 140px;
+  }
+
+  @include media-l {
+    margin-bottom: 120px;
+  }
+
+  @include media-m {
+    margin-bottom: 100px;
+  }
+
+  @include media-s {
+    margin-top: 50px;
+    margin-bottom: 80px;
+  }
+
+  @include media-xs {
+    margin-top: 40px; 
+  }
+}
+
+.h1 {
+  margin-bottom: 48px;
+  font-size: 48px;
+  font-weight: 800;
+  text-transform: uppercase;
+
+  @include media-l {
+    font-size: 44px;
+  }
+
+  @include media-m {
+    font-size: 42px;
+  }
+
+  @include media-s {
+    font-size: 40px;
+  }
+
+  @include media-xs {
+    font-size: 38px;
+    word-break: break-all;
+  }
+}
+
+.h2 {
+  margin-bottom: 24px;
+  font-size: 36px;
+  font-weight: 800;
+  text-transform: uppercase;
+
+  @include media-m {
+    font-size: 30px;
+  }
+
+  @include media-s {
+    font-size: 28px;
+  }
+
+  @include media-xs {
+    font-size: 26px;
+  }
+}
+
+.h3 {
+  margin-bottom: 16px;
+  font-size: 24px;
+  font-weight: 800;
+  text-transform: uppercase;
+
+  @include media-xs {
+    font-size: 22px;
+  }
+}
+
+.h4 {
+  margin-bottom: 16px;
+  font-size: 21px;
+  font-weight: 800;
+  text-transform: uppercase;
+}
+
+.h5 {
+  margin-bottom: 16px;
+  font-size: 18px;
+  font-weight: 800;
+  text-transform: uppercase;
+}
+
+.h6 {
+  margin-bottom: 16px;
+  font-size: 16px;
+  font-weight: 800;
+  text-transform: uppercase;
+}
+
+.articleAndRecommendArticleBlock {
+  display: grid;
+  width: 100%;
+  justify-content: space-between;
+  gap: 9.48%;
+  grid-template-columns: 1fr 312px;
+
+  @include media-l {
+    gap: 7%;
+    grid-template-columns: 1fr 29.4%;
+  }
+
+  @include media-m {
+    gap: 80px;
+    grid-template-columns: 1fr;
+  }
+}
+
+.article {
+  @include flex-builder(column, flex-start, flex-start);
+
+  gap: 100px;
+
+  @include media-l {
+    gap: 80px;
+  }
+
+  @include media-s {
+    gap: 60px;
+  }
+}
+
+.contentBlock {
+  width: 100%;
+}
+
+.contentBlockElements {
+  width: 100%;
+
+  @include flex-builder(column, flex-start, flex-start);
+
+  gap: 48px;
+
+  @include media-s {
+    gap: 36px;
+  }
+}
+
+.contentImgBlock {
+  width: 100%;
+
+  @include flex-builder(row, center, center);
+}
+
+.spinner {
+  width: 100px;
+  height: 100px;
+  fill: $blue;
+}
+
+.contentBlockImg {
+  width: 100%;
+}
+
+.contentBlockList {
+  gap: 16px;
+  list-style: none;
+
+  @include flex-builder(column, flex-start, flex-start);
+}
+
+.contentBlockListElement {
+  @include flex-builder(row, flex-start, flex-start);
+
+  gap: 16px;
+}
+
+.listLineIcon {
+  width: 16px;
+  height: 16px;
+  flex-shrink: 0;
+  fill: $blue;
+}
+
+.text {
+  font-size: 18px;
+}
+
+.quoteBlock {
+  @include flex-builder(row, flex-start, flex-start);
+
+  gap: 24px;
+
+  @include media-s {
+    gap: 20px;
+  }
+
+  @include media-xs {
+    gap: 18px;
+  }
+}
+
+.quoteBlockLineIcon {
+  width: 52px;
+  height: 65px;
+  flex-shrink: 0;
+  fill: $blue;
+
+  @include media-s {
+    width: 48px;
+    height: 60px;
+  }
+
+  @include media-xs {
+    width: 40px;
+    height: 50px;
+  }
+}
+
+.quoteText {
+  color: $text-grey;
+  font-size: 21px;
+
+  @include media-xs {
+    font-size: 18px;
+  }
+}
+
+.table {
+  display: block;
+  width: 100%;
+  overflow-x: auto;
+}
+
+.tbody {
+  display: block;
+  width: 100%;
+}
+
+.columnHeaderRow {
+  display: grid;
+  width: 100%;
+  grid-auto-columns: 25% 50% 25%;
+  text-align: left;
+
+  @include media-xs {
+    grid-auto-columns: 50%;
+  }
+}
+
+.columnHeader {
+  padding-right: 20px;
+  padding-bottom: 24px;
+  border-bottom: 2px solid $blue;
+  color: $blue;
+  font-size: 12px;
+  font-weight: 800;
+  grid-row: 1/2;
+  text-transform: uppercase;
+}
+
+.tableRow {
+  display: grid;
+  width: 100%;
+  margin-top: 24px;
+  grid-auto-columns: 25% 50% 25%;
+
+  @include media-xs {
+    grid-auto-columns: 50%;
+  }
+}
+
+.tableCell {
+  padding-right: 20px;
+  padding-bottom: 24px;
+  border-bottom: 1px solid $dark-grey;
+  grid-row: 1/2;
+}
+
+.recommendArticlesBlock {
+  width: 100%;
+  align-self: flex-start;
+  padding: 32px;
+  border: 1px solid $dark-grey;
+  border-radius: 4px;
+
+  @include media-l {
+    padding: 24px;
+  }
+
+  @include media-m {
+    padding: 32px;
+  }
+}
+
+.recommendArticlesTitle {
+  margin-bottom: 24px;
+  font-size: 18px;
+  font-weight: 800;
+  text-transform: uppercase;
+}
+
+.recommendedNewsList {
+  gap: 24px;
+  list-style: none;
+
+  @include flex-builder(column, flex-start, flex-start);
+}
+
+.recommendedNewsListElement {
+  @include flex-builder(column, flex-start, flex-start);
+
+  gap: 8px;
+}
+
+.reccomendedNewsDateAndViewsBlock {
+  @include flex-builder(row, flex-start, center);
+
+  color: $text-grey;
+  gap: 24px;
+}
+
+.reccomendedNewsViewsBlock {
+  @include flex-builder(row, flex-start, center);
+
+  gap: 8px;
+}
+
+.dateAndViewsBlock {
+  padding-top: 25px;
+  border-top: 1px solid $dark-grey;
+  margin-top: 100px;
+  color: $text-grey;
+  font-size: 14px;
+  gap: 24px;
+
+  @include flex-builder(row, flex-start, center);
+
+  @include media-m {
+    margin-top: 80px;
+  }
+
+  @include media-xs {
+    margin-top: 60px;
+  }
+}
+
+.viewsBlock {
+  @include flex-builder(row, flex-start, center);
+
+  gap: 8px;
+}

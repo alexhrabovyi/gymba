@@ -28,15 +28,14 @@
 }
 
 .title {
-  text-transform: uppercase;
   margin-bottom: 48px;
+  text-transform: uppercase;
 }
 
 .newsPreviews {
   display: grid;
+  gap: 90px 24px;
   grid-template-columns: repeat(4, 1fr);
-  row-gap: 90px;
-  column-gap: 24px;
 
   @media (max-width: 1250px) {
     grid-template-columns: repeat(3, 1fr);

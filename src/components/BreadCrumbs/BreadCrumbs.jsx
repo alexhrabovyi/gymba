@@ -23,6 +23,9 @@ export default function BreadCrumbs() {
     } else if (k === 'subcategoryId' && !isLast) {
       to = `${data.categoryId}/${data.subcategoryId}`;
       name = data.subcategoryName;
+    } else if (k === 'articleId') {
+      to = 'news';
+      name = 'Новости';
     }
 
     if (!to) return;

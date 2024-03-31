@@ -554,3 +554,17 @@ export function getNewsPreviewsPerPageAndPageAmount(pageNum) {
     newsPreviews: newsPreviewsPerPage,
   };
 }
+
+export function getNewsArticle(id) {
+  return news.find((n) => n.id === id);
+}
+
+export function getRecommendedNews(id) {
+  const allNewsPreviews = getAllNewsPreviews();
+  const index = news.findIndex((n) => n.id === id);
+  allNewsPreviews.splice(index, 1);
+
+  const recommendedNews = (allNewsPreviews.sort(() => 0.5 - Math.random())).slice(0, 3);
+
+  return recommendedNews;
+}
