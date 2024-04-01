@@ -43,17 +43,17 @@ export default function Delivery() {
               deliveryCls.mainBannerText,
             )}
             >
-              Приобретая товары в ООО &quot;ЭПК&quot;, Вы можете воспользоваться услугой
-              доставки товара.
+              Купуючи товари в ТОВ &quot;Ґимба&quot;, Ви можете скористатися послугою
+              доставки товару.
             </p>
             <LinkWithArrow
               to="#mainInformation"
-              alt="Листайте дальше"
+              alt="Гортайте далі"
               className={deliveryCls.LinkWithArrow}
               arrowDown
               isAnchorNavigation
             >
-              Листайте дальше
+              Гортайте далі
             </LinkWithArrow>
           </div>
         </div>
@@ -71,33 +71,46 @@ export default function Delivery() {
                 deliveryCls.subtitle,
               )}
               >
-                Стоимость и условия доставки по г. Казань
+                Вартість та умови доставки по м. Одесі
               </h2>
               <ul className={deliveryCls.infoBlockList}>
                 <li className={deliveryCls.infoBlockListChild}>
                   <Line
                     className={deliveryCls.lineIcon}
                   />
-                  Абсолютно бесплатна при заказе от 10 000 ₽
+                  Доступний самовивіз в робочі часи
                 </li>
                 <li className={deliveryCls.infoBlockListChild}>
                   <Line
                     className={deliveryCls.lineIcon}
                   />
-                  Доставка осуществляется на следующий день после согласования заказа.
+                  Абсолютно безкоштовна при замовленні від 5 000 ₴
                 </li>
                 <li className={deliveryCls.infoBlockListChild}>
                   <Line
                     className={deliveryCls.lineIcon}
                   />
-                  Доставка осуществляется максимально близко к месту выгрузки.
-                  Разгрузка товара производится силами покупателя.
+                  Можлива звичайна або кур&apos;єрська доставка за допомогою поштових операторів
+                  Meest Express, NovaPoshta
                 </li>
                 <li className={deliveryCls.infoBlockListChild}>
                   <Line
                     className={deliveryCls.lineIcon}
                   />
-                  Ограничение по весу сухих смесей - не более 200 кг.
+                  Також можлива доставка нашою власною кур&apos;єрською службою
+                </li>
+                <li className={deliveryCls.infoBlockListChild}>
+                  <Line
+                    className={deliveryCls.lineIcon}
+                  />
+                  Доставка здійснюється максимально близько до місця розвантаження.
+                  Розвантаження товару провадиться силами покупця.
+                </li>
+                <li className={deliveryCls.infoBlockListChild}>
+                  <Line
+                    className={deliveryCls.lineIcon}
+                  />
+                  Обмеження за вагою сухих сумішей – не більше 200 кг.
                 </li>
               </ul>
             </div>
@@ -110,42 +123,35 @@ export default function Delivery() {
                 deliveryCls.subtitle,
               )}
               >
-                Стоимость и условия доставки по Республике Татарстан
+                Вартість та умови доставки по Україні
               </h2>
               <ul className={deliveryCls.infoBlockList}>
                 <li className={deliveryCls.infoBlockListChild}>
                   <Line
                     className={deliveryCls.lineIcon}
                   />
-                  Абсолютно бесплатна при заказе от 10 000 ₽
+                  Абсолютно безкоштовна при замовленні від 5 000 ₴
                 </li>
                 <li className={deliveryCls.infoBlockListChild}>
                   <Line
                     className={deliveryCls.lineIcon}
                   />
-                  Доставка осуществляется согласно определенному графику, уточнить который можно
-                  у ответственного менеджера или по телефону 8 (843) 233-44-22.
+                  Можлива звичайна або кур&apos;єрська доставка за допомогою поштових операторів
+                  Meest Express, NovaPoshta
                 </li>
                 <li className={deliveryCls.infoBlockListChild}>
                   <Line
                     className={deliveryCls.lineIcon}
                   />
-                  Доставка осуществляется максимально близко к месту выгрузки.
-                  Разгрузка товара производится силами покупателя.
-                </li>
-                <li className={deliveryCls.infoBlockListChild}>
-                  <Line
-                    className={deliveryCls.lineIcon}
-                  />
-                  Ограничение по весу сухих смесей - не более 200 кг.
+                  Доставка здійснюється наступного дня після погодження замовлення.
                 </li>
               </ul>
             </div>
           </div>
           <aside className={deliveryCls.questionBannerBlock}>
             <AskQuestionBanner
-              title="Есть вопросы по доставке?"
-              subtitle="Задайте их нам и мы обязательно поможем вам."
+              title="Є питання щодо доставки?"
+              subtitle="Запитайте нас і ми обов'язково допоможемо Вам."
               btnOnClick={askQuestionBannerBtnOnClick}
               ref={askQuestionBannerBtnRef}
             />

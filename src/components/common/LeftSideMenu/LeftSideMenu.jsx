@@ -74,7 +74,7 @@ const LeftSideMenu = memo(({
         <button
           type="button"
           className={menuCls.closeButton}
-          aria-label={`Закрыть ${label}`}
+          aria-label={`Закрити ${label}`}
           onClick={() => {
             setIsMenuOpen(false);
             openButton.focus();

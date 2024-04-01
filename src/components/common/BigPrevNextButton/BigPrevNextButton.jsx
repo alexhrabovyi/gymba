@@ -6,9 +6,9 @@ export default function BigPrevNextButton({
   className, isInactive, isPrev = false, id, onClick, label,
 }) {
   if (!label && isPrev) {
-    label = 'Показать предыдущий слайд';
+    label = 'Показати попередній слайд';
   } else if (!label && !isPrev) {
-    label = 'Показать следующий слайд';
+    label = 'Показати наступний слайд';
   }
 
   return (

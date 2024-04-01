@@ -54,18 +54,19 @@ export default function Cart() {
             cartCls.title,
           )}
         >
-          Корзина
+          Кошик
         </h1>
         {!!products.length && (
         <button
           type="button"
           className={cartCls.deleteBtn}
           onClick={deleteBtnOnClick}
+          aria-label="Видалити все"
         >
           <BinIcon
             className={cartCls.binIcon}
           />
-          Удалить все
+          Видалити все
         </button>
         )}
       </div>
@@ -103,7 +104,7 @@ export default function Cart() {
             textCls.textBlack,
           )}
           >
-            {`${products.length} товара(ов) на сумму`}
+            {`${products.length} товар(и) на суму`}
           </p>
           <p className={classNames(
             textCls.text,
@@ -126,7 +127,7 @@ export default function Cart() {
         <Button
           className={cartCls.checkoutButton}
         >
-          Оформить заказ
+          Оформити замовлення
         </Button>
       </div>
       )}

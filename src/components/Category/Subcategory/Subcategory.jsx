@@ -8,7 +8,7 @@ import ArrowRight from '../../../assets/images/icons/arrow-right.svg';
 const Subcategory = memo(({
   categoryId, id, name, imgId, imgAlt,
 }) => {
-  const [imgSrc] = useState(() => import(`./images/${categoryId}_${imgId}.png`));
+  const [imgSrc] = useState(() => import(`../../../assets/images/subcategoryImgs/${categoryId}_${imgId}.webp`));
 
   return (
     <Link

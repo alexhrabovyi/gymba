@@ -42,8 +42,8 @@ const ValidationForm = memo(({ className, children }) => {
       switch (input.type) {
         case 'email': {
           if (!validateEmail(input)) {
-            markInvalid(input, 'Некорректный email');
-            throw new ValidationError('Некорректный email');
+            markInvalid(input, 'Некоректний email');
+            throw new ValidationError('Некоректний email');
           }
           formData.append(input.name, input.value);
           break;
@@ -51,8 +51,8 @@ const ValidationForm = memo(({ className, children }) => {
         case 'text': {
           if (input.name === 'name') {
             if (!validateName(input)) {
-              markInvalid(input, 'Некорректное имя');
-              throw new ValidationError('Некорректное имя');
+              markInvalid(input, 'Некоректне ім\'я');
+              throw new ValidationError('Некоректне ім\'я');
             }
 
             formData.append(input.name, input.value);
@@ -69,8 +69,8 @@ const ValidationForm = memo(({ className, children }) => {
       switch (textarea.dataset.textareaType) {
         case 'comment': {
           if (!validateTextarea(textarea)) {
-            markInvalid(textarea, 'Некорректный комментарий');
-            throw new ValidationError('Некорректный комментарий');
+            markInvalid(textarea, 'Некоректний коментар');
+            throw new ValidationError('Некоректний коментар');
           }
 
           formData.append(textarea.name, textarea.value);
@@ -78,8 +78,8 @@ const ValidationForm = memo(({ className, children }) => {
         }
         case 'question': {
           if (!validateTextarea(textarea)) {
-            markInvalid(textarea, 'Некорректный вопрос');
-            throw new ValidationError('Некорректный вопрос');
+            markInvalid(textarea, 'Некоректне запитання');
+            throw new ValidationError('Некоректне запитання');
           }
 
           formData.append(textarea.name, textarea.value);

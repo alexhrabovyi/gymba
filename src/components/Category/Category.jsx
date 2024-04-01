@@ -28,7 +28,7 @@ export default function Category() {
             categoryId={categoryId}
             name={s.name}
             id={s.id}
-            imgId={s.imgId}
+            imgId={s.id}
             imgAlt={s.imgAlt}
           />
         ))}

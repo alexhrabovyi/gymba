@@ -172,7 +172,7 @@ export default function Compare() {
           }
         }}
         tabIndex="0"
-        aria-label={`Показать сравнения товаров из категории ${subcategoryName}`}
+        aria-label={`Показати порівняння товарів з категорії ${subcategoryName}`}
         aria-pressed={activeSubcategoryId === subcategoryId}
       >
         <button
@@ -186,7 +186,7 @@ export default function Compare() {
               encType: 'application/json',
             });
           }}
-          aria-label={`Удалить категорию ${subcategoryName} из сравнения`}
+          aria-label={`Видалити категорію ${subcategoryName} з порівняння`}
         >
           <CrossIcon
             className={compareCls.crossIcon}
@@ -362,18 +362,19 @@ export default function Compare() {
               compareCls.title,
             )}
           >
-            Сравнение товаров
+            Порівняння товарів
           </h1>
           {!!compareSubcategoriesBtnInfo.length && (
           <button
             type="button"
             className={compareCls.deleteBtn}
             onClick={deleteAllBtnOnClick}
+            aria-label="Видалити все"
           >
             <BinIcon
               className={compareCls.binIcon}
             />
-            Удалить все
+            Видалити все
           </button>
           )}
         </div>
@@ -395,7 +396,7 @@ export default function Compare() {
                 disabled={isPrevControlBtnDisabled}
                 aria-disabled={isPrevControlBtnDisabled}
                 tabIndex={isPrevControlBtnDisabled ? -1 : 0}
-                aria-label="Показать предыдущую категорию"
+                aria-label="Показати попередню категорію"
               >
                 <ChevronIcon className={compareCls.chevronIcon} />
               </button>
@@ -409,7 +410,7 @@ export default function Compare() {
                 disabled={isNextControlBtnDisabled}
                 aria-disabled={isNextControlBtnDisabled}
                 tabIndex={isNextControlBtnDisabled ? -1 : 0}
-                aria-label="Показать следующую категорию"
+                aria-label="Показати наступну категорію"
               >
                 <ChevronIcon className={classNames(
                   compareCls.chevronIcon,
@@ -446,9 +447,9 @@ export default function Compare() {
                   displayedSpecsType === 'all' && compareCls.specsControlBtn_active,
                 )}
                 onClick={() => setDisplayedSpecsType('all')}
-                aria-label="Показать все характеристики"
+                aria-label="Показати всі характеристики"
               >
-                Все характеристики
+                Усі характеристики
               </button>
               <button
                 type="button"
@@ -457,7 +458,7 @@ export default function Compare() {
                   displayedSpecsType === 'similar' && compareCls.specsControlBtn_active,
                 )}
                 onClick={() => setDisplayedSpecsType('similar')}
-                aria-label="Показать характеристики, которые сходятся"
+                aria-label="Показати характеристики, що сходяться"
               >
                 Сходства
               </button>
@@ -468,7 +469,7 @@ export default function Compare() {
                   displayedSpecsType === 'differ' && compareCls.specsControlBtn_active,
                 )}
                 onClick={() => setDisplayedSpecsType('differ')}
-                aria-label="Показать характеристики, которые разнятся"
+                aria-label="Показати характеристики, які відрізняються"
               >
                 Отличия
               </button>
@@ -495,7 +496,7 @@ export default function Compare() {
                 textCls.textGrey,
               )}
               >
-                Завжди є, що порівняти!
+                Наші товари унікальні, але не настільки!
               </p>
             </div>
           </div>

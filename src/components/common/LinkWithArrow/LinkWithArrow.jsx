@@ -17,13 +17,11 @@ export default function LinkWithArrow({
     return (
       <a
         href={to}
-        className={
-      classNames(
-        linkWithArrowCls.link,
-        isWhite && linkWithArrowCls.link_white,
-        className,
-      )
-      }
+        className={classNames(
+          linkWithArrowCls.link,
+          isWhite && linkWithArrowCls.link_white,
+          className,
+        )}
         alt={alt}
         aria-label={alt}
       >

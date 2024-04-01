@@ -25,7 +25,7 @@ export default function BreadCrumbs() {
       name = data.subcategoryName;
     } else if (k === 'articleId') {
       to = 'news';
-      name = 'Новости';
+      name = 'Новини';
     }
 
     if (!to) return;
@@ -55,8 +55,8 @@ export default function BreadCrumbs() {
     <nav className={classNames(containerCls.container, breadcrumbsCls.nav)}>
       <ul className={breadcrumbsCls.list}>
         <li>
-          <Link className={breadcrumbsCls.link} to="/" alt="Главная">
-            Главная
+          <Link className={breadcrumbsCls.link} to="/" alt="Головна">
+            Головна
           </Link>
         </li>
         {links}

@@ -8,7 +8,6 @@
       {
         "name": "Алкидные эмали",
         "id": "alkyd_enamels",
-        "imgId": "1",
         "imgAlt": "Алкидная эмаль",
         "products": [
           {
@@ -665,44 +664,37 @@
       {
         "name": "Акриловые эмали",
         "id": "acrylic_enamels",
-        "imgId": "2",
         "imgAlt": "Акриловая эмаль",
         "products": []
       },
       {
         "name": "Нитроэмали",
         "id": "nitro_enamels",
-        "imgId": "3",
         "imgAlt": "Нитроэмаль"
       },
       {
         "name": "Масляные краски",
         "id": "oil_paints",
-        "imgId": "4",
         "imgAlt": "Масляная краска"
       },
       {
         "name": "Грунты ГФ и ГЭ",
         "id": "soils_gf_ge",
-        "imgId": "5",
         "imgAlt": "Спецэмаль"
       },
       {
         "name": "Эмали спецназначения",
         "id": "special_purpose_enamels",
-        "imgId": "6",
         "imgAlt": "Молотковая краска"
       },
       {
         "name": "Растворители",
         "id": "solvents",
-        "imgId": "7",
         "imgAlt": "Грунт-эмаль"
       },
       {
         "name": "Специальные грунты",
         "id": "special_soils",
-        "imgId": "8",
         "imgAlt": "Растворитель"
       }
     ]

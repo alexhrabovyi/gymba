@@ -14,37 +14,28 @@ export default function Footer() {
   return (
     <footer className={classNames(footerCls.footer, containerCls.container)}>
       <div className={footerCls.mainBlock}>
-        <Link to="/" className={footerCls.logoLink} alt="Главная страница Everest" aria-label="Главная страница Everest">
-          <img src={logo} className={footerCls.logo} alt="Everest логотип" />
+        <Link to="/" className={footerCls.logoLink} alt="Головна сторінка Ґимба" aria-label="Головна сторінка Ґимба">
+          <img src={logo} className={footerCls.logo} alt="Ґимба логотип" />
         </Link>
         <nav className={footerCls.mainLinkBlock}>
           <ul className={footerCls.mainLinkList}>
             <li>
-              <Link to="/" className={footerCls.link} alt="Каталог">Каталог</Link>
+              <Link to="/delivery" className={footerCls.link} alt="Доставка">Доставка</Link>
             </li>
             <li>
-              <Link to="/" className={footerCls.link} alt="Доставка">Доставка</Link>
+              <Link to="/payment" className={footerCls.link} alt="Оплата">Оплата</Link>
             </li>
             <li>
-              <Link to="/" className={footerCls.link} alt="Оплата">Оплата</Link>
+              <Link to="/news" className={footerCls.link} alt="Новини">Новини</Link>
             </li>
             <li>
-              <Link to="/" className={footerCls.link} alt="Прайс-лист">Прайс-лист</Link>
-            </li>
-            <li>
-              <Link to="/" className={footerCls.link} alt="Оптовикам">Оптовикам</Link>
-            </li>
-            <li>
-              <Link to="/" className={footerCls.link} alt="Вакансии">Вакансии</Link>
-            </li>
-            <li>
-              <Link to="/" className={footerCls.link} alt="Контакты">Контакты</Link>
+              <Link to="/contacts" className={footerCls.link} alt="Контакти">Контакти</Link>
             </li>
           </ul>
         </nav>
         <ValidationForm className={footerCls.subscribeForm}>
           <label htmlFor="input_subscribe" className={classNames(textCls.text, textCls.textWhite)}>
-            Подпишитесь на рассылку новостей, акций, спецпредложений
+            Підпишіться на розсилку новин, акцій, спецпропозицій
           </label>
           <div className={footerCls.footerWithButtonBlock}>
             <InputWithErrorMessage
@@ -52,7 +43,7 @@ export default function Footer() {
               name="subscribeEmail"
               inputBlockClassName={footerCls.inputBLock}
               inputClassName={footerCls.input}
-              placeholder="Электронная почта"
+              placeholder="Електронна пошта"
               id="input_subscribe"
               required
             />
@@ -60,50 +51,48 @@ export default function Footer() {
               className={footerCls.subscribeButton}
               type="submit"
             >
-              Подписаться
+              Підписатися
             </Button>
           </div>
         </ValidationForm>
         <p className={classNames(footerCls.address, textCls.text, textCls.textWhite)}>
-          ООО «ЭПК»
+          ТОВ “Ґимба“
           <br />
-          420054, Республика Татарстан
+          65069, Одеська область
           <br />
-          г. Казань, ул. Техническая, д. 10, к. 2
+          м. Одеса, вул. Рішельєвська, 21
         </p>
         <div className={footerCls.contactBlock}>
           <a
-            href="tel:+78552448409"
+            href="tel:+380974311101"
             className={classNames(footerCls.link, footerCls.linkBig)}
-            alt="tel:+78552448409"
-            aria-label="Номер телефона магазина +7 8552 44-84-09"
+            alt="+38 097 431-11-01"
+            aria-label="Номер телефону магазину +38 097 431-11-01"
           >
-            +7 8552 44-84-09
+            +38 097 431-11-01
           </a>
           <a
-            href="mailto:sale@everest-rt.ru"
+            href="mailto:gymba@gmail.com"
             className={classNames(footerCls.link, footerCls.linkBig)}
-            alt="sale@everest-rt.ru"
-            aria-label="Электронная почта магазина sale@everest-rt.ru"
+            alt="gymba@gmail.com"
+            aria-label="Електронна пошта магазину gymba@gmail.com"
           >
-            sale@everest-rt.ru
+            gymba@gmail.com
           </a>
         </div>
       </div>
       <div className={footerCls.additionalBlock}>
         <p className={classNames(textCls.text, textCls.textWhite, textCls.text13px)}>
-          ПАО Сбербанк, Расч/счет 40702810162000033064, Корр/счет 30101810600000000603
-          , БИК 049205603, ОГРН 1121674004143
+          ТОВ “Ґимба“, ЄДРПОУ: 40367123, IBAN UANP3057564166410648351904781
         </p>
         <p className={classNames(footerCls.text, textCls.text, textCls.text13px)}>
-          Указанная стоимость товаров и условия их
-          приобретения действительны по состоянию на текущую дату.
+          Вказана вартість товарів та умови їх придбання дійсні за станом поточну дату.
           <br />
           <br />
-          Продолжая работу с сайтом, вы даете согласие на использование сайтом cookies
-          и обработку персональных данных в целях функционирования сайта, проведения ретаргетинга,
-          статистических исследований, улучшения сервиса и предоставления релевантной рекламной
-          информации на основе ваших предпочтений и интересов.
+          Продовжуючи роботу з сайтом, ви погоджуєтеся на використання сайтом cookies
+          та обробку персональних даних з метою функціонування сайту, проведення ретаргетингу,
+          статистичних досліджень, покращення сервісу та надання релевантної рекламної
+          інформації на основі ваших уподобань та інтересів.
         </p>
         <nav className={footerCls.additionalLinkBlock}>
           <ul className={footerCls.additionalLinkList}>
@@ -111,27 +100,27 @@ export default function Footer() {
               <Link
                 to="/"
                 className={classNames(footerCls.link, footerCls.linkSmall)}
-                alt="Персональные данные"
+                alt="Персональні дані"
               >
-                Персональные данные
+                Персональні дані
               </Link>
             </li>
             <li>
               <Link
                 to="/"
                 className={classNames(footerCls.link, footerCls.linkSmall)}
-                alt="Условия пользовательского соглашения"
+                alt="Умови користувальницької угоди"
               >
-                Условия пользовательского соглашения
+                Умови використання сайту
               </Link>
             </li>
             <li>
               <Link
                 to="/"
                 className={classNames(footerCls.link, footerCls.linkSmall)}
-                alt="Условия продажи"
+                alt="Умови продажу"
               >
-                Условия продажи
+                Умови продажу
               </Link>
             </li>
           </ul>

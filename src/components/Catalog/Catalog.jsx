@@ -132,7 +132,7 @@ export default function Catalog() {
         onClick={buttonOnClick}
         ariaHidden
       >
-        {isAccordionOpen ? 'Скрыть' : 'Показать больше'}
+        {isAccordionOpen ? 'Приховати' : 'Показати більше'}
       </Button>
     </main>
   );

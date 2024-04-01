@@ -36,7 +36,7 @@ export default function AllNews() {
         newsCls.title,
       )}
       >
-        Новости
+        Новини
       </h1>
       <div className={newsCls.newsPreviews}>
         {newsPreviewsElements}

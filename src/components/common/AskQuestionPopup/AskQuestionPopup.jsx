@@ -25,7 +25,7 @@ const AskQuestionPopup = memo(({ isActive, setIsActive, openButtonRef }) => (
         popupCls.popupTitle,
       )}
     >
-      Задать вопрос
+      Задати питання
     </p>
     <ValidationForm
       className={popupCls.popupForm}
@@ -34,21 +34,21 @@ const AskQuestionPopup = memo(({ isActive, setIsActive, openButtonRef }) => (
         type="text"
         name="name"
         inputClassName={popupCls.input}
-        placeholder="Имя"
+        placeholder="Ім'я"
         required
       />
       <InputWithErrorMessage
         type="email"
         name="email"
         inputClassName={popupCls.input}
-        placeholder="Электронная почта"
+        placeholder="Електронна пошта"
         required
       />
       <TextAreaWithErrorMessage
         name="comment"
         textareaBlockClassName={popupCls.textareaBlock}
         textareaClassName={popupCls.textarea}
-        placeholder="Напишите ваш вопрос по товару"
+        placeholder="Напишіть ваше запитання щодо товару"
         required
         textareaType="question"
       />
@@ -57,7 +57,7 @@ const AskQuestionPopup = memo(({ isActive, setIsActive, openButtonRef }) => (
           type="submit"
           className={popupCls.submitButton}
         >
-          Отправить
+          Відправити
         </Button>
         <p className={classNames(
           textCls.text,
@@ -65,17 +65,17 @@ const AskQuestionPopup = memo(({ isActive, setIsActive, openButtonRef }) => (
           textCls.textBlack,
         )}
         >
-          Отправляя сообщение вы даете согласие на обработку&nbsp;
+          Надсилаючи повідомлення ви даєте згоду на обробку&nbsp;
           <Link
-            to="terms"
-            alt="Условия обработки персональных данных"
+            to="/terms"
+            alt="Умови обробки персональних даних"
             className={classNames(
               linkCls.link,
               linkCls.link14px,
               linkCls.linkBlue,
             )}
           >
-            персональных данных
+            персональних даних
           </Link>
         </p>
       </div>

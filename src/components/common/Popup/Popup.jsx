@@ -73,7 +73,7 @@ const Popup = memo(({
         <button
           type="button"
           className={popupCls.closeButton}
-          aria-label={`Закрыть ${label}`}
+          aria-label={`Закрити ${label}`}
           onClick={() => {
             setIsActive(false);
             openButton.focus();

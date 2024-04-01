@@ -32,7 +32,7 @@ const AskQuestionBannerAndPopup = forwardRef(({ title, subtitle, btnOnClick }, r
       aria-haspopup="dialog"
       aria-label="Відкрити вікно Задати питання"
     >
-      Связаться с нами
+      Зв&apos;язатися з нами
     </Button>
   </div>
 ));

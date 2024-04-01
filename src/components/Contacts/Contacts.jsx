@@ -2,7 +2,7 @@ import classNames from 'classnames';
 import containerCls from '../../scss/_container.module.scss';
 import textCls from '../../scss/_text.module.scss';
 import contactsCls from './Contacts.module.scss';
-import cityImg from './images/cityImg.png';
+import cityImg from './images/cityImg.webp';
 import TimeIcon from './images/time.svg';
 
 export default function Contacts() {
@@ -20,13 +20,13 @@ export default function Contacts() {
         contactsCls.title,
       )}
       >
-        Контакты
+        Контакти
       </h1>
       <div className={contactsCls.addressCard}>
         <img
           className={contactsCls.img}
           src={cityImg}
-          alt="Казань"
+          alt="Одеса"
         />
         <div className={contactsCls.addressCardTextBlocks}>
           <div className={contactsCls.addressCardTextBlock}>
@@ -40,10 +40,10 @@ export default function Contacts() {
             </p>
             <a
               className={contactsCls.addressLink}
-              href="tel:+78432334422"
-              alt="+7 843 233-44-22"
+              href="tel:+380974311101"
+              alt="+38 097 431-11-01"
             >
-              +7 843 233-44-22
+              +38 097 431-11-01
             </a>
           </div>
           <div className={contactsCls.addressCardTextBlock}>
@@ -53,7 +53,7 @@ export default function Contacts() {
               textCls.textGrey,
             )}
             >
-              Адрес:
+              Адреса:
             </p>
             <p className={classNames(
               textCls.text,
@@ -62,7 +62,7 @@ export default function Contacts() {
               contactsCls.addressCardText,
             )}
             >
-              г. Казань, ул. Техническая, 10/2
+              м. Одеса, вул. Рішельєвська, 21
             </p>
           </div>
         </div>
@@ -87,7 +87,7 @@ export default function Contacts() {
           contactsCls.subtitle,
         )}
         >
-          Реквизиты компании
+          Реквізити компанії
         </h2>
         <table className={contactsCls.infoTable}>
           <tr className={contactsCls.tableRow}>
@@ -95,10 +95,10 @@ export default function Contacts() {
               className={contactsCls.rowHeader}
               scope="row"
             >
-              Наименование:
+              Найменування:
             </th>
             <td className={contactsCls.tableCell}>
-              ООО «ЭПК»
+              ТОВ &ldquo;Ґимба&ldquo;
             </td>
           </tr>
           <tr className={contactsCls.tableRow}>
@@ -106,10 +106,10 @@ export default function Contacts() {
               className={contactsCls.rowHeader}
               scope="row"
             >
-              ИНН:
+              ЄДРПОУ:
             </th>
             <td className={contactsCls.tableCell}>
-              1639047491
+              40367123
             </td>
           </tr>
           <tr className={contactsCls.tableRow}>
@@ -117,10 +117,10 @@ export default function Contacts() {
               className={contactsCls.rowHeader}
               scope="row"
             >
-              КПП:
+              Юридична адреса:
             </th>
             <td className={contactsCls.tableCell}>
-              163901001
+              65069, Одеська область, м. Одеса, вул. Рішельєвська, 21
             </td>
           </tr>
           <tr className={contactsCls.tableRow}>
@@ -128,22 +128,10 @@ export default function Contacts() {
               className={contactsCls.rowHeader}
               scope="row"
             >
-              Юридический адрес:
+              IBAN
             </th>
             <td className={contactsCls.tableCell}>
-              423874, Республика Татарстан, Тукаевский р-он,
-              с. Тлянче-тамак, ул. Школьная, д. 44
-            </td>
-          </tr>
-          <tr className={contactsCls.tableRow}>
-            <th
-              className={contactsCls.rowHeader}
-              scope="row"
-            >
-              ОГРН:
-            </th>
-            <td className={contactsCls.tableCell}>
-              1121674004143
+              UANP3057564166410648351904781
             </td>
           </tr>
         </table>
