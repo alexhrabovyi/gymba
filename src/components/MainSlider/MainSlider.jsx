@@ -11,26 +11,26 @@ export default function MainSlider() {
 
   const slides = useMemo(() => [
     <Slide
-      to="/amogus"
+      to="/delivery"
       className={mainSliderCls.slide_1}
-      alt="Узнать подробнее об условиях доставки и пунктах выдачи"
-      linkText="Узнать подробнее"
+      alt="Дізнатися докладніше про умови доставки та пункти видачі"
+      linkText="Дізнатись детальніше"
       key={mainSliderCls.slide_1}
     >
-      Закажи онлайн —
+      Замов онлайн —
       <br />
-      забери в пункте
+      забери в пункті
       <br />
-      выдачи
+      видачі
     </Slide>,
     <Slide
       to="/"
       className={mainSliderCls.slide_2}
-      alt="Узнать подробнее о работе с оптовиками"
-      linkText="Узнать подробнее"
+      alt="Дізнатись детальніше про співпрацю з оптовиками"
+      linkText="Дізнатись детальніше"
       key={mainSliderCls.slide_2}
     >
-      Работаем с
+      Працюємо з
       <br />
       оптовиками
     </Slide>,

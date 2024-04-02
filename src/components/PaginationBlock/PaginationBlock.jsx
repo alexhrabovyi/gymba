@@ -136,7 +136,7 @@ const PaginationBlock = memo(({ pageAmount }) => {
             i === currentPageNum && paginationCls.paginationButton_active,
           )}
           style={{ borderRadius: i === firstMainButtonId ? '4px 0 0 4px' : i === lastMainButtonId ? '0px 4px 4px 0' : '' }}
-          aria-label={`Перейти на страницу товаров ${i}`}
+          aria-label={`Перейти на сторінку товарів ${i}`}
         >
           {i}
         </button>
@@ -167,7 +167,7 @@ const PaginationBlock = memo(({ pageAmount }) => {
               paginationCls.paginationButton,
               paginationCls.paginationButton_round,
             )}
-            aria-label={`Перейти на страницу товаров ${1}`}
+            aria-label={`Перейти на сторінку товарів ${1}`}
           >
             {1}
           </button>
@@ -180,7 +180,7 @@ const PaginationBlock = memo(({ pageAmount }) => {
               setSearchParams(searchParams);
             }}
             className={paginationCls.additionalButton}
-            aria-label={`Перейти на страницу товаров ${additionalStartBtnId}`}
+            aria-label={`Перейти на сторінку товарів ${additionalStartBtnId}`}
           >
             <ThreeDots className={paginationCls.icon} />
           </button>
@@ -198,7 +198,7 @@ const PaginationBlock = memo(({ pageAmount }) => {
               setSearchParams(searchParams);
             }}
             className={paginationCls.additionalButton}
-            aria-label={`Перейти на страницу товаров ${additionalEndBtnId}`}
+            aria-label={`Перейти на сторінку товарів ${additionalEndBtnId}`}
           >
             <ThreeDots className={paginationCls.icon} />
           </button>
@@ -214,7 +214,7 @@ const PaginationBlock = memo(({ pageAmount }) => {
               paginationCls.paginationButton,
               paginationCls.paginationButton_round,
             )}
-            aria-label={`Перейти на страницу товаров ${pageAmount}`}
+            aria-label={`Перейти на сторінку товарів ${pageAmount}`}
           >
             {pageAmount}
           </button>

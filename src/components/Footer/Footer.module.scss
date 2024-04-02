@@ -57,6 +57,11 @@
 
 .logoLink {
   width: 100%;
+  fill: $blue;
+
+  &:hover {
+    fill: $dark-blue;
+  }
 
   @include media-s {
     grid-column: 1/2;
@@ -72,8 +77,10 @@
 }
 
 .logo {
+  width: 100%;
+  height: auto;
+
   @include media-s {
-    width: 100%;
     max-width: 180px;
   }
 }

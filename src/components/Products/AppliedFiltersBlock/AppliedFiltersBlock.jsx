@@ -22,7 +22,7 @@ export default function AppliedFiltersBlock() {
       <button
         type="button"
         className={appliedFiltersCls.button}
-        aria-label="Удалить фильтр цен"
+        aria-label="Видалити фільтр цін"
         onClick={() => {
           searchParams.delete('minPrice');
           searchParams.delete('maxPrice');
@@ -40,7 +40,7 @@ export default function AppliedFiltersBlock() {
       key={`${name}-${value}`}
       type="button"
       className={appliedFiltersCls.button}
-      aria-label={`Удалить фильтр ${name} со значением ${value}`}
+      aria-label={`Видалити фільтр ${name} зі значенням ${value}`}
       onClick={() => {
         const newSearchParams = Array.from(searchParams).filter(([oldName, oldValue]) => (
           !(oldName === name && oldValue === value)
@@ -60,7 +60,7 @@ export default function AppliedFiltersBlock() {
         appliedFiltersCls.button,
         appliedFiltersCls.button_grey,
       )}
-      aria-label="Удалить все фильтры"
+      aria-label="Видалити всі фільтри"
       onClick={() => {
         const newSearchParams = Array.from(searchParams).filter(([name]) => (
           name === 'perView' || name === 'sortBy'
@@ -69,7 +69,7 @@ export default function AppliedFiltersBlock() {
       }}
     >
       <Cross className={appliedFiltersCls.icon} />
-      Очистить все
+      Видалити все
     </button>
   );
 

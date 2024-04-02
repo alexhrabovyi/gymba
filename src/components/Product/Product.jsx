@@ -190,7 +190,7 @@ export default function Product() {
           i === activeSlideId && productCls.paginationBtn_active,
         )}
         onClick={() => setActiveSlideId(i)}
-        aria-label={`Перейти к слайду ${i}`}
+        aria-label={`Перейти до слайду ${i}`}
       >
         <Suspense
           fallback={<Spinner className={productCls.paginationBtnSpinner} />}
@@ -226,7 +226,7 @@ export default function Product() {
             }, { once: true });
           }}
           aria-haspopup="dialog"
-          aria-label="Открыть картинку на весь экран"
+          aria-label="Відкрити зображення на весь екран"
         >
           <Suspense
             fallback={<Spinner className={productCls.slideImgSpinner} />}
@@ -321,7 +321,7 @@ export default function Product() {
           productCls.descriptionSubtitle,
         )}
         >
-          О товаре
+          Про товар
         </p>
         <p className={classNames(
           textCls.text,
@@ -424,10 +424,10 @@ export default function Product() {
                 productInWishlist && productCls.iconButton_active,
               )}
               onClick={wishlistButtonOnClick}
-              aria-label={productInWishlist ? `Удалить ${product.name} из избранного` : `Добавить ${product.name} в избранное`}
+              aria-label={productInWishlist ? `Видалити ${product.name} зі списку бажань` : `Додати ${product.name} до списку бажань`}
             >
               <Favorite className={productCls.buttonIcon} />
-              {!productInWishlist ? 'В избранное' : 'В избранном'}
+              {!productInWishlist ? 'В обране' : 'В обраному'}
             </button>
             <button
               type="button"
@@ -436,10 +436,10 @@ export default function Product() {
                 productInCompare && productCls.iconButton_active,
               )}
               onClick={compareButtonOnClick}
-              aria-label={productInCompare ? `Удалить ${product.name} из сравнения` : `Добавить ${product.name} в сравнение`}
+              aria-label={productInCompare ? `Видалити ${product.name} з порівняння` : `Додати ${product.name} в порівняння`}
             >
               <Compare className={productCls.buttonIcon} />
-              {!productInCompare ? ' К сравнению' : 'В cравнении'}
+              {!productInCompare ? ' До порівняння' : 'В порівнянні'}
             </button>
           </div>
         )}
@@ -464,7 +464,7 @@ export default function Product() {
               productCls.mainSpecsTitle,
             )}
             >
-              Основные характеристики
+              Основні характеристики
             </p>
             <ul className={productCls.mainSpecsList}>
               {mainSpecsElems}
@@ -475,10 +475,10 @@ export default function Product() {
                 linkCls.link,
                 linkCls.linkBlue,
               )}
-              alt="Посмотреть все характеристики"
+              alt="Переглянути всі характеристики"
               onClick={() => setIsDescTabPanelActive(true)}
             >
-              Посмотреть все
+              Переглянути всі
             </a>
           </div>
           {windowWidth <= 576 && (
@@ -490,19 +490,22 @@ export default function Product() {
                 productInWishlist && productCls.iconButton_active,
               )}
               onClick={wishlistButtonOnClick}
-              aria-label={productInWishlist ? `Удалить ${product.name} из избранного` : `Добавить ${product.name} в избранное`}
+              aria-label={productInWishlist ? `Видалити ${product.name} зі списку бажань` : `Додати ${product.name} до списку бажань`}
             >
               <Favorite className={productCls.buttonIcon} />
-              {!productInWishlist ? 'В избранное' : 'В избранном'}
+              {!productInWishlist ? 'В обране' : 'В обраному'}
             </button>
             <button
               type="button"
               className={classNames(
                 productCls.iconButton,
+                productInCompare && productCls.iconButton_active,
               )}
+              onClick={compareButtonOnClick}
+              aria-label={productInCompare ? `Видалити ${product.name} з порівняння` : `Додати ${product.name} в порівняння`}
             >
               <Compare className={productCls.buttonIcon} />
-              К сравнению
+              {!productInCompare ? ' До порівняння' : 'В порівнянні'}
             </button>
           </div>
           )}
@@ -539,10 +542,10 @@ export default function Product() {
             <div className={productCls.cartBtnAndBannerBlock}>
               <Button
                 className={productCls.cartButton}
-                ariaLabel={!productInCart ? `Добавить ${product.name} в корзину` : `Удалить ${product.name} из корзины`}
+                ariaLabel={!productInCart ? `Додати ${product.name} до кошику` : `Видалити ${product.name} з кошика`}
                 onClick={cartButtonOnClick}
               >
-                {!productInCart ? 'Добавить в корзину' : 'В корзине'}
+                {!productInCart ? 'Додати до кошику' : 'У кошику'}
               </Button>
               <AddToCartBanner
                 isActive={isCartBannerActive}
@@ -561,10 +564,10 @@ export default function Product() {
             role="tab"
             aria-selected={isDescTabPanelActive}
             aria-controls="descriptionTabPanel"
-            aria-label="Показать панель Описание"
+            aria-label="Показати панель Опис"
             onClick={() => setIsDescTabPanelActive(true)}
           >
-            Описание
+            Опис
             <span
               className={classNames(
                 productCls.tabButtonLine,
@@ -578,10 +581,10 @@ export default function Product() {
             role="tab"
             aria-selected={!isDescTabPanelActive}
             aria-controls="commentTabPanel"
-            aria-label="Показать панель Отзывы"
+            aria-label="Показати панель Відгуки"
             onClick={() => setIsDescTabPanelActive(false)}
           >
-            Отзывы
+            Відгуки
             <span
               className={classNames(
                 productCls.tabButtonLine,
@@ -648,8 +651,8 @@ export default function Product() {
           </div>
           <aside className={productCls.bannerBlock}>
             <AskQuestionBanner
-              title="Есть вопросы по товару?"
-              subtitle="Задайте их нам и мы поможем вам определиться с выбором."
+              title="Є питання щодо товару?"
+              subtitle="Запитайте нас і ми допоможемо Вам визначитися з вибором."
               btnOnClick={askQuestionBtnOnClick}
               ref={openQuestionPopupBtnRef}
             />
@@ -675,7 +678,7 @@ export default function Product() {
             productCls.popupTitle,
           )}
         >
-          Оставить отзыв
+          Залишити відгук
         </p>
         <ValidationForm
           className={productCls.popupForm}
@@ -684,21 +687,21 @@ export default function Product() {
             type="text"
             name="name"
             inputClassName={productCls.input}
-            placeholder="Имя"
+            placeholder="Ім'я"
             required
           />
           <InputWithErrorMessage
             type="email"
             name="email"
             inputClassName={productCls.input}
-            placeholder="Электронная почта"
+            placeholder="Електронна пошта"
             required
           />
           <TextAreaWithErrorMessage
             name="comment"
             textareaBlockClassName={productCls.textareaBlock}
             textareaClassName={productCls.textarea}
-            placeholder="Впечатления о товаре"
+            placeholder="Враження про товар"
             required
             textareaType="comment"
           />
@@ -707,7 +710,7 @@ export default function Product() {
               type="submit"
               className={productCls.submitButton}
             >
-              Отправить
+              Відправити
             </Button>
             <p className={classNames(
               textCls.text,
@@ -715,17 +718,17 @@ export default function Product() {
               textCls.textBlack,
             )}
             >
-              Отправляя сообщение вы даете согласие на обработку&nbsp;
+              Надсилаючи повідомлення ви даєте згоду на обробку&nbsp;
               <Link
                 to="terms"
-                alt="Условия обработки персональных данных"
+                alt="Умови обробки персональних даних"
                 className={classNames(
                   linkCls.link,
                   linkCls.link14px,
                   linkCls.linkBlue,
                 )}
               >
-                персональных данных
+                персональних даних
               </Link>
             </p>
           </div>

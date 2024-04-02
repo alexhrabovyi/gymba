@@ -8,14 +8,14 @@ import footerCls from './Footer.module.scss';
 import Button from '../common/Button/Button.jsx';
 import ValidationForm from '../common/ValidationForm/ValidationForm.jsx';
 import InputWithErrorMessage from '../common/InputWithErrorMessage/InputWithErrorMessage.jsx';
-import logo from './images/logo.svg?url';
+import Logo from './images/logo.svg';
 
 export default function Footer() {
   return (
     <footer className={classNames(footerCls.footer, containerCls.container)}>
       <div className={footerCls.mainBlock}>
         <Link to="/" className={footerCls.logoLink} alt="Головна сторінка Ґимба" aria-label="Головна сторінка Ґимба">
-          <img src={logo} className={footerCls.logo} alt="Ґимба логотип" />
+          <Logo className={footerCls.logo} alt="Ґимба логотип" />
         </Link>
         <nav className={footerCls.mainLinkBlock}>
           <ul className={footerCls.mainLinkList}>

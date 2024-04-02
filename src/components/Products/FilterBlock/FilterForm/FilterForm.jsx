@@ -80,7 +80,7 @@ export default function FilterForm({ name, values, initIsClosed = false }) {
         type="button"
         className={filterCls.titleButton}
         onClick={() => setIsClose(!isClosed)}
-        aria-label={isClosed ? `Расскрыть меню фильтров ${name}` : `Свернуть меню фильтров ${name}`}
+        aria-label={isClosed ? `Розкрити меню фільтрів ${name}` : `Згорнути меню фільтрів ${name}`}
       >
         <p className={classNames(
           textCls.text,

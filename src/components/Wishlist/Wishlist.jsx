@@ -51,18 +51,19 @@ export default function Wishlist() {
             wishlistCls.title,
           )}
         >
-          Избранное
+          Список бажань
         </h1>
         {!!products.length && (
         <button
           type="button"
           className={wishlistCls.deleteBtn}
           onClick={deleteBtnOnClick}
+          aria-label="Видалити все"
         >
           <BinIcon
             className={wishlistCls.binIcon}
           />
-          Удалить все
+          Видалити все
         </button>
         )}
       </div>

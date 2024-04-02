@@ -63,7 +63,7 @@ const Gallery = memo(({
         aria-hidden={!isOpen}
         role="dialog"
         aria-modal
-        aria-label={`Галерея изображений ${productName}`}
+        aria-label={`Галерея зображень ${productName}`}
         tabIndex={isOpen ? '0' : '-1'}
       >
         <Slider

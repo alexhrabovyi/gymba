@@ -36,7 +36,7 @@ export default function Payment() {
             paymentCls.subtitle,
           )}
           >
-            Для юридических лиц
+            Для юридичних осіб
           </h2>
           <ul className={paymentCls.methodList}>
             <li className={paymentCls.methodListElement}>
@@ -50,7 +50,7 @@ export default function Payment() {
                   paymentCls.methodListElementTitle,
                 )}
                 >
-                  Оплата наличными
+                  Оплата готівкою
                 </p>
                 <p className={classNames(
                   textCls.text,
@@ -58,7 +58,8 @@ export default function Payment() {
                   textCls.textBlack,
                 )}
                 >
-                  В центральном офисе или при доставке службой ЭПК
+                  У центральному офісі або під час доставки нашою
+                  кур&apos;єрською службою
                 </p>
               </div>
             </li>
@@ -73,7 +74,7 @@ export default function Payment() {
                   paymentCls.methodListElementTitle,
                 )}
                 >
-                  Безналичная оплата по выставленному счету
+                  Безготівкова плата за виставленим рахунком
                 </p>
               </div>
             </li>
@@ -91,7 +92,7 @@ export default function Payment() {
             paymentCls.subtitle,
           )}
           >
-            Для Физических лиц
+            Для фізичних осіб
           </h2>
           <ul className={paymentCls.methodList}>
             <li className={paymentCls.methodListElement}>
@@ -105,7 +106,7 @@ export default function Payment() {
                   paymentCls.methodListElementTitle,
                 )}
                 >
-                  Оплата наличными
+                  Оплата готівкою
                 </p>
                 <p className={classNames(
                   textCls.text,
@@ -113,7 +114,34 @@ export default function Payment() {
                   textCls.textBlack,
                 )}
                 >
-                  В центральном офисе или при доставке службой ЭПК
+                  У центральному офісі, під час доставки нашою
+                  кур&apos;єрською службою, а також за допомоною поштових операторів
+                  Meest Express та NovaPoshta
+                </p>
+              </div>
+            </li>
+            <li className={paymentCls.methodListElement}>
+              <Line className={paymentCls.lineIcon} />
+              <div className={paymentCls.methodListElementTextBlock}>
+                <p className={classNames(
+                  textCls.text,
+                  textCls.textFw800,
+                  textCls.text16px,
+                  textCls.textBlack,
+                  paymentCls.methodListElementTitle,
+                )}
+                >
+                  Безготівкова плата
+                </p>
+                <p className={classNames(
+                  textCls.text,
+                  textCls.text16px,
+                  textCls.textBlack,
+                )}
+                >
+                  У центральному офісі, під час доставки нашою
+                  кур&apos;єрською службою, а також за допомоною поштових операторів
+                  Meest Express та NovaPoshta
                 </p>
               </div>
             </li>

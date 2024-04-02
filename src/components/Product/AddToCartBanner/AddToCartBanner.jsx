@@ -34,11 +34,11 @@ export default function AddToCartBanner({ isActive = false, setIsActive }) {
       <Link
         className={bannerCls.link}
         to="/cart"
-        alt="Перейти в корзину"
+        alt="Перейти до кошику"
         tabIndex={isActive ? '0' : '-1'}
         aria-hidden={!isActive}
       >
-        Перейти в корзину
+        Перейти до кошику
       </Link>
     </div>
   );

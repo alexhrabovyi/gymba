@@ -3,7 +3,7 @@ import sliderButtonCls from './MainSliderButton.module.scss';
 import ChevronRight from '../../../assets/images/icons/chevronRight.svg';
 
 export default function SliderButton({ isInactive, isRight, onClick }) {
-  const label = !isRight ? 'Показать предыдущий слайд' : 'Показать следующий слайд';
+  const label = !isRight ? 'Показати попередній слайд' : 'Показати наступний слайд';
 
   return (
     <button

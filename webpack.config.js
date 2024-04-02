@@ -123,17 +123,17 @@ module.exports = (env) => {
     new MiniCssExtractPlugin({
       filename: 'styles/[name].[contenthash].bundle.css',
     }),
-    // new FaviconsWebpackPlugin({
-    //   logo: "./src/assets/favicons/favicon.png",
-    //   outputPath: path.resolve(__dirname + "/bundle/assets/favicons"),
-    //   prefix: '../assets/favicons/',
-    //   inject: true,
-    //   favicons: {
-    //     icons: {
-    //       yandex: false
-    //     }
-    //   }
-    // }),
+    new FaviconsWebpackPlugin({
+      logo: "./src/assets/favicons/favicon.png",
+      outputPath: path.resolve(__dirname + "/bundle/assets/favicons"),
+      prefix: '../assets/favicons/',
+      inject: true,
+      favicons: {
+        icons: {
+          yandex: false
+        }
+      }
+    }),
   ]
 
   !isProd && plugins.push(new ReactRefreshWebpackPlugin());

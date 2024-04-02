@@ -201,8 +201,8 @@ export default function Header() {
           className={classNames(containerCls.container, headerCls.header)}
         >
           {windowWidth > 768 && (
-          <Link to="/" className={headerCls.logoLink} alt="Главная страница Everest" aria-label="Главная страница Everest">
-            <Logo className={headerCls.logoLinkImg} alt="Everest логотип" />
+          <Link to="/" className={headerCls.logoLink} alt="Головна сторінка Ґимба" aria-label="Головна сторінка Ґимба">
+            <Logo className={headerCls.logoLinkImg} alt="Ґимба логотип" />
           </Link>
           )}
           {windowWidth > 1024 && (
@@ -212,20 +212,20 @@ export default function Header() {
               <a
                 href="/"
                 className={headerCls.linkWithIcon}
-                alt="Наш магазин находится в городе Казань"
-                aria-label="Наш магазин находится в городе Казань"
+                alt="Наш магазин знаходиться в місті Одеса"
+                aria-label="Наш магазин знаходиться в місті Одеса"
               >
                 <Tag />
-                <p className={textCls.text}>Казань</p>
+                <p className={textCls.text}>Одеса</p>
               </a>
               <a
-                href="tel:+78552448409"
+                href="tel:+380974311101"
                 className={headerCls.linkWithIcon}
-                alt="Номер телефона магазина +7 8552 44-84-09"
-                aria-label="Номер телефона магазина +7 8552 44-84-09"
+                alt="Номер телефону магазину +38 097 431-11-01"
+                aria-label="Номер телефону магазину +38 097 431-11-01"
               >
                 <Phone />
-                <p className={textCls.text}>+7 8552 44-84-09</p>
+                <p className={textCls.text}>+38 097 431-11-01</p>
               </a>
             </div>
             )}
@@ -238,19 +238,10 @@ export default function Header() {
                   <Link to="/payment" className={linkCls.link} alt="Оплата">Оплата</Link>
                 </li>
                 <li>
-                  <Link to="/" className={linkCls.link} alt="Прайс-лист">Прайс-лист</Link>
+                  <Link to="/news" className={linkCls.link} alt="Новини">Новини</Link>
                 </li>
                 <li>
-                  <Link to="/" className={linkCls.link} alt="Оптовикам">Оптовикам</Link>
-                </li>
-                <li>
-                  <Link to="/" className={linkCls.link} alt="Вакансии">Вакансии</Link>
-                </li>
-                <li>
-                  <Link to="/news" className={linkCls.link} alt="Новости">Новости</Link>
-                </li>
-                <li>
-                  <Link to="/contacts" className={linkCls.link} alt="Контакты">Контакты</Link>
+                  <Link to="/contacts" className={linkCls.link} alt="Контакти">Контакти</Link>
                 </li>
               </ul>
             </nav>
@@ -266,8 +257,8 @@ export default function Header() {
               )}
               onClick={menuBtnOnClick}
               aria-label={
-                windowWidth <= 1024 ? isAnyMenuOpen ? 'Закрыть меню' : 'Открыть меню'
-                  : isAnyMenuOpen ? 'Закрыть каталог' : 'Открыть каталог'
+                windowWidth <= 1024 ? isAnyMenuOpen ? 'Закрити меню' : 'Відкрити меню'
+                  : isAnyMenuOpen ? 'Закрити каталог' : 'Відкрити каталог'
               }
               aria-haspopup="dialog"
               data-open-menu-btn
@@ -298,24 +289,24 @@ export default function Header() {
               {windowWidth > 1025 ? 'Каталог' : windowWidth > 768 ? 'Меню' : ''}
             </button>
             {windowWidth <= 768 && (
-            <Link to="/" className={headerCls.logoLink} alt="Главная страница Everest" aria-label="Главная страница Everest">
-              <LogoSmall className={headerCls.logoLinkImg} alt="Everest логотип" />
+            <Link to="/" className={headerCls.logoLink} alt="Головна сторінка Ґимба" aria-label="Головна сторінка Ґимба">
+              <LogoSmall className={headerCls.logoLinkImg} alt="Ґимба логотип" />
             </Link>
             )}
             <div className={headerCls.inputBlock}>
               <Input
                 type="search"
                 className={headerCls.input}
-                placeholder="Поиск товаров"
+                placeholder="Пошук товарів"
                 required
               />
               {windowWidth > 768
-                ? (<Button className={headerCls.submitButton} type="submit">Найти</Button>)
+                ? (<Button className={headerCls.submitButton} type="submit">Знайти</Button>)
                 : (
                   <button
                     type="submit"
                     className={headerCls.submitButtonWithIcon}
-                    aria-label="Поиск по сайту"
+                    aria-label="Пошук по сайту"
                   >
                     <Search className={headerCls.submitButtonIcon} />
                   </button>
@@ -329,7 +320,7 @@ export default function Header() {
                     <Link
                       to="/"
                       className={headerCls.iconLink}
-                      aria-label="Профиль пользователя"
+                      aria-label="Профіль користувача"
                     >
                       <User className={headerCls.iconInLink} />
                     </Link>
@@ -342,7 +333,7 @@ export default function Header() {
                         compareAmount && headerCls.iconLinkWithCircle,
                       )}
                       data-before={compareAmount}
-                      aria-label="Сравнить товары"
+                      aria-label="Порівняти товари"
                     >
                       <Compare className={headerCls.iconInLink} />
                     </Link>
@@ -355,7 +346,7 @@ export default function Header() {
                         wishlistAmount && headerCls.iconLinkWithCircle,
                       )}
                       data-before={wishlistAmount}
-                      aria-label="Понравившиеся товары"
+                      aria-label="Лист бажань"
                     >
                       <Favorite className={headerCls.iconInLink} />
                     </Link>
@@ -370,7 +361,7 @@ export default function Header() {
                       cartAmount && headerCls.iconLinkWithCircle,
                     )}
                     data-before={cartAmount}
-                    aria-label="Корзина"
+                    aria-label="Кошик"
                   >
                     <Cart className={headerCls.iconInLink} />
                   </Link>
@@ -378,7 +369,7 @@ export default function Header() {
               </ul>
             </nav>
             {windowWidth > 1024 && (
-            <p className={classNames(headerCls.price, textCls.text)}>221 465 ₽</p>
+            <p className={classNames(headerCls.price, textCls.text)}>221 465 ₴</p>
             )}
           </div>
         </header>

@@ -55,14 +55,14 @@ const HeaderCategoryMenu = memo(({
       aria-hidden={!isMenuOpen}
       role="dialog"
       aria-modal
-      aria-label="Меню каталога"
+      aria-label="Меню каталогу"
       tabIndex={isMenuOpen ? '0' : '-1'}
     >
       <button
         type="button"
         className={categoryMenuCls.backButton}
         onClick={backToMenuOnClick}
-        aria-label="Вернуться в меню навигации"
+        aria-label="Повернутися до меню навігації"
         aria-haspopup="dialog"
       >
         <ChevronRight className={categoryMenuCls.backButtonChevron} />
@@ -89,7 +89,7 @@ const HeaderCategoryMenu = memo(({
                 type="button"
                 data-category-id={c.id}
                 aria-haspopup="dialog"
-                aria-label={`Открыть меню категории ${c.name}`}
+                aria-label={`Відкрити меню категорії ${c.name}`}
               >
                 {c.name}
                 <ChevronRight className={categoryMenuCls.categoryButtonChevron} />

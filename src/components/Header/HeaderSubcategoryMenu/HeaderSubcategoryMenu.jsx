@@ -55,14 +55,14 @@ const HeaderSubcategoryMenu = memo(({ isMenuOpen, category, backToCatalogOnClick
       aria-hidden={!isMenuOpen}
       role="dialog"
       aria-modal
-      aria-label={`Меню категории ${category.name}`}
+      aria-label={`Меню категорії ${category.name}`}
       tabIndex={isMenuOpen ? '0' : '-1'}
     >
       <button
         type="button"
         className={subcategoryMenuCls.backButton}
         onClick={backToCatalogOnClick}
-        aria-label="Вернуться в меню каталога"
+        aria-label="Повернутись до меню каталогу"
         aria-haspopup="dialog"
       >
         <ChevronRight className={subcategoryMenuCls.backButtonChevron} />
@@ -91,8 +91,8 @@ const HeaderSubcategoryMenu = memo(({ isMenuOpen, category, backToCatalogOnClick
             </li>
           ))}
           <li>
-            <Link to={category.id} className={subcategoryMenuCls.allCategoriesLink} alt="Все категории">
-              Все категории
+            <Link to={category.id} className={subcategoryMenuCls.allCategoriesLink} alt="Усі категорії">
+              Усі категорії
               <ArrowRight className={subcategoryMenuCls.allCategoriesArrow} />
             </Link>
           </li>

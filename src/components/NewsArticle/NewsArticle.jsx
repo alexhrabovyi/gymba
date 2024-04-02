@@ -274,7 +274,7 @@ export default function NewsArticle() {
         </div>
         <article className={articleCls.recommendArticlesBlock}>
           <p className={articleCls.recommendArticlesTitle}>
-            Смотрите также
+            Дивіться також
           </p>
           {recommendedNewsList}
         </article>

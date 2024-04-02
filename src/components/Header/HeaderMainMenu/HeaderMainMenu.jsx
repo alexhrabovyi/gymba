@@ -157,7 +157,7 @@ const HeaderMainMenu = memo(({ isMenuOpen, categories, catalogBtnOnClick }) => {
       aria-hidden={!isMenuOpen}
       role="dialog"
       aria-modal
-      aria-label={windowWidth <= 1024 ? 'Меню каталога и навигации' : 'Меню каталога'}
+      aria-label={windowWidth <= 1024 ? 'Меню каталогу та навігації' : 'Меню каталогу'}
       tabIndex={isMenuOpen ? '0' : '-1'}
     >
       {windowWidth > 1024 && (
@@ -169,7 +169,7 @@ const HeaderMainMenu = memo(({ isMenuOpen, categories, catalogBtnOnClick }) => {
               <Link
                 to="/"
                 className={headerMenuCls.iconLink}
-                aria-label="Профиль пользователя"
+                aria-label="Профіль користувача"
               >
                 <User className={headerMenuCls.iconInLink} />
               </Link>
@@ -182,7 +182,7 @@ const HeaderMainMenu = memo(({ isMenuOpen, categories, catalogBtnOnClick }) => {
                   compareAmount && headerMenuCls.iconLinkWithCircle,
                 )}
                 data-before={compareAmount}
-                aria-label="Сравнить товары"
+                aria-label="Порівняти товари"
               >
                 <Compare className={headerMenuCls.iconInLink} />
               </Link>
@@ -195,7 +195,7 @@ const HeaderMainMenu = memo(({ isMenuOpen, categories, catalogBtnOnClick }) => {
                   wishlistAmount && headerMenuCls.iconLinkWithCircle,
                 )}
                 data-before={wishlistAmount}
-                aria-label="Понравившиеся товары"
+                aria-label="Лист бажань"
               >
                 <Favorite className={headerMenuCls.iconInLink} />
               </Link>
@@ -249,7 +249,7 @@ const HeaderMainMenu = memo(({ isMenuOpen, categories, catalogBtnOnClick }) => {
             headerMenuCls.popularTitle,
           )}
           >
-            Популярное сегодня
+            Популярне сьогодні
           </p>
           <div className={headerMenuCls.productCard}>
             <Link to="/" className={headerMenuCls.imgLink} alt="Dulux MASTER 30 BC 2,3 л. краска алк. полуматовая б/цв">
@@ -279,7 +279,7 @@ const HeaderMainMenu = memo(({ isMenuOpen, categories, catalogBtnOnClick }) => {
               <Link
                 to="/"
                 className={headerMenuCls.iconLink}
-                aria-label="Профиль пользователя"
+                aria-label="Профіль користувача"
               >
                 <User className={headerMenuCls.iconInLink} />
               </Link>
@@ -292,7 +292,7 @@ const HeaderMainMenu = memo(({ isMenuOpen, categories, catalogBtnOnClick }) => {
                   compareAmount && headerMenuCls.iconLinkWithCircle,
                 )}
                 data-before={compareAmount}
-                aria-label="Сравнить товары"
+                aria-label="Порівняти товари"
               >
                 <Compare className={headerMenuCls.iconInLink} />
               </Link>
@@ -305,7 +305,7 @@ const HeaderMainMenu = memo(({ isMenuOpen, categories, catalogBtnOnClick }) => {
                   wishlistAmount && headerMenuCls.iconLinkWithCircle,
                 )}
                 data-before={wishlistAmount}
-                aria-label="Понравившиеся товары"
+                aria-label="Лист бажань"
               >
                 <Favorite className={headerMenuCls.iconInLink} />
               </Link>
@@ -320,7 +320,7 @@ const HeaderMainMenu = memo(({ isMenuOpen, categories, catalogBtnOnClick }) => {
                 className={headerMenuCls.catalogButton}
                 onClick={catalogBtnOnClick}
                 aria-haspopup="dialog"
-                aria-label="Открыть меню каталога"
+                aria-label="Відкрити меню каталогу"
               >
                 Каталог
                 <ChevronRight className={headerMenuCls.catalogButtonChevron} />
@@ -333,19 +333,10 @@ const HeaderMainMenu = memo(({ isMenuOpen, categories, catalogBtnOnClick }) => {
               <Link to="/payment" className={classNames(linkCls.link, linkCls.link18px)} alt="Оплата">Оплата</Link>
             </li>
             <li>
-              <Link to="/" className={classNames(linkCls.link, linkCls.link18px)} alt="Прайс-лист">Прайс-лист</Link>
+              <Link to="/news" className={classNames(linkCls.link, linkCls.link18px)} alt="Новини">Новини</Link>
             </li>
             <li>
-              <Link to="/" className={classNames(linkCls.link, linkCls.link18px)} alt="Оптовикам">Оптовикам</Link>
-            </li>
-            <li>
-              <Link to="/" className={classNames(linkCls.link, linkCls.link18px)} alt="Вакансии">Вакансии</Link>
-            </li>
-            <li>
-              <Link to="/news" className={classNames(linkCls.link, linkCls.link18px)} alt="Новости">Новости</Link>
-            </li>
-            <li>
-              <Link to="/contacts" className={classNames(linkCls.link, linkCls.link18px)} alt="Контакты">Контакты</Link>
+              <Link to="/contacts" className={classNames(linkCls.link, linkCls.link18px)} alt="Контакти">Контакти</Link>
             </li>
           </ul>
         </nav>
@@ -353,20 +344,20 @@ const HeaderMainMenu = memo(({ isMenuOpen, categories, catalogBtnOnClick }) => {
           <a
             href="/"
             className={headerMenuCls.linkWithIcon}
-            alt="Наш магазин находится в городе Казань"
-            aria-label="Наш магазин находится в городе Казань"
+            alt="Наш магазин знаходиться в місті Одеса"
+            aria-label="Наш магазин знаходиться в місті Одеса"
           >
             <Tag />
-            <p className={textCls.text}>Казань</p>
+            <p className={textCls.text}>Одеса</p>
           </a>
           <a
-            href="tel:+78552448409"
+            href="tel:+380974311101"
             className={headerMenuCls.linkWithIcon}
-            alt="Номер телефона магазина +7 8552 44-84-09"
-            aria-label="Номер телефона магазина +7 8552 44-84-09"
+            alt="Номер телефону магазину +38 097 431-11-01"
+            aria-label="Номер телефону магазину +38 097 431-11-01"
           >
             <Phone />
-            <p className={textCls.text}>+7 8552 44-84-09</p>
+            <p className={textCls.text}>+38 097 431-11-01</p>
           </a>
         </div>
       </>

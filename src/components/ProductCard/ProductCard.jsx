@@ -133,7 +133,7 @@ const ProductCard = memo(({
               productCls.iconButton,
               productInCompare && productCls.iconButton_active,
             )}
-            aria-label={productInCompare ? `Удалить ${name} из сравнения` : `Добавить ${name} в сравнение`}
+            aria-label={productInCompare ? `Видалити ${name} з порівняння` : `Добавить ${name} в порівняння`}
             onClick={compareButtonOnClick}
           >
             <Compare className={productCls.icon} />
@@ -144,7 +144,7 @@ const ProductCard = memo(({
               productCls.iconButton,
               productInWishlist && productCls.iconButton_active,
             )}
-            aria-label={productInWishlist ? `Удалить ${name} из избранного` : `Добавить ${name} в избранное`}
+            aria-label={productInWishlist ? `Видалити ${name} зі списку бажань` : `Добавить ${name} до списку бажань`}
             onClick={wishlistButtonOnClick}
           >
             <Favorite className={productCls.icon} />
@@ -188,7 +188,7 @@ const ProductCard = memo(({
           </div>
           <Button
             className={productCls.cartButton}
-            ariaLabel={!productInCart ? `Добавить ${name} в корзину` : `Удалить ${name} из корзины`}
+            ariaLabel={!productInCart ? `Додати ${name} до кошику` : `Видалити ${name} з кошика`}
             onClick={cartButtonOnClick}
           >
             {!productInCart ? (
@@ -235,7 +235,7 @@ const ProductCard = memo(({
               productCls.iconButton,
               productInCompare && productCls.iconButton_active,
             )}
-            aria-label={productInCompare ? `Удалить ${name} из сравнения` : `Добавить ${name} в сравнение`}
+            aria-label={productInCompare ? `Видалити ${name} з порівняння` : `Додати ${name} в порівняння`}
             onClick={compareButtonOnClick}
           >
             <Compare className={productCls.icon} />
@@ -246,7 +246,7 @@ const ProductCard = memo(({
               productCls.iconButton,
               productInWishlist && productCls.iconButton_active,
             )}
-            aria-label={productInWishlist ? `Удалить ${name} из избранного` : `Добавить ${name} в избранное`}
+            aria-label={productInWishlist ? `Видалити ${name} зі списку бажань` : `Додати ${name} до списку бажань`}
             onClick={wishlistButtonOnClick}
           >
             <Favorite className={productCls.icon} />
@@ -268,10 +268,10 @@ const ProductCard = memo(({
         </div>
         <Button
           className={productCls.longCartButton}
-          ariaLabel={!productInCart ? `Добавить ${name} в корзину` : `Удалить ${name} из корзины`}
+          ariaLabel={!productInCart ? `Додати ${name} до кошику` : `Видалити ${name} з кошика`}
           onClick={cartButtonOnClick}
         >
-          {!productInCart ? 'В корзину' : 'Удалить из корзины'}
+          {!productInCart ? 'Додати до кошику' : 'У кошику'}
         </Button>
       </div>
     </div>

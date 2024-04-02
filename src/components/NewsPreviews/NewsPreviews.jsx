@@ -53,7 +53,7 @@ export default function NewsPreviews() {
         newsCls.title,
       )}
       >
-        Новости
+        Новини
       </h2>
       <div className={newsCls.previews}>
         {windowWidth > 1360 && previews}
@@ -84,10 +84,10 @@ export default function NewsPreviews() {
       </div>
       <LinkWithArrow
         to="news"
-        alt="Все новости"
+        alt="Всі новини"
         className={newsCls.linkWithArrow}
       >
-        Все новости
+        Всі новини
       </LinkWithArrow>
     </article>
   );

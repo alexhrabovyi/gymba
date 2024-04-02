@@ -1,14 +1,14 @@
 [
   {
-    "name": "Эмали",
+    "name": "Емалі",
     "id": "enamels",
     "imgId": "1",
-    "imgAlt": "Эмаль Dulux Master",
+    "imgAlt": "Емаль",
     "subcategories": [
       {
-        "name": "Алкидные эмали",
+        "name": "Алкідні емалі",
         "id": "alkyd_enamels",
-        "imgAlt": "Алкидная эмаль",
+        "imgAlt": "Алкідна емаль",
         "products": [
           {
             "name": "Емаль ZEBRA алкідна ПФ-116 серія Акварель 811 білий мат 2,8 кг",
@@ -662,95 +662,95 @@
         ]
       },
       {
-        "name": "Акриловые эмали",
+        "name": "Акрилові емалі",
         "id": "acrylic_enamels",
-        "imgAlt": "Акриловая эмаль",
+        "imgAlt": "Акрилова емаль",
         "products": []
       },
       {
-        "name": "Нитроэмали",
+        "name": "Нітроемалі",
         "id": "nitro_enamels",
-        "imgAlt": "Нитроэмаль"
+        "imgAlt": "Нітроемаль"
       },
       {
-        "name": "Масляные краски",
+        "name": "Масляні фарби",
         "id": "oil_paints",
-        "imgAlt": "Масляная краска"
+        "imgAlt": "Масляна фарба"
       },
       {
-        "name": "Грунты ГФ и ГЭ",
+        "name": "Ґрунти ГФ та ГЕ",
         "id": "soils_gf_ge",
-        "imgAlt": "Спецэмаль"
+        "imgAlt": "Грунт-емаль"
       },
       {
-        "name": "Эмали спецназначения",
+        "name": "Емалі спецпризначення",
         "id": "special_purpose_enamels",
-        "imgAlt": "Молотковая краска"
+        "imgAlt": "Спецемаль"
       },
       {
-        "name": "Растворители",
+        "name": "Розчинники",
         "id": "solvents",
-        "imgAlt": "Грунт-эмаль"
+        "imgAlt": "Розчинник"
       },
       {
-        "name": "Специальные грунты",
+        "name": "Спеціальні ґрунти",
         "id": "special_soils",
-        "imgAlt": "Растворитель"
+        "imgAlt": "СпецҐрунт"
       }
     ]
   },
   {
-    "name": "Краски",
+    "name": "Фарби",
     "id": "paints",
     "imgId": "2",
-    "imgAlt": "Краска Marshall Export 7",
+    "imgAlt": "Фарба",
     "subcategories": [
       {
-        "name": "Водно-дисперсионные краски",
+        "name": "Водно-дисперсійні фарби",
         "id": "waterdispersion_paints"
       },
       {
-        "name": "Колеровочные пасты",
+        "name": "Пасти кольорів",
         "id": "tinting_pastes"
       },
       {
-        "name": "Аэрозольные краски",
+        "name": "Аерозольні фарби",
         "id": "aerosol_paints"
       },
       {
-        "name": "Декоративные штукатурки",
+        "name": "Декоративні штукатурки",
         "id": "decorative_plasters"
       },
       {
-        "name": "Колоранты",
+        "name": "Колоранти",
         "id": "colorants"
       },
       {
-        "name": "Шпатлевки готовые",
+        "name": "Шпаклівки готові",
         "id": "ready_putties"
       },
       {
-        "name": "Акриловые грунты",
+        "name": "Акрилові ґрунти",
         "id": "acrylic_primers"
       }
     ]
   },
   {
-    "name": "Защита для древесины",
+    "name": "Захист для деревини",
     "id": "wood_protection",
     "imgId": "3",
-    "imgAlt": "Здоровый Дом Био - Средство для защиты древесины",
+    "imgAlt": "Засіб для захисту деревини",
     "subcategories": [
       {
-        "name": "Для дерева",
+        "name": "Для деревини",
         "id": "for_wood"
       },
       {
-        "name": "Огне- биозащита, антисептики",
+        "name": "Вогне-біозахист, антисептики",
         "id": "fire_bio_protection_antiseptics"
       },
       {
-        "name": "Для сауны",
+        "name": "Для сауни",
         "id": "for_sauna"
       },
       {
@@ -762,7 +762,7 @@
         "id": "stains"
       },
       {
-        "name": "Нитролаки",
+        "name": "Нітролаки",
         "id": "nitrovarnishes"
       },
       {
@@ -770,19 +770,19 @@
         "id": "impregnations"
       },
       {
-        "name": "Прочее",
+        "name": "Інше",
         "id": "other"
       }
     ]
   },
   {
-    "name": "Пены, герметики, клей",
+    "name": "Піни, герметики, клей",
     "id": "foams_sealants_glue",
     "imgId": "4",
-    "imgAlt": "Клей Quelyd Спец-флизелин",
+    "imgAlt": "Клей",
     "subcategories": [
       {
-        "name": "Пены монтажные",
+        "name": "Піни монтажні",
         "id": "foams"
       },
       {
@@ -794,7 +794,7 @@
         "id": "mastics"
       },
       {
-        "name": "Жидкие гвозди",
+        "name": "Рідкі цвяхи",
         "id": "liquid_nails"
       },
       {
@@ -802,127 +802,123 @@
         "id": "pva"
       },
       {
-        "name": "Контактный клей",
+        "name": "Контактний клей",
         "id": "contact_glue"
       },
       {
-        "name": "Клей для обоев",
+        "name": "Клей для шпалер",
         "id": "wallpaper_glue"
       },
       {
-        "name": "Для напольных покрытий",
+        "name": "Для підлогових покриттів",
         "id": "for_floor_coverings"
       },
       {
-        "name": "Для потолочных и декоративных плит",
+        "name": "Для стельових та декоративних плит",
         "id": "for_ceiling_and_decorative_tiles"
       },
       {
-        "name": "Универсальные клея",
+        "name": "Універсальні клеї",
         "id": "universal_adhesives"
       },
       {
-        "name": "Холодная сварка",
+        "name": "Холодне зварювання",
         "id": "cold_welding"
       },
       {
-        "name": "Эпоксидные клея",
+        "name": "Епоксидні клеї",
         "id": "epoxy_adhesives"
       }
     ]
   },
   {
-    "name": "Инструменты",
+    "name": "Інструменти",
     "id": "instruments",
     "imgId": "5",
     "imgAlt": "Валик",
     "subcategories": [
       {
-        "name": "Измерительные",
+        "name": "Вимірювальні",
         "id": "measuring"
       },
       {
-        "name": "Ленты",
+        "name": "Стрічки",
         "id": "ribbons"
       },
       {
-        "name": "Малярный",
+        "name": "Малярні",
         "id": "painter"
       },
       {
-        "name": "Монтажно-крепежный",
+        "name": "Монтажно-кріпильні",
         "id": "mounting_fastening"
       },
       {
-        "name": "Пистолеты",
+        "name": "Пістолети",
         "id": "pistols"
       },
       {
-        "name": "Абразивные",
+        "name": "Абразивні",
         "id": "abrasive"
       },
       {
-        "name": "Режущие",
+        "name": "Ріжучі",
         "id": "cutting"
       },
       {
-        "name": "Средства защиты труда",
+        "name": "Засоби захисту праці",
         "id": "labor_protection_equipment"
       },
       {
-        "name": "Прочее",
-        "id": "other"
-      },
-      {
-        "name": "Столярно-слесарные",
+        "name": "Столярно-слюсарні",
         "id": "carpentry_plumbing"
       },
       {
-        "name": "Штукатурные",
+        "name": "Штукатурні",
         "id": "plastering"
+      },
+      {
+        "name": "Інше",
+        "id": "other"
       }
     ]
   },
   {
-    "name": "Оконная комплектация",
+    "name": "Віконна комплектація",
     "id": "window_equipment",
     "imgId": "6",
-    "imgAlt": "Оконная рамка в разрезе",
+    "imgAlt": "Віконна рамка у розрізі",
     "subcategories": [
       {
         "name": "Космофен",
         "id": "cosmofen"
       },
       {
-        "name": "Откос оконный утепленный",
+        "name": "Відкос віконний утеплений",
         "id": "insulated_window_slope"
       },
       {
-        "name": "Москитная группа",
+        "name": "Москітна група",
         "id": "mosquito_group"
       },
       {
-        "name": "Панели ПВХ",
+        "name": "Панелі ПВХ",
         "id": "pvc_panels"
       },
       {
-        "name": "Подкладки под стеклопакет",
+        "name": "Підкладки під склопакет",
         "id": "linings_for_glass_units"
       },
       {
-        "name": "Прочее",
-        "id": "other"
-      },
-      {
-        "name": "Подоконник",
+        "name": "Підвіконня",
         "id": "windowsill"
       },
       {
-        "name": "Профили, нащельники",
+        "name": "Профілі, нащільники",
         "id": "profiles_flashings"
       },
       {
-        "name": "Псулы, ленты",
+        "name": "Псули, стрічки",
         "id": "psules_ribbons"
       },
       {
@@ -930,35 +926,39 @@
         "id": "furniture_handles"
       },
       {
-        "name": "Сэндвич-ПВХ",
+        "name": "Сендвіч-ПВХ",
         "id": "sandwich_PVC"
       },
       {
-        "name": "Уплотнители оконные",
+        "name": "Ущільнювачі віконні",
         "id": "window_seals"
+      },
+      {
+        "name": "Інше",
+        "id": "other"
       }
     ]
   },
   {
-    "name": "Общестроительные материалы",
+    "name": "Загальнобудівельні матеріали",
     "id": "construction_materials",
     "imgId": "7",
-    "imgAlt": "Berg - Наливной пол",
+    "imgAlt": "Наливна підлога",
     "subcategories": [
       {
-        "name": "Двери входные",
+        "name": "Двері вхідні",
         "id": "entrance_doors"
       },
       {
-        "name": "Двери межкомнатные",
+        "name": "Двері міжкімнатні",
         "id": "interior_doors"
       },
       {
-        "name": "Плинтуса, порожки,стремянки",
+        "name": "Плінтуса, поріжки, драбини",
         "id": "thresholds_stepladders"
       },
       {
-        "name": "Сухие смеси",
+        "name": "Сухі суміші",
         "id": "dry_mixes"
       },
       {
@@ -966,35 +966,35 @@
         "id": "armature"
       },
       {
-        "name": "Сантехника",
+        "name": "Сантехніка",
         "id": "plumbing"
       },
       {
-        "name": "Теплоизоляция",
+        "name": "Теплоізоляція",
         "id": "thermal_insulation"
       },
       {
-        "name": "Плинтуса потолочные, угол, плитка, фартук",
+        "name": "Плінтуси стельові, кут, плитка, фартух",
         "id": "ceiling_plinths_corner_tiles_apron"
       },
       {
-        "name": "Профили для гипсокартона, комплектующие",
+        "name": "Профілі для гіпсокартону, комплектуючі",
         "id": "profiles_for_plasterboard_components"
       },
       {
-        "name": "Электрика",
+        "name": "Електрика",
         "id": "electrics"
       }
     ]
   },
   {
-    "name": "Крепеж",
+    "name": "Кріплення",
     "id": "fasteners",
     "imgId": "8",
-    "imgAlt": "Угловой крепеж",
+    "imgAlt": "Кутове кріплення",
     "subcategories": [
       {
-        "name": "Анкерные болты",
+        "name": "Анкерні болти",
         "id": "anchor_bolts"
       },
       {
@@ -1002,56 +1002,56 @@
         "id": "nuts"
       },
       {
-        "name": "Гвозди",
+        "name": "Цвяхи",
         "id": "nails"
       },
       {
-        "name": "Дюбельная техника",
+        "name": "Дюбельна техніка",
         "id": "doweling_technology"
       },
       {
-        "name": "Саморезы и шурупы",
+        "name": "Саморізи та шурупи",
         "id": "self_tapping_screws"
       },
       {
-        "name": "Крепеж перфорированный",
+        "name": "Кріплення перфороване",
         "id": "perforated_fasteners"
       },
       {
-        "name": "Прочее",
-        "id": "other"
-      },
-      {
-        "name": "Скобы строительные",
+        "name": "Скоби будівельні",
         "id": "construction_staples"
       },
       {
-        "name": "Шпильки резьбовые",
+        "name": "Шпильки різьбові",
         "id": "threaded_studs"
+      },
+      {
+        "name": "Інше",
+        "id": "other"
       }
     ]
   },
   {
-    "name": "Хозтовары",
+    "name": "Госптовари",
     "id": "household_goods",
     "imgId": "9",
-    "imgAlt": "Полотно лопаты",
+    "imgAlt": "Полотно лопати",
     "subcategories": [
       {
         "name": "Батарейки",
         "id": "batteries"
       },
       {
-        "name": "Бытовая химия",
+        "name": "Побутова хімія",
         "id": "household_chemicals"
       },
       {
-        "name": "Прочие хозтовары",
-        "id": "other_household_goods"
+        "name": "Лопати снігові",
+        "id": "snow_shovels"
       },
       {
-        "name": "Лопаты снеговые",
-        "id": "snow_shovels"
+        "name": "Iншe",
+        "id": "other_household_goods"
       }
     ]
   }

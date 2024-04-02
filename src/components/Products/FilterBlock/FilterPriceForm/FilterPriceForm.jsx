@@ -451,7 +451,7 @@ export default function FilterPriceForm() {
         type="button"
         className={filterCls.titleButton}
         onClick={() => setIsClose(!isClosed)}
-        aria-label={isClosed ? 'Расскрыть меню фильтров Цена' : 'Свернуть меню фильтров Цена'}
+        aria-label={isClosed ? 'Розкрити меню фільтрів Ціна' : 'Згорнути меню фільтрів Ціна'}
       >
         <p className={classNames(
           textCls.text,
@@ -459,7 +459,7 @@ export default function FilterPriceForm() {
           filterCls.title,
         )}
         >
-          Цена, ₴
+          Ціна, ₴
         </p>
         <ChevronUp className={classNames(
           filterCls.chevron,

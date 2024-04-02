@@ -140,7 +140,7 @@ export default function Products() {
               aria-atomic="true"
               aria-live="assertive"
             >
-              Всего товаров:
+              Усього товарів:
               <span>
                 {` ${productAmount}`}
               </span>
@@ -149,14 +149,14 @@ export default function Products() {
           </div>
           <div className={productsCls.sortAndAppearanceBlock}>
             <Select
-              label="Сортировать по"
+              label="Сортувати за"
               options={sortSelectOptions}
               defaultSelectedOptionId="default"
               searchParamName="sortBy"
             />
             <div className={productsCls.appearanceOptions}>
               <Select
-                label="Показывать по"
+                label="Показувати по"
                 options={viewSelectOptions}
                 defaultSelectedOptionId="12"
                 searchParamName="perView"
@@ -213,7 +213,7 @@ export default function Products() {
                     productsCls.noProductsText,
                   )}
                   >
-                    Товары не найдены
+                    Товари не знайдено
                   </p>
                   <Button
                     className={productsCls.resetButton}
@@ -224,7 +224,7 @@ export default function Products() {
                       setSearchParams(newSearchParams);
                     }}
                   >
-                    Сбросить фильтры
+                    Видалити фільтри
                   </Button>
                 </div>
               </div>
