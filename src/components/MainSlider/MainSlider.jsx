@@ -14,7 +14,7 @@ export default function MainSlider() {
       to="/delivery"
       className={mainSliderCls.slide_1}
       alt="Дізнатися докладніше про умови доставки та пункти видачі"
-      linkText="Дізнатись детальніше"
+      linkText="Детальніше"
       key={mainSliderCls.slide_1}
     >
       Замов онлайн —
@@ -27,7 +27,7 @@ export default function MainSlider() {
       to="/"
       className={mainSliderCls.slide_2}
       alt="Дізнатись детальніше про співпрацю з оптовиками"
-      linkText="Дізнатись детальніше"
+      linkText="Детальніше"
       key={mainSliderCls.slide_2}
     >
       Працюємо з

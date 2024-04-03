@@ -17,6 +17,7 @@ import { NewsPage, loader as newsPageLoader } from '../pages/News/News.jsx';
 import { NewsArticlePage, loader as newsArticleLoader } from '../pages/NewsArticle/NewsArticle.jsx';
 import { loader as getAnalogueProductsLoader, action as getAnalogueProductsAction } from '../pages/GetAnalogueProducts/GetAnalogueProducts.jsx';
 import { GetCompareProducts, loader as getCompareProductsLoader } from '../pages/GetCompareProducts/GetCompareProducts.jsx';
+import { GetRandomProduct, loader as getRandomProductLoader } from '../pages/GetRandomProduct/GetRandomProduct.jsx';
 
 const router = createBrowserRouter([
   {
@@ -92,6 +93,11 @@ const router = createBrowserRouter([
         path: 'getCompareProducts',
         loader: getCompareProductsLoader,
         element: <GetCompareProducts />,
+      },
+      {
+        path: 'getRandomProduct',
+        loader: getRandomProductLoader,
+        element: <GetRandomProduct />,
       },
     ],
   },

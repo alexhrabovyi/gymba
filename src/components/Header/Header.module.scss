@@ -431,6 +431,34 @@
   }
 }
 
+.openLoginPopupBtn {
+  width: 24px;
+  height: 24px;
+  fill: $blue;
+  transition: all .05s ease-in-out;
+  @include flex-builder(row, center, center);
+  border: none;
+  background: none;
+
+  &:hover {
+    fill: $dark-blue;
+  }
+
+  &:active {
+    fill: $blue-active;
+  }
+
+  @include media-m {
+    width: 30px;
+    height: 30px;
+  }
+
+  @include media-s {
+    width: 28px;
+    height: 28px;
+  }
+}
+
 .iconInLink {
   width: 100%;
   height: 100%;

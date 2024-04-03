@@ -18,6 +18,7 @@ import Button from '../common/Button/Button.jsx';
 import HeaderMainMenu from './HeaderMainMenu/HeaderMainMenu.jsx';
 import HeaderCategoryMenu from './HeaderCategoryMenu/HeaderCategoryMenu.jsx';
 import HeaderSubcategoryMenu from './HeaderSubcategoryMenu/HeaderSubcategoryMenu.jsx';
+import LoginRegisterPopup from './LoginRegisterPopup/LoginRegisterPopup.jsx';
 import containerCls from '../../scss/_container.module.scss';
 import textCls from '../../scss/_text.module.scss';
 import linkCls from '../../scss/_link.module.scss';
@@ -42,11 +43,13 @@ export default function Header() {
   const headerWrapperRef = useRef(null);
   const headerRef = useRef(null);
   const openMenuButtonRef = useRef(null);
+  const openLoginPopupBtnRef = useRef(null);
 
   const [activeCategory, setActiveCategory] = useState(categories[0]);
   const [isMainMenuOpen, setIsMainMenuOpen] = useState(false);
   const [isCategoryMenuOpen, setIsCategoryMenuOpen] = useState(false);
   const [isSubcategoryMenuOpen, setIsSubcategoryMenuOpen] = useState(false);
+  const [isLoginPopupOpen, setIsLoginPopupOpen] = useState(false);
   const [wishlistAmount, setWishlistAmount] = useState(null);
   const [compareAmount, setCompareAmount] = useState(null);
   const [cartAmount, setCartAmount] = useState(null);
@@ -155,6 +158,10 @@ export default function Header() {
       setIsSubcategoryMenuOpen(false);
     }
   }
+
+  const openLoginPopupBtnOnClick = useCallback(() => {
+    setIsLoginPopupOpen(true);
+  }, []);
 
   const catalogBtnOnClick = useCallback(() => {
     setIsMainMenuOpen(false);
@@ -317,13 +324,16 @@ export default function Header() {
                 {windowWidth > 1360 && (
                 <>
                   <li>
-                    <Link
-                      to="/"
-                      className={headerCls.iconLink}
-                      aria-label="Профіль користувача"
+                    <button
+                      ref={openLoginPopupBtnRef}
+                      className={headerCls.openLoginPopupBtn}
+                      type="button"
+                      onClick={openLoginPopupBtnOnClick}
+                      aria-haspopup="dialog"
+                      aria-label="Відкрити вікно Профіль користувача"
                     >
                       <User className={headerCls.iconInLink} />
-                    </Link>
+                    </button>
                   </li>
                   <li>
                     <Link
@@ -377,6 +387,7 @@ export default function Header() {
           isMenuOpen={isMainMenuOpen}
           categories={categories}
           catalogBtnOnClick={catalogBtnOnClick}
+          openLoginPopupBtnOnClick={openLoginPopupBtnOnClick}
         />
         {windowWidth <= 1024 && (
         <>
@@ -401,6 +412,11 @@ export default function Header() {
           isAnyMenuOpen && backdropCls.backdrop_active,
         )}
         onClick={backdropOnClick}
+      />
+      <LoginRegisterPopup
+        isActive={isLoginPopupOpen}
+        setIsActive={setIsLoginPopupOpen}
+        openButtonRef={openLoginPopupBtnRef}
       />
     </>
   );

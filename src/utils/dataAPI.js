@@ -65,6 +65,18 @@ export function getProduct(categoryId, subcategoryId, productId) {
   };
 }
 
+export function getRandomProduct() {
+  const { categoryId, subcategory } = getCategoryAndSubcategory('enamels', 'alkyd_enamels');
+
+  const randomProduct = (subcategory.products.sort(() => 0.5 - Math.random()))[0];
+
+  return {
+    categoryId,
+    subcategoryId: subcategory.id,
+    product: randomProduct,
+  };
+}
+
 export function getSubcategoryFilters(categoryId, subcategoryId) {
   const subCategoryProducts = getCategoryAndSubcategory(categoryId, subcategoryId)
     .subcategory.products;

@@ -1,12 +1,14 @@
 import {
-  memo, useEffect, useRef, useState, useCallback, useLayoutEffect,
+  memo, useEffect, useRef, useState, useCallback, useLayoutEffect, useMemo, Suspense,
 } from 'react';
-import { Link, useFetcher } from 'react-router-dom';
+import { Link, useFetcher, Await } from 'react-router-dom';
 import classNames from 'classnames';
 import useOnResize from '../../../hooks/useOnResize.jsx';
 import findAllInteractiveElements from '../../../utils/findAllInteractiveElements.js';
 import getScrollWidth from '../../../utils/getScrollWidth.jsx';
 import useFetcherLoad from '../../../hooks/useFetcherLoad.jsx';
+import Spinner from '../../common/Spinner/Spinner.jsx';
+import DynamicImage from '../../common/DynamicImage/DynamicImage.jsx';
 import containerCls from '../../../scss/_container.module.scss';
 import linkCls from '../../../scss/_link.module.scss';
 import textCls from '../../../scss/_text.module.scss';
@@ -14,14 +16,15 @@ import headerMenuCls from './HeaderMainMenu.module.scss';
 import User from '../images/user.svg';
 import Compare from '../../../assets/images/icons/compare.svg';
 import Favorite from '../../../assets/images/icons/favorite.svg';
-import productImg from './images/product.png';
 import ChevronRight from '../../../assets/images/icons/chevronRight.svg';
 import Tag from '../images/tag.svg';
 import Phone from '../images/phone.svg';
 
-const HeaderMainMenu = memo(({ isMenuOpen, categories, catalogBtnOnClick }) => {
+const HeaderMainMenu = memo(({
+  isMenuOpen, categories, catalogBtnOnClick, openLoginPopupBtnOnClick }) => {
   const wishlistFetcher = useFetcher();
   const compareFetcher = useFetcher();
+  const randomProductFetcher = useFetcher();
 
   const menuRef = useRef(null);
 
@@ -29,6 +32,7 @@ const HeaderMainMenu = memo(({ isMenuOpen, categories, catalogBtnOnClick }) => {
   const [windowWidth, setWindowWidth] = useState(null);
   const [wishlistAmount, setWishlistAmount] = useState(null);
   const [compareAmount, setCompareAmount] = useState(null);
+  const [randomProduct, setRandomProduct] = useState(null);
 
   const activeCategory = categories.find((c) => c.id === activeCategoryId);
   const { subcategories } = activeCategory;
@@ -136,6 +140,58 @@ const HeaderMainMenu = memo(({ isMenuOpen, categories, catalogBtnOnClick }) => {
     }
   }
 
+  useFetcherLoad(randomProductFetcher, '/getRandomProduct');
+
+  if (randomProductFetcher.data) {
+    if (randomProductFetcher.data.randomProduct !== randomProduct) {
+      setRandomProduct(randomProductFetcher.data.randomProduct);
+    }
+  }
+
+  const randomProductElement = useMemo(() => {
+    if (!randomProduct) return;
+
+    const { categoryId, subcategoryId, product } = randomProduct;
+    const link = `/${categoryId}/${subcategoryId}/${product.id}`;
+    const imgSrc = import(`../../../assets/images/productImgs/${product.id}.webp`);
+
+    return (
+      <div className={headerMenuCls.productCard}>
+        <Link to={link} className={headerMenuCls.imgLink} alt={product.name}>
+          <Suspense
+            fallback={<Spinner className={headerMenuCls.productCardImgSpinner} />}
+          >
+            <Await
+              resolve={imgSrc}
+            >
+              <DynamicImage
+                className={headerMenuCls.productImg}
+                alt={product.name}
+              />
+            </Await>
+          </Suspense>
+        </Link>
+        <div className={headerMenuCls.nameAndPriceBlock}>
+          <Link to={link} className={linkCls.link} alt={product.name}>
+            {product.name}
+          </Link>
+          <div className={headerMenuCls.priceBlock}>
+            {product.oldPrice && (
+              <p className={headerMenuCls.oldPrice}>
+                {product.oldPrice}
+                &nbsp;₴/шт
+              </p>
+            )}
+            <p className={headerMenuCls.actualPrice}>
+              {product.price}
+              <span className={headerMenuCls.actualPriceSpan}>₴/шт</span>
+            </p>
+          </div>
+        </div>
+      </div>
+    );
+  }, [randomProduct]);
+
   function onPointerMoveHandler(e) {
     const link = e.target.closest('a');
     if (!link) return;
@@ -166,13 +222,15 @@ const HeaderMainMenu = memo(({ isMenuOpen, categories, catalogBtnOnClick }) => {
         <nav className={headerMenuCls.iconLinkBlock}>
           <ul className={headerMenuCls.iconLinkList}>
             <li>
-              <Link
-                to="/"
-                className={headerMenuCls.iconLink}
-                aria-label="Профіль користувача"
+              <button
+                className={headerMenuCls.openLoginPopupBtn}
+                type="button"
+                onClick={openLoginPopupBtnOnClick}
+                aria-haspopup="dialog"
+                aria-label="Відкрити вікно Профіль користувача"
               >
                 <User className={headerMenuCls.iconInLink} />
-              </Link>
+              </button>
             </li>
             <li>
               <Link
@@ -251,23 +309,7 @@ const HeaderMainMenu = memo(({ isMenuOpen, categories, catalogBtnOnClick }) => {
           >
             Популярне сьогодні
           </p>
-          <div className={headerMenuCls.productCard}>
-            <Link to="/" className={headerMenuCls.imgLink} alt="Dulux MASTER 30 BC 2,3 л. краска алк. полуматовая б/цв">
-              <img src={productImg} className={headerMenuCls.productImg} alt="Dulux MASTER 30 BC 2,3 л. краска алк. полуматовая б/цв" />
-            </Link>
-            <div className={headerMenuCls.nameAndPriceBlock}>
-              <Link to="/" className={linkCls.link} alt="Dulux MASTER 30 BC 2,3 л. краска алк. полуматовая б/цв">
-                Dulux MASTER 30 BC 2,3 л. краска алк. полуматовая б/цв
-              </Link>
-              <div className={headerMenuCls.priceBlock}>
-                <p className={headerMenuCls.oldPrice}>3 512 ₽/шт</p>
-                <p className={headerMenuCls.actualPrice}>
-                  3 088
-                  <span className={headerMenuCls.actualPriceSpan}>₽/шт</span>
-                </p>
-              </div>
-            </div>
-          </div>
+          {randomProductElement}
         </article>
       </>
       )}
@@ -276,13 +318,15 @@ const HeaderMainMenu = memo(({ isMenuOpen, categories, catalogBtnOnClick }) => {
         <nav className={headerMenuCls.iconLinkBlock}>
           <ul className={headerMenuCls.iconLinkList}>
             <li>
-              <Link
-                to="/"
-                className={headerMenuCls.iconLink}
-                aria-label="Профіль користувача"
+              <button
+                className={headerMenuCls.openLoginPopupBtn}
+                type="button"
+                onClick={openLoginPopupBtnOnClick}
+                aria-haspopup="dialog"
+                aria-label="Відкрити вікно Профіль користувача"
               >
                 <User className={headerMenuCls.iconInLink} />
-              </Link>
+              </button>
             </li>
             <li>
               <Link

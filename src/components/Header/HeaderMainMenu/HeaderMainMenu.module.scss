@@ -72,6 +72,24 @@
   list-style: none;
 }
 
+.openLoginPopupBtn {
+  @include flex-builder(row, center, center);
+  border: none;
+  background: none;
+  width: 24px;
+  height: 24px;
+  fill: $blue;
+  transition: all .05s ease-in-out;
+
+  &:hover {
+    fill: $dark-blue;
+  }
+
+  &:active {
+    fill: $blue-active;
+  }
+}
+
 .iconLink {
   display: block;
   width: 24px;
@@ -204,6 +222,12 @@
   width: 100%;
 
   @include flex-builder(row, center, center);
+}
+
+.productCardImgSpinner {
+  fill: $blue;
+  width: 75px;
+  height: 75px;
 }
 
 .productImg {

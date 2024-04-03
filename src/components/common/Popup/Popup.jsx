@@ -47,7 +47,10 @@ const Popup = memo(({
   function backdropOnClick(e) {
     if (e.target === popupBackdropRef.current) {
       setIsActive(false);
-      openButton.focus();
+
+      if (openButton) {
+        openButton.focus();
+      }
     }
   }
 
@@ -76,7 +79,10 @@ const Popup = memo(({
           aria-label={`Закрити ${label}`}
           onClick={() => {
             setIsActive(false);
-            openButton.focus();
+
+            if (openButton) {
+              openButton.focus();
+            }
           }}
           aria-haspopup="dialog"
         >
