@@ -12,7 +12,7 @@ import ViewsIcon from '../../../assets/images/icons/views.svg';
 const NewsPreview = memo(({
   name, id, date, views,
 }) => {
-  const [imgSrc] = useState(() => import(`../../../assets/images/newsImgs/${id}.png`));
+  const [imgSrc] = useState(() => import(`../../../assets/images/newsImgs/${id}.webp`));
 
   return (
     <div className={previewCls.preview}>

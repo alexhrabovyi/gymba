@@ -52,7 +52,7 @@ export default function NewsArticle() {
   }, []);
 
   const createContentImg = useCallback((imgId, imgAlt) => {
-    const imgSrc = import(`../../assets/images/newsImgs/additional-${imgId}-${articleObj.id}.png`);
+    const imgSrc = import(`../../assets/images/newsImgs/additional-${imgId}-${articleObj.id}.webp`);
 
     return (
       <div
