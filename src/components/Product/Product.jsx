@@ -176,6 +176,7 @@ export default function Product() {
     }
 
     setImgSrcs(srcs);
+    setActiveSlideId(0);
   }, [product]);
 
   useEffect(downloadImages, [downloadImages]);

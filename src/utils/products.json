@@ -2,7 +2,6 @@
   {
     "name": "Емалі",
     "id": "enamels",
-    "imgId": "1",
     "imgAlt": "Емаль",
     "subcategories": [
       {
@@ -702,7 +701,6 @@
   {
     "name": "Фарби",
     "id": "paints",
-    "imgId": "2",
     "imgAlt": "Фарба",
     "subcategories": [
       {
@@ -738,7 +736,6 @@
   {
     "name": "Захист для деревини",
     "id": "wood_protection",
-    "imgId": "3",
     "imgAlt": "Засіб для захисту деревини",
     "subcategories": [
       {
@@ -778,7 +775,6 @@
   {
     "name": "Піни, герметики, клей",
     "id": "foams_sealants_glue",
-    "imgId": "4",
     "imgAlt": "Клей",
     "subcategories": [
       {
@@ -834,7 +830,6 @@
   {
     "name": "Інструменти",
     "id": "instruments",
-    "imgId": "5",
     "imgAlt": "Валик",
     "subcategories": [
       {
@@ -886,7 +881,6 @@
   {
     "name": "Віконна комплектація",
     "id": "window_equipment",
-    "imgId": "6",
     "imgAlt": "Віконна рамка у розрізі",
     "subcategories": [
       {
@@ -942,7 +936,6 @@
   {
     "name": "Загальнобудівельні матеріали",
     "id": "construction_materials",
-    "imgId": "7",
     "imgAlt": "Наливна підлога",
     "subcategories": [
       {
@@ -990,7 +983,6 @@
   {
     "name": "Кріплення",
     "id": "fasteners",
-    "imgId": "8",
     "imgAlt": "Кутове кріплення",
     "subcategories": [
       {
@@ -1034,7 +1026,6 @@
   {
     "name": "Госптовари",
     "id": "household_goods",
-    "imgId": "9",
     "imgAlt": "Полотно лопати",
     "subcategories": [
       {

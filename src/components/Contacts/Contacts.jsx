@@ -90,6 +90,7 @@ export default function Contacts() {
           Реквізити компанії
         </h2>
         <table className={contactsCls.infoTable}>
+          <tbody className={contactsCls.tbody}>
           <tr className={contactsCls.tableRow}>
             <th
               className={contactsCls.rowHeader}
@@ -134,6 +135,7 @@ export default function Contacts() {
               UANP3057564166410648351904781
             </td>
           </tr>
+          </tbody>
         </table>
       </div>
     </main>

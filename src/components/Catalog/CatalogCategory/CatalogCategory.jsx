@@ -10,7 +10,7 @@ export default function Category({ categoryProps, figureId }) {
   const { subcategories } = categoryProps;
 
   const [figureSrc] = useState(() => import(`./images/figure_${figureId}.svg?url`));
-  const [imgSrc] = useState(() => import(`./images/product_${categoryProps.imgId}.png`));
+  const [imgSrc] = useState(() => import(`../../../assets/images/categoryImgs/${categoryProps.id}.webp`));
 
   return (
     <nav className={categoryCls.category}>

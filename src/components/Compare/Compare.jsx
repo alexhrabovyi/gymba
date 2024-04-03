@@ -460,7 +460,7 @@ export default function Compare() {
                 onClick={() => setDisplayedSpecsType('similar')}
                 aria-label="Показати характеристики, що сходяться"
               >
-                Сходства
+                Однакові
               </button>
               <button
                 type="button"
@@ -471,7 +471,7 @@ export default function Compare() {
                 onClick={() => setDisplayedSpecsType('differ')}
                 aria-label="Показати характеристики, які відрізняються"
               >
-                Отличия
+                Різні
               </button>
             </div>
           </div>

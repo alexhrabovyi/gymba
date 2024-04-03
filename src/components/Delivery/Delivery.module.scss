@@ -31,7 +31,7 @@
   width: 100%;
   height: 600px;
   padding: 4.59%;
-  background: url('./images/banner.png') no-repeat top right $light-blue;
+  background: url('./images/banner.webp') no-repeat top right $light-blue;
 
   @media (max-width: 1600px) {
     height: 520px;
@@ -42,11 +42,11 @@
   }
 
   @media (max-width: 1250px) {
-    background: url('./images/banner.png') no-repeat top right -90px $light-blue;
+    background: url('./images/banner.webp') no-repeat top right -90px $light-blue;
   }
 
   @media (max-width: 1100px) {
-    background: url('./images/banner.png') no-repeat top right -180px $light-blue;
+    background: url('./images/banner.webp') no-repeat top right -180px $light-blue;
   }
 
   @include media-m {
@@ -54,12 +54,12 @@
   }
 
   @media (max-width: 865px) {
-    background: url('./images/banner.png') no-repeat top right -250px $light-blue;
+    background: url('./images/banner.webp') no-repeat top right -250px $light-blue;
   }
 
   @include media-s {
     height: 400px;
-    background: url('./images/banner.png') no-repeat top right -300px $light-blue;
+    background: url('./images/banner.webp') no-repeat top right -300px $light-blue;
   }
 
   @include media-xs {
@@ -67,7 +67,7 @@
   }
 
   @media (max-width: 500px) {
-    background: url('./images/banner.png') no-repeat top right -400px $light-blue;
+    background: url('./images/banner.webp') no-repeat top right -400px $light-blue;
   }
 }
 

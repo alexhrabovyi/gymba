@@ -125,30 +125,37 @@
 }
 
 .infoTable {
+  display: block;
   width: 100%;
   max-width: 650px;
   font-family: Onest, sans-serif;
   font-size: 16px;
+  overflow-x: auto;
+}
+
+.tbody {
+  width: 100%;
 }
 
 .tableRow {
-  @include flex-builder(row, flex-start, flex-start);
-
+  min-width: 100%;
+  display: grid;
+  grid-template-columns: 30% 65%;
   padding-top: 16px;
   padding-bottom: 32px;
   border-top: 1px solid $dark-grey;
   gap: 5%;
+
+  @include media-xs {
+    grid-template-columns: 47.5% 47.5%;
+  }
 }
 
 .rowHeader {
+  width: 100%;
   display: flex;
-  width: 30%;
   flex-shrink: 0;
   color: $text-grey;
   font-weight: 400;
   text-align: left;
-
-  @include media-xs {
-    width: 50%;
-  }
 }
