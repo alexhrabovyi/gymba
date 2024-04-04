@@ -1,4 +1,3 @@
-/* eslint-disable import/prefer-default-export */
 import { getCompareProductCards } from '../../utils/dataAPI';
 
 export function loader({ request }) {

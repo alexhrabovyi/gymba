@@ -1,0 +1,101 @@
+@import '../../../scss/colors';
+@import '../../../scss/mixins';
+
+.searchBlock {
+  position: fixed;
+  z-index: 2000;
+  padding: 25px 16px 16px;
+  border-radius: 4px;
+  background: $white;
+  transition: opacity .25s ease-in-out;
+}
+
+.matchedText {
+  color: $blue;
+}
+
+.imgSpinner {
+  width: 20px;
+  height: 20px;
+  fill: $blue;
+}
+
+.img {
+  width: 40px;
+}
+
+.searchResultList {
+  width: 100%;
+  gap: 20px;
+  list-style: none;
+
+  @include flex-builder(column, flex-start, stretch);
+}
+
+.searchResultListElement {
+  width: 100%;
+  font-family: Onest, sans-serif;
+  font-size: 18px;
+
+  @include media-xs {
+    font-size: 16px;
+  }
+}
+
+.searchResultListLink {
+  color: $black;
+
+  @include flex-builder(row, flex-start, center);
+
+  gap: 16px;
+  text-decoration: none;
+
+  &:hover {
+    color: $blue;
+  }
+
+  &:active {
+    color: $dark-blue;
+  }
+}
+
+.searchResultListType {
+  font-weight: 800;
+}
+
+.nothingFoundText {
+  font-family: Onest, sans-serif;
+  font-size: 18px;
+
+  @include media-xs {
+    font-size: 16px;
+  }
+}
+
+.allResultsLink {
+  width: 100%;
+  margin-top: 25px;
+  color: $black;
+  fill: $black;
+  font-family: Onest, sans-serif;
+  font-size: 21px;
+  gap: 8px;
+  text-decoration: none;
+  transition: all .05s ease-in-out;
+
+  @include flex-builder(row, flex-start, center);
+
+  @include media-s {
+    font-size: 18px;
+  }
+
+  &:hover {
+    color: $blue;
+    fill: $blue;
+  }
+
+  &:active {
+    color: $dark-blue;
+    fill: $dark-blue;
+  }
+}

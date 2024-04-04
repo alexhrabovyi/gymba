@@ -13,12 +13,12 @@ import useHideScrollbarOnOpen from '../../hooks/useHideScrollbarOnOpen.jsx';
 import useOnResize from '../../hooks/useOnResize.jsx';
 import getScrollWidth from '../../utils/getScrollWidth.jsx';
 import useFetcherLoad from '../../hooks/useFetcherLoad.jsx';
-import Input from '../common/Input/Input.jsx';
 import Button from '../common/Button/Button.jsx';
 import HeaderMainMenu from './HeaderMainMenu/HeaderMainMenu.jsx';
 import HeaderCategoryMenu from './HeaderCategoryMenu/HeaderCategoryMenu.jsx';
 import HeaderSubcategoryMenu from './HeaderSubcategoryMenu/HeaderSubcategoryMenu.jsx';
 import LoginRegisterPopup from './LoginRegisterPopup/LoginRegisterPopup.jsx';
+import SearchResultBlock from './SearchResultsBlock/SearchResultsBlock.jsx';
 import containerCls from '../../scss/_container.module.scss';
 import textCls from '../../scss/_text.module.scss';
 import linkCls from '../../scss/_link.module.scss';
@@ -43,6 +43,7 @@ export default function Header() {
   const headerWrapperRef = useRef(null);
   const headerRef = useRef(null);
   const openMenuButtonRef = useRef(null);
+  const searchInputRef = useRef(null);
   const openLoginPopupBtnRef = useRef(null);
 
   const [activeCategory, setActiveCategory] = useState(categories[0]);
@@ -50,6 +51,9 @@ export default function Header() {
   const [isCategoryMenuOpen, setIsCategoryMenuOpen] = useState(false);
   const [isSubcategoryMenuOpen, setIsSubcategoryMenuOpen] = useState(false);
   const [isLoginPopupOpen, setIsLoginPopupOpen] = useState(false);
+  const [isSearchBlockActive, setIsSearchBlockActive] = useState(false);
+  const [searchBlockStyles, setSearchBlockStyles] = useState(null);
+  const [searchValue, setSearchValue] = useState(null);
   const [wishlistAmount, setWishlistAmount] = useState(null);
   const [compareAmount, setCompareAmount] = useState(null);
   const [cartAmount, setCartAmount] = useState(null);
@@ -139,6 +143,31 @@ export default function Header() {
     }
   }
 
+  // searchBlock functions
+
+  const setupSearchBlockStyles = useCallback(() => {
+    const searchInput = searchInputRef.current;
+    const header = headerRef.current;
+
+    if (!searchInput || !header) return;
+
+    setTimeout(() => {
+      const width = searchInput.offsetWidth;
+      const { left } = searchInput.getBoundingClientRect();
+      const headerBottom = header.getBoundingClientRect().bottom;
+
+      setSearchBlockStyles({
+        width,
+        left,
+        headerBottom,
+      });
+    });
+  }, []);
+
+  useLayoutEffect(setupSearchBlockStyles, [setupSearchBlockStyles]);
+
+  useOnResize(setupSearchBlockStyles);
+
   // event functions
 
   function headerOnClick(e) {
@@ -157,6 +186,14 @@ export default function Header() {
       setIsCategoryMenuOpen(false);
       setIsSubcategoryMenuOpen(false);
     }
+  }
+
+  function searchInputOnFocus() {
+    setIsSearchBlockActive(true);
+  }
+
+  function searchInputOnChange(e) {
+    setSearchValue(e.target.value);
   }
 
   const openLoginPopupBtnOnClick = useCallback(() => {
@@ -301,11 +338,14 @@ export default function Header() {
             </Link>
             )}
             <div className={headerCls.inputBlock}>
-              <Input
+              <input
+                ref={searchInputRef}
                 type="search"
                 className={headerCls.input}
                 placeholder="Пошук товарів"
                 required
+                onFocus={searchInputOnFocus}
+                onChange={searchInputOnChange}
               />
               {windowWidth > 768
                 ? (<Button className={headerCls.submitButton} type="submit">Знайти</Button>)
@@ -417,6 +457,14 @@ export default function Header() {
         isActive={isLoginPopupOpen}
         setIsActive={setIsLoginPopupOpen}
         openButtonRef={openLoginPopupBtnRef}
+      />
+      <SearchResultBlock
+        isActive={isSearchBlockActive}
+        setIsActive={setIsSearchBlockActive}
+        inputLeft={searchBlockStyles?.left}
+        inputWidth={searchBlockStyles?.width}
+        headerBottom={searchBlockStyles?.headerBottom}
+        searchValue={searchValue}
       />
     </>
   );

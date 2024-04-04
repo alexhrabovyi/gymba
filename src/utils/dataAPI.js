@@ -526,6 +526,107 @@ export function getAnalogueProducts(categoryId, subcategoryId, productId) {
 
   return randomProducts;
 }
+
+export function getSearchResults(searchQuery) {
+  const firstOrderRegExp = new RegExp(`^${searchQuery}`, 'i');
+  const lastOrderRegExp = new RegExp(`${searchQuery}`, 'i');
+
+  const allCategories = [];
+  const allSubcategories = [];
+  const allProducts = [];
+  const allNews = [];
+  const firstOrderResults = [];
+  const lastOrderResults = [];
+
+  products.forEach((c) => {
+    allCategories.push({
+      id: c.id,
+      name: c.name,
+    });
+
+    c.subcategories.forEach((s) => {
+      allSubcategories.push({
+        categoryId: c.id,
+        id: s.id,
+        name: s.name,
+      });
+
+      s.products?.forEach((p) => allProducts.push({
+        categoryId: c.id,
+        subcategoryId: s.id,
+        product: p,
+      }));
+    });
+  });
+
+  news.forEach((n) => {
+    allNews.push({
+      id: n.id,
+      name: n.name,
+    });
+  });
+
+  allCategories.forEach((c) => {
+    if (firstOrderRegExp.test(c.name)) {
+      firstOrderResults.push({
+        type: 'category',
+        category: c,
+      });
+    } else if (lastOrderRegExp.test(c.name)) {
+      lastOrderResults.push({
+        type: 'category',
+        category: c,
+      });
+    }
+  });
+
+  allSubcategories.forEach((s) => {
+    if (firstOrderRegExp.test(s.name)) {
+      firstOrderResults.push({
+        type: 'subcategory',
+        subcategory: s,
+      });
+    } else if (lastOrderRegExp.test(s.name)) {
+      lastOrderResults.push({
+        type: 'subcategory',
+        subcategory: s,
+      });
+    }
+  });
+
+  allProducts.forEach((p) => {
+    if (firstOrderRegExp.test(p.product.name)) {
+      firstOrderResults.push({
+        type: 'product',
+        product: p,
+      });
+    } else if (lastOrderRegExp.test(p.product.name)) {
+      lastOrderResults.push({
+        type: 'product',
+        product: p,
+      });
+    }
+  });
+
+  allNews.forEach((n) => {
+    if (firstOrderRegExp.test(n.name)) {
+      firstOrderResults.push({
+        type: 'news',
+        news: n,
+      });
+    } else if (lastOrderRegExp.test(n.name)) {
+      lastOrderResults.push({
+        type: 'news',
+        news: n,
+      });
+    }
+  });
+
+  const result = [...firstOrderResults, ...lastOrderResults];
+
+  return result;
+}
+
 // news
 
 function getAllNewsPreviews() {
