@@ -434,11 +434,12 @@
 .openLoginPopupBtn {
   width: 24px;
   height: 24px;
-  fill: $blue;
-  transition: all .05s ease-in-out;
-  @include flex-builder(row, center, center);
   border: none;
   background: none;
+  fill: $blue;
+  transition: all .05s ease-in-out;
+
+  @include flex-builder(row, center, center);
 
   &:hover {
     fill: $dark-blue;

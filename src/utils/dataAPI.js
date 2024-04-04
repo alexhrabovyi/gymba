@@ -67,8 +67,9 @@ export function getProduct(categoryId, subcategoryId, productId) {
 
 export function getRandomProduct() {
   const { categoryId, subcategory } = getCategoryAndSubcategory('enamels', 'alkyd_enamels');
+  const subcategoryProducts = subcategory.products.slice(0);
 
-  const randomProduct = (subcategory.products.sort(() => 0.5 - Math.random()))[0];
+  const randomProduct = (subcategoryProducts.sort(() => 0.5 - Math.random()))[0];
 
   return {
     categoryId,

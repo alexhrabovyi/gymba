@@ -74,10 +74,11 @@
 
 .openLoginPopupBtn {
   @include flex-builder(row, center, center);
-  border: none;
-  background: none;
+
   width: 24px;
   height: 24px;
+  border: none;
+  background: none;
   fill: $blue;
   transition: all .05s ease-in-out;
 
@@ -225,9 +226,9 @@
 }
 
 .productCardImgSpinner {
-  fill: $blue;
   width: 75px;
   height: 75px;
+  fill: $blue;
 }
 
 .productImg {

@@ -138,13 +138,13 @@
 }
 
 .tableRow {
-  min-width: 100%;
   display: grid;
-  grid-template-columns: 30% 65%;
+  min-width: 100%;
   padding-top: 16px;
   padding-bottom: 32px;
   border-top: 1px solid $dark-grey;
   gap: 5%;
+  grid-template-columns: 30% 65%;
 
   @include media-xs {
     grid-template-columns: 47.5% 47.5%;
@@ -152,8 +152,8 @@
 }
 
 .rowHeader {
-  width: 100%;
   display: flex;
+  width: 100%;
   flex-shrink: 0;
   color: $text-grey;
   font-weight: 400;

@@ -63,6 +63,12 @@
 
     @include flex-builder(row, space-between, flex-start);
   }
+
+  @include media-xs {
+    @include flex-builder(column, flex-start, flex-start);
+
+    gap: 20px;
+  }
 }
 
 .submitButton {

@@ -51,7 +51,7 @@ const LoginRegisterPopup = memo(({ isActive, setIsActive, openButtonRef }) => {
           <span
             className={classNames(
               popupCls.tabButtonLine,
-              isLoginTabActive && popupCls.tabButtonLine_active,
+              !isLoginTabActive && popupCls.tabButtonLine_active,
             )}
           />
         </button>
@@ -91,6 +91,26 @@ const LoginRegisterPopup = memo(({ isActive, setIsActive, openButtonRef }) => {
               </Button>
             </div>
           </ValidationForm>
+          <div className={popupCls.additionalBlock}>
+            <p className={classNames(
+              textCls.text,
+              textCls.textBlack,
+            )}
+            >
+              Досі не маєте акаунту?
+            </p>
+            <button
+              type="button"
+              className={popupCls.alreadyRegisteredBtn}
+              onClick={() => setIsLoginTabActive(false)}
+              role="tab"
+              aria-selected={isLoginTabActive}
+              aria-controls="registerTabPanel"
+              aria-label="Показати панель Реєстрація"
+            >
+              Реєстрація
+            </button>
+          </div>
         </div>
         <div
           className={classNames(
@@ -105,51 +125,37 @@ const LoginRegisterPopup = memo(({ isActive, setIsActive, openButtonRef }) => {
           >
             <InputWithErrorMessage
               type="text"
-              name="fullName"
-              inputClassName={classNames(
-                popupCls.input,
-                popupCls.input_long,
-              )}
+              name="fullname"
+              inputClassName={popupCls.input}
+              inputBlockClassName={popupCls.input_long}
               placeholder="ПІБ"
               required
             />
             <InputWithErrorMessage
               type="tel"
               name="tel"
-              inputClassName={classNames(
-                popupCls.input,
-                popupCls.input_short,
-              )}
+              inputClassName={popupCls.input}
               placeholder="Телефон"
               required
             />
             <InputWithErrorMessage
               type="email"
               name="email"
-              inputClassName={classNames(
-                popupCls.input,
-                popupCls.input_short,
-              )}
+              inputClassName={popupCls.input}
               placeholder="Електронна пошта"
               required
             />
             <InputWithErrorMessage
               type="password"
               name="password"
-              inputClassName={classNames(
-                popupCls.input,
-                popupCls.input_short,
-              )}
+              inputClassName={popupCls.input}
               placeholder="Пароль"
               required
             />
             <InputWithErrorMessage
               type="password"
               name="password_control"
-              inputClassName={classNames(
-                popupCls.input,
-                popupCls.input_short,
-              )}
+              inputClassName={popupCls.input}
               placeholder="Повторіть пароль"
               required
             />
@@ -161,27 +167,27 @@ const LoginRegisterPopup = memo(({ isActive, setIsActive, openButtonRef }) => {
                 Відправити
               </Button>
             </div>
-            <div className={popupCls.alreadyRegisteredBlock}>
-              <p className={classNames(
-                textCls.text,
-                textCls.textBlack,
-              )}
-              >
-                Вже реєструвалися?
-              </p>
-              <button
-                type="button"
-                className={popupCls.alreadyRegisteredBtn}
-                onClick={() => setIsLoginTabActive(true)}
-                role="tab"
-                aria-selected={isLoginTabActive}
-                aria-controls="loginTabPanel"
-                aria-label="Показати панель Вхід"
-              >
-                Увійти
-              </button>
-            </div>
           </ValidationForm>
+          <div className={popupCls.additionalBlock}>
+            <p className={classNames(
+              textCls.text,
+              textCls.textBlack,
+            )}
+            >
+              Вже реєструвалися?
+            </p>
+            <button
+              type="button"
+              className={popupCls.alreadyRegisteredBtn}
+              onClick={() => setIsLoginTabActive(true)}
+              role="tab"
+              aria-selected={isLoginTabActive}
+              aria-controls="loginTabPanel"
+              aria-label="Показати панель Вхід"
+            >
+              Увійти
+            </button>
+          </div>
         </div>
       </div>
     </Popup>

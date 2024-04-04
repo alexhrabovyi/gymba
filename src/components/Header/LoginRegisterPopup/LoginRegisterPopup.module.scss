@@ -1,0 +1,144 @@
+@import '../../../scss/mixins';
+@import '../../../scss/colors';
+
+
+.tabButtonsBlock {
+  width: 100%;
+  border-bottom: 1px solid $dark-grey;
+
+  @include flex-builder(row, flex-start, center);
+
+  gap: 32px;
+}
+
+.tabButtonLine {
+  position: absolute;
+  bottom: -1px;
+  left: 0;
+  display: none;
+  width: 100%;
+  height: 2px;
+  background: $blue;
+
+  &_active {
+    display: block;
+  }
+}
+
+.tabButton {
+  position: relative;
+  padding-right: 15px;
+  padding-bottom: 22px;
+  padding-left: 15px;
+  border: none;
+  background: none;
+  color: $black;
+  cursor: pointer;
+  font-family: Onest, sans-serif;
+  font-size: 18px;
+  font-weight: 800;
+  text-transform: uppercase;
+  transition: all .05s ease-in-out;
+
+  @include media-xs {
+    padding-bottom: 18px;
+    font-size: 16px;
+  }
+
+  &:hover .tabButtonLine {
+    display: block;
+  }
+}
+
+.tabContentBlocks {
+  width: 100%;
+}
+
+.tabContentBlock {
+  display: none;
+  margin-top: 24px;
+
+  &_active {
+    display: block;
+  }
+}
+
+.form {
+  display: grid;
+  gap: 36px 16px;
+  grid-template-columns: 1fr 1fr;
+
+  @include media-s {
+    grid-template-columns: 1fr;
+  }
+}
+
+.input {
+  height: 56px;
+  background-color: $light-blue;
+
+  &:hover {
+    background-color: $dark-grey;
+  }
+
+  &:focus {
+    background-color: $white;
+  }
+
+  &_long {
+    grid-column: 1/3;
+
+    @include media-s {
+      grid-column: 1/2;
+    }
+  }
+}
+
+.submitButtonBlock {
+  grid-column: 1/3;
+
+  @include media-s {
+    grid-column: 1/2;
+  }
+}
+
+.submitButton {
+  width: 162px;
+  height: 60px;
+  font-size: 16px;
+}
+
+.additionalBlock {
+  padding-top: 16px;
+  border-top: 1px solid $dark-grey;
+  margin-top: 48px;
+  gap: 8px;
+
+  @include flex-builder(row, center, center);
+
+  @include media-s {
+    margin-top: 42px;
+  }
+
+  @include media-xs {
+    margin-top: 36px;
+  }
+}
+
+.alreadyRegisteredBtn {
+  border: none;
+  background: none;
+  color: $blue;
+  cursor: pointer;
+  font-family: Onest, sans-serif;
+  font-size: 16px;
+  transition: all .05s ease-in-out;
+
+  &:hover {
+    color: $dark-blue;
+  }
+
+  &:active {
+    color: $blue-active;
+  }
+}

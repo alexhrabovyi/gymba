@@ -23,6 +23,57 @@ const ValidationForm = memo(({ className, children }) => {
     }, { once: true });
   }
 
+  function addTelMask(input) {
+    if (!input) return;
+
+    function createTel(str) {
+      let tel = str.replace(/\d{1,2}/, '+38($&');
+      tel = tel.replace(/(?<=\+38\(\d\d)\d(?=\d)/, '$&)');
+      tel = tel.replace(/(?<=\))\d{3}(?=\d)/, '$&-');
+      tel = tel.replace(/(?<=-)\d{2}(?=\d)/, '$&-');
+      return tel;
+    }
+
+    input.addEventListener('focusin', (e) => {
+      if (e.target.value.length < 3) {
+        e.target.value = '+38';
+      }
+    }, { once: true, passive: true });
+
+    input.addEventListener('input', (e) => {
+      if (e.target.value.length < 3) {
+        e.target.value = '+38';
+      }
+
+      e.target.value = e.target.value.replace(/(?<=\+38)[^0]/, '');
+      e.target.value = e.target.value.replace(/(?<=[\d-()+])\D/, '');
+
+      if (e.target.value.length > 3) {
+        const nums = e.target.value.slice(3, 15).match(/\d/g).join('');
+
+        e.target.value = createTel(nums);
+      }
+    }, { passive: true });
+
+    input.addEventListener('paste', (e) => {
+      e.preventDefault();
+
+      let paste = (e.clipboardData || window.clipboardData).getData('text');
+
+      if (paste.match(/\D/g)) return;
+
+      if (paste.startsWith('38')) {
+        paste = paste.slice(2);
+      }
+
+      if (paste[0] !== '0') {
+        paste = `0${paste}`;
+      }
+
+      e.target.value = createTel(paste);
+    });
+  }
+
   function validateEmail(input) {
     const regex = new RegExp("([!#-'*+/-9=?A-Z^-~-]+(\.[!#-'*+/-9=?A-Z^-~-]+)*|\"\(\[\]!#-[^-~ \t]|(\\[\t -~]))+\")@([!#-'*+/-9=?A-Z^-~-]+(\.[!#-'*+/-9=?A-Z^-~-]+)*|\[[\t -Z^-~]*])");
     return regex.test(input.value);
@@ -31,6 +82,27 @@ const ValidationForm = memo(({ className, children }) => {
   function validateName(input) {
     const regex = new RegExp('^[а-яa-z]{2,}(\\s[а-яa-z]{2,})*$', 'i');
     return regex.test(input.value);
+  }
+
+  function validateFullname(input) {
+    const regex = new RegExp('^[а-яa-z]{2,}(\\s[а-яa-z]{2,}){2}$', 'i');
+    return regex.test(input.value);
+  }
+
+  function validatePassword(input) {
+    const regex = new RegExp('\\s');
+
+    return !regex.test(input.value) && input.value.length > 7;
+  }
+
+  function validatePasswordControl(input) {
+    const originalPasswordInputValue = formRef.current.querySelector('[name="password"]')?.value;
+
+    return input.value === originalPasswordInputValue;
+  }
+
+  function validateTel(input) {
+    return input.value.length === 17;
   }
 
   function validateTextarea(textarea) {
@@ -45,6 +117,7 @@ const ValidationForm = memo(({ className, children }) => {
             markInvalid(input, 'Некоректний email');
             throw new ValidationError('Некоректний email');
           }
+
           formData.append(input.name, input.value);
           break;
         }
@@ -54,9 +127,39 @@ const ValidationForm = memo(({ className, children }) => {
               markInvalid(input, 'Некоректне ім\'я');
               throw new ValidationError('Некоректне ім\'я');
             }
-
-            formData.append(input.name, input.value);
+          } else if (input.name === 'fullname') {
+            if (!validateFullname(input)) {
+              markInvalid(input, 'Некоректне ПІБ');
+              throw new ValidationError('Некоректне ПІБ');
+            }
           }
+
+          formData.append(input.name, input.value);
+          break;
+        }
+        case 'password': {
+          if (input.name === 'password') {
+            if (!validatePassword(input)) {
+              markInvalid(input, 'Некоректний пароль');
+              throw new ValidationError('Некоректний пароль');
+            }
+          } else if (input.name === 'password_control') {
+            if (!validatePasswordControl(input)) {
+              markInvalid(input, 'Некоректний пароль');
+              throw new ValidationError('Некоректний пароль');
+            }
+          }
+
+          formData.append(input.name, input.value);
+          break;
+        }
+        case 'tel': {
+          if (!validateTel(input)) {
+            markInvalid(input, 'Некоректний номер');
+            throw new ValidationError('Некоректний номер');
+          }
+
+          formData.append(input.name, input.value);
           break;
         }
         default: {
@@ -100,18 +203,19 @@ const ValidationForm = memo(({ className, children }) => {
     setTextareas(Array.from(formRef.current.querySelectorAll('textarea')));
   }, []);
 
-  function onSubmitHandler() {
+  useEffect(() => {
+    addTelMask(formRef.current.querySelector('input[type="tel"]'));
+  }, []);
+
+  function onSubmitHandler(event) {
     const formData = new FormData();
 
     try {
       validate(formData);
-    } catch (e) {
-      console.error(e);
+    } catch (err) {
+      event.preventDefault();
+      console.error(err);
     }
-
-    formData.entries().forEach(([name, value]) => {
-      console.log(`${name}: ${value}`);
-    });
   }
 
   return (

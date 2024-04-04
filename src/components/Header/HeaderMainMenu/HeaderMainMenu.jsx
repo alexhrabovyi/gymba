@@ -21,7 +21,8 @@ import Tag from '../images/tag.svg';
 import Phone from '../images/phone.svg';
 
 const HeaderMainMenu = memo(({
-  isMenuOpen, categories, catalogBtnOnClick, openLoginPopupBtnOnClick }) => {
+  isMenuOpen, categories, catalogBtnOnClick, openLoginPopupBtnOnClick,
+}) => {
   const wishlistFetcher = useFetcher();
   const compareFetcher = useFetcher();
   const randomProductFetcher = useFetcher();

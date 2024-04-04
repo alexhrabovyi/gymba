@@ -427,9 +427,25 @@
   gap: 32px;
 }
 
+.tabButtonLine {
+  position: absolute;
+  bottom: -1px;
+  left: 0;
+  display: none;
+  width: 100%;
+  height: 2px;
+  background: $blue;
+
+  &_active {
+    display: block;
+  }
+}
+
 .tabButton {
   position: relative;
+  padding-right: 15px;
   padding-bottom: 22px;
+  padding-left: 15px;
   border: none;
   background: none;
   color: $black;
@@ -444,17 +460,8 @@
     padding-bottom: 18px;
     font-size: 16px;
   }
-}
 
-.tabButtonLine {
-  position: absolute;
-  bottom: -1px;
-  display: none;
-  width: 100%;
-  height: 2px;
-  background: $blue;
-
-  &_active {
+  &:hover .tabButtonLine {
     display: block;
   }
 }
@@ -680,6 +687,12 @@
     grid-column: 1/2;
 
     @include flex-builder(row, space-between, flex-start);
+  }
+
+  @include media-xs {
+    @include flex-builder(column, flex-start, flex-start);
+
+    gap: 20px;
   }
 }
 

@@ -91,50 +91,50 @@ export default function Contacts() {
         </h2>
         <table className={contactsCls.infoTable}>
           <tbody className={contactsCls.tbody}>
-          <tr className={contactsCls.tableRow}>
-            <th
-              className={contactsCls.rowHeader}
-              scope="row"
-            >
-              Найменування:
-            </th>
-            <td className={contactsCls.tableCell}>
-              ТОВ &ldquo;Ґимба&ldquo;
-            </td>
-          </tr>
-          <tr className={contactsCls.tableRow}>
-            <th
-              className={contactsCls.rowHeader}
-              scope="row"
-            >
-              ЄДРПОУ:
-            </th>
-            <td className={contactsCls.tableCell}>
-              40367123
-            </td>
-          </tr>
-          <tr className={contactsCls.tableRow}>
-            <th
-              className={contactsCls.rowHeader}
-              scope="row"
-            >
-              Юридична адреса:
-            </th>
-            <td className={contactsCls.tableCell}>
-              65069, Одеська область, м. Одеса, вул. Рішельєвська, 21
-            </td>
-          </tr>
-          <tr className={contactsCls.tableRow}>
-            <th
-              className={contactsCls.rowHeader}
-              scope="row"
-            >
-              IBAN
-            </th>
-            <td className={contactsCls.tableCell}>
-              UANP3057564166410648351904781
-            </td>
-          </tr>
+            <tr className={contactsCls.tableRow}>
+              <th
+                className={contactsCls.rowHeader}
+                scope="row"
+              >
+                Найменування:
+              </th>
+              <td className={contactsCls.tableCell}>
+                ТОВ &ldquo;Ґимба&ldquo;
+              </td>
+            </tr>
+            <tr className={contactsCls.tableRow}>
+              <th
+                className={contactsCls.rowHeader}
+                scope="row"
+              >
+                ЄДРПОУ:
+              </th>
+              <td className={contactsCls.tableCell}>
+                40367123
+              </td>
+            </tr>
+            <tr className={contactsCls.tableRow}>
+              <th
+                className={contactsCls.rowHeader}
+                scope="row"
+              >
+                Юридична адреса:
+              </th>
+              <td className={contactsCls.tableCell}>
+                65069, Одеська область, м. Одеса, вул. Рішельєвська, 21
+              </td>
+            </tr>
+            <tr className={contactsCls.tableRow}>
+              <th
+                className={contactsCls.rowHeader}
+                scope="row"
+              >
+                IBAN
+              </th>
+              <td className={contactsCls.tableCell}>
+                UANP3057564166410648351904781
+              </td>
+            </tr>
           </tbody>
         </table>
       </div>
