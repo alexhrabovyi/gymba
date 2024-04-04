@@ -43,8 +43,8 @@ const SearchResultBlock = memo(({
   useOnResize(getWindowWidth);
 
   function setupWidthAndLeft() {
-    let width;
-    let left;
+    let width = 0;
+    let left = 0;
 
     if (windowWidth > 768) {
       if (inputWidth >= 575) {

@@ -15,7 +15,7 @@ import { PaymentPage } from '../pages/Payment/Payment.jsx';
 import { ContactsPage } from '../pages/Contacts/Contacts.jsx';
 import { NewsPage, loader as newsPageLoader } from '../pages/News/News.jsx';
 import { NewsArticlePage, loader as newsArticleLoader } from '../pages/NewsArticle/NewsArticle.jsx';
-import { loader as getSearchPageLoader } from '../pages/Search/Search.jsx';
+import { SearchPage, loader as getSearchPageLoader } from '../pages/Search/Search.jsx';
 import { loader as getAnalogueProductsLoader, action as getAnalogueProductsAction } from '../pages/GetAnalogueProducts/GetAnalogueProducts.jsx';
 import { GetCompareProducts, loader as getCompareProductsLoader } from '../pages/GetCompareProducts/GetCompareProducts.jsx';
 import { GetRandomProduct, loader as getRandomProductLoader } from '../pages/GetRandomProduct/GetRandomProduct.jsx';
@@ -88,6 +88,7 @@ const router = createBrowserRouter([
       {
         path: 'search',
         loader: getSearchPageLoader,
+        element: <SearchPage />,
       },
       {
         path: 'getAnalogueProducts',

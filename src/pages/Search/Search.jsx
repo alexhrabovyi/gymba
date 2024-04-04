@@ -1,11 +1,26 @@
-import { getSearchResults } from '../../utils/dataAPI';
+import { getSearchResultsPerPageAndPageAmount } from '../../utils/dataAPI';
+import BreadCrumbs from '../../components/BreadCrumbs/BreadCrumbs.jsx';
+import Search from '../../components/Search/Search.jsx';
 
 export function loader({ request }) {
-  const searchQuery = (new URL(request.url)).searchParams.get('search');
+  const { searchParams } = new URL(request.url);
 
-  const searchResults = getSearchResults(searchQuery);
+  const searchQuery = searchParams.get('search');
+  const pageNum = +searchParams.get('page');
+
+  const { searchResults, pageAmount } = getSearchResultsPerPageAndPageAmount(searchQuery, pageNum);
 
   return {
     searchResults,
+    pageAmount,
   };
+}
+
+export function SearchPage() {
+  return (
+    <>
+      <BreadCrumbs />
+      <Search />
+    </>
+  );
 }

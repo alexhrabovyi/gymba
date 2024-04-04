@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable jsx-a11y/no-static-element-interactions */
 import {
   useState,
@@ -6,7 +7,14 @@ import {
   useCallback,
   useLayoutEffect,
 } from 'react';
-import { Link, useFetcher, useLoaderData } from 'react-router-dom';
+import {
+  Link,
+  useFetcher,
+  useLoaderData,
+  Form,
+  useLocation,
+  useSearchParams,
+} from 'react-router-dom';
 import classNames from 'classnames';
 import useScrollToTop from '../../hooks/useScrollToTop.jsx';
 import useHideScrollbarOnOpen from '../../hooks/useHideScrollbarOnOpen.jsx';
@@ -39,6 +47,8 @@ export default function Header() {
   const wishlistFetcher = useFetcher();
   const cartFetcher = useFetcher();
   const compareFetcher = useFetcher();
+  const location = useLocation();
+  const [searchParams] = useSearchParams();
 
   const headerWrapperRef = useRef(null);
   const headerRef = useRef(null);
@@ -116,6 +126,17 @@ export default function Header() {
   }, [isMainMenuOpen, isCategoryMenuOpen, isSubcategoryMenuOpen]);
 
   useEffect(keepOpenMenuBtnEnabled, [keepOpenMenuBtnEnabled]);
+
+  const searchInputValueInitialSetup = useCallback(() => {
+    if (location.pathname === '/search') {
+      const searchParamValue = searchParams.get('search');
+
+      setSearchValue(searchParamValue);
+      searchInputRef.current.value = searchParamValue;
+    }
+  }, []);
+
+  useEffect(searchInputValueInitialSetup, [searchInputValueInitialSetup]);
 
   // fetcher functions
 
@@ -198,6 +219,7 @@ export default function Header() {
 
   const openLoginPopupBtnOnClick = useCallback(() => {
     setIsLoginPopupOpen(true);
+    setIsSearchBlockActive(false);
   }, []);
 
   const catalogBtnOnClick = useCallback(() => {
@@ -337,10 +359,16 @@ export default function Header() {
               <LogoSmall className={headerCls.logoLinkImg} alt="Ґимба логотип" />
             </Link>
             )}
-            <div className={headerCls.inputBlock}>
+            <Form
+              role="search"
+              action="/search"
+              className={headerCls.inputBlock}
+              onSubmit={() => setIsSearchBlockActive(false)}
+            >
               <input
                 ref={searchInputRef}
                 type="search"
+                name="search"
                 className={headerCls.input}
                 placeholder="Пошук товарів"
                 required
@@ -358,7 +386,7 @@ export default function Header() {
                     <Search className={headerCls.submitButtonIcon} />
                   </button>
                 )}
-            </div>
+            </Form>
             <nav className={headerCls.linkListBottomNav}>
               <ul className={headerCls.linkList}>
                 {windowWidth > 1360 && (

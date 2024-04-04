@@ -527,7 +527,7 @@ export function getAnalogueProducts(categoryId, subcategoryId, productId) {
   return randomProducts;
 }
 
-export function getSearchResults(searchQuery) {
+function getAllSearchResults(searchQuery) {
   const firstOrderRegExp = new RegExp(`^${searchQuery}`, 'i');
   const lastOrderRegExp = new RegExp(`${searchQuery}`, 'i');
 
@@ -625,6 +625,25 @@ export function getSearchResults(searchQuery) {
   const result = [...firstOrderResults, ...lastOrderResults];
 
   return result;
+}
+
+export function getSearchResultsPerPageAndPageAmount(searchQuery, pageNum) {
+  const perView = 12;
+  const allSearchResults = getAllSearchResults(searchQuery);
+  const searchResultsAmount = allSearchResults.length;
+  const pageAmount = getPageAmount(searchResultsAmount, perView);
+
+  if (!pageNum || pageNum > pageAmount) pageNum = 1;
+
+  const firstPageProduct = (+pageNum - 1) * perView;
+  const lastPageProduct = +pageNum * perView;
+
+  const searchResults = allSearchResults.slice(firstPageProduct, lastPageProduct);
+
+  return {
+    searchResults,
+    pageAmount,
+  };
 }
 
 // news
