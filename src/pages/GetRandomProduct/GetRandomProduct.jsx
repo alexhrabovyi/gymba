@@ -1,3 +1,4 @@
+/* eslint-disable import/prefer-default-export */
 import { getRandomProduct } from '../../utils/dataAPI';
 
 export function loader() {
@@ -6,8 +7,4 @@ export function loader() {
   return {
     randomProduct,
   };
-}
-
-export function GetRandomProduct() {
-  throw new Error('Not Found');
 }

@@ -26,6 +26,8 @@ export function getCategoriesAndSubcategories() {
 export function getCategoryAndSubcategories(categoryId) {
   const category = products.find((c) => c.id === categoryId);
 
+  if (!category) throw new Error('Категорію не знайдено');
+
   const subcategories = category.subcategories.map((subC) => ({
     name: subC.name,
     id: subC.id,
@@ -42,6 +44,9 @@ export function getCategoryAndSubcategories(categoryId) {
 
 export function getCategoryAndSubcategory(categoryId, subcategoryId) {
   const category = products.find((c) => c.id === categoryId);
+
+  if (!category) throw new Error('Категорію не знайдено');
+
   const subcategory = category.subcategories.find((s) => s.id === subcategoryId);
 
   return {
@@ -53,6 +58,9 @@ export function getCategoryAndSubcategory(categoryId, subcategoryId) {
 
 export function getProduct(categoryId, subcategoryId, productId) {
   const category = products.find((c) => c.id === categoryId);
+
+  if (!category) throw new Error('Категорію не знайдено');
+
   const subcategory = category.subcategories.find((s) => s.id === subcategoryId);
   const product = subcategory.products.find((p) => p.id === productId);
 
@@ -510,6 +518,8 @@ export function deleteSubcFromCompare(categoryId, subcategoryId) {
 }
 
 export function getCompareProductCards(categoryId, subcategoryId) {
+  if (categoryId === null || subcategoryId === null) throw new Error('Некорректний запит');
+
   const compareIds = getCompareIds()
     .filter(([cId, subcId]) => cId === categoryId && subcId === subcategoryId);
 
@@ -689,7 +699,11 @@ export function getNewsPreviewsPerPageAndPageAmount(pageNum) {
 }
 
 export function getNewsArticle(id) {
-  return news.find((n) => n.id === id);
+  const article = news.find((n) => n.id === id);
+
+  if (!article) throw new Error('Статтю не знайдено');
+
+  return article;
 }
 
 export function getRecommendedNews(id) {

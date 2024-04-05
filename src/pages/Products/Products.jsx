@@ -7,19 +7,36 @@ export function loader({ params, request }) {
   const subcategoryIdParam = params.subcategoryId;
   const { searchParams } = new URL(request.url);
 
-  const {
-    categoryName, categoryId, subcategory,
-  } = getCategoryAndSubcategory(categoryIdParam, subcategoryIdParam);
+  let categoryName;
+  let categoryId;
+  let subcategory;
+  let subcategoryFilters;
+  let minPrice;
+  let maxPrice;
+  let filteredAndSortedProducts;
+  let productAmount;
+  let pageAmount;
 
-  const subcategoryFilters = getSubcategoryFilters(categoryIdParam, subcategoryIdParam);
-
-  const {
-    minPrice,
-    maxPrice,
-    filteredAndSortedProducts,
-    productAmount,
-    pageAmount,
-  } = getFilteredProductsAndMinMaxPrice(categoryIdParam, subcategoryIdParam, searchParams);
+  try {
+    [
+      categoryName, categoryId, subcategory,
+    ] = Object.values(getCategoryAndSubcategory(categoryIdParam, subcategoryIdParam));
+    subcategoryFilters = getSubcategoryFilters(categoryIdParam, subcategoryIdParam);
+    [
+      filteredAndSortedProducts,
+      minPrice,
+      maxPrice,
+      productAmount,
+      pageAmount,
+    ] = Object
+      .values(getFilteredProductsAndMinMaxPrice(categoryIdParam, subcategoryIdParam, searchParams));
+  } catch (e) {
+    if (e.message === 'Категорію не знайдено') {
+      throw new Response('Сторінку не знайдено', { status: 404 });
+    } else {
+      throw e;
+    }
+  }
 
   return {
     categoryName,

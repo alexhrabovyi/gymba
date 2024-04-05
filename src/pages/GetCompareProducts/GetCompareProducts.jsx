@@ -1,3 +1,4 @@
+/* eslint-disable import/prefer-default-export */
 import { getCompareProductCards } from '../../utils/dataAPI';
 
 export function loader({ request }) {
@@ -5,11 +6,17 @@ export function loader({ request }) {
   const categoryId = searchParams.get('categoryId');
   const subcategoryId = searchParams.get('subcategoryId');
 
-  const productCards = getCompareProductCards(categoryId, subcategoryId);
+  let productCards;
+
+  try {
+    productCards = getCompareProductCards(categoryId, subcategoryId);
+  } catch (e) {
+    if (e.message === 'Некорректний запит') {
+      throw new Response('Сторінку не знайдено', { status: 404 });
+    } else {
+      throw e;
+    }
+  }
 
   return { productCards };
-}
-
-export function GetCompareProducts() {
-  throw new Error('Not Found');
 }

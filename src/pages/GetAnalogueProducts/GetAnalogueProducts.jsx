@@ -2,7 +2,7 @@
 import { getAnalogueProducts } from '../../utils/dataAPI';
 
 export function loader() {
-  throw new Response('Not Found', { status: 404 });
+  throw new Response('Сторінку не знайдено', { status: 404 });
 }
 
 export async function action({ request }) {
