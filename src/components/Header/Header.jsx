@@ -9,6 +9,7 @@ import {
 } from 'react';
 import {
   Link,
+  NavLink,
   useFetcher,
   useLoaderData,
   Form,
@@ -273,7 +274,6 @@ export default function Header() {
           )}
           {windowWidth > 1024 && (
           <div className={headerCls.topBlock}>
-            {windowWidth > 1360 && (
             <div className={headerCls.locationAndTelBlock}>
               <a
                 href="/"
@@ -294,20 +294,47 @@ export default function Header() {
                 <p className={textCls.text}>+38 097 431-11-01</p>
               </a>
             </div>
-            )}
-            <nav className={headerCls.linkListTopNav}>
-              <ul className={headerCls.linkList}>
+            <nav className={headerCls.topNav}>
+              <ul className={headerCls.linkListTopNav}>
                 <li>
-                  <Link to="/delivery" className={linkCls.link} alt="Доставка">Доставка</Link>
+                  <NavLink
+                    to="/delivery"
+                    className={({ isActive }) => (isActive
+                      ? classNames(linkCls.link, linkCls.link_active) : classNames(linkCls.link))}
+                    alt="Доставка"
+                  >
+                    Доставка
+                  </NavLink>
                 </li>
                 <li>
-                  <Link to="/payment" className={linkCls.link} alt="Оплата">Оплата</Link>
+                  <NavLink
+                    to="/payment"
+                    className={({ isActive }) => (isActive
+                      ? classNames(linkCls.link, linkCls.link_active) : classNames(linkCls.link))}
+                    alt="Оплата"
+                  >
+                    Оплата
+                  </NavLink>
                 </li>
                 <li>
-                  <Link to="/news" className={linkCls.link} alt="Новини">Новини</Link>
+                  <NavLink
+                    to="/news"
+                    className={({ isActive }) => (isActive
+                      ? classNames(linkCls.link, linkCls.link_active) : classNames(linkCls.link))}
+                    alt="Новини"
+                  >
+                    Новини
+                  </NavLink>
                 </li>
                 <li>
-                  <Link to="/contacts" className={linkCls.link} alt="Контакти">Контакти</Link>
+                  <NavLink
+                    to="/contacts"
+                    className={({ isActive }) => (isActive
+                      ? classNames(linkCls.link, linkCls.link_active) : classNames(linkCls.link))}
+                    alt="Контакти"
+                  >
+                    Контакти
+                  </NavLink>
                 </li>
               </ul>
             </nav>
@@ -387,9 +414,9 @@ export default function Header() {
                   </button>
                 )}
             </Form>
-            <nav className={headerCls.linkListBottomNav}>
-              <ul className={headerCls.linkList}>
-                {windowWidth > 1360 && (
+            <nav className={headerCls.bottomNav}>
+              <ul className={headerCls.linkListBottomNav}>
+                {windowWidth > 1024 && (
                 <>
                   <li>
                     <button
@@ -446,9 +473,6 @@ export default function Header() {
                 </li>
               </ul>
             </nav>
-            {windowWidth > 1024 && (
-            <p className={classNames(headerCls.price, textCls.text)}>221 465 ₴</p>
-            )}
           </div>
         </header>
         <HeaderMainMenu

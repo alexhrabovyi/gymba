@@ -57,12 +57,8 @@
   width: 100%;
   max-width: 210px;
   padding-left: 1.32%;
-  margin-bottom: 25px;
+  margin-bottom: 60px;
   grid-column: 1/4;
-
-  @include media-m {
-    margin-bottom: 60px;
-  }
 }
 
 .iconLinkList {

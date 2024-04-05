@@ -1,7 +1,9 @@
 import {
   memo, useEffect, useRef, useState, useCallback, useLayoutEffect, useMemo, Suspense,
 } from 'react';
-import { Link, useFetcher, Await } from 'react-router-dom';
+import {
+  Link, NavLink, useFetcher, Await,
+} from 'react-router-dom';
 import classNames from 'classnames';
 import useOnResize from '../../../hooks/useOnResize.jsx';
 import findAllInteractiveElements from '../../../utils/findAllInteractiveElements.js';
@@ -219,49 +221,6 @@ const HeaderMainMenu = memo(({
     >
       {windowWidth > 1024 && (
       <>
-        {windowWidth <= 1360 && (
-        <nav className={headerMenuCls.iconLinkBlock}>
-          <ul className={headerMenuCls.iconLinkList}>
-            <li>
-              <button
-                className={headerMenuCls.openLoginPopupBtn}
-                type="button"
-                onClick={openLoginPopupBtnOnClick}
-                aria-haspopup="dialog"
-                aria-label="Відкрити вікно Профіль користувача"
-              >
-                <User className={headerMenuCls.iconInLink} />
-              </button>
-            </li>
-            <li>
-              <Link
-                to="/compare"
-                className={classNames(
-                  headerMenuCls.iconLink,
-                  compareAmount && headerMenuCls.iconLinkWithCircle,
-                )}
-                data-before={compareAmount}
-                aria-label="Порівняти товари"
-              >
-                <Compare className={headerMenuCls.iconInLink} />
-              </Link>
-            </li>
-            <li>
-              <Link
-                to="/wishlist"
-                className={classNames(
-                  headerMenuCls.iconLink,
-                  wishlistAmount && headerMenuCls.iconLinkWithCircle,
-                )}
-                data-before={wishlistAmount}
-                aria-label="Лист бажань"
-              >
-                <Favorite className={headerMenuCls.iconInLink} />
-              </Link>
-            </li>
-          </ul>
-        </nav>
-        )}
         <nav
           className={headerMenuCls.mainLinkBlock}
           onPointerMove={onPointerMoveHandler}
@@ -372,16 +331,48 @@ const HeaderMainMenu = memo(({
               </button>
             </li>
             <li>
-              <Link to="/delivery" className={classNames(linkCls.link, linkCls.link18px)} alt="Доставка">Доставка</Link>
+              <NavLink
+                to="/delivery"
+                className={({ isActive }) => (isActive
+                  ? classNames(linkCls.link, linkCls.link18px, linkCls.link_active)
+                  : classNames(linkCls.link, linkCls.link18px))}
+                alt="Доставка"
+              >
+                Доставка
+              </NavLink>
             </li>
             <li>
-              <Link to="/payment" className={classNames(linkCls.link, linkCls.link18px)} alt="Оплата">Оплата</Link>
+              <NavLink
+                to="/payment"
+                className={({ isActive }) => (isActive
+                  ? classNames(linkCls.link, linkCls.link18px, linkCls.link_active)
+                  : classNames(linkCls.link, linkCls.link18px))}
+                alt="Оплата"
+              >
+                Оплата
+              </NavLink>
             </li>
             <li>
-              <Link to="/news" className={classNames(linkCls.link, linkCls.link18px)} alt="Новини">Новини</Link>
+              <NavLink
+                to="/news"
+                className={({ isActive }) => (isActive
+                  ? classNames(linkCls.link, linkCls.link18px, linkCls.link_active)
+                  : classNames(linkCls.link, linkCls.link18px))}
+                alt="Новини"
+              >
+                Новини
+              </NavLink>
             </li>
             <li>
-              <Link to="/contacts" className={classNames(linkCls.link, linkCls.link18px)} alt="Контакти">Контакти</Link>
+              <NavLink
+                to="/contacts"
+                className={({ isActive }) => (isActive
+                  ? classNames(linkCls.link, linkCls.link18px, linkCls.link_active)
+                  : classNames(linkCls.link, linkCls.link18px))}
+                alt="Контакти"
+              >
+                Контакти
+              </NavLink>
             </li>
           </ul>
         </nav>

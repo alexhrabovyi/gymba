@@ -1,3 +1,4 @@
+/* eslint-disable no-restricted-globals */
 /* eslint-disable react/no-array-index-key */
 /* eslint-disable jsx-a11y/no-static-element-interactions */
 import {
@@ -50,10 +51,10 @@ const SearchResultBlock = memo(({
       if (inputWidth >= 575) {
         width = inputWidth;
         left = inputLeft;
+      } else {
+        width = 575;
+        left = inputLeft - ((width - inputWidth) / 2);
       }
-
-      width = 575;
-      left = inputLeft - ((width - inputWidth) / 2);
     } else if (windowWidth > 576) {
       width = windowWidth * 0.9;
       left = windowWidth * 0.05;
@@ -61,6 +62,8 @@ const SearchResultBlock = memo(({
       width = windowWidth * 0.95;
       left = windowWidth * 0.025;
     }
+
+    if (isNaN(left)) left = 0;
 
     return {
       width,
