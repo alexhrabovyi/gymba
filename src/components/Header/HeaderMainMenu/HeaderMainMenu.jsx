@@ -1,3 +1,4 @@
+/* eslint-disable import/no-unresolved */
 import {
   memo, useEffect, useRef, useState, useCallback, useLayoutEffect, useMemo, Suspense,
 } from 'react';
@@ -22,6 +23,8 @@ import ChevronRight from '../../../assets/images/icons/chevronRight.svg';
 import Tag from '../images/tag.svg';
 import Phone from '../images/phone.svg';
 
+import ThreeDotsSpinnerBlock from '../../common/ThreeDotsSpinnerBlock/ThreeDotsSpinnerBlock.jsx';
+
 const HeaderMainMenu = memo(({
   isMenuOpen, categories, catalogBtnOnClick, openLoginPopupBtnOnClick,
 }) => {
@@ -31,14 +34,16 @@ const HeaderMainMenu = memo(({
 
   const menuRef = useRef(null);
 
-  const [activeCategoryId, setActiveCategoryId] = useState(categories[0].id);
+  const [activeCategoryId, setActiveCategoryId] = useState(null);
   const [windowWidth, setWindowWidth] = useState(null);
   const [wishlistAmount, setWishlistAmount] = useState(null);
   const [compareAmount, setCompareAmount] = useState(null);
   const [randomProduct, setRandomProduct] = useState(null);
 
-  const activeCategory = categories.find((c) => c.id === activeCategoryId);
-  const { subcategories } = activeCategory;
+  const activeCategory = categories?.find((c) => c.id === activeCategoryId);
+  const subcategories = activeCategory?.subcategories;
+
+  // setup functions
 
   const getWindowWidth = useCallback(() => {
     setWindowWidth(window.innerWidth);
@@ -46,6 +51,12 @@ const HeaderMainMenu = memo(({
 
   useLayoutEffect(getWindowWidth, [getWindowWidth]);
   useOnResize(getWindowWidth);
+
+  const setupActiveCategory = useCallback(() => {
+    setActiveCategoryId(categories?.[0].id);
+  }, [categories]);
+
+  useEffect(setupActiveCategory);
 
   function useToggleInteractiveElements() {
     if (menuRef.current) {
@@ -127,6 +138,8 @@ const HeaderMainMenu = memo(({
     if (isMenuOpen) menuRef.current.focus();
   }, [isMenuOpen]);
 
+  // fetcher functions
+
   useFetcherLoad(wishlistFetcher, '/wishlist');
 
   if (wishlistFetcher.data) {
@@ -150,6 +163,44 @@ const HeaderMainMenu = memo(({
       setRandomProduct(randomProductFetcher.data.randomProduct);
     }
   }
+
+  // element creating functions
+
+  const categoryLinkList = useMemo(() => (
+    <ul className={headerMenuCls.mainLinkList}>
+      {categories?.map((c) => (
+        <li key={c.id}>
+          <Link
+            to={c.id}
+            data-category-id={c.id}
+            className={classNames(
+              headerMenuCls.mainLink,
+              activeCategoryId === c.id && headerMenuCls.mainLink_active,
+            )}
+            alt={c.name}
+          >
+            {c.name}
+          </Link>
+        </li>
+      ))}
+    </ul>
+  ), [categories, activeCategoryId]);
+
+  const subcategoryLinkList = useMemo(() => (
+    <ul className={headerMenuCls.additionalLinkList}>
+      {subcategories?.map((subC) => (
+        <li key={subC.id}>
+          <Link
+            to={`${activeCategory.id}/${subC.id}`}
+            className={classNames(linkCls.link, linkCls.link18px)}
+            alt={subC.name}
+          >
+            {subC.name}
+          </Link>
+        </li>
+      ))}
+    </ul>
+  ), [subcategories, activeCategory]);
 
   const randomProductElement = useMemo(() => {
     if (!randomProduct) return;
@@ -195,6 +246,8 @@ const HeaderMainMenu = memo(({
     );
   }, [randomProduct]);
 
+  // event functions
+
   function onPointerMoveHandler(e) {
     const link = e.target.closest('a');
     if (!link) return;
@@ -226,38 +279,20 @@ const HeaderMainMenu = memo(({
           onPointerMove={onPointerMoveHandler}
           onFocus={onPointerMoveHandler}
         >
-          <ul className={headerMenuCls.mainLinkList}>
-            {categories.map((c) => (
-              <li key={c.id}>
-                <Link
-                  to={c.id}
-                  data-category-id={c.id}
-                  className={classNames(
-                    headerMenuCls.mainLink,
-                    activeCategoryId === c.id && headerMenuCls.mainLink_active,
-                  )}
-                  alt={c.name}
-                >
-                  {c.name}
-                </Link>
-              </li>
-            ))}
-          </ul>
+          {categories ? categoryLinkList : (
+            <ThreeDotsSpinnerBlock
+              blockClassName={headerMenuCls.loadingBlock}
+              spinnerClassName={headerMenuCls.loadingSpinner}
+            />
+          )}
         </nav>
         <nav className={headerMenuCls.additionalLinkBlock}>
-          <ul className={headerMenuCls.additionalLinkList}>
-            {subcategories.map((subC) => (
-              <li key={subC.id}>
-                <Link
-                  to={`${activeCategory.id}/${subC.id}`}
-                  className={classNames(linkCls.link, linkCls.link18px)}
-                  alt={subC.name}
-                >
-                  {subC.name}
-                </Link>
-              </li>
-            ))}
-          </ul>
+          {subcategories ? subcategoryLinkList : (
+            <ThreeDotsSpinnerBlock
+              blockClassName={headerMenuCls.loadingBlock}
+              spinnerClassName={headerMenuCls.loadingSpinner}
+            />
+          )}
         </nav>
         <article className={headerMenuCls.popularBlock}>
           <p className={classNames(
@@ -269,7 +304,12 @@ const HeaderMainMenu = memo(({
           >
             Популярне сьогодні
           </p>
-          {randomProductElement}
+          {randomProduct ? randomProductElement : (
+            <ThreeDotsSpinnerBlock
+              blockClassName={headerMenuCls.loadingProductBlock}
+              spinnerClassName={headerMenuCls.loadingSpinner}
+            />
+          )}
         </article>
       </>
       )}

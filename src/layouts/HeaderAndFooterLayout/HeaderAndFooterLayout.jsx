@@ -1,18 +1,33 @@
+/* eslint-disable import/prefer-default-export */
+import { Suspense } from 'react';
 import { Outlet } from 'react-router-dom';
+import classNames from 'classnames';
 import Header from '../../components/Header/Header.jsx';
-import Footer from '../../components/Footer/Footer.jsx';
-import { getCategoriesAndSubcategories } from '../../utils/dataAPI.js';
-
-export function loader() {
-  return getCategoriesAndSubcategories();
-}
+import BarsSpinner from '../../components/common/BarsSpinner/BarsSpinner.jsx';
+import FooterLazy from '../../components/Footer/Footer.lazy.jsx';
+import containerCls from '../../scss/_container.module.scss';
+import layoutCls from './HeaderAndFooterLayout.module.scss';
 
 export function HeaderAndFooterLayout() {
+  const Fallback = (
+    <div className={classNames(
+      containerCls.container,
+      layoutCls.fallbackBlock,
+    )}
+    >
+      <BarsSpinner />
+    </div>
+  );
+
   return (
     <>
       <Header />
-      <Outlet />
-      <Footer />
+      <Suspense fallback={Fallback}>
+        <Outlet />
+      </Suspense>
+      <Suspense>
+        <FooterLazy />
+      </Suspense>
     </>
   );
 }

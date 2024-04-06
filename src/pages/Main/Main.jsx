@@ -1,21 +1,18 @@
-import Catalog from '../../components/Catalog/Catalog.jsx';
+import { Suspense } from 'react';
 import MainSlider from '../../components/MainSlider/MainSlider.jsx';
-import NewsPreview from '../../components/NewsPreviews/NewsPreviews.jsx';
-import { getCategoriesAndSubcategories, getFourNewsPreviews } from '../../utils/dataAPI.js';
+import CatalogLazy from '../../components/Catalog/Catalog.lazy.jsx';
+import NewsPreviewsLazy from '../../components/NewsPreviews/NewsPreviews.lazy.jsx';
 
-export function loader() {
-  return {
-    categories: getCategoriesAndSubcategories(),
-    news: getFourNewsPreviews(),
-  };
-}
-
-export function Main() {
+export default function Main() {
   return (
     <>
       <MainSlider />
-      <Catalog />
-      <NewsPreview />
+      <Suspense>
+        <CatalogLazy />
+      </Suspense>
+      <Suspense>
+        <NewsPreviewsLazy />
+      </Suspense>
     </>
   );
 }

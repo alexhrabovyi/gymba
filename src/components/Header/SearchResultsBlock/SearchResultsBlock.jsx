@@ -1,8 +1,10 @@
+/* eslint-disable import/no-unresolved */
 /* eslint-disable no-restricted-globals */
 /* eslint-disable react/no-array-index-key */
 /* eslint-disable jsx-a11y/no-static-element-interactions */
 import {
-  Fragment, Suspense, memo, useMemo, useState, useCallback, useLayoutEffect, useRef,
+  Fragment, Suspense, memo, useState, useCallback, useLayoutEffect, useRef,
+  useEffect,
 } from 'react';
 import { Link, useFetcher, Await } from 'react-router-dom';
 import classNames from 'classnames';
@@ -10,6 +12,7 @@ import useOnResize from '../../../hooks/useOnResize.jsx';
 import findAllInteractiveElements from '../../../utils/findAllInteractiveElements';
 import Spinner from '../../common/Spinner/Spinner.jsx';
 import DynamicImage from '../../common/DynamicImage/DynamicImage.jsx';
+import ThreeDotsSpinnerBlock from '../../common/ThreeDotsSpinnerBlock/ThreeDotsSpinnerBlock.jsx';
 import backdropCls from '../../../scss/_backdrop.module.scss';
 import searchCls from './SearchResultsBlock.module.scss';
 import ArrowRightIcon from '../../../assets/images/icons/arrow-right.svg';
@@ -29,6 +32,7 @@ const SearchResultBlock = memo(({
   const [prevSearchValue, setPrevSearchValue] = useState(searchValue);
   const [searchResults, setSearchResults] = useState(null);
   const [windowWidth, setWindowWidth] = useState(null);
+  const [searchResultList, setSearchResultList] = useState(null);
 
   const isOpen = isActive && searchValue?.length;
 
@@ -112,7 +116,8 @@ const SearchResultBlock = memo(({
 
   function updateSearchResults() {
     if (searchResultsFetcher.data && searchValue !== '') {
-      const searchResultsFromFetcher = searchResultsFetcher.data.searchResults;
+      const searchResultsFromFetcher = searchResultsFetcher
+        .data.searchResultAndPageAmount.searchResults;
 
       if (searchResultsFromFetcher !== searchResults) {
         setSearchResults(searchResultsFromFetcher);
@@ -122,8 +127,8 @@ const SearchResultBlock = memo(({
 
   updateSearchResults();
 
-  const searchResultList = useMemo(() => {
-    if (!searchResults) return;
+  const setupSearchResultList = useCallback(() => {
+    if (!searchResults || searchResultsFetcher.state === 'loading') return;
 
     const listElems = searchResults.slice(0, 5).map((sR) => {
       let key;
@@ -235,7 +240,7 @@ const SearchResultBlock = memo(({
       );
     });
 
-    return (
+    const newSearchResultList = (
       <ul className={searchCls.searchResultList}>
         {listElems.length ? (
           listElems
@@ -246,7 +251,11 @@ const SearchResultBlock = memo(({
         )}
       </ul>
     );
-  }, [searchResults, searchValue]);
+
+    setSearchResultList(newSearchResultList);
+  }, [searchResults, searchResultsFetcher, searchValue]);
+
+  useEffect(setupSearchResultList, [setupSearchResultList]);
 
   return (
     <div
@@ -267,16 +276,29 @@ const SearchResultBlock = memo(({
           width: metrics?.width,
         }}
       >
-        {searchResultList}
-        {searchResults?.length > 5 && (
-          <Link
-            className={searchCls.allResultsLink}
-            to={`/search?${searchParamsString}`}
-            alt="Сторінка результатів пошуку"
+        {isActive && searchResultList ? (
+          <div className={classNames(
+            searchCls.loadingBlock,
+            searchResultsFetcher.state === 'loading' && searchCls.loadingBlock_active,
+          )}
           >
-            Переглянути всі результати
-            <ArrowRightIcon className={searchCls.arrowRightIcon} />
-          </Link>
+            {searchResultList}
+            {searchResults?.length > 5 && (
+            <Link
+              className={searchCls.allResultsLink}
+              to={`/search?${searchParamsString}`}
+              alt="Сторінка результатів пошуку"
+            >
+              Переглянути всі результати
+              <ArrowRightIcon className={searchCls.arrowRightIcon} />
+            </Link>
+            )}
+          </div>
+        ) : (
+          <ThreeDotsSpinnerBlock
+            blockClassName={searchCls.spinnerBlock}
+            spinnerClassName={searchCls.spinner}
+          />
         )}
       </div>
     </div>

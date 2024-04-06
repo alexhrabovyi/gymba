@@ -1,10 +1,17 @@
-/* eslint-disable import/prefer-default-export */
+import { defer } from 'react-router-dom';
+import Error from '../../components/Error/Error.jsx';
 import { getRandomProduct } from '../../utils/dataAPI';
 
-export function loader() {
+export async function loader() {
   const randomProduct = getRandomProduct();
 
-  return {
+  return defer({
     randomProduct,
-  };
+  });
+}
+
+export function GetRandomProductPage() {
+  return (
+    <Error />
+  );
 }

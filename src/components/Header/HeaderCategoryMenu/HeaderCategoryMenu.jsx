@@ -1,6 +1,8 @@
+/* eslint-disable import/no-unresolved */
 import classNames from 'classnames';
 import {
   memo, useRef, useEffect, useLayoutEffect, useCallback,
+  useMemo,
 } from 'react';
 import useToggleInteractiveElements from '../../../hooks/useToggleInteractiveElements.jsx';
 import useOnResize from '../../../hooks/useOnResize.jsx';
@@ -8,6 +10,7 @@ import containerCls from '../../../scss/_container.module.scss';
 import textCls from '../../../scss/_text.module.scss';
 import categoryMenuCls from './HeaderCategoryMenu.module.scss';
 import ChevronRight from '../../../assets/images/icons/chevronRight.svg';
+import ThreeDotsSpinnerBlock from '../../common/ThreeDotsSpinnerBlock/ThreeDotsSpinnerBlock.jsx';
 
 const HeaderCategoryMenu = memo(({
   isMenuOpen,
@@ -39,6 +42,25 @@ const HeaderCategoryMenu = memo(({
 
   useLayoutEffect(setupMenuHeight, [setupMenuHeight]);
   useOnResize(setupMenuHeight);
+
+  const categoryLinkList = useMemo(() => (
+    <ul className={categoryMenuCls.categoryMenuLinkList}>
+      {categories?.map((c) => (
+        <li key={c.id}>
+          <button
+            className={categoryMenuCls.categoryButton}
+            type="button"
+            data-category-id={c.id}
+            aria-haspopup="dialog"
+            aria-label={`Відкрити меню категорії ${c.name}`}
+          >
+            {c.name}
+            <ChevronRight className={categoryMenuCls.categoryButtonChevron} />
+          </button>
+        </li>
+      ))}
+    </ul>
+  ), [categories]);
 
   useEffect(() => {
     if (isMenuOpen) menuRef.current.focus();
@@ -81,22 +103,12 @@ const HeaderCategoryMenu = memo(({
         className={categoryMenuCls.categoryMenuLinkBlock}
         onClick={categoryBtnOnClick}
       >
-        <ul className={categoryMenuCls.categoryMenuLinkList}>
-          {categories.map((c) => (
-            <li key={c.id}>
-              <button
-                className={categoryMenuCls.categoryButton}
-                type="button"
-                data-category-id={c.id}
-                aria-haspopup="dialog"
-                aria-label={`Відкрити меню категорії ${c.name}`}
-              >
-                {c.name}
-                <ChevronRight className={categoryMenuCls.categoryButtonChevron} />
-              </button>
-            </li>
-          ))}
-        </ul>
+        {categories ? categoryLinkList : (
+          <ThreeDotsSpinnerBlock
+            blockClassName={categoryMenuCls.loadingSpinnerBlock}
+            spinnerClassName={categoryMenuCls.loadingSpinner}
+          />
+        )}
       </nav>
     </div>
   );

@@ -1,7 +1,7 @@
 import {
   useCallback, useLayoutEffect, useMemo, useState,
 } from 'react';
-import { useLoaderData } from 'react-router-dom';
+import { useFetcher } from 'react-router-dom';
 import classNames from 'classnames';
 import useOnResize from '../../hooks/useOnResize.jsx';
 import Slider from '../common/Slider/Slider.jsx';
@@ -11,9 +11,13 @@ import BigPrevNextButton from '../common/BigPrevNextButton/BigPrevNextButton.jsx
 import containerCls from '../../scss/_container.module.scss';
 import textCls from '../../scss/_text.module.scss';
 import newsCls from './NewsPreviews.module.scss';
+import useFetcherLoad from '../../hooks/useFetcherLoad.jsx';
+import ThreeDotsSpinnerBlock from '../common/ThreeDotsSpinnerBlock/ThreeDotsSpinnerBlock.jsx';
 
 export default function NewsPreviews() {
-  const { news } = useLoaderData();
+  const newsFetcher = useFetcher();
+
+  const [news, setNews] = useState(null);
   const [windowWidth, setWindowWidth] = useState();
   const [activeSlideId, setActiveSlideId] = useState(0);
 
@@ -24,7 +28,17 @@ export default function NewsPreviews() {
   useLayoutEffect(getWindowWidth, [getWindowWidth]);
   useOnResize(getWindowWidth);
 
-  const previews = useMemo(() => news.map((n) => (
+  useFetcherLoad(newsFetcher, '/');
+
+  if (newsFetcher.data) {
+    const fetcherNews = newsFetcher.data.news;
+
+    if (fetcherNews !== news) {
+      setNews(fetcherNews);
+    }
+  }
+
+  const previews = useMemo(() => news?.map((n) => (
     <NewsPreview
       key={n.id}
       name={n.name}
@@ -39,9 +53,12 @@ export default function NewsPreviews() {
   if (windowWidth <= 1024) perView = 2;
   if (windowWidth <= 768) perView = 1;
 
-  if (activeSlideId > previews.length - perView) {
+  if (previews && activeSlideId > previews.length - perView) {
     setActiveSlideId(previews.length - perView);
   }
+
+  const isPrevButtonInactive = activeSlideId === 0;
+  const isNextButtonInactive = previews && activeSlideId === previews.length - perView;
 
   return (
     <article className={classNames(containerCls.container, newsCls.article)}>
@@ -56,8 +73,13 @@ export default function NewsPreviews() {
         Новини
       </h2>
       <div className={newsCls.previews}>
-        {windowWidth > 1360 && previews}
-        {windowWidth <= 1360 && (
+        {!previews && (
+          <ThreeDotsSpinnerBlock
+            blockClassName={newsCls.spinnerBlock}
+          />
+        )}
+        {previews && windowWidth > 1360 && previews}
+        {previews && windowWidth <= 1360 && (
           <Slider
             activeSlideId={activeSlideId}
             setActiveSlideId={setActiveSlideId}
@@ -66,17 +88,17 @@ export default function NewsPreviews() {
             perView={perView}
           />
         )}
-        {windowWidth <= 1360 && (
+        {previews && windowWidth <= 1360 && (
           <>
             <BigPrevNextButton
               className={newsCls.sliderButtonPrev}
-              isInactive={activeSlideId === 0}
+              isInactive={isPrevButtonInactive}
               isPrev
               onClick={() => setActiveSlideId((id) => id - 1)}
             />
             <BigPrevNextButton
               className={newsCls.sliderButtonNext}
-              isInactive={activeSlideId === previews.length - perView}
+              isInactive={isNextButtonInactive}
               onClick={() => setActiveSlideId((id) => id + 1)}
             />
           </>

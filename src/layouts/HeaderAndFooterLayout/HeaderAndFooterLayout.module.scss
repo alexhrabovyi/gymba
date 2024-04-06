@@ -1,0 +1,8 @@
+@import '../../scss/mixins';
+
+.fallbackBlock {
+  width: 100%;
+  height: 70vh;
+
+  @include flex-builder(row, center, center);
+}

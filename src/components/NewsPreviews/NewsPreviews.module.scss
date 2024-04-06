@@ -31,6 +31,7 @@
 .previews {
   position: relative;
   display: grid;
+  width: 100%;
   column-gap: 24px;
   grid-template-columns: repeat(4, 1fr);
 
@@ -46,6 +47,19 @@
 
   @include media-s {
     max-width: 300px;
+  }
+}
+
+.spinnerBlock {
+  width: 100%;
+  height: 100px;
+
+  @include flex-builder(row, center, center);
+
+  grid-column: 1/5;
+
+  @include media-l {
+    grid-column: 1/2;
   }
 }
 

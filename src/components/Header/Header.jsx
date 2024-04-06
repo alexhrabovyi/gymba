@@ -11,7 +11,6 @@ import {
   Link,
   NavLink,
   useFetcher,
-  useLoaderData,
   Form,
   useLocation,
   useSearchParams,
@@ -44,7 +43,7 @@ import Favorite from '../../assets/images/icons/favorite.svg';
 import Cart from '../../assets/images/icons/cart.svg';
 
 export default function Header() {
-  const categories = useLoaderData();
+  const categoriesFetcher = useFetcher();
   const wishlistFetcher = useFetcher();
   const cartFetcher = useFetcher();
   const compareFetcher = useFetcher();
@@ -57,7 +56,8 @@ export default function Header() {
   const searchInputRef = useRef(null);
   const openLoginPopupBtnRef = useRef(null);
 
-  const [activeCategory, setActiveCategory] = useState(categories[0]);
+  const [categories, setCategories] = useState(null);
+  const [activeCategory, setActiveCategory] = useState(null);
   const [isMainMenuOpen, setIsMainMenuOpen] = useState(false);
   const [isCategoryMenuOpen, setIsCategoryMenuOpen] = useState(false);
   const [isSubcategoryMenuOpen, setIsSubcategoryMenuOpen] = useState(false);
@@ -83,6 +83,12 @@ export default function Header() {
 
   useLayoutEffect(getWindowWidth, [getWindowWidth]);
   useOnResize(getWindowWidth);
+
+  const setupActiveCategory = useCallback(() => {
+    setActiveCategory(categories?.[0]);
+  }, [categories]);
+
+  useEffect(setupActiveCategory, [setupActiveCategory]);
 
   const setupHeaderAndHeaderWrapperStyles = useCallback(() => {
     const headerWrapper = headerWrapperRef.current;
@@ -140,6 +146,14 @@ export default function Header() {
   useEffect(searchInputValueInitialSetup, [searchInputValueInitialSetup]);
 
   // fetcher functions
+
+  useFetcherLoad(categoriesFetcher, '/getCategoriesAndSubcategories');
+
+  if (categoriesFetcher.data) {
+    if (categoriesFetcher.data.categories !== categories) {
+      setCategories(categoriesFetcher.data.categories);
+    }
+  }
 
   useFetcherLoad(wishlistFetcher, '/wishlist');
 

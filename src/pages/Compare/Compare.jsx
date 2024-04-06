@@ -1,3 +1,4 @@
+import { defer } from 'react-router-dom';
 import {
   getCompareIds, getCompareAmount, getCompareSubcategoriesBtnInfo, addIdToCompare,
   deleteSubcFromCompare, deleteAllFromCompare, deleteFromCompare,
@@ -5,16 +6,16 @@ import {
 import BreadCrumbs from '../../components/BreadCrumbs/BreadCrumbs.jsx';
 import Compare from '../../components/Compare/Compare.jsx';
 
-export function loader() {
+export async function loader() {
   const compareIds = getCompareIds();
   const compareAmount = getCompareAmount();
   const compareSubcategoriesBtnInfo = getCompareSubcategoriesBtnInfo();
 
-  return {
+  return defer({
     compareIds,
     compareAmount,
     compareSubcategoriesBtnInfo,
-  };
+  });
 }
 
 export async function action({ request }) {

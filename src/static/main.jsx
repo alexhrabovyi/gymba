@@ -2,9 +2,10 @@ import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import React from 'react';
 import { createRoot } from 'react-dom/client';
 import './main.scss';
-import { HeaderAndFooterLayout, loader as HeaderAndFooterLayoutLoader } from '../layouts/HeaderAndFooterLayout/HeaderAndFooterLayout.jsx';
+import { HeaderAndFooterLayout } from '../layouts/HeaderAndFooterLayout/HeaderAndFooterLayout.jsx';
 import { ErrorPage } from '../pages/Error/Error.jsx';
-import { Main, loader as mainLoader } from '../pages/Main/Main.jsx';
+import MainLazy from '../pages/Main/Main.lazy.jsx';
+import { loader as mainLoader } from '../pages/Main/MainUtils.jsx';
 import { CategoryPage, loader as categoryPageLoader } from '../pages/Category/Category.jsx';
 import { ProductsPage, loader as productsLoader } from '../pages/Products/Products.jsx';
 import { ProductPage, loader as productPageLoader } from '../pages/Product/Product.jsx';
@@ -17,13 +18,13 @@ import { ContactsPage } from '../pages/Contacts/Contacts.jsx';
 import { NewsPage, loader as newsPageLoader } from '../pages/News/News.jsx';
 import { NewsArticlePage, loader as newsArticleLoader } from '../pages/NewsArticle/NewsArticle.jsx';
 import { SearchPage, loader as getSearchPageLoader } from '../pages/Search/Search.jsx';
+import { GetCategoriesAndSubcategoriesPage, loader as getCategoriesAndSubcategoriesLoader } from '../pages/GetCategoriesAndSubcategories/GetCategoriesAndSubcategories.jsx';
 import { loader as getAnalogueProductsLoader, action as getAnalogueProductsAction } from '../pages/GetAnalogueProducts/GetAnalogueProducts.jsx';
 import { loader as getCompareProductsLoader } from '../pages/GetCompareProducts/GetCompareProducts.jsx';
-import { loader as getRandomProductLoader } from '../pages/GetRandomProduct/GetRandomProduct.jsx';
+import { GetRandomProductPage, loader as getRandomProductLoader } from '../pages/GetRandomProduct/GetRandomProduct.jsx';
 
 const router = createBrowserRouter([
   {
-    loader: HeaderAndFooterLayoutLoader,
     element: <HeaderAndFooterLayout />,
     children: [
       {
@@ -32,7 +33,7 @@ const router = createBrowserRouter([
           {
             path: '/',
             loader: mainLoader,
-            element: <Main />,
+            element: <MainLazy />,
           },
           {
             path: ':categoryId',
@@ -95,6 +96,11 @@ const router = createBrowserRouter([
             element: <SearchPage />,
           },
           {
+            path: 'getCategoriesAndSubcategories',
+            loader: getCategoriesAndSubcategoriesLoader,
+            element: <GetCategoriesAndSubcategoriesPage />,
+          },
+          {
             path: 'getAnalogueProducts',
             action: getAnalogueProductsAction,
             loader: getAnalogueProductsLoader,
@@ -106,6 +112,7 @@ const router = createBrowserRouter([
           {
             path: 'getRandomProduct',
             loader: getRandomProductLoader,
+            element: <GetRandomProductPage />,
           },
         ],
       },

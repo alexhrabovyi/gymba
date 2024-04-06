@@ -1,3 +1,4 @@
+import { defer } from 'react-router-dom';
 import {
   getWishlistIds,
   getWishlistAmount,
@@ -14,14 +15,13 @@ export function loader({ request }) {
 
   const wishlistIds = getWishlistIds();
   const wishlistAmount = getWishlistAmount();
-  const { wishlistProducts, pageAmount } = getWishlistProductsPerPageAndPageAmount(page);
+  const wishlistProductsPerPageAndPageAmount = getWishlistProductsPerPageAndPageAmount(page);
 
-  return {
+  return defer({
     wishlistIds,
     wishlistAmount,
-    wishlistProducts,
-    pageAmount,
-  };
+    wishlistProductsPerPageAndPageAmount,
+  });
 }
 
 export async function action({ request }) {

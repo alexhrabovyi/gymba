@@ -2,7 +2,21 @@
 import products from './products.json';
 import news from './news.json';
 
-export function getCategoriesAndSubcategories() {
+// async function fakeNetwork() {
+//   return new Promise((res) => {
+//     setTimeout(res, Math.random() * 800);
+//   });
+// }
+
+async function fakeNetwork() {
+  return new Promise((res) => {
+    setTimeout(res, 3000);
+  });
+}
+
+export async function getCategoriesAndSubcategories() {
+  await fakeNetwork();
+
   const categories = products.map((c) => {
     const dataSubcategories = c.subcategories;
 
@@ -73,7 +87,8 @@ export function getProduct(categoryId, subcategoryId, productId) {
   };
 }
 
-export function getRandomProduct() {
+export async function getRandomProduct() {
+  await fakeNetwork();
   const { categoryId, subcategory } = getCategoryAndSubcategory('enamels', 'alkyd_enamels');
   const subcategoryProducts = subcategory.products.slice(0);
 
@@ -302,28 +317,30 @@ export function deleteAllFromWishlist() {
   localStorage.removeItem('wishlistIds');
 }
 
-export function getWishlistIds() {
+export async function getWishlistIds() {
+  await fakeNetwork();
+
   const wishlistIds = JSON.parse(localStorage.getItem('wishlistIds')) || [];
 
   return wishlistIds;
 }
 
-export function getWishlistAmount() {
-  const wishlistIds = getWishlistIds();
+export async function getWishlistAmount() {
+  const wishlistIds = await getWishlistIds();
 
   return wishlistIds.length;
 }
 
-export function getAllWishlistProducts() {
-  const wishlistIds = getWishlistIds();
+export async function getAllWishlistProducts() {
+  const wishlistIds = await getWishlistIds();
   const wishlistProducts = wishlistIds.map((ids) => getProduct(...ids));
 
   return wishlistProducts;
 }
 
-export function getWishlistProductsPerPageAndPageAmount(pageNum) {
+export async function getWishlistProductsPerPageAndPageAmount(pageNum) {
   const perView = 12;
-  const allWishlistProducts = getAllWishlistProducts();
+  const allWishlistProducts = await getAllWishlistProducts();
   const wishlistProductsAmount = allWishlistProducts.length;
   const pageAmount = getPageAmount(wishlistProductsAmount, perView);
 
@@ -385,14 +402,16 @@ export function deleteAllFromCart() {
   localStorage.removeItem('cartIds');
 }
 
-export function getCartIds() {
+export async function getCartIds() {
+  await fakeNetwork();
+
   const cartIds = JSON.parse(localStorage.getItem('cartIds')) || [];
 
   return cartIds;
 }
 
-export function getCartAmount() {
-  const cartIds = getCartIds();
+export async function getCartAmount() {
+  const cartIds = await getCartIds();
 
   return cartIds.length;
 }
@@ -407,8 +426,8 @@ export function editProductAmountInCart(categoryId, subcategoryId, productId, ne
   localStorage.setItem('cartIds', JSON.stringify(cartIds));
 }
 
-function getCartProducts() {
-  const cartIds = getCartIds();
+async function getCartProducts() {
+  const cartIds = await getCartIds();
 
   const cartProducts = cartIds.map((cId) => {
     const product = getProduct(cId.categoryId, cId.subcategoryId, cId.productId);
@@ -429,8 +448,8 @@ function getCartTotalPrice(cartProducts) {
   return cartProducts.reduce((totalPrice, cP) => totalPrice += cP.totalPrice, 0);
 }
 
-export function getCartProductsAndTotalPrice() {
-  const cartProducts = getCartProducts();
+export async function getCartProductsAndTotalPrice() {
+  const cartProducts = await getCartProducts();
   const totalPrice = getCartTotalPrice(cartProducts);
 
   return {
@@ -474,20 +493,22 @@ export function deleteAllFromCompare() {
   localStorage.removeItem('compareIds');
 }
 
-export function getCompareIds() {
+export async function getCompareIds() {
+  await fakeNetwork();
+
   const compareIds = JSON.parse(localStorage.getItem('compareIds')) || [];
 
   return compareIds;
 }
 
-export function getCompareAmount() {
-  const compareIds = getCompareIds();
+export async function getCompareAmount() {
+  const compareIds = await getCompareIds();
 
   return compareIds.length;
 }
 
-export function getCompareSubcategoriesBtnInfo() {
-  const compareIds = getCompareIds();
+export async function getCompareSubcategoriesBtnInfo() {
+  const compareIds = await getCompareIds();
 
   const uniqueCompareCategoryAndSubcategory = [];
   compareIds.forEach(([cId, subcId]) => {
@@ -537,7 +558,9 @@ export function getAnalogueProducts(categoryId, subcategoryId, productId) {
   return randomProducts;
 }
 
-function getAllSearchResults(searchQuery) {
+async function getAllSearchResults(searchQuery) {
+  await fakeNetwork();
+
   const firstOrderRegExp = new RegExp(`^${searchQuery}`, 'i');
   const lastOrderRegExp = new RegExp(`${searchQuery}`, 'i');
 
@@ -637,9 +660,9 @@ function getAllSearchResults(searchQuery) {
   return result;
 }
 
-export function getSearchResultsPerPageAndPageAmount(searchQuery, pageNum) {
+export async function getSearchResultsPerPageAndPageAmount(searchQuery, pageNum) {
   const perView = 12;
-  const allSearchResults = getAllSearchResults(searchQuery);
+  const allSearchResults = await getAllSearchResults(searchQuery);
   const searchResultsAmount = allSearchResults.length;
   const pageAmount = getPageAmount(searchResultsAmount, perView);
 
@@ -658,7 +681,9 @@ export function getSearchResultsPerPageAndPageAmount(searchQuery, pageNum) {
 
 // news
 
-function getAllNewsPreviews() {
+async function getAllNewsPreviews() {
+  await fakeNetwork();
+
   const newsPreviews = news.map((n) => ({
     name: n.name,
     id: n.id,
@@ -669,8 +694,8 @@ function getAllNewsPreviews() {
   return newsPreviews;
 }
 
-export function getFourNewsPreviews() {
-  const newsPreviews = getAllNewsPreviews().slice(0, 4);
+export async function getFourNewsPreviews() {
+  const newsPreviews = (await getAllNewsPreviews()).slice(0, 4);
 
   return newsPreviews;
 }

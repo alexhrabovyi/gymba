@@ -1,10 +1,13 @@
+/* eslint-disable import/no-unresolved */
 import { Link } from 'react-router-dom';
 import classNames from 'classnames';
 import {
   memo, useRef, useEffect, useLayoutEffect, useCallback,
+  useMemo,
 } from 'react';
 import useToggleInteractiveElements from '../../../hooks/useToggleInteractiveElements.jsx';
 import useOnResize from '../../../hooks/useOnResize.jsx';
+import ThreeDotsSpinnerBlock from '../../common/ThreeDotsSpinnerBlock/ThreeDotsSpinnerBlock.jsx';
 import containerCls from '../../../scss/_container.module.scss';
 import textCls from '../../../scss/_text.module.scss';
 import linkCls from '../../../scss/_link.module.scss';
@@ -15,7 +18,7 @@ import ArrowRight from '../../../assets/images/icons/arrow-right.svg';
 const HeaderSubcategoryMenu = memo(({ isMenuOpen, category, backToCatalogOnClick }) => {
   const menuRef = useRef(null);
 
-  const { subcategories } = category;
+  const subcategories = category?.subcategories;
 
   useToggleInteractiveElements(menuRef, isMenuOpen);
 
@@ -40,6 +43,22 @@ const HeaderSubcategoryMenu = memo(({ isMenuOpen, category, backToCatalogOnClick
   useLayoutEffect(setupMenuHeight, [setupMenuHeight]);
   useOnResize(setupMenuHeight);
 
+  const subcategoryLinkList = useMemo(() => (
+    <ul className={subcategoryMenuCls.linkList}>
+      {subcategories?.map((subC) => (
+        <li key={subC.id}>
+          <Link
+            to={`${category.id}/${subC.id}`}
+            className={classNames(linkCls.link, linkCls.link18px)}
+            alt={subC.name}
+          >
+            {subC.name}
+          </Link>
+        </li>
+      ))}
+    </ul>
+  ), [subcategories, category]);
+
   useEffect(() => {
     if (isMenuOpen) menuRef.current.focus();
   }, [isMenuOpen]);
@@ -55,7 +74,7 @@ const HeaderSubcategoryMenu = memo(({ isMenuOpen, category, backToCatalogOnClick
       aria-hidden={!isMenuOpen}
       role="dialog"
       aria-modal
-      aria-label={`Меню категорії ${category.name}`}
+      aria-label={`Меню категорії ${category?.name}`}
       tabIndex={isMenuOpen ? '0' : '-1'}
     >
       <button
@@ -75,23 +94,18 @@ const HeaderSubcategoryMenu = memo(({ isMenuOpen, category, backToCatalogOnClick
         textCls.text21px,
       )}
       >
-        {category.name}
+        {category?.name}
       </p>
       <nav className={subcategoryMenuCls.linkBlock}>
         <ul className={subcategoryMenuCls.linkList}>
-          {subcategories.map((subC) => (
-            <li key={subC.id}>
-              <Link
-                to={`${category.id}/${subC.id}`}
-                className={classNames(linkCls.link, linkCls.link18px)}
-                alt={subC.name}
-              >
-                {subC.name}
-              </Link>
-            </li>
-          ))}
+          {subcategories ? subcategoryLinkList : (
+            <ThreeDotsSpinnerBlock
+              blockClassName={subcategoryMenuCls.loadingSpinnerBlock}
+              spinnerClassName={subcategoryMenuCls.loadingSpinner}
+            />
+          )}
           <li>
-            <Link to={category.id} className={subcategoryMenuCls.allCategoriesLink} alt="Усі категорії">
+            <Link to={category?.id} className={subcategoryMenuCls.allCategoriesLink} alt="Усі категорії">
               Усі категорії
               <ArrowRight className={subcategoryMenuCls.allCategoriesArrow} />
             </Link>

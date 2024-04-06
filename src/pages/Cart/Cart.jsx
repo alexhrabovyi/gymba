@@ -1,3 +1,4 @@
+import { defer } from 'react-router-dom';
 import {
   getCartIds, getCartAmount, addIdToCart, deleteAllFromCart,
   deleteFromCart, getCartProductsAndTotalPrice, editProductAmountInCart,
@@ -5,17 +6,16 @@ import {
 import BreadCrumbs from '../../components/BreadCrumbs/BreadCrumbs.jsx';
 import Cart from '../../components/Cart/Cart.jsx';
 
-export function loader() {
+export async function loader() {
   const cartIds = getCartIds();
   const cartAmount = getCartAmount();
-  const { cartProducts, totalPrice } = getCartProductsAndTotalPrice();
+  const cartProductsAndTotalPrice = getCartProductsAndTotalPrice();
 
-  return {
+  return defer({
     cartIds,
     cartAmount,
-    cartProducts,
-    totalPrice,
-  };
+    cartProductsAndTotalPrice,
+  });
 }
 
 export async function action({ request }) {

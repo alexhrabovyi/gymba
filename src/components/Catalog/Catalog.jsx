@@ -5,27 +5,43 @@ import {
   useRef,
   useCallback,
   useLayoutEffect,
+  useMemo,
 } from 'react';
+import { useFetcher } from 'react-router-dom';
 import classNames from 'classnames';
-import { useLoaderData } from 'react-router-dom';
-import catalogCls from './Catalog.module.scss';
-import textCls from '../../scss/_text.module.scss';
-import containerCls from '../../scss/_container.module.scss';
-import Category from './CatalogCategory/CatalogCategory.jsx';
-import Button from '../common/Button/Button.jsx';
+import useFetcherLoad from '../../hooks/useFetcherLoad.jsx';
 import useOnResize from '../../hooks/useOnResize.jsx';
+import Category from './CatalogCategory/CatalogCategory.jsx';
+import ThreeDotsSpinnerBlock from '../common/ThreeDotsSpinnerBlock/ThreeDotsSpinnerBlock.jsx';
+import Button from '../common/Button/Button.jsx';
+import containerCls from '../../scss/_container.module.scss';
+import textCls from '../../scss/_text.module.scss';
+import catalogCls from './Catalog.module.scss';
 
 export default function Catalog() {
-  const { categories } = useLoaderData();
+  const categoriesFetcher = useFetcher();
+
+  const categoryBlockRef = useRef(null);
+
+  const [categories, setCategories] = useState(null);
   const [isAccordionNeeded, setIsAccordionNeeded] = useState(false);
   const [isAccordionOpen, setIsAccordionOpen] = useState(false);
-  const categoryBlockRef = useRef(null);
+
+  useFetcherLoad(categoriesFetcher, '/');
+
+  if (categoriesFetcher.data) {
+    const fetcherCategories = categoriesFetcher.data.categories;
+
+    if (fetcherCategories !== categories) {
+      setCategories(fetcherCategories);
+    }
+  }
 
   const calcCollapsedHeight = useCallback(() => {
     const categoryBlock = categoryBlockRef.current;
 
     const gap = +getComputedStyle(categoryBlock).rowGap.match(/\d+/)[0];
-    const fourthBlockOffsetTop = categoryBlock.children[3].offsetTop;
+    const fourthBlockOffsetTop = categoryBlock.children[3]?.offsetTop;
     return fourthBlockOffsetTop - gap;
   }, []);
 
@@ -82,7 +98,7 @@ export default function Catalog() {
   useEffect(() => {
     const categoryBlock = categoryBlockRef.current;
 
-    if (isAccordionNeeded && categories.length > 3) {
+    if (isAccordionNeeded && categories?.length > 3) {
       categoryBlock.style.height = `${calcCollapsedHeight()}px`;
       categoryBlock.style.overflowY = 'hidden';
     }
@@ -94,19 +110,23 @@ export default function Catalog() {
     };
   }, [isAccordionNeeded, categories, calcCollapsedHeight]);
 
-  let figureId = 1;
+  const categoryElements = useMemo(() => {
+    if (!categories) return;
 
-  const categoryElements = categories.map((categoryProps) => {
-    if (figureId > 9) figureId = 1;
+    let figureId = 1;
 
-    return (
-      <Category
-        key={categoryProps.id}
-        categoryProps={categoryProps}
-        figureId={figureId++}
-      />
-    );
-  });
+    return categories?.map((categoryProps) => {
+      if (figureId > 9) figureId = 1;
+
+      return (
+        <Category
+          key={categoryProps.id}
+          categoryProps={categoryProps}
+          figureId={figureId++}
+        />
+      );
+    });
+  }, [categories]);
 
   return (
     <main className={classNames(catalogCls.catalog, containerCls.container)}>
@@ -125,15 +145,20 @@ export default function Catalog() {
         ref={categoryBlockRef}
         className={catalogCls.categoryBlock}
       >
-        {categoryElements}
+        {categoryElements || (
+          <ThreeDotsSpinnerBlock
+            blockClassName={catalogCls.spinnerBlock}
+          />
+        )}
       </div>
-      <Button
-        className={catalogCls.button}
-        onClick={buttonOnClick}
-        ariaHidden
-      >
-        {isAccordionOpen ? 'Приховати' : 'Показати більше'}
-      </Button>
+      {categories && (
+        <Button
+          className={catalogCls.button}
+          onClick={buttonOnClick}
+        >
+          {isAccordionOpen ? 'Приховати' : 'Показати більше'}
+        </Button>
+      )}
     </main>
   );
 }
