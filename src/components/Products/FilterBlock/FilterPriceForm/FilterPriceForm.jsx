@@ -2,19 +2,22 @@
 import {
   useCallback, useEffect, useLayoutEffect, useRef, useState,
 } from 'react';
-import { useLoaderData, useNavigation, useSearchParams } from 'react-router-dom';
+import { useFetcher, useParams, useSearchParams } from 'react-router-dom';
 import classNames from 'classnames';
 import textCls from '../../../../scss/_text.module.scss';
 import filterCls from './FilterPriceForm.module.scss';
 import ChevronUp from '../../../../assets/images/icons/chevronUp.svg';
 
 export default function FilterPriceForm() {
-  const loaderData = useLoaderData();
+  const productsFetcher = useFetcher();
+  const params = useParams();
   const [searchParams, setSearchParams] = useSearchParams();
-  const navigation = useNavigation();
 
   const [isClosed, setIsClose] = useState(false);
   const [formWasInteracted, setFormWasInteracted] = useState(false);
+
+  const [filteredProductsAndMinMaxPrice, setFilteredProductsAndMinMaxPrice] = useState(null);
+  const [prevFetchUrl, setPrevFetchUrl] = useState(null);
 
   const [prevLoaderMinPrice, setPrevLoaderMinPrice] = useState(null);
   const [prevLoaderMaxPrice, setPrevLoaderMaxPrice] = useState(null);
@@ -33,27 +36,35 @@ export default function FilterPriceForm() {
   const minButtonRef = useRef(null);
   const maxButtonRef = useRef(null);
 
-  const loaderMinPrice = Number(loaderData.minPrice) || 0;
-  const loaderMaxPrice = Number(loaderData.maxPrice) || 0;
+  // setup functions
+
+  const categoryIdParam = params.categoryId;
+  const subcategoryIdParam = params.subcategoryId;
+
+  const fetchUrl = searchParams.size ? `/getSubcategoryProducts/${categoryIdParam}/${subcategoryIdParam}?${searchParams.toString()}`
+    : `/getSubcategoryProducts/${categoryIdParam}/${subcategoryIdParam}`;
+
+  const initMinPrice = Number(filteredProductsAndMinMaxPrice?.minPrice) || 0;
+  const initMaxPrice = Number(filteredProductsAndMinMaxPrice?.maxPrice) || 0;
 
   function setupPrices() {
-    if (prevLoaderMinPrice !== loaderMinPrice) setPrevLoaderMinPrice(loaderMinPrice);
-    if (prevLoaderMaxPrice !== loaderMaxPrice) setPrevLoaderMaxPrice(loaderMaxPrice);
+    if (prevLoaderMinPrice !== initMinPrice) setPrevLoaderMinPrice(initMinPrice);
+    if (prevLoaderMaxPrice !== initMaxPrice) setPrevLoaderMaxPrice(initMaxPrice);
 
     if (!formWasInteracted) {
       if (searchParams.has('minPrice')) {
         const searchParamsMinPrice = Number(searchParams.get('minPrice'));
         const searchParamsMaxPrice = Number(searchParams.get('maxPrice'));
 
-        if (loaderMinPrice > searchParamsMinPrice && prevLoaderMinPrice !== loaderMinPrice) {
+        if (initMinPrice > searchParamsMinPrice && prevLoaderMinPrice !== initMinPrice) {
           setTotalMinPrice(searchParamsMinPrice);
-        } else if (loaderMinPrice < searchParamsMinPrice && prevLoaderMinPrice !== loaderMinPrice) {
-          setTotalMinPrice(loaderMinPrice);
+        } else if (initMinPrice < searchParamsMinPrice && prevLoaderMinPrice !== initMinPrice) {
+          setTotalMinPrice(initMinPrice);
         }
-        if (loaderMaxPrice < searchParamsMaxPrice && prevLoaderMaxPrice !== loaderMaxPrice) {
+        if (initMaxPrice < searchParamsMaxPrice && prevLoaderMaxPrice !== initMaxPrice) {
           setTotalMaxPrice(searchParamsMaxPrice);
-        } else if (loaderMaxPrice > searchParamsMaxPrice && prevLoaderMaxPrice !== loaderMaxPrice) {
-          setTotalMaxPrice(loaderMaxPrice);
+        } else if (initMaxPrice > searchParamsMaxPrice && prevLoaderMaxPrice !== initMaxPrice) {
+          setTotalMaxPrice(initMaxPrice);
         }
 
         if (searchParamsMinPrice !== currentMinPrice) {
@@ -65,29 +76,29 @@ export default function FilterPriceForm() {
           setMaxInputValue(searchParamsMaxPrice);
         }
       } else {
-        if (totalMinPrice !== loaderMinPrice) setTotalMinPrice(loaderMinPrice);
-        if (totalMaxPrice !== loaderMaxPrice) setTotalMaxPrice(loaderMaxPrice);
+        if (totalMinPrice !== initMinPrice) setTotalMinPrice(initMinPrice);
+        if (totalMaxPrice !== initMaxPrice) setTotalMaxPrice(initMaxPrice);
 
-        if (currentMinPrice !== loaderMinPrice) {
-          setCurrentMinPrice(loaderMinPrice);
-          setMinInputValue(loaderMinPrice);
+        if (currentMinPrice !== initMinPrice) {
+          setCurrentMinPrice(initMinPrice);
+          setMinInputValue(initMinPrice);
         }
-        if (currentMaxPrice !== loaderMaxPrice) {
-          setCurrentMaxPrice(loaderMaxPrice);
-          setMaxInputValue(loaderMaxPrice);
+        if (currentMaxPrice !== initMaxPrice) {
+          setCurrentMaxPrice(initMaxPrice);
+          setMaxInputValue(initMaxPrice);
         }
       }
     } else {
-      if (loaderMinPrice > currentMinPrice && prevLoaderMinPrice !== loaderMinPrice) {
+      if (initMinPrice > currentMinPrice && prevLoaderMinPrice !== initMinPrice) {
         setTotalMinPrice(currentMinPrice);
-      } else if (loaderMinPrice < currentMinPrice && prevLoaderMinPrice !== loaderMinPrice) {
-        setTotalMinPrice(loaderMinPrice);
+      } else if (initMinPrice < currentMinPrice && prevLoaderMinPrice !== initMinPrice) {
+        setTotalMinPrice(initMinPrice);
       }
 
-      if (loaderMaxPrice < currentMaxPrice && prevLoaderMaxPrice !== loaderMaxPrice) {
+      if (initMaxPrice < currentMaxPrice && prevLoaderMaxPrice !== initMaxPrice) {
         setTotalMaxPrice(currentMaxPrice);
-      } else if (loaderMaxPrice > currentMaxPrice && prevLoaderMaxPrice !== loaderMaxPrice) {
-        setTotalMaxPrice(loaderMaxPrice);
+      } else if (initMaxPrice > currentMaxPrice && prevLoaderMaxPrice !== initMaxPrice) {
+        setTotalMaxPrice(initMaxPrice);
       }
     }
   }
@@ -95,12 +106,10 @@ export default function FilterPriceForm() {
   setupPrices();
 
   const interactedFormOnNavigate = useCallback(() => {
-    if (navigation.state === 'loading' && formWasInteracted) {
-      const urlSearchParams = new URLSearchParams(navigation.location.search);
-
-      if (urlSearchParams.has('minPrice')) {
-        const searchParamsMinPrice = Number(urlSearchParams.get('minPrice'));
-        const searchParamsMaxPrice = Number(urlSearchParams.get('maxPrice'));
+    if (productsFetcher.state === 'loading' && formWasInteracted) {
+      if (searchParams.has('minPrice')) {
+        const searchParamsMinPrice = Number(searchParams.get('minPrice'));
+        const searchParamsMaxPrice = Number(searchParams.get('maxPrice'));
 
         if (searchParamsMinPrice !== currentMinPrice) {
           setCurrentMinPrice(searchParamsMinPrice);
@@ -115,9 +124,41 @@ export default function FilterPriceForm() {
         setFormWasInteracted(false);
       }
     }
-  }, [navigation, currentMinPrice, currentMaxPrice, formWasInteracted]);
+  }, [productsFetcher, searchParams, currentMinPrice, currentMaxPrice, formWasInteracted]);
 
   useLayoutEffect(interactedFormOnNavigate, [interactedFormOnNavigate]);
+
+  // fetcher functions
+
+  const initialDataFetch = useCallback(() => {
+    if (productsFetcher.state === 'idle' && !productsFetcher.data) {
+      setPrevFetchUrl(fetchUrl);
+
+      productsFetcher.load(fetchUrl);
+    }
+  }, [productsFetcher, fetchUrl]);
+
+  useEffect(initialDataFetch, [initialDataFetch]);
+
+  const dataFetchByInteraction = useCallback(() => {
+    if (prevFetchUrl !== fetchUrl) {
+      setPrevFetchUrl(fetchUrl);
+
+      productsFetcher.load(fetchUrl);
+    }
+  }, [prevFetchUrl, fetchUrl, productsFetcher]);
+
+  useEffect(dataFetchByInteraction, [dataFetchByInteraction]);
+
+  function updateDataFromFetch() {
+    if (productsFetcher.data) {
+      if (productsFetcher.data.filteredProductsAndMinMaxPrice !== filteredProductsAndMinMaxPrice) {
+        setFilteredProductsAndMinMaxPrice(productsFetcher.data.filteredProductsAndMinMaxPrice);
+      }
+    }
+  }
+
+  updateDataFromFetch();
 
   // helper functions
 
@@ -195,22 +236,22 @@ export default function FilterPriceForm() {
 
     const contentBlock = contentRef.current;
 
-    if (loaderMinPrice === loaderMaxPrice
-      && currentMinPrice === loaderMinPrice
-      && currentMaxPrice === loaderMaxPrice) {
+    if (initMinPrice === initMaxPrice
+      && currentMinPrice === initMinPrice
+      && currentMaxPrice === initMaxPrice) {
       contentBlock.style.opacity = '0.5';
       contentBlock.style.pointerEvents = 'none';
     }
 
     return () => {
-      if (loaderMinPrice === loaderMaxPrice
-        && currentMinPrice === loaderMinPrice
-        && currentMaxPrice === loaderMaxPrice) {
+      if (initMinPrice === initMaxPrice
+        && currentMinPrice === initMinPrice
+        && currentMaxPrice === initMaxPrice) {
         contentBlock.style.opacity = '';
         contentBlock.style.pointerEvents = '';
       }
     };
-  }, [formWasInteracted, loaderMinPrice, loaderMaxPrice, currentMinPrice, currentMaxPrice]);
+  }, [formWasInteracted, initMinPrice, initMaxPrice, currentMinPrice, currentMaxPrice]);
 
   useEffect(makeInactiveOnSameValues, [makeInactiveOnSameValues]);
 

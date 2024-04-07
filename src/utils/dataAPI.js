@@ -37,7 +37,9 @@ export async function getCategoriesAndSubcategories() {
   return categories;
 }
 
-export function getCategoryAndSubcategories(categoryId) {
+export async function getCategoryAndSubcategories(categoryId) {
+  await fakeNetwork();
+
   const category = products.find((c) => c.id === categoryId);
 
   if (!category) throw new Error('Категорію не знайдено');
@@ -89,6 +91,7 @@ export function getProduct(categoryId, subcategoryId, productId) {
 
 export async function getRandomProduct() {
   await fakeNetwork();
+
   const { categoryId, subcategory } = getCategoryAndSubcategory('enamels', 'alkyd_enamels');
   const subcategoryProducts = subcategory.products.slice(0);
 
@@ -101,7 +104,9 @@ export async function getRandomProduct() {
   };
 }
 
-export function getSubcategoryFilters(categoryId, subcategoryId) {
+export async function getSubcategoryFilters(categoryId, subcategoryId) {
+  await fakeNetwork();
+
   const subCategoryProducts = getCategoryAndSubcategory(categoryId, subcategoryId)
     .subcategory.products;
 
@@ -128,7 +133,9 @@ export function getSubcategoryFilters(categoryId, subcategoryId) {
   return filters;
 }
 
-function filterBySpecs(subcategoryProducts, searchParams) {
+async function filterBySpecs(subcategoryProducts, searchParams) {
+  await fakeNetwork();
+
   let filters = {};
 
   Array.from(searchParams).forEach(([key, value]) => {
@@ -237,7 +244,7 @@ function getProductsPerPage(subcategoryProducts, perView, pageNum, pageAmount) {
   return subcategoryProducts.slice(firstPageProduct, lastPageProduct);
 }
 
-export function getFilteredProductsAndMinMaxPrice(categoryId, subcategoryId, searchParams) {
+export async function getFilteredProductsAndMinMaxPrice(categoryId, subcategoryId, searchParams) {
   const category = products.find((c) => c.id === categoryId);
   const subcategory = category.subcategories.find((s) => s.id === subcategoryId);
   const subcategoryProducts = subcategory.products;
@@ -256,7 +263,7 @@ export function getFilteredProductsAndMinMaxPrice(categoryId, subcategoryId, sea
   const pageNum = searchParams.get('page');
   searchParams.delete('page');
 
-  let filteredProducts = filterBySpecs(subcategoryProducts, searchParams);
+  let filteredProducts = await filterBySpecs(subcategoryProducts, searchParams);
   const { minPrice, maxPrice } = getMinAndMaxPrice(filteredProducts);
 
   filteredProducts = filterByPrice(filteredProducts, searchParamsMinPrice, searchParamsMaxPrice);
@@ -739,4 +746,34 @@ export function getRecommendedNews(id) {
   const recommendedNews = (allNewsPreviews.sort(() => 0.5 - Math.random())).slice(0, 3);
 
   return recommendedNews;
+}
+
+// breadCrumbs
+
+export async function getBreadCrumbsInfo(requestList) {
+  await fakeNetwork();
+
+  const result = {};
+
+  if (requestList.categoryId) {
+    const category = products.find((c) => c.id === requestList.categoryId);
+
+    result.category = {
+      id: category.id,
+      name: category.name,
+      link: `/${category.id}`,
+    };
+
+    if (requestList.subcategoryId) {
+      const subcategory = category.subcategories.find((s) => s.id === requestList.subcategoryId);
+
+      result.subcategory = {
+        id: subcategory.id,
+        name: subcategory.name,
+        link: `/${category.id}/${subcategory.id}`,
+      };
+    }
+  }
+
+  return result;
 }

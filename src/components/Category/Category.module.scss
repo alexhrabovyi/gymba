@@ -55,3 +55,22 @@
     grid-template-columns: 1fr;
   }
 }
+
+.spinnerBlock {
+  width: 100%;
+  height: 100px;
+  @include flex-builder(row, center, center);
+  grid-column: 1/5;
+
+  @include media-l {
+    grid-column: 1/4;
+  }
+
+  @include media-m {
+    grid-column: 1/3;
+  }
+
+  @include media-xs {
+    grid-column: 1/2;
+  }
+}

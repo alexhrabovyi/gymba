@@ -88,6 +88,11 @@
   height: 24px;
 }
 
+.productAmount {
+  @include flex-builder(row, flex-start, center);
+  gap: 4px;
+}
+
 .sortAndAppearanceBlock {
   @include flex-builder(row, space-between, center);
 
@@ -191,6 +196,22 @@
       display: grid;
       grid-template-columns: 1fr 1fr;
     }
+  }
+
+  &_inactive {
+    opacity: 0.5;
+    pointer-events: none;
+  }
+}
+
+.spinnerBlock {
+  width: 100%;
+  height: 100px;
+  @include flex-builder(row, center, center);
+  grid-column: 1/4;
+
+  @include media-s {
+    grid-column: 1/3;
   }
 }
 

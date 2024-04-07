@@ -6,19 +6,22 @@ import { HeaderAndFooterLayout } from '../layouts/HeaderAndFooterLayout/HeaderAn
 import { ErrorPage } from '../pages/Error/Error.jsx';
 import MainLazy from '../pages/Main/Main.lazy.jsx';
 import { loader as mainLoader } from '../pages/Main/MainUtils.jsx';
-import { CategoryPage, loader as categoryPageLoader } from '../pages/Category/Category.jsx';
-import { ProductsPage, loader as productsLoader } from '../pages/Products/Products.jsx';
+import CategoryPageLazy from '../pages/Category/Category.lazy.jsx';
+import { loader as categoryLoader } from '../pages/Category/CategoryUtils.jsx';
+import ProductsPageLazy from '../pages/Products/Products.lazy.jsx';
 import { ProductPage, loader as productPageLoader } from '../pages/Product/Product.jsx';
 import { WishlistPage, loader as wishlistLoader, action as wishlistAction } from '../pages/Wishlist/Wishlist.jsx';
 import { CartPage, loader as cartLoader, action as cartAction } from '../pages/Cart/Cart.jsx';
 import { ComparePage, loader as compareLoader, action as compareAction } from '../pages/Compare/Compare.jsx';
-import { DeliveryPage } from '../pages/Delivery/Delivery.jsx';
+import DeliveryPageLazy from '../pages/Delivery/Delivery.lazy.jsx';
 import { PaymentPage } from '../pages/Payment/Payment.jsx';
 import { ContactsPage } from '../pages/Contacts/Contacts.jsx';
 import { NewsPage, loader as newsPageLoader } from '../pages/News/News.jsx';
 import { NewsArticlePage, loader as newsArticleLoader } from '../pages/NewsArticle/NewsArticle.jsx';
 import { SearchPage, loader as getSearchPageLoader } from '../pages/Search/Search.jsx';
 import { GetCategoriesAndSubcategoriesPage, loader as getCategoriesAndSubcategoriesLoader } from '../pages/GetCategoriesAndSubcategories/GetCategoriesAndSubcategories.jsx';
+import { loader as getBreadCrumbsInfoLoader, action as getBreadCrumbsInfoAction } from '../pages/GetBreadCrumbsInfo/GetBreadCrumbsInfo.jsx';
+import { loader as getSubcategoryProductsLoader } from '../pages/GetSubcategoryProducts/GetSubcategoryProducts.jsx';
 import { loader as getAnalogueProductsLoader, action as getAnalogueProductsAction } from '../pages/GetAnalogueProducts/GetAnalogueProducts.jsx';
 import { loader as getCompareProductsLoader } from '../pages/GetCompareProducts/GetCompareProducts.jsx';
 import { GetRandomProductPage, loader as getRandomProductLoader } from '../pages/GetRandomProduct/GetRandomProduct.jsx';
@@ -37,13 +40,12 @@ const router = createBrowserRouter([
           },
           {
             path: ':categoryId',
-            loader: categoryPageLoader,
-            element: <CategoryPage />,
+            loader: categoryLoader,
+            element: <CategoryPageLazy />,
           },
           {
             path: ':categoryId/:subcategoryId',
-            loader: productsLoader,
-            element: <ProductsPage />,
+            element: <ProductsPageLazy />,
           },
           {
             path: ':categoryId/:subcategoryId/:productId',
@@ -70,7 +72,7 @@ const router = createBrowserRouter([
           },
           {
             path: 'delivery',
-            element: <DeliveryPage />,
+            element: <DeliveryPageLazy />,
           },
           {
             path: 'payment',
@@ -99,6 +101,15 @@ const router = createBrowserRouter([
             path: 'getCategoriesAndSubcategories',
             loader: getCategoriesAndSubcategoriesLoader,
             element: <GetCategoriesAndSubcategoriesPage />,
+          },
+          {
+            path: 'getBreadCrumbsInfo',
+            loader: getBreadCrumbsInfoLoader,
+            action: getBreadCrumbsInfoAction,
+          },
+          {
+            path: 'getSubcategoryProducts/:categoryId/:subcategoryId',
+            loader: getSubcategoryProductsLoader,
           },
           {
             path: 'getAnalogueProducts',

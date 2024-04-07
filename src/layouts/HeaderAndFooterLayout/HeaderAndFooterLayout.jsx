@@ -9,7 +9,7 @@ import containerCls from '../../scss/_container.module.scss';
 import layoutCls from './HeaderAndFooterLayout.module.scss';
 
 export function HeaderAndFooterLayout() {
-  const Fallback = (
+  const fallback = (
     <div className={classNames(
       containerCls.container,
       layoutCls.fallbackBlock,
@@ -22,7 +22,7 @@ export function HeaderAndFooterLayout() {
   return (
     <>
       <Header />
-      <Suspense fallback={Fallback}>
+      <Suspense fallback={fallback}>
         <Outlet />
       </Suspense>
       <Suspense>
