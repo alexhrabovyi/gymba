@@ -10,7 +10,7 @@ import news from './news.json';
 
 async function fakeNetwork() {
   return new Promise((res) => {
-    setTimeout(res, 3000);
+    setTimeout(res, Math.random() * 3000);
   });
 }
 
@@ -72,7 +72,9 @@ export function getCategoryAndSubcategory(categoryId, subcategoryId) {
   };
 }
 
-export function getProduct(categoryId, subcategoryId, productId) {
+export async function getProduct(categoryId, subcategoryId, productId) {
+  await fakeNetwork();
+
   const category = products.find((c) => c.id === categoryId);
 
   if (!category) throw new Error('Категорію не знайдено');
@@ -340,7 +342,8 @@ export async function getWishlistAmount() {
 
 export async function getAllWishlistProducts() {
   const wishlistIds = await getWishlistIds();
-  const wishlistProducts = wishlistIds.map((ids) => getProduct(...ids));
+
+  const wishlistProducts = await Promise.all(wishlistIds.map((ids) => getProduct(...ids)));
 
   return wishlistProducts;
 }
@@ -423,8 +426,8 @@ export async function getCartAmount() {
   return cartIds.length;
 }
 
-export function editProductAmountInCart(categoryId, subcategoryId, productId, newAmount) {
-  const cartIds = getCartIds();
+export async function editProductAmountInCart(categoryId, subcategoryId, productId, newAmount) {
+  const cartIds = await getCartIds();
 
   const cartObj = cartIds.find((cId) => cId.categoryId === categoryId
     && cId.subcategoryId === subcategoryId && cId.productId === productId);
@@ -436,8 +439,12 @@ export function editProductAmountInCart(categoryId, subcategoryId, productId, ne
 async function getCartProducts() {
   const cartIds = await getCartIds();
 
-  const cartProducts = cartIds.map((cId) => {
-    const product = getProduct(cId.categoryId, cId.subcategoryId, cId.productId);
+  const cartProductPromises = await Promise.all(cartIds.map((cId) => (
+    getProduct(cId.categoryId, cId.subcategoryId, cId.productId)
+  )));
+
+  const cartProducts = cartIds.map((cId, i) => {
+    const product = cartProductPromises[i];
     const { amount } = cId;
     const totalPrice = +product.product.price * +amount;
 

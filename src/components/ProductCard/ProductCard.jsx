@@ -67,6 +67,42 @@ const ProductCard = memo(({
     }
   }
 
+  function optimisticWishlist() {
+    if (wishlistFetcher.state === 'loading') {
+      if (wishlistFetcher.formMethod === 'patch' && !productInWishlist) {
+        setProductInWishlist(true);
+      } else if (wishlistFetcher.formMethod === 'delete' && productInWishlist) {
+        setProductInWishlist(false);
+      }
+    }
+  }
+
+  optimisticWishlist();
+
+  function optimisticCart() {
+    if (cartFetcher.state === 'loading') {
+      if (cartFetcher.formMethod === 'patch' && !productInCart) {
+        setProductInCart(true);
+      } else if (cartFetcher.formMethod === 'delete' && productInCart) {
+        setProductInCart(false);
+      }
+    }
+  }
+
+  optimisticCart();
+
+  function optimisticCompare() {
+    if (compareFetcher.state === 'loading') {
+      if (compareFetcher.formMethod === 'patch' && !productInCompare) {
+        setProductInCompare(true);
+      } else if (compareFetcher.formMethod === 'delete' && productInCompare) {
+        setProductInCompare(false);
+      }
+    }
+  }
+
+  optimisticCompare();
+
   function wishlistButtonOnClick() {
     const data = JSON.stringify([categoryId, subcategoryId, productId]);
 

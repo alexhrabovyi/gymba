@@ -4,7 +4,7 @@ import {
   useState, useEffect, Suspense, useMemo, useRef, useCallback, useLayoutEffect,
 } from 'react';
 import {
-  useLoaderData, useFetcher, Await, Link,
+  useParams, useFetcher, Await, Link,
 } from 'react-router-dom';
 import classNames from 'classnames';
 import useOnResize from '../../hooks/useOnResize.jsx';
@@ -12,6 +12,7 @@ import useFetcherLoad from '../../hooks/useFetcherLoad.jsx';
 import findAllInteractiveElements from '../../utils/findAllInteractiveElements.js';
 import Spinner from '../common/Spinner/Spinner.jsx';
 import DynamicImage from '../common/DynamicImage/DynamicImage.jsx';
+import ThreeDotsSpinnerBlock from '../common/ThreeDotsSpinnerBlock/ThreeDotsSpinnerBlock.jsx';
 import Slider from '../common/Slider/Slider.jsx';
 import Button from '../common/Button/Button.jsx';
 import AddToCartBanner from './AddToCartBanner/AddToCartBanner.jsx';
@@ -32,16 +33,19 @@ import Compare from '../../assets/images/icons/compare.svg';
 import Line from '../../assets/images/icons/oblique.svg';
 
 export default function Product() {
-  const { categoryId, subcategoryId, product } = useLoaderData();
+  const productFetcher = useFetcher();
   const wishlistFetcher = useFetcher();
   const cartFetcher = useFetcher();
   const compareFetcher = useFetcher();
+
+  const params = useParams();
 
   const descTabPanelRef = useRef();
   const commentTabPanelRef = useRef();
   const openCommentPopupBtnRef = useRef();
   const openQuestionPopupBtnRef = useRef();
 
+  const [productData, setProductData] = useState(null);
   const [imgSrcs, setImgSrcs] = useState([]);
   const [windowWidth, setWindowWidth] = useState(null);
   const [productInWishlist, setProductInWishlist] = useState(false);
@@ -54,7 +58,13 @@ export default function Product() {
   const [isQuestionPopupActive, setIsQuestionPopupActive] = useState(false);
   const [isGalleryOpen, setIsGalleryOpen] = useState(false);
 
-  // helper functions
+  // setup functions
+
+  const fetchUrl = `/${params.categoryId}/${params.subcategoryId}/${params.productId}`;
+
+  const categoryId = productData?.categoryId;
+  const subcategoryId = productData?.subcategoryId;
+  const product = useMemo(() => productData?.product, [productData]);
 
   const getWindowWidth = useCallback(() => {
     setWindowWidth(window.innerWidth);
@@ -68,9 +78,17 @@ export default function Product() {
 
   // fetch functions
 
+  useFetcherLoad(productFetcher, fetchUrl);
+
+  if (productFetcher.data) {
+    if (productFetcher.data.product !== productData) {
+      setProductData(productFetcher.data.product);
+    }
+  }
+
   useFetcherLoad(wishlistFetcher, '/wishlist');
 
-  if (wishlistFetcher.data) {
+  if (wishlistFetcher.data && product) {
     const productInWishlistFromFetcher = wishlistFetcher
       .data.wishlistIds.find(([cId, subcId, pId]) => (
         cId === categoryId && subcId === subcategoryId && pId === product.id
@@ -83,7 +101,7 @@ export default function Product() {
 
   useFetcherLoad(cartFetcher, '/cart');
 
-  if (cartFetcher.data) {
+  if (cartFetcher.data && product) {
     const productInCartFromFetcher = cartFetcher.data.cartIds.find((cId) => (
       cId.categoryId === categoryId
         && cId.subcategoryId === subcategoryId && cId.productId === product.id
@@ -96,7 +114,7 @@ export default function Product() {
 
   useFetcherLoad(compareFetcher, '/compare');
 
-  if (compareFetcher.data) {
+  if (compareFetcher.data && product) {
     const productInCompareFromFetcher = compareFetcher
       .data.compareIds.find(([cId, subcId, pId]) => (
         cId === categoryId && subcId === subcategoryId && pId === product.id
@@ -107,64 +125,47 @@ export default function Product() {
     }
   }
 
-  function wishlistButtonOnClick() {
-    const data = JSON.stringify([categoryId, subcategoryId, product.id]);
-
-    if (!productInWishlist) {
-      wishlistFetcher.submit(data, {
-        action: '/wishlist',
-        method: 'PATCH',
-        encType: 'application/json',
-      });
-    } else {
-      wishlistFetcher.submit(data, {
-        action: '/wishlist',
-        method: 'DELETE',
-        encType: 'application/json',
-      });
+  function optimisticWishlist() {
+    if (wishlistFetcher.state === 'loading') {
+      if (wishlistFetcher.formMethod === 'patch' && !productInWishlist) {
+        setProductInWishlist(true);
+      } else if (wishlistFetcher.formMethod === 'delete' && productInWishlist) {
+        setProductInWishlist(false);
+      }
     }
   }
 
-  function cartButtonOnClick() {
-    const data = JSON.stringify([categoryId, subcategoryId, product.id]);
+  optimisticWishlist();
 
-    if (!productInCart) {
-      cartFetcher.submit(data, {
-        action: '/cart',
-        method: 'PATCH',
-        encType: 'application/json',
-      });
-      setIsCartBannerActive(true);
-    } else {
-      cartFetcher.submit(data, {
-        action: '/cart',
-        method: 'DELETE',
-        encType: 'application/json',
-      });
+  function optimisticCart() {
+    if (cartFetcher.state === 'loading') {
+      if (cartFetcher.formMethod === 'patch' && !productInCart) {
+        setProductInCart(true);
+      } else if (cartFetcher.formMethod === 'delete' && productInCart) {
+        setProductInCart(false);
+      }
     }
   }
 
-  function compareButtonOnClick() {
-    const data = JSON.stringify([categoryId, subcategoryId, product.id]);
+  optimisticCart();
 
-    if (!productInCompare) {
-      compareFetcher.submit(data, {
-        action: '/compare',
-        method: 'PATCH',
-        encType: 'application/json',
-      });
-    } else {
-      compareFetcher.submit(data, {
-        action: '/compare',
-        method: 'DELETE',
-        encType: 'application/json',
-      });
+  function optimisticCompare() {
+    if (compareFetcher.state === 'loading') {
+      if (compareFetcher.formMethod === 'patch' && !productInCompare) {
+        setProductInCompare(true);
+      } else if (compareFetcher.formMethod === 'delete' && productInCompare) {
+        setProductInCompare(false);
+      }
     }
   }
+
+  optimisticCompare();
 
   // main slider functions
 
   const downloadImages = useCallback(() => {
+    if (!product) return;
+
     const srcs = [[product.id, import(`../../assets/images/productImgs/${product.id}.webp`)]];
 
     const { additionalImgs } = product;
@@ -249,6 +250,8 @@ export default function Product() {
   // mainSpecs and price functions
 
   const mainSpecsElems = useMemo(() => {
+    if (!product) return;
+
     const { mainSpecs } = product;
 
     return Object.entries(mainSpecs).map(([name, value]) => (
@@ -276,7 +279,7 @@ export default function Product() {
 
   let discountPercent;
 
-  if (product.oldPrice) {
+  if (product && product.oldPrice) {
     discountPercent = ((product.oldPrice - product.price) / product.oldPrice) * 100;
     discountPercent = discountPercent.toFixed(0);
   }
@@ -284,6 +287,8 @@ export default function Product() {
   // tabs function
 
   const disableTabPanelElements = useCallback(() => {
+    if (!product) return;
+
     let interactiveElems;
 
     if (isDescTabPanelActive) {
@@ -303,14 +308,14 @@ export default function Product() {
         el.setAttribute('aria-hidden', false);
       });
     };
-  }, [isDescTabPanelActive]);
+  }, [product, isDescTabPanelActive]);
 
   useEffect(disableTabPanelElements, [disableTabPanelElements]);
 
   // descritption and specs block
 
   const descriptionBlock = useMemo(() => {
-    if (!product.description) return;
+    if (!product || !product.description) return;
 
     return (
       <div className={productCls.descriptionBlock}>
@@ -336,6 +341,8 @@ export default function Product() {
   }, [product]);
 
   const specsBlock = useMemo(() => {
+    if (!product) return;
+
     const allSpecs = Object.entries({ ...product['specs-filters'], ...product.specs });
 
     return (
@@ -386,6 +393,8 @@ export default function Product() {
   // gallery popup functions
 
   const imgIdsForGallery = useMemo(() => {
+    if (!product) return;
+
     const result = [product.id];
 
     const { additionalImgs } = product;
@@ -397,7 +406,62 @@ export default function Product() {
     return result;
   }, [product]);
 
-  // other event functions
+  // event functions
+
+  function wishlistButtonOnClick() {
+    const data = JSON.stringify([categoryId, subcategoryId, product.id]);
+
+    if (!productInWishlist) {
+      wishlistFetcher.submit(data, {
+        action: '/wishlist',
+        method: 'PATCH',
+        encType: 'application/json',
+      });
+    } else {
+      wishlistFetcher.submit(data, {
+        action: '/wishlist',
+        method: 'DELETE',
+        encType: 'application/json',
+      });
+    }
+  }
+
+  function cartButtonOnClick() {
+    const data = JSON.stringify([categoryId, subcategoryId, product.id]);
+
+    if (!productInCart) {
+      cartFetcher.submit(data, {
+        action: '/cart',
+        method: 'PATCH',
+        encType: 'application/json',
+      });
+      setIsCartBannerActive(true);
+    } else {
+      cartFetcher.submit(data, {
+        action: '/cart',
+        method: 'DELETE',
+        encType: 'application/json',
+      });
+    }
+  }
+
+  function compareButtonOnClick() {
+    const data = JSON.stringify([categoryId, subcategoryId, product.id]);
+
+    if (!productInCompare) {
+      compareFetcher.submit(data, {
+        action: '/compare',
+        method: 'PATCH',
+        encType: 'application/json',
+      });
+    } else {
+      compareFetcher.submit(data, {
+        action: '/compare',
+        method: 'DELETE',
+        encType: 'application/json',
+      });
+    }
+  }
 
   function askQuestionBtnOnClick() {
     setIsQuestionPopupActive(true);
@@ -414,340 +478,350 @@ export default function Product() {
           productCls.title,
         )}
         >
-          {product.name}
+          {product?.name}
         </h1>
-        {windowWidth > 576 && (
-          <div className={productCls.additionalButtonsBlock}>
-            <button
-              type="button"
-              className={classNames(
-                productCls.iconButton,
-                productInWishlist && productCls.iconButton_active,
-              )}
-              onClick={wishlistButtonOnClick}
-              aria-label={productInWishlist ? `Видалити ${product.name} зі списку бажань` : `Додати ${product.name} до списку бажань`}
-            >
-              <Favorite className={productCls.buttonIcon} />
-              {!productInWishlist ? 'В обране' : 'В обраному'}
-            </button>
-            <button
-              type="button"
-              className={classNames(
-                productCls.iconButton,
-                productInCompare && productCls.iconButton_active,
-              )}
-              onClick={compareButtonOnClick}
-              aria-label={productInCompare ? `Видалити ${product.name} з порівняння` : `Додати ${product.name} в порівняння`}
-            >
-              <Compare className={productCls.buttonIcon} />
-              {!productInCompare ? ' До порівняння' : 'В порівнянні'}
-            </button>
-          </div>
-        )}
-        <div className={productCls.mainBlock}>
-          <div className={productCls.imageSliderBlock}>
-            <div className={productCls.imagePaginationBlock}>
-              {paginationBtns}
+        {product ? (
+          <>
+            {windowWidth > 576 && (
+            <div className={productCls.additionalButtonsBlock}>
+              <button
+                type="button"
+                className={classNames(
+                  productCls.iconButton,
+                  productInWishlist && productCls.iconButton_active,
+                )}
+                onClick={wishlistButtonOnClick}
+                aria-label={productInWishlist ? `Видалити ${product.name} зі списку бажань` : `Додати ${product.name} до списку бажань`}
+              >
+                <Favorite className={productCls.buttonIcon} />
+                {!productInWishlist ? 'В обране' : 'В обраному'}
+              </button>
+              <button
+                type="button"
+                className={classNames(
+                  productCls.iconButton,
+                  productInCompare && productCls.iconButton_active,
+                )}
+                onClick={compareButtonOnClick}
+                aria-label={productInCompare ? `Видалити ${product.name} з порівняння` : `Додати ${product.name} в порівняння`}
+              >
+                <Compare className={productCls.buttonIcon} />
+                {!productInCompare ? ' До порівняння' : 'В порівнянні'}
+              </button>
             </div>
-            <Slider
-              activeSlideId={activeSlideId}
-              setActiveSlideId={setActiveSlideId}
-              slides={slides}
-              gap={20}
-            />
-          </div>
-          <div className={productCls.mainSpecsBlock}>
-            <p className={classNames(
-              textCls.text,
-              textCls.textFw800,
-              textCls.text14px,
-              textCls.textBlack,
-              productCls.mainSpecsTitle,
             )}
-            >
-              Основні характеристики
-            </p>
-            <ul className={productCls.mainSpecsList}>
-              {mainSpecsElems}
-            </ul>
-            <a
-              href="#descriptionTabPanel"
-              className={classNames(
-                linkCls.link,
-                linkCls.linkBlue,
-              )}
-              alt="Переглянути всі характеристики"
-              onClick={() => setIsDescTabPanelActive(true)}
-            >
-              Переглянути всі
-            </a>
-          </div>
-          {windowWidth <= 576 && (
-          <div className={productCls.additionalButtonsBlock}>
-            <button
-              type="button"
-              className={classNames(
-                productCls.iconButton,
-                productInWishlist && productCls.iconButton_active,
-              )}
-              onClick={wishlistButtonOnClick}
-              aria-label={productInWishlist ? `Видалити ${product.name} зі списку бажань` : `Додати ${product.name} до списку бажань`}
-            >
-              <Favorite className={productCls.buttonIcon} />
-              {!productInWishlist ? 'В обране' : 'В обраному'}
-            </button>
-            <button
-              type="button"
-              className={classNames(
-                productCls.iconButton,
-                productInCompare && productCls.iconButton_active,
-              )}
-              onClick={compareButtonOnClick}
-              aria-label={productInCompare ? `Видалити ${product.name} з порівняння` : `Додати ${product.name} в порівняння`}
-            >
-              <Compare className={productCls.buttonIcon} />
-              {!productInCompare ? ' До порівняння' : 'В порівнянні'}
-            </button>
-          </div>
-          )}
-          <div className={productCls.priceAndCartBlock}>
-            {product.oldPrice && (
-            <p className={productCls.oldPrice}>
-              {`${product.oldPrice} ₴/шт`}
-            </p>
-            )}
-            <div className={productCls.mainPriceBlock}>
-              <p className={classNames(
-                textCls.text,
-                textCls.textFw800,
-                textCls.text48px,
-                textCls.textBlack,
-                product.mainPrice,
-              )}
-              >
-                {product.price}
-              </p>
-              <span className={classNames(
-                textCls.text,
-                textCls.textBlack,
-              )}
-              >
-                ₴/шт
-              </span>
-              {product.oldPrice && (
-              <div className={productCls.discountBlock}>
-                {`-${discountPercent}%`}
+            <div className={productCls.mainBlock}>
+              <div className={productCls.imageSliderBlock}>
+                <div className={productCls.imagePaginationBlock}>
+                  {paginationBtns}
+                </div>
+                <Slider
+                  activeSlideId={activeSlideId}
+                  setActiveSlideId={setActiveSlideId}
+                  slides={slides}
+                  gap={20}
+                />
+              </div>
+              <div className={productCls.mainSpecsBlock}>
+                <p className={classNames(
+                  textCls.text,
+                  textCls.textFw800,
+                  textCls.text14px,
+                  textCls.textBlack,
+                  productCls.mainSpecsTitle,
+                )}
+                >
+                  Основні характеристики
+                </p>
+                <ul className={productCls.mainSpecsList}>
+                  {mainSpecsElems}
+                </ul>
+                <a
+                  href="#descriptionTabPanel"
+                  className={classNames(
+                    linkCls.link,
+                    linkCls.linkBlue,
+                  )}
+                  alt="Переглянути всі характеристики"
+                  onClick={() => setIsDescTabPanelActive(true)}
+                >
+                  Переглянути всі
+                </a>
+              </div>
+              {windowWidth <= 576 && (
+              <div className={productCls.additionalButtonsBlock}>
+                <button
+                  type="button"
+                  className={classNames(
+                    productCls.iconButton,
+                    productInWishlist && productCls.iconButton_active,
+                  )}
+                  onClick={wishlistButtonOnClick}
+                  aria-label={productInWishlist ? `Видалити ${product.name} зі списку бажань` : `Додати ${product.name} до списку бажань`}
+                >
+                  <Favorite className={productCls.buttonIcon} />
+                  {!productInWishlist ? 'В обране' : 'В обраному'}
+                </button>
+                <button
+                  type="button"
+                  className={classNames(
+                    productCls.iconButton,
+                    productInCompare && productCls.iconButton_active,
+                  )}
+                  onClick={compareButtonOnClick}
+                  aria-label={productInCompare ? `Видалити ${product.name} з порівняння` : `Додати ${product.name} в порівняння`}
+                >
+                  <Compare className={productCls.buttonIcon} />
+                  {!productInCompare ? ' До порівняння' : 'В порівнянні'}
+                </button>
               </div>
               )}
-            </div>
-            <div className={productCls.cartBtnAndBannerBlock}>
-              <Button
-                className={productCls.cartButton}
-                ariaLabel={!productInCart ? `Додати ${product.name} до кошику` : `Видалити ${product.name} з кошика`}
-                onClick={cartButtonOnClick}
-              >
-                {!productInCart ? 'Додати до кошику' : 'У кошику'}
-              </Button>
-              <AddToCartBanner
-                isActive={isCartBannerActive}
-                setIsActive={setIsCartBannerActive}
-              />
-            </div>
-          </div>
-        </div>
-        <div
-          className={productCls.tabList}
-          role="tablist"
-        >
-          <button
-            type="button"
-            className={productCls.tabButton}
-            role="tab"
-            aria-selected={isDescTabPanelActive}
-            aria-controls="descriptionTabPanel"
-            aria-label="Показати панель Опис"
-            onClick={() => setIsDescTabPanelActive(true)}
-          >
-            Опис
-            <span
-              className={classNames(
-                productCls.tabButtonLine,
-                isDescTabPanelActive && productCls.tabButtonLine_active,
-              )}
-            />
-          </button>
-          <button
-            type="button"
-            className={productCls.tabButton}
-            role="tab"
-            aria-selected={!isDescTabPanelActive}
-            aria-controls="commentTabPanel"
-            aria-label="Показати панель Відгуки"
-            onClick={() => setIsDescTabPanelActive(false)}
-          >
-            Відгуки
-            <span
-              className={classNames(
-                productCls.tabButtonLine,
-                !isDescTabPanelActive && productCls.tabButtonLine_active,
-              )}
-            />
-          </button>
-        </div>
-        <div className={productCls.tabPanelsAndBannerBlock}>
-          <div className={productCls.tabPanels}>
-            <div
-              ref={descTabPanelRef}
-              className={classNames(
-                productCls.tabPanel,
-                isDescTabPanelActive && productCls.tabPanel_active,
-              )}
-              id="descriptionTabPanel"
-              role="tabpanel"
-            >
-              {descriptionBlock}
-              {specsBlock}
-            </div>
-            <div
-              ref={commentTabPanelRef}
-              className={classNames(
-                productCls.tabPanel,
-                !isDescTabPanelActive && productCls.tabPanel_active,
-              )}
-              id="commentTabPanel"
-              role="tabpanel"
-            >
-              <div className={productCls.noCommentsBlock}>
-                <div className={productCls.noCommentsTextBlock}>
-                  <Line className={productCls.noCommentsLine} />
+              <div className={productCls.priceAndCartBlock}>
+                {product.oldPrice && (
+                <p className={productCls.oldPrice}>
+                  {`${product.oldPrice} ₴/шт`}
+                </p>
+                )}
+                <div className={productCls.mainPriceBlock}>
                   <p className={classNames(
                     textCls.text,
                     textCls.textFw800,
-                    textCls.text32px,
-                    productCls.noCommentsText,
+                    textCls.text48px,
+                    textCls.textBlack,
+                    productCls.mainPrice,
                   )}
                   >
-                    Відгуків немає
+                    {product.price}
                   </p>
-                  <p className={classNames(
+                  <span className={classNames(
                     textCls.text,
-                    textCls.text24px,
-                    textCls.textGrey,
+                    textCls.textBlack,
                   )}
                   >
-                    Будьте першим, хто залише відгук!
-                  </p>
+                    ₴/шт
+                  </span>
+                  {product.oldPrice && (
+                  <div className={productCls.discountBlock}>
+                    {`-${discountPercent}%`}
+                  </div>
+                  )}
                 </div>
-                <Button
-                  ref={openCommentPopupBtnRef}
-                  className={productCls.commentButton}
-                  onClick={() => setIsCommentPopupActive(true)}
-                  aria-haspopup="dialog"
-                  aria-label="Відкрити вікно Написати відгук"
-                >
-                  Написати відгук
-                </Button>
+                <div className={productCls.cartBtnAndBannerBlock}>
+                  <Button
+                    className={productCls.cartButton}
+                    ariaLabel={!productInCart ? `Додати ${product.name} до кошику` : `Видалити ${product.name} з кошика`}
+                    onClick={cartButtonOnClick}
+                  >
+                    {!productInCart ? 'Додати до кошику' : 'У кошику'}
+                  </Button>
+                  <AddToCartBanner
+                    isActive={isCartBannerActive}
+                    setIsActive={setIsCartBannerActive}
+                  />
+                </div>
               </div>
             </div>
-          </div>
-          <aside className={productCls.bannerBlock}>
-            <AskQuestionBanner
-              title="Є питання щодо товару?"
-              subtitle="Запитайте нас і ми допоможемо Вам визначитися з вибором."
-              btnOnClick={askQuestionBtnOnClick}
-              ref={openQuestionPopupBtnRef}
-            />
-          </aside>
-        </div>
-        <RelatedProducts
-          categoryId={categoryId}
-          subcategoryId={subcategoryId}
-          productId={product.id}
-        />
-      </main>
-      <Popup
-        isActive={isCommentPopupActive}
-        setIsActive={setIsCommentPopupActive}
-        label="Вікно написати відгук"
-        openButton={openCommentPopupBtnRef.current}
-      >
-        <p
-          className={classNames(
-            textCls.text,
-            textCls.textFw800,
-            textCls.text36px,
-            productCls.popupTitle,
-          )}
-        >
-          Залишити відгук
-        </p>
-        <ValidationForm
-          className={productCls.popupForm}
-        >
-          <InputWithErrorMessage
-            type="text"
-            name="name"
-            inputClassName={productCls.input}
-            placeholder="Ім'я"
-            required
-          />
-          <InputWithErrorMessage
-            type="email"
-            name="email"
-            inputClassName={productCls.input}
-            placeholder="Електронна пошта"
-            required
-          />
-          <TextAreaWithErrorMessage
-            name="comment"
-            textareaBlockClassName={productCls.textareaBlock}
-            textareaClassName={productCls.textarea}
-            placeholder="Враження про товар"
-            required
-            textareaType="comment"
-          />
-          <div className={productCls.submitAndTermsBlock}>
-            <Button
-              type="submit"
-              className={productCls.submitButton}
+            <div
+              className={productCls.tabList}
+              role="tablist"
             >
-              Відправити
-            </Button>
-            <p className={classNames(
-              textCls.text,
-              textCls.text14px,
-              textCls.textBlack,
-            )}
-            >
-              Надсилаючи повідомлення ви даєте згоду на обробку&nbsp;
-              <Link
-                to="terms"
-                alt="Умови обробки персональних даних"
-                className={classNames(
-                  linkCls.link,
-                  linkCls.link14px,
-                  linkCls.linkBlue,
-                )}
+              <button
+                type="button"
+                className={productCls.tabButton}
+                role="tab"
+                aria-selected={isDescTabPanelActive}
+                aria-controls="descriptionTabPanel"
+                aria-label="Показати панель Опис"
+                onClick={() => setIsDescTabPanelActive(true)}
               >
-                персональних даних
-              </Link>
+                Опис
+                <span
+                  className={classNames(
+                    productCls.tabButtonLine,
+                    isDescTabPanelActive && productCls.tabButtonLine_active,
+                  )}
+                />
+              </button>
+              <button
+                type="button"
+                className={productCls.tabButton}
+                role="tab"
+                aria-selected={!isDescTabPanelActive}
+                aria-controls="commentTabPanel"
+                aria-label="Показати панель Відгуки"
+                onClick={() => setIsDescTabPanelActive(false)}
+              >
+                Відгуки
+                <span
+                  className={classNames(
+                    productCls.tabButtonLine,
+                    !isDescTabPanelActive && productCls.tabButtonLine_active,
+                  )}
+                />
+              </button>
+            </div>
+            <div className={productCls.tabPanelsAndBannerBlock}>
+              <div className={productCls.tabPanels}>
+                <div
+                  ref={descTabPanelRef}
+                  className={classNames(
+                    productCls.tabPanel,
+                    isDescTabPanelActive && productCls.tabPanel_active,
+                  )}
+                  id="descriptionTabPanel"
+                  role="tabpanel"
+                >
+                  {descriptionBlock}
+                  {specsBlock}
+                </div>
+                <div
+                  ref={commentTabPanelRef}
+                  className={classNames(
+                    productCls.tabPanel,
+                    !isDescTabPanelActive && productCls.tabPanel_active,
+                  )}
+                  id="commentTabPanel"
+                  role="tabpanel"
+                >
+                  <div className={productCls.noCommentsBlock}>
+                    <div className={productCls.noCommentsTextBlock}>
+                      <Line className={productCls.noCommentsLine} />
+                      <p className={classNames(
+                        textCls.text,
+                        textCls.textFw800,
+                        textCls.text32px,
+                        productCls.noCommentsText,
+                      )}
+                      >
+                        Відгуків немає
+                      </p>
+                      <p className={classNames(
+                        textCls.text,
+                        textCls.text24px,
+                        textCls.textGrey,
+                      )}
+                      >
+                        Будьте першим, хто залише відгук!
+                      </p>
+                    </div>
+                    <Button
+                      ref={openCommentPopupBtnRef}
+                      className={productCls.commentButton}
+                      onClick={() => setIsCommentPopupActive(true)}
+                      aria-haspopup="dialog"
+                      aria-label="Відкрити вікно Написати відгук"
+                    >
+                      Написати відгук
+                    </Button>
+                  </div>
+                </div>
+              </div>
+              <aside className={productCls.bannerBlock}>
+                <AskQuestionBanner
+                  title="Є питання щодо товару?"
+                  subtitle="Запитайте нас і ми допоможемо Вам визначитися з вибором."
+                  btnOnClick={askQuestionBtnOnClick}
+                  ref={openQuestionPopupBtnRef}
+                />
+              </aside>
+            </div>
+            <RelatedProducts
+              categoryId={categoryId}
+              subcategoryId={subcategoryId}
+              productId={product.id}
+            />
+          </>
+        ) : (
+          <ThreeDotsSpinnerBlock />
+        )}
+      </main>
+      {product && (
+        <>
+          <Popup
+            isActive={isCommentPopupActive}
+            setIsActive={setIsCommentPopupActive}
+            label="Вікно написати відгук"
+            openButton={openCommentPopupBtnRef.current}
+          >
+            <p
+              className={classNames(
+                textCls.text,
+                textCls.textFw800,
+                textCls.text36px,
+                productCls.popupTitle,
+              )}
+            >
+              Залишити відгук
             </p>
-          </div>
-        </ValidationForm>
-      </Popup>
-      <AskQuestionPopup
-        isActive={isQuestionPopupActive}
-        setIsActive={setIsQuestionPopupActive}
-        openButtonRef={openQuestionPopupBtnRef}
-      />
-      <Gallery
-        imgIds={imgIdsForGallery}
-        isOpen={isGalleryOpen}
-        setIsOpen={setIsGalleryOpen}
-        activeSlideId={activeSlideId}
-        setActiveSlideId={setActiveSlideId}
-        productName={product.name}
-      />
+            <ValidationForm
+              className={productCls.popupForm}
+            >
+              <InputWithErrorMessage
+                type="text"
+                name="name"
+                inputClassName={productCls.input}
+                placeholder="Ім'я"
+                required
+              />
+              <InputWithErrorMessage
+                type="email"
+                name="email"
+                inputClassName={productCls.input}
+                placeholder="Електронна пошта"
+                required
+              />
+              <TextAreaWithErrorMessage
+                name="comment"
+                textareaBlockClassName={productCls.textareaBlock}
+                textareaClassName={productCls.textarea}
+                placeholder="Враження про товар"
+                required
+                textareaType="comment"
+              />
+              <div className={productCls.submitAndTermsBlock}>
+                <Button
+                  type="submit"
+                  className={productCls.submitButton}
+                >
+                  Відправити
+                </Button>
+                <p className={classNames(
+                  textCls.text,
+                  textCls.text14px,
+                  textCls.textBlack,
+                )}
+                >
+                  Надсилаючи повідомлення ви даєте згоду на обробку&nbsp;
+                  <Link
+                    to="terms"
+                    alt="Умови обробки персональних даних"
+                    className={classNames(
+                      linkCls.link,
+                      linkCls.link14px,
+                      linkCls.linkBlue,
+                    )}
+                  >
+                    персональних даних
+                  </Link>
+                </p>
+              </div>
+            </ValidationForm>
+          </Popup>
+          <AskQuestionPopup
+            isActive={isQuestionPopupActive}
+            setIsActive={setIsQuestionPopupActive}
+            openButtonRef={openQuestionPopupBtnRef}
+          />
+          <Gallery
+            imgIds={imgIdsForGallery}
+            isOpen={isGalleryOpen}
+            setIsOpen={setIsGalleryOpen}
+            activeSlideId={activeSlideId}
+            setActiveSlideId={setActiveSlideId}
+            productName={product.name}
+          />
+        </>
+      )}
     </>
   );
 }

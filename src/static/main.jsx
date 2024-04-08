@@ -9,9 +9,12 @@ import { loader as mainLoader } from '../pages/Main/MainUtils.jsx';
 import CategoryPageLazy from '../pages/Category/Category.lazy.jsx';
 import { loader as categoryLoader } from '../pages/Category/CategoryUtils.jsx';
 import ProductsPageLazy from '../pages/Products/Products.lazy.jsx';
-import { ProductPage, loader as productPageLoader } from '../pages/Product/Product.jsx';
-import { WishlistPage, loader as wishlistLoader, action as wishlistAction } from '../pages/Wishlist/Wishlist.jsx';
-import { CartPage, loader as cartLoader, action as cartAction } from '../pages/Cart/Cart.jsx';
+import ProductPageLazy from '../pages/Product/Product.lazy.jsx';
+import { loader as productPageLoader } from '../pages/Product/ProductUtils.jsx';
+import WishlistPageLazy from '../pages/Wishlist/Wishlist.lazy.jsx';
+import { loader as wishlistLoader, action as wishlistAction } from '../pages/Wishlist/WishlistUtils.jsx';
+import CartPageLazy from '../pages/Cart/Cart.lazy.jsx';
+import { loader as cartLoader, action as cartAction } from '../pages/Cart/CartUtils.jsx';
 import { ComparePage, loader as compareLoader, action as compareAction } from '../pages/Compare/Compare.jsx';
 import DeliveryPageLazy from '../pages/Delivery/Delivery.lazy.jsx';
 import { PaymentPage } from '../pages/Payment/Payment.jsx';
@@ -50,19 +53,19 @@ const router = createBrowserRouter([
           {
             path: ':categoryId/:subcategoryId/:productId',
             loader: productPageLoader,
-            element: <ProductPage />,
+            element: <ProductPageLazy />,
           },
           {
             path: 'wishlist',
             loader: wishlistLoader,
             action: wishlistAction,
-            element: <WishlistPage />,
+            element: <WishlistPageLazy />,
           },
           {
             path: 'cart',
             loader: cartLoader,
             action: cartAction,
-            element: <CartPage />,
+            element: <CartPageLazy />,
           },
           {
             path: 'compare',
