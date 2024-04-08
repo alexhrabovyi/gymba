@@ -1,8 +1,9 @@
 import {
   useState, useMemo, useEffect, useCallback, Fragment, useRef,
 } from 'react';
-import { useFetcher, useLoaderData } from 'react-router-dom';
+import { useFetcher } from 'react-router-dom';
 import classNames from 'classnames';
+import useFetcherLoad from '../../hooks/useFetcherLoad.jsx';
 import ProductCard from '../ProductCard/ProductCard.jsx';
 import containerCls from '../../scss/_container.module.scss';
 import textCls from '../../scss/_text.module.scss';
@@ -11,39 +12,49 @@ import CrossIcon from '../../assets/images/icons/cross.svg';
 import BinIcon from '../../assets/images/icons/bin.svg';
 import ChevronIcon from '../../assets/images/icons/chevronRight.svg';
 import Line from '../../assets/images/icons/oblique.svg';
+import ThreeDotsSpinnerBlock from '../common/ThreeDotsSpinnerBlock/ThreeDotsSpinnerBlock.jsx';
 
 export default function Compare() {
-  const { compareSubcategoriesBtnInfo } = useLoaderData();
+  // const { compareSubcategoriesBtnInfo } = useLoaderData();
   const compareFetcher = useFetcher();
   const getCompareProductsFetcher = useFetcher();
 
   const productBlockRef = useRef();
   const specsTableRef = useRef();
 
-  const [activeSubcategoryId, setActiveSubcategoryId] = useState(() => (
-    compareSubcategoriesBtnInfo[0]?.subcategoryId
-  ));
+  const [compareFetcherData, setCompareFetcherData] = useState(null);
+  const [activeSubcategoryId, setActiveSubcategoryId] = useState(null);
   const [searchParamsString, setSearchParamsString] = useState(null);
   const [prevSearchParamsString, setPrevSearchParamsString] = useState(null);
-  const [productCardObjs, setProductCardObjs] = useState([]);
+  const [productCardObjs, setProductCardObjs] = useState(null);
   const [displayedSpecsType, setDisplayedSpecsType] = useState('all');
 
   // basic setup functions
 
-  const activeSubcategoryBtnIndex = compareSubcategoriesBtnInfo
-    .findIndex(({ subcategoryId }) => subcategoryId === activeSubcategoryId);
+  const initialActiveSubcategoryIdSetup = useCallback(() => {
+    if (activeSubcategoryId === null && compareFetcherData) {
+      setActiveSubcategoryId(compareFetcherData[0]?.subcategoryId);
+    }
+  }, [activeSubcategoryId, compareFetcherData]);
+
+  useEffect(initialActiveSubcategoryIdSetup, [initialActiveSubcategoryIdSetup]);
+
+  const activeSubcategoryBtnIndex = compareFetcherData
+    ?.findIndex(({ subcategoryId }) => subcategoryId === activeSubcategoryId);
   const activeSubcategoryCategory = (
-    compareSubcategoriesBtnInfo[activeSubcategoryBtnIndex]?.categoryId
+    compareFetcherData?.[activeSubcategoryBtnIndex]?.categoryId
   );
 
   const updateActiveSubcategoryId = useCallback(() => {
-    const isActiveSubcategoryStillExist = compareSubcategoriesBtnInfo
+    if (!compareFetcherData) return;
+
+    const isActiveSubcategoryStillExist = compareFetcherData
       .find(({ subcategoryId }) => subcategoryId === activeSubcategoryId);
 
-    if (!isActiveSubcategoryStillExist && compareSubcategoriesBtnInfo) {
-      setActiveSubcategoryId(compareSubcategoriesBtnInfo[0]?.subcategoryId);
+    if (!isActiveSubcategoryStillExist && compareFetcherData) {
+      setActiveSubcategoryId(compareFetcherData[0]?.subcategoryId);
     }
-  }, [compareSubcategoriesBtnInfo, activeSubcategoryId]);
+  }, [compareFetcherData, activeSubcategoryId]);
 
   useEffect(updateActiveSubcategoryId, [updateActiveSubcategoryId]);
 
@@ -67,7 +78,7 @@ export default function Compare() {
   setupSearchParamsString();
 
   const resetScrollLeftOnNewCards = useCallback(() => {
-    if (productCardObjs.length) {
+    if (productCardObjs?.length) {
       productBlockRef.current.scrollLeft = 0;
       specsTableRef.current.scrollLeft = 0;
     }
@@ -76,6 +87,14 @@ export default function Compare() {
   useEffect(resetScrollLeftOnNewCards, [resetScrollLeftOnNewCards]);
 
   // fetch functions
+
+  useFetcherLoad(compareFetcher, '/compare');
+
+  if (compareFetcher.data) {
+    if (compareFetcher.data.compareSubcategoriesBtnInfo !== compareFetcherData) {
+      setCompareFetcherData(compareFetcher.data.compareSubcategoriesBtnInfo);
+    }
+  }
 
   const initialRequestCompareProducts = useCallback(() => {
     if (getCompareProductsFetcher.state === 'idle' && !getCompareProductsFetcher.data
@@ -104,6 +123,9 @@ export default function Compare() {
     if (getCompareProductsFetcher.data) {
       const compareProductsFromFetcher = getCompareProductsFetcher.data.productCards;
 
+      if (productCardObjs && productCardObjs.length === 0
+        && compareProductsFromFetcher.length === 0) return;
+
       if (compareProductsFromFetcher !== productCardObjs) {
         setProductCardObjs(compareProductsFromFetcher);
       }
@@ -111,6 +133,18 @@ export default function Compare() {
   }
 
   updateProductCartObjs();
+
+  function optimisticDeleteAllBtn() {
+    if (compareFetcher.state === 'loading'
+    && compareFetcher.formMethod === 'delete') {
+      if (compareFetcherData !== null) {
+        setCompareFetcherData(null);
+        setProductCardObjs([]);
+      }
+    }
+  }
+
+  optimisticDeleteAllBtn();
 
   // event handler functions
 
@@ -125,13 +159,13 @@ export default function Compare() {
 
   function prevControlButtonOnClick() {
     setActiveSubcategoryId(
-      compareSubcategoriesBtnInfo[activeSubcategoryBtnIndex - 1].subcategoryId,
+      compareFetcherData[activeSubcategoryBtnIndex - 1].subcategoryId,
     );
   }
 
   function nextControlButtonOnClick() {
     setActiveSubcategoryId(
-      compareSubcategoriesBtnInfo[activeSubcategoryBtnIndex + 1].subcategoryId,
+      compareFetcherData[activeSubcategoryBtnIndex + 1].subcategoryId,
     );
   }
 
@@ -153,11 +187,11 @@ export default function Compare() {
 
   const isPrevControlBtnDisabled = activeSubcategoryBtnIndex === 0;
   const isNextControlBtnDisabled = (
-    activeSubcategoryBtnIndex === compareSubcategoriesBtnInfo.length - 1
+    activeSubcategoryBtnIndex === (compareFetcherData ? compareFetcherData.length - 1 : null)
   );
 
   const subcategoryBtns = useMemo(() => (
-    compareSubcategoriesBtnInfo.map(({ categoryId, subcategoryId, subcategoryName }) => (
+    compareFetcherData?.map(({ categoryId, subcategoryId, subcategoryName }) => (
       <div
         key={subcategoryId}
         className={classNames(
@@ -195,12 +229,12 @@ export default function Compare() {
         {subcategoryName}
       </div>
     ))
-  ), [compareSubcategoriesBtnInfo, activeSubcategoryId, compareFetcher]);
+  ), [compareFetcherData, activeSubcategoryId, compareFetcher]);
 
   // setup product cards
 
   const productCards = useMemo(() => (
-    productCardObjs.map((pC) => (
+    productCardObjs?.map((pC) => (
       <div
         key={pC.product.id}
         className={compareCls.productCard}
@@ -221,7 +255,7 @@ export default function Compare() {
   // setup specs
 
   const allSpecFilterNames = useMemo(() => {
-    if (!productCardObjs.length) return;
+    if (!productCardObjs || !productCardObjs.length) return;
 
     const filters = new Set();
 
@@ -344,7 +378,7 @@ export default function Compare() {
   return (
     <main className={classNames(
       compareCls.main,
-      productCardObjs.length === 0 && compareCls.main_marginBottom,
+      (productCardObjs?.length === 0 || !productCardObjs) && compareCls.main_marginBottom,
     )}
     >
       <div className={classNames(
@@ -364,7 +398,7 @@ export default function Compare() {
           >
             Порівняння товарів
           </h1>
-          {!!compareSubcategoriesBtnInfo.length && (
+          {subcategoryBtns?.length > 0 && (
           <button
             type="button"
             className={compareCls.deleteBtn}
@@ -378,49 +412,51 @@ export default function Compare() {
           </button>
           )}
         </div>
-        {productCardObjs.length > 0 && (
-        <>
-          <div className={compareCls.subcategoryBtnAndControlBtnBlock}>
-            <div className={compareCls.subcategoryBtnBlock}>
-              {subcategoryBtns}
-            </div>
-            {subcategoryBtns.length > 1 && (
-            <div className={compareCls.controlBtnBlock}>
-              <button
-                type="button"
-                className={classNames(
-                  compareCls.controlButton,
-                  isPrevControlBtnDisabled && compareCls.controlButton_disabled,
-                )}
-                onClick={prevControlButtonOnClick}
-                disabled={isPrevControlBtnDisabled}
-                aria-disabled={isPrevControlBtnDisabled}
-                tabIndex={isPrevControlBtnDisabled ? -1 : 0}
-                aria-label="Показати попередню категорію"
-              >
-                <ChevronIcon className={compareCls.chevronIcon} />
-              </button>
-              <button
-                type="button"
-                className={classNames(
-                  compareCls.controlButton,
-                  isNextControlBtnDisabled && compareCls.controlButton_disabled,
-                )}
-                onClick={nextControlButtonOnClick}
-                disabled={isNextControlBtnDisabled}
-                aria-disabled={isNextControlBtnDisabled}
-                tabIndex={isNextControlBtnDisabled ? -1 : 0}
-                aria-label="Показати наступну категорію"
-              >
-                <ChevronIcon className={classNames(
-                  compareCls.chevronIcon,
-                  compareCls.chevronIcon_next,
-                )}
-                />
-              </button>
-            </div>
-            )}
+        {subcategoryBtns?.length > 0 && (
+        <div className={compareCls.subcategoryBtnAndControlBtnBlock}>
+          <div className={compareCls.subcategoryBtnBlock}>
+            {subcategoryBtns}
           </div>
+          {subcategoryBtns.length > 1 && (
+          <div className={compareCls.controlBtnBlock}>
+            <button
+              type="button"
+              className={classNames(
+                compareCls.controlButton,
+                isPrevControlBtnDisabled && compareCls.controlButton_disabled,
+              )}
+              onClick={prevControlButtonOnClick}
+              disabled={isPrevControlBtnDisabled}
+              aria-disabled={isPrevControlBtnDisabled}
+              tabIndex={isPrevControlBtnDisabled ? -1 : 0}
+              aria-label="Показати попередню категорію"
+            >
+              <ChevronIcon className={compareCls.chevronIcon} />
+            </button>
+            <button
+              type="button"
+              className={classNames(
+                compareCls.controlButton,
+                isNextControlBtnDisabled && compareCls.controlButton_disabled,
+              )}
+              onClick={nextControlButtonOnClick}
+              disabled={isNextControlBtnDisabled}
+              aria-disabled={isNextControlBtnDisabled}
+              tabIndex={isNextControlBtnDisabled ? -1 : 0}
+              aria-label="Показати наступну категорію"
+            >
+              <ChevronIcon className={classNames(
+                compareCls.chevronIcon,
+                compareCls.chevronIcon_next,
+              )}
+              />
+            </button>
+          </div>
+          )}
+        </div>
+        )}
+        {productCardObjs && productCardObjs.length > 0 && (
+        <>
           <div
             ref={productBlockRef}
             className={compareCls.productBlock}
@@ -477,7 +513,10 @@ export default function Compare() {
           </div>
         </>
         )}
-        {productCardObjs.length === 0 && (
+        {!productCardObjs && (
+          <ThreeDotsSpinnerBlock />
+        )}
+        {productCardObjs && productCardObjs.length === 0 && (
           <div className={compareCls.noProductBlock}>
             <div className={compareCls.noProductContent}>
               <Line className={compareCls.noProductLine} />
@@ -502,7 +541,7 @@ export default function Compare() {
           </div>
         )}
       </div>
-      {productCardObjs.length > 0 && (
+      {productCardObjs && productCardObjs.length > 0 && (
         <div className={classNames(
           containerCls.container,
           compareCls.specsBlock,

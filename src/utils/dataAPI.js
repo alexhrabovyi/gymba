@@ -545,20 +545,24 @@ export async function getCompareSubcategoriesBtnInfo() {
   return compareSubcategoriesBtnInfo;
 }
 
-export function deleteSubcFromCompare(categoryId, subcategoryId) {
-  const compareIds = getCompareIds().filter(([cId, subcId]) => cId !== categoryId
+export async function deleteSubcFromCompare(categoryId, subcategoryId) {
+  let compareIds = await getCompareIds();
+
+  compareIds = compareIds.filter(([cId, subcId]) => cId !== categoryId
     || (cId === categoryId && subcId !== subcategoryId));
 
   localStorage.setItem('compareIds', JSON.stringify(compareIds));
 }
 
-export function getCompareProductCards(categoryId, subcategoryId) {
+export async function getCompareProductCards(categoryId, subcategoryId) {
   if (categoryId === null || subcategoryId === null) throw new Error('Некорректний запит');
 
-  const compareIds = getCompareIds()
-    .filter(([cId, subcId]) => cId === categoryId && subcId === subcategoryId);
+  let compareIds = await getCompareIds();
 
-  const productCards = compareIds.map(([cId, subcId, pId]) => getProduct(cId, subcId, pId));
+  compareIds = compareIds.filter(([cId, subcId]) => cId === categoryId && subcId === subcategoryId);
+
+  const productCards = await Promise
+    .all(compareIds.map(([cId, subcId, pId]) => getProduct(cId, subcId, pId)));
 
   return productCards;
 }

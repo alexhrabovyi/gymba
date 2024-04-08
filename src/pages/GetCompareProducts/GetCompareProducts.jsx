@@ -1,7 +1,8 @@
 /* eslint-disable import/prefer-default-export */
+import { defer } from 'react-router-dom';
 import { getCompareProductCards } from '../../utils/dataAPI';
 
-export function loader({ request }) {
+export async function loader({ request }) {
   const { searchParams } = new URL(request.url);
   const categoryId = searchParams.get('categoryId');
   const subcategoryId = searchParams.get('subcategoryId');
@@ -18,5 +19,5 @@ export function loader({ request }) {
     }
   }
 
-  return { productCards };
+  return defer({ productCards });
 }

@@ -15,10 +15,11 @@ import WishlistPageLazy from '../pages/Wishlist/Wishlist.lazy.jsx';
 import { loader as wishlistLoader, action as wishlistAction } from '../pages/Wishlist/WishlistUtils.jsx';
 import CartPageLazy from '../pages/Cart/Cart.lazy.jsx';
 import { loader as cartLoader, action as cartAction } from '../pages/Cart/CartUtils.jsx';
-import { ComparePage, loader as compareLoader, action as compareAction } from '../pages/Compare/Compare.jsx';
+import ComparePageLazy from '../pages/Compare/Compare.lazy.jsx';
+import { loader as compareLoader, action as compareAction } from '../pages/Compare/CompareUtils.jsx';
 import DeliveryPageLazy from '../pages/Delivery/Delivery.lazy.jsx';
-import { PaymentPage } from '../pages/Payment/Payment.jsx';
-import { ContactsPage } from '../pages/Contacts/Contacts.jsx';
+import PaymentPageLazy from '../pages/Payment/Payment.lazy.jsx';
+import ContactsPageLazy from '../pages/Contacts/Contact.lazy.jsx';
 import { NewsPage, loader as newsPageLoader } from '../pages/News/News.jsx';
 import { NewsArticlePage, loader as newsArticleLoader } from '../pages/NewsArticle/NewsArticle.jsx';
 import { SearchPage, loader as getSearchPageLoader } from '../pages/Search/Search.jsx';
@@ -71,7 +72,7 @@ const router = createBrowserRouter([
             path: 'compare',
             loader: compareLoader,
             action: compareAction,
-            element: <ComparePage />,
+            element: <ComparePageLazy />,
           },
           {
             path: 'delivery',
@@ -79,11 +80,11 @@ const router = createBrowserRouter([
           },
           {
             path: 'payment',
-            element: <PaymentPage />,
+            element: <PaymentPageLazy />,
           },
           {
             path: 'contacts',
-            element: <ContactsPage />,
+            element: <ContactsPageLazy />,
           },
           {
             path: 'news',
