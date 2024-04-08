@@ -1,1 +1,0 @@
-"use strict";(self.webpackChunkreact_config=self.webpackChunkreact_config||[]).push([[1806],{1806:function(a){a.exports="/gymba/assets/images/grunt-emal-maxima-bystrosokhnuschaya-chernaya-mat-2-5-kg.79e68e76d8c94e230da2..webp"}}]);

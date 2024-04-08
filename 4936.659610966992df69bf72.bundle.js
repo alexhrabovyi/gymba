@@ -1,1 +1,0 @@
-"use strict";(self.webpackChunkreact_config=self.webpackChunkreact_config||[]).push([[4936],{4936:function(a){a.exports="/gymba/assets/images/yak_vybraty_emal_dlia_farbuvannia.a84edba5347dbf5aa911..webp"}}]);
