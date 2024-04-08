@@ -1,1 +1,0 @@
-"use strict";(self.webpackChunkreact_config=self.webpackChunkreact_config||[]).push([[7880],{7880:function(e){e.exports="/gymbaassets/images/emal-korabelnaya-antikoroziyna-molotkova-3-v-1-102-temno-korichnevyy-0-75-l.520e8021eabaeac99d1b..webp"}}]);

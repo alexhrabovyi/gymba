@@ -1,1 +1,0 @@
-"use strict";(self.webpackChunkreact_config=self.webpackChunkreact_config||[]).push([[200],{200:function(e){e.exports="/gymbaassets/images/household_goods.396312d54235d7efddf6..webp"}}]);

@@ -1,1 +1,0 @@
-"use strict";(self.webpackChunkreact_config=self.webpackChunkreact_config||[]).push([[3944],{3944:function(a){a.exports="/gymbaassets/images/emal-alpina-direkt-auf-rost-matt-ral-7016-antratsyt-mat-2-5-l.217f2d472d8a23952ee1..webp"}}]);

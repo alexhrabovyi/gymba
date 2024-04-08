@@ -1,0 +1,1 @@
+"use strict";(self.webpackChunkreact_config=self.webpackChunkreact_config||[]).push([[7828],{7828:function(e){e.exports="/gymba/assets/images/window_equipment.94e291dadd625646cb2e..webp"}}]);

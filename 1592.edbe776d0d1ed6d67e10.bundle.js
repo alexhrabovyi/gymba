@@ -1,1 +1,0 @@
-"use strict";(self.webpackChunkreact_config=self.webpackChunkreact_config||[]).push([[1592],{1592:function(a){a.exports="/gymbaassets/images/yak_pidibraty_vidpovidni_budivelni_materialy_dlia_vashoho_proektu.aed0a5b6ff3908a9d35a..webp"}}]);

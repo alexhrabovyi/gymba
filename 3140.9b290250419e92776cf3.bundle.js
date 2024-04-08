@@ -1,1 +1,0 @@
-"use strict";(self.webpackChunkreact_config=self.webpackChunkreact_config||[]).push([[3140],{3140:function(a){a.exports="/gymbaassets/images/emal-alkidnaya-pf-115-fazenda-belyy-glyanets-0-9-nbsp-kg.80e292f5d191ab0a64a9..webp"}}]);

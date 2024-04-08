@@ -1,1 +1,0 @@
-"use strict";(self.webpackChunkreact_config=self.webpackChunkreact_config||[]).push([[3704],{3704:function(e){e.exports="/gymbaassets/images/instruments.efd9c2504684945ce655..webp"}}]);
