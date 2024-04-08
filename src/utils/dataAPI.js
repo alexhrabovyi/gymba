@@ -2,15 +2,9 @@
 import products from './products.json';
 import news from './news.json';
 
-// async function fakeNetwork() {
-//   return new Promise((res) => {
-//     setTimeout(res, Math.random() * 800);
-//   });
-// }
-
 async function fakeNetwork() {
   return new Promise((res) => {
-    setTimeout(res, Math.random() * 3000);
+    setTimeout(res, Math.random() * 800);
   });
 }
 
@@ -727,8 +721,8 @@ function getNewsPreviewsPerPage(allNewsPreviews, pageAmount, perView, pageNum) {
   return allNewsPreviews.slice(firstPageNewsPreview, lastPageNewsPreview);
 }
 
-export function getNewsPreviewsPerPageAndPageAmount(pageNum) {
-  const allNewsPreviews = getAllNewsPreviews();
+export async function getNewsPreviewsPerPageAndPageAmount(pageNum) {
+  const allNewsPreviews = await getAllNewsPreviews();
   const allNewsPreviewsAmount = allNewsPreviews.length;
   const perView = 12;
 
@@ -741,7 +735,9 @@ export function getNewsPreviewsPerPageAndPageAmount(pageNum) {
   };
 }
 
-export function getNewsArticle(id) {
+export async function getNewsArticle(id) {
+  await fakeNetwork();
+
   const article = news.find((n) => n.id === id);
 
   if (!article) throw new Error('Статтю не знайдено');
@@ -749,8 +745,8 @@ export function getNewsArticle(id) {
   return article;
 }
 
-export function getRecommendedNews(id) {
-  const allNewsPreviews = getAllNewsPreviews();
+export async function getRecommendedNews(id) {
+  const allNewsPreviews = await getAllNewsPreviews();
   const index = news.findIndex((n) => n.id === id);
   allNewsPreviews.splice(index, 1);
 

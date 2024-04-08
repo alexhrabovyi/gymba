@@ -1,9 +1,11 @@
 /* eslint-disable react/no-array-index-key */
 import {
   useMemo, Suspense, useState, useCallback, useLayoutEffect,
+  useEffect,
 } from 'react';
 import {
-  useLoaderData, Link, Await, useSearchParams,
+  Link, Await, useSearchParams,
+  useFetcher,
 } from 'react-router-dom';
 import classNames from 'classnames';
 import useOnResize from '../../hooks/useOnResize.jsx';
@@ -15,14 +17,47 @@ import containerCls from '../../scss/_container.module.scss';
 import textCls from '../../scss/_text.module.scss';
 import searchCls from './Search.module.scss';
 import LineIcon from '../../assets/images/icons/oblique.svg';
+import ThreeDotsSpinnerBlock from '../common/ThreeDotsSpinnerBlock/ThreeDotsSpinnerBlock.jsx';
 
 export default function Search() {
-  const { searchResults, pageAmount } = useLoaderData();
+  const searchFetcher = useFetcher();
   const [searchParams] = useSearchParams();
 
+  const [searchFetcherData, setSearchFetcherData] = useState(null);
   const [isShortProductCard, setIsShortProductCard] = useState(false);
+  const [fetchURL, setFetchUrl] = useState(null);
+  const [prevFetchUrl, setPrevFetchUrl] = useState(null);
 
   const searchValue = searchParams.get('search');
+
+  const searchResults = useMemo(() => searchFetcherData?.searchResults, [searchFetcherData]);
+  const pageAmount = searchFetcherData?.pageAmount;
+
+  const setupFetchUrl = useCallback(() => {
+    const newFetchURL = `/search?${searchParams.toString()}`;
+
+    if (newFetchURL !== fetchURL) {
+      setFetchUrl(newFetchURL);
+    }
+  }, [searchParams, fetchURL]);
+
+  useEffect(setupFetchUrl);
+
+  const requestFetcherData = useCallback(() => {
+    if (fetchURL !== prevFetchUrl) {
+      setPrevFetchUrl(fetchURL);
+
+      searchFetcher.load(fetchURL);
+    }
+  }, [fetchURL, prevFetchUrl, searchFetcher]);
+
+  useEffect(requestFetcherData);
+
+  if (searchFetcher.data) {
+    if (searchFetcher.data.searchResultAndPageAmount !== searchFetcherData) {
+      setSearchFetcherData(searchFetcher.data.searchResultAndPageAmount);
+    }
+  }
 
   const setupIsShortProductCard = useCallback(() => {
     if (window.innerWidth > 576 && isShortProductCard) {
@@ -131,35 +166,43 @@ export default function Search() {
       searchCls.main,
     )}
     >
-      <div className={searchCls.searchResults}>
-        {searchValue?.length ? (
-          searchResultList
-        ) : (
-          <div className={searchCls.noResultBlock}>
-            <div className={searchCls.noResultContent}>
-              <LineIcon className={searchCls.noResultLine} />
-              <p className={classNames(
-                textCls.text,
-                textCls.textFw800,
-                textCls.text32px,
-                searchCls.noResultText,
-              )}
-              >
-                Нічого не знайдено
-              </p>
-              <p className={classNames(
-                textCls.text,
-                textCls.text24px,
-                textCls.textGrey,
-              )}
-              >
-                Переконайтеся у правильності формулювання вашого запиту, спробуйте використати
-                альтернативні варіанти або більш узагальнені терміни.
-              </p>
-            </div>
-          </div>
+      {searchResults !== undefined ? (
+        <div className={classNames(
+          searchCls.searchResults,
+          searchFetcher.state === 'loading' && searchCls.searchResults_inactive,
         )}
-      </div>
+        >
+          {searchResults.length ? (
+            searchResultList
+          ) : (
+            <div className={searchCls.noResultBlock}>
+              <div className={searchCls.noResultContent}>
+                <LineIcon className={searchCls.noResultLine} />
+                <p className={classNames(
+                  textCls.text,
+                  textCls.textFw800,
+                  textCls.text32px,
+                  searchCls.noResultText,
+                )}
+                >
+                  Нічого не знайдено
+                </p>
+                <p className={classNames(
+                  textCls.text,
+                  textCls.text24px,
+                  textCls.textGrey,
+                )}
+                >
+                  Переконайтеся у правильності формулювання вашого запиту, спробуйте використати
+                  альтернативні варіанти або більш узагальнені терміни.
+                </p>
+              </div>
+            </div>
+          )}
+        </div>
+      ) : (
+        <ThreeDotsSpinnerBlock />
+      )}
       {searchValue && (
         <div className={searchCls.paginationBlock}>
           <PaginationBlock

@@ -1,6 +1,7 @@
 /* eslint-disable import/prefer-default-export */
 import { defer } from 'react-router-dom';
 import { getCompareProductCards } from '../../utils/dataAPI';
+import Error from '../../components/Error/Error.jsx';
 
 export async function loader({ request }) {
   const { searchParams } = new URL(request.url);
@@ -20,4 +21,10 @@ export async function loader({ request }) {
   }
 
   return defer({ productCards });
+}
+
+export function GetCompareProductsPage() {
+  return (
+    <Error />
+  );
 }

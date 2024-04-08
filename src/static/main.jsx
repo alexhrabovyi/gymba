@@ -20,14 +20,17 @@ import { loader as compareLoader, action as compareAction } from '../pages/Compa
 import DeliveryPageLazy from '../pages/Delivery/Delivery.lazy.jsx';
 import PaymentPageLazy from '../pages/Payment/Payment.lazy.jsx';
 import ContactsPageLazy from '../pages/Contacts/Contact.lazy.jsx';
-import { NewsPage, loader as newsPageLoader } from '../pages/News/News.jsx';
-import { NewsArticlePage, loader as newsArticleLoader } from '../pages/NewsArticle/NewsArticle.jsx';
-import { SearchPage, loader as getSearchPageLoader } from '../pages/Search/Search.jsx';
+import NewsPageLazy from '../pages/News/News.lazy.jsx';
+import { loader as newsPageLoader } from '../pages/News/NewsUtils.jsx';
+import NewsArticlePageLazy from '../pages/NewsArticle/NewsArticle.lazy.jsx';
+import { loader as newsArticleLoader } from '../pages/NewsArticle/NewsArticleUtils.jsx';
+import SearchPageLazy from '../pages/Search/Search.lazy.jsx';
+import { loader as getSearchPageLoader } from '../pages/Search/SearchUtils.jsx';
 import { GetCategoriesAndSubcategoriesPage, loader as getCategoriesAndSubcategoriesLoader } from '../pages/GetCategoriesAndSubcategories/GetCategoriesAndSubcategories.jsx';
 import { loader as getBreadCrumbsInfoLoader, action as getBreadCrumbsInfoAction } from '../pages/GetBreadCrumbsInfo/GetBreadCrumbsInfo.jsx';
 import { loader as getSubcategoryProductsLoader } from '../pages/GetSubcategoryProducts/GetSubcategoryProducts.jsx';
 import { loader as getAnalogueProductsLoader, action as getAnalogueProductsAction } from '../pages/GetAnalogueProducts/GetAnalogueProducts.jsx';
-import { loader as getCompareProductsLoader } from '../pages/GetCompareProducts/GetCompareProducts.jsx';
+import { GetCompareProductsPage, loader as getCompareProductsLoader } from '../pages/GetCompareProducts/GetCompareProducts.jsx';
 import { GetRandomProductPage, loader as getRandomProductLoader } from '../pages/GetRandomProduct/GetRandomProduct.jsx';
 
 const router = createBrowserRouter([
@@ -89,17 +92,17 @@ const router = createBrowserRouter([
           {
             path: 'news',
             loader: newsPageLoader,
-            element: <NewsPage />,
+            element: <NewsPageLazy />,
           },
           {
             path: 'news/:articleId',
             loader: newsArticleLoader,
-            element: <NewsArticlePage />,
+            element: <NewsArticlePageLazy />,
           },
           {
             path: 'search',
             loader: getSearchPageLoader,
-            element: <SearchPage />,
+            element: <SearchPageLazy />,
           },
           {
             path: 'getCategoriesAndSubcategories',
@@ -123,6 +126,7 @@ const router = createBrowserRouter([
           {
             path: 'getCompareProducts',
             loader: getCompareProductsLoader,
+            element: <GetCompareProductsPage />,
           },
           {
             path: 'getRandomProduct',

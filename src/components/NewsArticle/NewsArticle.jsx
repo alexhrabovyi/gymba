@@ -2,19 +2,41 @@
 /* eslint-disable no-shadow */
 /* eslint-disable react/no-array-index-key */
 /* eslint-disable default-case */
-import { Suspense, useCallback, useMemo } from 'react';
-import { Await, useLoaderData, Link } from 'react-router-dom';
+import {
+  useState, Suspense, useCallback, useMemo,
+} from 'react';
+import {
+  Await, Link, useFetcher, useParams,
+} from 'react-router-dom';
 import classNames from 'classnames';
 import Spinner from '../common/Spinner/Spinner.jsx';
 import DynamicImage from '../common/DynamicImage/DynamicImage.jsx';
+import ThreeDotsSpinnerBlock from '../common/ThreeDotsSpinnerBlock/ThreeDotsSpinnerBlock.jsx';
 import containerCls from '../../scss/_container.module.scss';
 import linkCls from '../../scss/_link.module.scss';
 import articleCls from './NewsArticle.module.scss';
 import LineIcon from '../../assets/images/icons/oblique.svg';
 import ViewsIcon from '../../assets/images/icons/views.svg';
+import useFetcherLoad from '../../hooks/useFetcherLoad.jsx';
 
 export default function NewsArticle() {
-  const { articleObj, recommendedNews } = useLoaderData();
+  const articleFetcher = useFetcher();
+  const params = useParams();
+
+  const [articleFetcherData, setArticleFetcherData] = useState();
+
+  const fetchUrl = `/news/${params.articleId}`;
+
+  const articleObj = useMemo(() => articleFetcherData?.articleObj, [articleFetcherData]);
+  const recommendedNews = useMemo(() => articleFetcherData?.recommendedNews, [articleFetcherData]);
+
+  useFetcherLoad(articleFetcher, fetchUrl);
+
+  if (articleFetcher.data) {
+    if (articleFetcher.data !== articleFetcherData) {
+      setArticleFetcherData(articleFetcher.data);
+    }
+  }
 
   const createContentTitle = useCallback((titleType, title) => {
     switch (titleType) {
@@ -186,8 +208,10 @@ export default function NewsArticle() {
     );
   }, []);
 
-  const contentBlocks = useMemo(() => (
-    articleObj.description.map((d, i) => {
+  const contentBlocks = useMemo(() => {
+    if (!articleObj) return;
+
+    return articleObj.description.map((d, i) => {
       let title;
 
       if (d.titleType) {
@@ -225,11 +249,13 @@ export default function NewsArticle() {
           </div>
         </div>
       );
-    })
-  ), [articleObj, createContentTitle, createContentImg, createContentList,
+    });
+  }, [articleObj, createContentTitle, createContentImg, createContentList,
     createContentParagraphs, createContentQuoteBlock, createContentTable]);
 
   const recommendedNewsList = useMemo(() => {
+    if (!recommendedNews) return;
+
     const recommendedNewsListElements = recommendedNews.map((rN) => (
       <li
         key={rN.id}
@@ -266,28 +292,34 @@ export default function NewsArticle() {
     )}
     >
       <h1 className={articleCls.h1}>
-        {articleObj.name}
+        {articleObj?.name}
       </h1>
-      <div className={articleCls.articleAndRecommendArticleBlock}>
-        <div className={articleCls.article}>
-          {contentBlocks}
-        </div>
-        <article className={articleCls.recommendArticlesBlock}>
-          <p className={articleCls.recommendArticlesTitle}>
-            Дивіться також
-          </p>
-          {recommendedNewsList}
-        </article>
-      </div>
-      <div className={articleCls.dateAndViewsBlock}>
-        {articleObj.date}
-        <div className={articleCls.viewsBlock}>
-          <ViewsIcon
-            className={articleCls.viewsIcon}
-          />
-          {articleObj.views}
-        </div>
-      </div>
+      {articleObj ? (
+        <>
+          <div className={articleCls.articleAndRecommendArticleBlock}>
+            <div className={articleCls.article}>
+              {contentBlocks}
+            </div>
+            <article className={articleCls.recommendArticlesBlock}>
+              <p className={articleCls.recommendArticlesTitle}>
+                Дивіться також
+              </p>
+              {recommendedNewsList}
+            </article>
+          </div>
+          <div className={articleCls.dateAndViewsBlock}>
+            {articleObj.date}
+            <div className={articleCls.viewsBlock}>
+              <ViewsIcon
+                className={articleCls.viewsIcon}
+              />
+              {articleObj.views}
+            </div>
+          </div>
+        </>
+      ) : (
+        <ThreeDotsSpinnerBlock />
+      )}
     </main>
   );
 }
