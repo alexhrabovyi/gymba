@@ -14,7 +14,7 @@ module.exports = (env) => {
   const entry = path.resolve(__dirname, 'src/static/main.jsx');
 
   const output = {
-    publicPath: '/',
+    publicPath: '/gymba/',
     filename: '[name].[contenthash].bundle.js',
     path: path.resolve(__dirname, 'bundle'),
     clean: true,
@@ -47,7 +47,12 @@ module.exports = (env) => {
       {
         test: /\.s[ac]ss$/i,
         use: [
-          isProd ? MiniCssExtractPlugin.loader : "style-loader",
+          isProd ? {
+            loader: MiniCssExtractPlugin.loader,
+            options: {
+              publicPath: "/gymba/",
+            },
+          } : "style-loader",
           {
             loader: "css-loader",
             options: {
@@ -97,7 +102,6 @@ module.exports = (env) => {
           {
             loader: '@svgr/webpack',
             options: { icon: true },
-            // outDir: 'assets/images/[name].[contenthash].[ext]',
           },
         ],
       },
@@ -106,6 +110,7 @@ module.exports = (env) => {
         type: 'asset/resource',
         resourceQuery: /url/i,
         generator: {
+          publicPath: '/gymba/',
           filename: `assets/images/[name].[contenthash].[ext]`,
         },
         use: isProd ? ['image-webpack-loader'] : [],
@@ -125,8 +130,8 @@ module.exports = (env) => {
     }),
     new FaviconsWebpackPlugin({
       logo: "./src/assets/favicons/favicon.png",
-      outputPath: path.resolve(__dirname + "/bundle/assets/favicons"),
-      prefix: '../assets/favicons/',
+      outputPath: "./assets/favicons",
+      prefix: './assets/favicons/',
       inject: true,
       favicons: {
         icons: {
@@ -142,7 +147,7 @@ module.exports = (env) => {
   // devServer
 
   const devServer = !isProd ? {
-    open: true,
+    open: ['/gymba/'],
     watchFiles: ['src/**/*.html', 'bundle/*.html'],
     client: {
       overlay: true,
