@@ -1,0 +1,1 @@
+"use strict";(self.webpackChunkreact_config=self.webpackChunkreact_config||[]).push([[2640],{2640:function(e,c,s){e.exports=s.p+"assets/images/wood_protection.6c40bef9928c31f21f01..webp"}}]);
