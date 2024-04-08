@@ -1,4 +1,4 @@
-import { createBrowserRouter, RouterProvider } from 'react-router-dom';
+import { createHashRouter, RouterProvider } from 'react-router-dom';
 import React from 'react';
 import { createRoot } from 'react-dom/client';
 import './main.scss';
@@ -33,7 +33,7 @@ import { loader as getAnalogueProductsLoader, action as getAnalogueProductsActio
 import { GetCompareProductsPage, loader as getCompareProductsLoader } from '../pages/GetCompareProducts/GetCompareProducts.jsx';
 import { GetRandomProductPage, loader as getRandomProductLoader } from '../pages/GetRandomProduct/GetRandomProduct.jsx';
 
-const router = createBrowserRouter([
+const router = createHashRouter([
   {
     element: <HeaderAndFooterLayout />,
     children: [

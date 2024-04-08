@@ -90,6 +90,7 @@
 
 .productAmount {
   @include flex-builder(row, flex-start, center);
+
   gap: 4px;
 }
 
@@ -207,7 +208,9 @@
 .spinnerBlock {
   width: 100%;
   height: 100px;
+
   @include flex-builder(row, center, center);
+
   grid-column: 1/4;
 
   @include media-s {

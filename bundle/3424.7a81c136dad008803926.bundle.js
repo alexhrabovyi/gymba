@@ -1,0 +1,1 @@
+"use strict";(self.webpackChunkreact_config=self.webpackChunkreact_config||[]).push([[3424],{1044:function(a,e,s){a.exports=s.p+"assets/images/emal-alkidnaya-pf-115-korabelnaya-belyy-glyanets-2-8-nbsp-kg.28b73290ada1724db1ed..webp"}}]);

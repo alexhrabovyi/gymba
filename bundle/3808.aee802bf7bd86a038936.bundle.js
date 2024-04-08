@@ -1,0 +1,1 @@
+"use strict";(self.webpackChunkreact_config=self.webpackChunkreact_config||[]).push([[3808],{3808:function(e,s,c){e.exports=c.p+"assets/images/enamels_special_purpose_enamels.de56de52d925c269cac9..webp"}}]);

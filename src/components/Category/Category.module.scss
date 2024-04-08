@@ -59,7 +59,9 @@
 .spinnerBlock {
   width: 100%;
   height: 100px;
+
   @include flex-builder(row, center, center);
+
   grid-column: 1/5;
 
   @include media-l {
