@@ -1,0 +1,1 @@
+"use strict";(self.webpackChunkreact_config=self.webpackChunkreact_config||[]).push([[6952],{6952:function(a){a.exports="/gymbaassets/images/additional-2-emal-alkidnaya-pf-116-akvarel-zebra-811-belyy-mat-2-8-kg.b1c19f5ab66159b5e8e0..webp"}}]);

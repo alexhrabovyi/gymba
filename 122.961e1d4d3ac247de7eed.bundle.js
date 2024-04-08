@@ -1,1 +1,0 @@
-"use strict";(self.webpackChunkreact_config=self.webpackChunkreact_config||[]).push([[122],{122:function(e,s,c){e.exports=c.p+"assets/images/figure_2.83d5b202cf46c4bd19a9..svg"}}]);

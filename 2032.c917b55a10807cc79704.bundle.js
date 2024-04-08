@@ -1,0 +1,1 @@
+"use strict";(self.webpackChunkreact_config=self.webpackChunkreact_config||[]).push([[2032],{2032:function(e){e.exports="/gymbaassets/images/enamels.7e3b830157cc150dce90..webp"}}]);

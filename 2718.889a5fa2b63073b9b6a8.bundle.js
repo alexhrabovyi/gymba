@@ -1,0 +1,1 @@
+"use strict";(self.webpackChunkreact_config=self.webpackChunkreact_config||[]).push([[2718],{2718:function(e){e.exports="/gymbaassets/images/additional-1-novi_tekhnolohii_v_budivelnykh_materialakh.558f235c3c567c0004d5..webp"}}]);

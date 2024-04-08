@@ -1,0 +1,1 @@
+"use strict";(self.webpackChunkreact_config=self.webpackChunkreact_config||[]).push([[9636],{9636:function(a){a.exports="/gymbaassets/images/gruntovka-gf-021-fazenda-seryy-glyanets-2-8-nbsp-kg.ceaaa34933366ca4a4ce..webp"}}]);

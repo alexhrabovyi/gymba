@@ -1,0 +1,1 @@
+"use strict";(self.webpackChunkreact_config=self.webpackChunkreact_config||[]).push([[4716],{4716:function(a){a.exports="/gymbaassets/images/adgezionnaya-gruntovka-otex-tikkurila-belyy-glubokiy-mat-0-9-l.2852997b2aad981b768f..webp"}}]);
