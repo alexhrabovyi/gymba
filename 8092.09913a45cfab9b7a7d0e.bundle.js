@@ -1,1 +1,0 @@
-"use strict";(self.webpackChunkreact_config=self.webpackChunkreact_config||[]).push([[8092],{8092:function(e){e.exports="/gymba/assets/images/figure_5.76108e99c91cc7a4229d..svg"}}]);
