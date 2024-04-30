@@ -1,11 +1,13 @@
 import { createHashRouter, RouterProvider } from 'react-router-dom';
 import React from 'react';
 import { createRoot } from 'react-dom/client';
+import { Provider } from 'react-redux';
+import { worker } from '../utils/serverAPI.js';
+import store from '../globalStore/globalStore.js';
 import './main.scss';
 import { HeaderAndFooterLayout } from '../layouts/HeaderAndFooterLayout/HeaderAndFooterLayout.jsx';
 import { ErrorPage } from '../pages/Error/Error.jsx';
 import MainLazy from '../pages/Main/Main.lazy.jsx';
-import { loader as mainLoader } from '../pages/Main/MainUtils.jsx';
 import CategoryPageLazy from '../pages/Category/Category.lazy.jsx';
 import { loader as categoryLoader } from '../pages/Category/CategoryUtils.jsx';
 import ProductsPageLazy from '../pages/Products/Products.lazy.jsx';
@@ -42,7 +44,6 @@ const router = createHashRouter([
         children: [
           {
             path: '/',
-            loader: mainLoader,
             element: <MainLazy />,
           },
           {
@@ -139,8 +140,16 @@ const router = createHashRouter([
   },
 ]);
 
-createRoot(document.getElementById('root')).render(
-  <React.StrictMode>
-    <RouterProvider router={router} />
-  </React.StrictMode>,
-);
+async function start() {
+  await worker.start({ onUnhandledRequest: 'bypass' });
+
+  createRoot(document.getElementById('root')).render(
+    <React.StrictMode>
+      <Provider store={store}>
+        <RouterProvider router={router} />
+      </Provider>
+    </React.StrictMode>,
+  );
+}
+
+start();

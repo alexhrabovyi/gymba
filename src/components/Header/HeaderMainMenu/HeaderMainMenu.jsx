@@ -25,12 +25,16 @@ import Phone from '../images/phone.svg';
 
 import ThreeDotsSpinnerBlock from '../../common/ThreeDotsSpinnerBlock/ThreeDotsSpinnerBlock.jsx';
 
+
+import { useGetCategoriesQuery } from '../../../queryAPI/queryAPI.js';
+
+
 const HeaderMainMenu = memo(({
   isMenuOpen, categories, catalogBtnOnClick, openLoginPopupBtnOnClick,
 }) => {
-  const wishlistFetcher = useFetcher();
-  const compareFetcher = useFetcher();
-  const randomProductFetcher = useFetcher();
+  // const wishlistFetcher = useFetcher();
+  // const compareFetcher = useFetcher();
+  // const randomProductFetcher = useFetcher();
 
   const menuRef = useRef(null);
 
@@ -140,29 +144,33 @@ const HeaderMainMenu = memo(({
 
   // fetcher functions
 
-  useFetcherLoad(wishlistFetcher, '/wishlist');
+  const test = useGetCategoriesQuery();
 
-  if (wishlistFetcher.data) {
-    if (wishlistFetcher.data.wishlistAmount !== wishlistAmount) {
-      setWishlistAmount(wishlistFetcher.data.wishlistAmount);
-    }
-  }
+  console.log(test.data);
 
-  useFetcherLoad(compareFetcher, '/compare');
+  // useFetcherLoad(wishlistFetcher, '/wishlist');
 
-  if (compareFetcher.data) {
-    if (compareFetcher.data.compareAmount !== compareAmount) {
-      setCompareAmount(compareFetcher.data.compareAmount);
-    }
-  }
+  // if (wishlistFetcher.data) {
+  //   if (wishlistFetcher.data.wishlistAmount !== wishlistAmount) {
+  //     setWishlistAmount(wishlistFetcher.data.wishlistAmount);
+  //   }
+  // }
 
-  useFetcherLoad(randomProductFetcher, '/getRandomProduct');
+  // useFetcherLoad(compareFetcher, '/compare');
 
-  if (randomProductFetcher.data) {
-    if (randomProductFetcher.data.randomProduct !== randomProduct) {
-      setRandomProduct(randomProductFetcher.data.randomProduct);
-    }
-  }
+  // if (compareFetcher.data) {
+  //   if (compareFetcher.data.compareAmount !== compareAmount) {
+  //     setCompareAmount(compareFetcher.data.compareAmount);
+  //   }
+  // }
+
+  // useFetcherLoad(randomProductFetcher, '/getRandomProduct');
+
+  // if (randomProductFetcher.data) {
+  //   if (randomProductFetcher.data.randomProduct !== randomProduct) {
+  //     setRandomProduct(randomProductFetcher.data.randomProduct);
+  //   }
+  // }
 
   // element creating functions
 

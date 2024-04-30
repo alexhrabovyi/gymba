@@ -8,28 +8,63 @@ async function fakeNetwork() {
   });
 }
 
+// =====
 export async function getCategoriesAndSubcategories() {
   await fakeNetwork();
 
-  const categories = products.map((c) => {
-    const dataSubcategories = c.subcategories;
+  const categoriesFullObjs = Object.values(products.categories.entities);
 
-    const subcategories = dataSubcategories.map((subC) => ({
+  const categoriesShortObjs = categoriesFullObjs.map((c) => {
+    const subcategoriesIds = c.subcategories.ids;
+
+    const subcategoriesFullObjs = Object.values(c.subcategories.entities);
+    const subcategoriesShortObjs = subcategoriesFullObjs.map((subC) => ({
       name: subC.name,
       id: subC.id,
+      imgAlt: subC.imgAlt,
     }));
 
+    const subcategoryEntities = {};
+
+    subcategoriesShortObjs.forEach((s) => {
+      subcategoryEntities[s.id] = s;
+    });
+
     return {
-      name: c.name,
-      id: c.id,
-      imgId: c.imgId,
-      imgAlt: c.imgAlt,
-      subcategories,
+      ...c,
+      subcategories: {
+        ids: subcategoriesIds,
+        entities: subcategoryEntities,
+      },
     };
   });
 
-  return categories;
+  return categoriesShortObjs;
 }
+// =====
+
+// export async function getCategoriesAndSubcategories() {
+//   await fakeNetwork();
+
+//   const categories = products.map((c) => {
+//     const dataSubcategories = c.subcategories;
+
+//     const subcategories = dataSubcategories.map((subC) => ({
+//       name: subC.name,
+//       id: subC.id,
+//     }));
+
+//     return {
+//       name: c.name,
+//       id: c.id,
+//       imgId: c.imgId,
+//       imgAlt: c.imgAlt,
+//       subcategories,
+//     };
+//   });
+
+//   return categories;
+// }
 
 export async function getCategoryAndSubcategories(categoryId) {
   await fakeNetwork();

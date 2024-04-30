@@ -43,10 +43,10 @@ import Favorite from '../../assets/images/icons/favorite.svg';
 import Cart from '../../assets/images/icons/cart.svg';
 
 export default function Header() {
-  const categoriesFetcher = useFetcher();
-  const wishlistFetcher = useFetcher();
-  const cartFetcher = useFetcher();
-  const compareFetcher = useFetcher();
+  // const categoriesFetcher = useFetcher();
+  // const wishlistFetcher = useFetcher();
+  // const cartFetcher = useFetcher();
+  // const compareFetcher = useFetcher();
   const location = useLocation();
   const [searchParams] = useSearchParams();
 
@@ -147,37 +147,37 @@ export default function Header() {
 
   // fetcher functions
 
-  useFetcherLoad(categoriesFetcher, '/getCategoriesAndSubcategories');
+  // useFetcherLoad(categoriesFetcher, '/getCategoriesAndSubcategories');
 
-  if (categoriesFetcher.data) {
-    if (categoriesFetcher.data.categories !== categories) {
-      setCategories(categoriesFetcher.data.categories);
-    }
-  }
+  // if (categoriesFetcher.data) {
+  //   if (categoriesFetcher.data.categories !== categories) {
+  //     setCategories(categoriesFetcher.data.categories);
+  //   }
+  // }
 
-  useFetcherLoad(wishlistFetcher, '/wishlist');
+  // useFetcherLoad(wishlistFetcher, '/wishlist');
 
-  if (wishlistFetcher.data) {
-    if (wishlistFetcher.data.wishlistAmount !== wishlistAmount) {
-      setWishlistAmount(wishlistFetcher.data.wishlistAmount);
-    }
-  }
+  // if (wishlistFetcher.data) {
+  //   if (wishlistFetcher.data.wishlistAmount !== wishlistAmount) {
+  //     setWishlistAmount(wishlistFetcher.data.wishlistAmount);
+  //   }
+  // }
 
-  useFetcherLoad(cartFetcher, '/cart');
+  // useFetcherLoad(cartFetcher, '/cart');
 
-  if (cartFetcher.data) {
-    if (cartFetcher.data.cartAmount !== cartAmount) {
-      setCartAmount(cartFetcher.data.cartAmount);
-    }
-  }
+  // if (cartFetcher.data) {
+  //   if (cartFetcher.data.cartAmount !== cartAmount) {
+  //     setCartAmount(cartFetcher.data.cartAmount);
+  //   }
+  // }
 
-  useFetcherLoad(compareFetcher, '/compare');
+  // useFetcherLoad(compareFetcher, '/compare');
 
-  if (compareFetcher.data) {
-    if (compareFetcher.data.compareAmount !== compareAmount) {
-      setCompareAmount(compareFetcher.data.compareAmount);
-    }
-  }
+  // if (compareFetcher.data) {
+  //   if (compareFetcher.data.compareAmount !== compareAmount) {
+  //     setCompareAmount(compareFetcher.data.compareAmount);
+  //   }
+  // }
 
   // searchBlock functions
 
@@ -497,7 +497,7 @@ export default function Header() {
         />
         {windowWidth <= 1024 && (
         <>
-          <HeaderCategoryMenu
+          {/* <HeaderCategoryMenu
             isMenuOpen={isCategoryMenuOpen}
             categories={categories}
             categoryBtnOnClick={categoryBtnOnClick}
@@ -507,7 +507,7 @@ export default function Header() {
             isMenuOpen={isSubcategoryMenuOpen}
             category={activeCategory}
             backToCatalogOnClick={backToCatalogOnClick}
-          />
+          /> */}
         </>
         )}
       </div>
@@ -519,19 +519,19 @@ export default function Header() {
         )}
         onClick={backdropOnClick}
       />
-      <LoginRegisterPopup
+      {/* <LoginRegisterPopup
         isActive={isLoginPopupOpen}
         setIsActive={setIsLoginPopupOpen}
         openButtonRef={openLoginPopupBtnRef}
-      />
-      <SearchResultBlock
+      /> */}
+      {/* <SearchResultBlock
         isActive={isSearchBlockActive}
         setIsActive={setIsSearchBlockActive}
         inputLeft={searchBlockStyles?.left}
         inputWidth={searchBlockStyles?.width}
         headerBottom={searchBlockStyles?.headerBottom}
         searchValue={searchValue}
-      />
+      /> */}
     </>
   );
 }

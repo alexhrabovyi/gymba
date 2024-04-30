@@ -110,7 +110,6 @@ module.exports = (env) => {
         type: 'asset/resource',
         resourceQuery: /url/i,
         generator: {
-          publicPath: '/gymba/',
           filename: `assets/images/[name].[contenthash].[ext]`,
         },
         use: isProd ? ['image-webpack-loader'] : [],
