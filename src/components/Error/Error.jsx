@@ -8,7 +8,7 @@ import LineIcon from '../../assets/images/icons/oblique.svg';
 export default function Error() {
   const err = useRouteError();
 
-  const message = err?.message || err?.data || 'Виникла невідома помилка';
+  const message = err && err.status === 404 ? 'Сторінку не знайдено' : 'Виникла невідома помилка';
   const status = err?.status;
 
   console.error(err);

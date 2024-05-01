@@ -7,9 +7,8 @@ import {
   useLayoutEffect,
   useMemo,
 } from 'react';
-import { useFetcher } from 'react-router-dom';
 import classNames from 'classnames';
-import useFetcherLoad from '../../hooks/useFetcherLoad.jsx';
+import { useGetCategoriesQuery } from '../../queryAPI/queryAPI.js';
 import useOnResize from '../../hooks/useOnResize.jsx';
 import Category from './CatalogCategory/CatalogCategory.jsx';
 import ThreeDotsSpinnerBlock from '../common/ThreeDotsSpinnerBlock/ThreeDotsSpinnerBlock.jsx';
@@ -19,22 +18,16 @@ import textCls from '../../scss/_text.module.scss';
 import catalogCls from './Catalog.module.scss';
 
 export default function Catalog() {
-  const categoriesFetcher = useFetcher();
-
   const categoryBlockRef = useRef(null);
 
   const [categories, setCategories] = useState(null);
   const [isAccordionNeeded, setIsAccordionNeeded] = useState(false);
   const [isAccordionOpen, setIsAccordionOpen] = useState(false);
 
-  useFetcherLoad(categoriesFetcher, '/');
+  const { data } = useGetCategoriesQuery();
 
-  if (categoriesFetcher.data) {
-    const fetcherCategories = categoriesFetcher.data.categories;
-
-    if (fetcherCategories !== categories) {
-      setCategories(fetcherCategories);
-    }
+  if (data && categories === null) {
+    setCategories(data.entities);
   }
 
   const calcCollapsedHeight = useCallback(() => {
@@ -115,7 +108,7 @@ export default function Catalog() {
 
     let figureId = 1;
 
-    return categories?.map((categoryProps) => {
+    return Object.values(categories).map((categoryProps) => {
       if (figureId > 9) figureId = 1;
 
       return (

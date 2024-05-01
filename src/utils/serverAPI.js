@@ -1,11 +1,25 @@
+/* eslint-disable max-len */
 import { http, HttpResponse } from 'msw';
 import { setupWorker } from 'msw/browser';
-import { getCategoriesAndSubcategories } from './dataAPI';
+import { getCategoriesAndSubcategories, getNewsPreviews, getFilteredProductsAndMinMaxPrice } from './dataAPI';
 
 export const handlers = [
   http.get('/fakeAPI/categories', async () => {
     const categories = await getCategoriesAndSubcategories();
     return HttpResponse.json(categories);
+  }),
+  http.get('/fakeAPI/news', async () => {
+    const newsPreviews = await getNewsPreviews();
+    return HttpResponse.json(newsPreviews);
+  }),
+  http.get('/fakeAPI/getProducts/:categoryId/:subcategoryId', async ({ request, params }) => {
+    const categoryIdParam = params.categoryId;
+    const subcategoryIdParam = params.subcategoryId;
+    const { searchParams } = new URL(request.url);
+
+    const productsAndFilters = await getFilteredProductsAndMinMaxPrice(categoryIdParam, subcategoryIdParam, searchParams);
+
+    return HttpResponse.json(productsAndFilters);
   }),
 ];
 

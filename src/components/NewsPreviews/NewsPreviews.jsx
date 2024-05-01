@@ -1,8 +1,8 @@
 import {
   useCallback, useLayoutEffect, useMemo, useState,
 } from 'react';
-import { useFetcher } from 'react-router-dom';
 import classNames from 'classnames';
+import { useGetNewsQuery } from '../../queryAPI/queryAPI.js';
 import useOnResize from '../../hooks/useOnResize.jsx';
 import Slider from '../common/Slider/Slider.jsx';
 import LinkWithArrow from '../common/LinkWithArrow/LinkWithArrow.jsx';
@@ -11,15 +11,18 @@ import BigPrevNextButton from '../common/BigPrevNextButton/BigPrevNextButton.jsx
 import containerCls from '../../scss/_container.module.scss';
 import textCls from '../../scss/_text.module.scss';
 import newsCls from './NewsPreviews.module.scss';
-import useFetcherLoad from '../../hooks/useFetcherLoad.jsx';
 import ThreeDotsSpinnerBlock from '../common/ThreeDotsSpinnerBlock/ThreeDotsSpinnerBlock.jsx';
 
 export default function NewsPreviews() {
-  const newsFetcher = useFetcher();
-
   const [news, setNews] = useState(null);
   const [windowWidth, setWindowWidth] = useState();
   const [activeSlideId, setActiveSlideId] = useState(0);
+
+  const { data } = useGetNewsQuery();
+
+  if (data && news === null) {
+    setNews(Object.values(data.entities));
+  }
 
   const getWindowWidth = useCallback(() => {
     setWindowWidth(window.innerWidth);
@@ -27,16 +30,6 @@ export default function NewsPreviews() {
 
   useLayoutEffect(getWindowWidth, [getWindowWidth]);
   useOnResize(getWindowWidth);
-
-  useFetcherLoad(newsFetcher, '/');
-
-  if (newsFetcher.data) {
-    const fetcherNews = newsFetcher.data.news;
-
-    if (fetcherNews !== news) {
-      setNews(fetcherNews);
-    }
-  }
 
   const previews = useMemo(() => news?.map((n) => (
     <NewsPreview

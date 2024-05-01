@@ -2,14 +2,11 @@
 import {
   memo, useEffect, useRef, useState, useCallback, useLayoutEffect, useMemo, Suspense,
 } from 'react';
-import {
-  Link, NavLink, useFetcher, Await,
-} from 'react-router-dom';
+import { Link, NavLink, Await } from 'react-router-dom';
 import classNames from 'classnames';
 import useOnResize from '../../../hooks/useOnResize.jsx';
 import findAllInteractiveElements from '../../../utils/findAllInteractiveElements.js';
 import getScrollWidth from '../../../utils/getScrollWidth.jsx';
-import useFetcherLoad from '../../../hooks/useFetcherLoad.jsx';
 import Spinner from '../../common/Spinner/Spinner.jsx';
 import DynamicImage from '../../common/DynamicImage/DynamicImage.jsx';
 import containerCls from '../../../scss/_container.module.scss';
@@ -25,17 +22,9 @@ import Phone from '../images/phone.svg';
 
 import ThreeDotsSpinnerBlock from '../../common/ThreeDotsSpinnerBlock/ThreeDotsSpinnerBlock.jsx';
 
-
-import { useGetCategoriesQuery } from '../../../queryAPI/queryAPI.js';
-
-
 const HeaderMainMenu = memo(({
   isMenuOpen, categories, catalogBtnOnClick, openLoginPopupBtnOnClick,
 }) => {
-  // const wishlistFetcher = useFetcher();
-  // const compareFetcher = useFetcher();
-  // const randomProductFetcher = useFetcher();
-
   const menuRef = useRef(null);
 
   const [activeCategoryId, setActiveCategoryId] = useState(null);
@@ -44,8 +33,8 @@ const HeaderMainMenu = memo(({
   const [compareAmount, setCompareAmount] = useState(null);
   const [randomProduct, setRandomProduct] = useState(null);
 
-  const activeCategory = categories?.find((c) => c.id === activeCategoryId);
-  const subcategories = activeCategory?.subcategories;
+  const activeCategory = categories?.[activeCategoryId];
+  const subcategories = activeCategory?.subcategories.entities;
 
   // setup functions
 
@@ -57,7 +46,7 @@ const HeaderMainMenu = memo(({
   useOnResize(getWindowWidth);
 
   const setupActiveCategory = useCallback(() => {
-    setActiveCategoryId(categories?.[0].id);
+    setActiveCategoryId(categories && Object.keys(categories)[0]);
   }, [categories]);
 
   useEffect(setupActiveCategory);
@@ -144,39 +133,11 @@ const HeaderMainMenu = memo(({
 
   // fetcher functions
 
-  const test = useGetCategoriesQuery();
-
-  console.log(test.data);
-
-  // useFetcherLoad(wishlistFetcher, '/wishlist');
-
-  // if (wishlistFetcher.data) {
-  //   if (wishlistFetcher.data.wishlistAmount !== wishlistAmount) {
-  //     setWishlistAmount(wishlistFetcher.data.wishlistAmount);
-  //   }
-  // }
-
-  // useFetcherLoad(compareFetcher, '/compare');
-
-  // if (compareFetcher.data) {
-  //   if (compareFetcher.data.compareAmount !== compareAmount) {
-  //     setCompareAmount(compareFetcher.data.compareAmount);
-  //   }
-  // }
-
-  // useFetcherLoad(randomProductFetcher, '/getRandomProduct');
-
-  // if (randomProductFetcher.data) {
-  //   if (randomProductFetcher.data.randomProduct !== randomProduct) {
-  //     setRandomProduct(randomProductFetcher.data.randomProduct);
-  //   }
-  // }
-
   // element creating functions
 
   const categoryLinkList = useMemo(() => (
     <ul className={headerMenuCls.mainLinkList}>
-      {categories?.map((c) => (
+      {categories && Object.values(categories).map((c) => (
         <li key={c.id}>
           <Link
             to={c.id}
@@ -196,7 +157,7 @@ const HeaderMainMenu = memo(({
 
   const subcategoryLinkList = useMemo(() => (
     <ul className={headerMenuCls.additionalLinkList}>
-      {subcategories?.map((subC) => (
+      {subcategories && Object.values(subcategories).map((subC) => (
         <li key={subC.id}>
           <Link
             to={`${activeCategory.id}/${subC.id}`}

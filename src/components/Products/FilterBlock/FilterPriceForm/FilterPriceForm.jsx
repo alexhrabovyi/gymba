@@ -9,7 +9,7 @@ import filterCls from './FilterPriceForm.module.scss';
 import ChevronUp from '../../../../assets/images/icons/chevronUp.svg';
 
 export default function FilterPriceForm() {
-  const productsFetcher = useFetcher();
+  // const productsFetcher = useFetcher();
   const params = useParams();
   const [searchParams, setSearchParams] = useSearchParams();
 
@@ -130,35 +130,35 @@ export default function FilterPriceForm() {
 
   // fetcher functions
 
-  const initialDataFetch = useCallback(() => {
-    if (productsFetcher.state === 'idle' && !productsFetcher.data) {
-      setPrevFetchUrl(fetchUrl);
+  // const initialDataFetch = useCallback(() => {
+  //   if (productsFetcher.state === 'idle' && !productsFetcher.data) {
+  //     setPrevFetchUrl(fetchUrl);
 
-      productsFetcher.load(fetchUrl);
-    }
-  }, [productsFetcher, fetchUrl]);
+  //     productsFetcher.load(fetchUrl);
+  //   }
+  // }, [productsFetcher, fetchUrl]);
 
-  useEffect(initialDataFetch, [initialDataFetch]);
+  // useEffect(initialDataFetch, [initialDataFetch]);
 
-  const dataFetchByInteraction = useCallback(() => {
-    if (prevFetchUrl !== fetchUrl) {
-      setPrevFetchUrl(fetchUrl);
+  // const dataFetchByInteraction = useCallback(() => {
+  //   if (prevFetchUrl !== fetchUrl) {
+  //     setPrevFetchUrl(fetchUrl);
 
-      productsFetcher.load(fetchUrl);
-    }
-  }, [prevFetchUrl, fetchUrl, productsFetcher]);
+  //     productsFetcher.load(fetchUrl);
+  //   }
+  // }, [prevFetchUrl, fetchUrl, productsFetcher]);
 
-  useEffect(dataFetchByInteraction, [dataFetchByInteraction]);
+  // useEffect(dataFetchByInteraction, [dataFetchByInteraction]);
 
-  function updateDataFromFetch() {
-    if (productsFetcher.data) {
-      if (productsFetcher.data.filteredProductsAndMinMaxPrice !== filteredProductsAndMinMaxPrice) {
-        setFilteredProductsAndMinMaxPrice(productsFetcher.data.filteredProductsAndMinMaxPrice);
-      }
-    }
-  }
+  // function updateDataFromFetch() {
+  //   if (productsFetcher.data) {
+  //     if (productsFetcher.data.filteredProductsAndMinMaxPrice !== filteredProductsAndMinMaxPrice) {
+  //       setFilteredProductsAndMinMaxPrice(productsFetcher.data.filteredProductsAndMinMaxPrice);
+  //     }
+  //   }
+  // }
 
-  updateDataFromFetch();
+  // updateDataFromFetch();
 
   // helper functions
 

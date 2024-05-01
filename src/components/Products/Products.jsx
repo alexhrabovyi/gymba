@@ -22,16 +22,18 @@ import FilterIcon from './images/filter.svg';
 import Line from '../../assets/images/icons/oblique.svg';
 import Button from '../common/Button/Button.jsx';
 
+import { useGetCategoriesQuery } from '../../queryAPI/queryAPI.js';
+import { useGetProductsQuery } from '../../queryAPI/queryAPI.js';
+
 export default function Products() {
-  const productsFetcher = useFetcher();
   const [searchParams, setSearchParams] = useSearchParams();
   const params = useParams();
 
   const openFilterMenuBtnRef = useRef();
 
-  const [categoryAndSubcategory, setCategoryAndSubcategory] = useState(null);
+  const [category, setCategory] = useState(null);
   const [subcategoryFilters, setSubcategoryFilters] = useState(null);
-  const [filteredProductsAndMinMaxPrice, setFilteredProductsAndMinMaxPrice] = useState(null);
+  const [productsAndInfo, setProductsAndInfo] = useState(null);
   const [isFilterMenuOpen, setIsFilterMenuOpen] = useState(false);
   const [windowWidth, setWindowWidth] = useState();
   const [prevFetchUrl, setPrevFetchUrl] = useState(null);
@@ -41,17 +43,18 @@ export default function Products() {
   const categoryIdParam = params.categoryId;
   const subcategoryIdParam = params.subcategoryId;
 
-  const categoryId = categoryAndSubcategory?.categoryId;
-  const subcategoryName = categoryAndSubcategory?.subcategory.name;
-  const subcategoryId = categoryAndSubcategory?.subcategory.id;
+  const categoryId = category?.id;
+  const subcategory = category?.subcategories.entities[subcategoryIdParam];
+  const subcategoryName = subcategory?.name;
+  const subcategoryId = subcategory?.id;
 
-  const filteredAndSortedProducts = useMemo(() => filteredProductsAndMinMaxPrice
-    ?.filteredAndSortedProducts, [filteredProductsAndMinMaxPrice]);
-  const productAmount = filteredProductsAndMinMaxPrice?.productAmount;
-  const pageAmount = filteredProductsAndMinMaxPrice?.pageAmount;
+  const filteredAndSortedProducts = useMemo(() => productsAndInfo
+    ?.filteredAndSortedProducts, [productsAndInfo]);
+  const productAmount = productsAndInfo?.productAmount;
+  const pageAmount = productsAndInfo?.pageAmount;
 
-  const fetchUrl = searchParams.size ? `/getSubcategoryProducts/${categoryIdParam}/${subcategoryIdParam}?${searchParams.toString()}`
-    : `/getSubcategoryProducts/${categoryIdParam}/${subcategoryIdParam}`;
+  const fetchUrl = searchParams.size ? `${categoryIdParam}/${subcategoryIdParam}?${searchParams.toString()}`
+    : `${categoryIdParam}/${subcategoryIdParam}`;
 
   const getWindowWidth = useCallback(() => {
     setWindowWidth(window.innerWidth);
@@ -76,43 +79,65 @@ export default function Products() {
 
   // fetcher functions
 
-  const initialDataFetch = useCallback(() => {
-    if (productsFetcher.state === 'idle' && !productsFetcher.data) {
-      setPrevFetchUrl(fetchUrl);
+  const { data: fetchedCategories } = useGetCategoriesQuery();
 
-      productsFetcher.load(fetchUrl);
+  if (fetchedCategories && category === null) {
+    setCategory(fetchedCategories.entities[categoryIdParam]);
+  }
+
+  const {
+    data: fetchedProductsAndFilters,
+    isLoading: isProductsLoading,
+    isFetching: isProductsFetching,
+  } = useGetProductsQuery(fetchUrl);
+
+  if (fetchedProductsAndFilters) {
+    if (subcategoryFilters === null) {
+      setSubcategoryFilters(fetchedProductsAndFilters.subcategoryFilters);
     }
-  }, [productsFetcher, fetchUrl]);
 
-  useEffect(initialDataFetch, [initialDataFetch]);
-
-  const dataFetchByInteraction = useCallback(() => {
-    if (prevFetchUrl !== fetchUrl) {
-      setPrevFetchUrl(fetchUrl);
-
-      productsFetcher.load(fetchUrl);
-    }
-  }, [prevFetchUrl, fetchUrl, productsFetcher]);
-
-  useEffect(dataFetchByInteraction, [dataFetchByInteraction]);
-
-  function updateDataFromFetch() {
-    if (productsFetcher.data) {
-      if (productsFetcher.data.categoryAndSubcategory !== categoryAndSubcategory) {
-        setCategoryAndSubcategory(productsFetcher.data.categoryAndSubcategory);
-      }
-
-      if (productsFetcher.data.subcategoryFilters !== subcategoryFilters) {
-        setSubcategoryFilters(productsFetcher.data.subcategoryFilters);
-      }
-
-      if (productsFetcher.data.filteredProductsAndMinMaxPrice !== filteredProductsAndMinMaxPrice) {
-        setFilteredProductsAndMinMaxPrice(productsFetcher.data.filteredProductsAndMinMaxPrice);
-      }
+    if (productsAndInfo !== fetchedProductsAndFilters) {
+      setProductsAndInfo(fetchedProductsAndFilters);
     }
   }
 
-  updateDataFromFetch();
+  // const initialDataFetch = useCallback(() => {
+  //   if (productsFetcher.state === 'idle' && !productsFetcher.data) {
+  //     setPrevFetchUrl(fetchUrl);
+
+  //     productsFetcher.load(fetchUrl);
+  //   }
+  // }, [productsFetcher, fetchUrl]);
+
+  // useEffect(initialDataFetch, [initialDataFetch]);
+
+  // const dataFetchByInteraction = useCallback(() => {
+  //   if (prevFetchUrl !== fetchUrl) {
+  //     setPrevFetchUrl(fetchUrl);
+
+  //     productsFetcher.load(fetchUrl);
+  //   }
+  // }, [prevFetchUrl, fetchUrl, productsFetcher]);
+
+  // useEffect(dataFetchByInteraction, [dataFetchByInteraction]);
+
+  // function updateDataFromFetch() {
+  //   if (productsFetcher.data) {
+  //     if (productsFetcher.data.categoryAndSubcategory !== categoryAndSubcategory) {
+  //       setCategoryAndSubcategory(productsFetcher.data.categoryAndSubcategory);
+  //     }
+
+  //     if (productsFetcher.data.subcategoryFilters !== subcategoryFilters) {
+  //       setSubcategoryFilters(productsFetcher.data.subcategoryFilters);
+  //     }
+
+  //     if (productsFetcher.data.filteredProductsAndMinMaxPrice !== filteredProductsAndMinMaxPrice) {
+  //       setFilteredProductsAndMinMaxPrice(productsFetcher.data.filteredProductsAndMinMaxPrice);
+  //     }
+  //   }
+  // }
+
+  // updateDataFromFetch();
 
   // productCards setup
 
@@ -169,23 +194,23 @@ export default function Products() {
 
   const sortSelectOptions = useMemo(() => [
     {
-      name: 'за замовчуванням',
+      name: 'замовчуванням',
       id: 'default',
     },
     {
-      name: 'за назвою (А - Я)',
+      name: 'назвою (А - Я)',
       id: 'name-A-Z',
     },
     {
-      name: 'за назвою (Я - А)',
+      name: 'назвою (Я - А)',
       id: 'name-Z-A',
     },
     {
-      name: 'за ціною (зменшення)',
+      name: 'ціною (зменшення)',
       id: 'price-down',
     },
     {
-      name: 'за ціною (зростання)',
+      name: 'ціною (зростання)',
       id: 'price-up',
     },
   ], []);
@@ -256,7 +281,7 @@ export default function Products() {
               >
                 Усього товарів:
                 <span>
-                  {productAmount !== undefined ? productAmount : 'Завантаження ...'}
+                  {!isProductsFetching ? productAmount : 'Завантаження ...'}
                 </span>
               </p>
             )}
@@ -312,10 +337,10 @@ export default function Products() {
           )}
           <div className={classNames(
             isProductCardsShort ? productsCls.products : productsCls.products_long,
-            productsFetcher.state === 'loading' && productCards !== undefined && productsCls.products_inactive,
+            isProductsFetching && !isProductsLoading && productsCls.products_inactive,
           )}
           >
-            {windowWidth > 1024 && <AppliedFiltersBlock />}
+            {/* {windowWidth > 1024 && <AppliedFiltersBlock />} */}
             {productCards === undefined ? (
               <ThreeDotsSpinnerBlock blockClassName={productsCls.spinnerBlock} />
             ) : (productCards.length > 0 ? productCards : noProductsBlock)}
@@ -327,7 +352,7 @@ export default function Products() {
           </div>
         </div>
       </main>
-      {windowWidth <= 1024 && (
+      {/* {windowWidth <= 1024 && (
       <LeftSideMenu
         isMenuOpen={isFilterMenuOpen}
         setIsMenuOpen={setIsFilterMenuOpen}
@@ -340,7 +365,7 @@ export default function Products() {
           />
         </div>
       </LeftSideMenu>
-      )}
+      )} */}
     </>
   );
 }

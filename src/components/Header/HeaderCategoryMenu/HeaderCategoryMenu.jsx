@@ -1,4 +1,3 @@
-/* eslint-disable import/no-unresolved */
 import classNames from 'classnames';
 import {
   memo, useRef, useEffect, useLayoutEffect, useCallback,
@@ -45,7 +44,7 @@ const HeaderCategoryMenu = memo(({
 
   const categoryLinkList = useMemo(() => (
     <ul className={categoryMenuCls.categoryMenuLinkList}>
-      {categories?.map((c) => (
+      {categories && Object.values(categories).map((c) => (
         <li key={c.id}>
           <button
             className={categoryMenuCls.categoryButton}

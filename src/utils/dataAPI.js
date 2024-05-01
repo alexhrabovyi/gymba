@@ -2,9 +2,15 @@
 import products from './products.json';
 import news from './news.json';
 
+// async function fakeNetwork() {
+//   return new Promise((res) => {
+//     setTimeout(res, Math.random() * 800);
+//   });
+// }
+
 async function fakeNetwork() {
   return new Promise((res) => {
-    setTimeout(res, Math.random() * 800);
+    setTimeout(res, 1500);
   });
 }
 
@@ -41,109 +47,11 @@ export async function getCategoriesAndSubcategories() {
 
   return categoriesShortObjs;
 }
-// =====
 
-// export async function getCategoriesAndSubcategories() {
-//   await fakeNetwork();
-
-//   const categories = products.map((c) => {
-//     const dataSubcategories = c.subcategories;
-
-//     const subcategories = dataSubcategories.map((subC) => ({
-//       name: subC.name,
-//       id: subC.id,
-//     }));
-
-//     return {
-//       name: c.name,
-//       id: c.id,
-//       imgId: c.imgId,
-//       imgAlt: c.imgAlt,
-//       subcategories,
-//     };
-//   });
-
-//   return categories;
-// }
-
-export async function getCategoryAndSubcategories(categoryId) {
-  await fakeNetwork();
-
-  const category = products.find((c) => c.id === categoryId);
-
-  if (!category) throw new Error('Категорію не знайдено');
-
-  const subcategories = category.subcategories.map((subC) => ({
-    name: subC.name,
-    id: subC.id,
-    imgId: subC.imgId,
-    imgAlt: subC.imgAlt,
-  }));
-
-  return {
-    categoryName: category.name,
-    categoryId: category.id,
-    subcategories,
-  };
-}
-
-export function getCategoryAndSubcategory(categoryId, subcategoryId) {
-  const category = products.find((c) => c.id === categoryId);
-
-  if (!category) throw new Error('Категорію не знайдено');
-
-  const subcategory = category.subcategories.find((s) => s.id === subcategoryId);
-
-  return {
-    categoryName: category.name,
-    categoryId: category.id,
-    subcategory,
-  };
-}
-
-export async function getProduct(categoryId, subcategoryId, productId) {
-  await fakeNetwork();
-
-  const category = products.find((c) => c.id === categoryId);
-
-  if (!category) throw new Error('Категорію не знайдено');
-
-  const subcategory = category.subcategories.find((s) => s.id === subcategoryId);
-  const product = subcategory.products.find((p) => p.id === productId);
-
-  return {
-    categoryName: category.name,
-    categoryId: category.id,
-    subcategoryName: subcategory.name,
-    subcategoryId: subcategory.id,
-    product,
-  };
-}
-
-export async function getRandomProduct() {
-  await fakeNetwork();
-
-  const { categoryId, subcategory } = getCategoryAndSubcategory('enamels', 'alkyd_enamels');
-  const subcategoryProducts = subcategory.products.slice(0);
-
-  const randomProduct = (subcategoryProducts.sort(() => 0.5 - Math.random()))[0];
-
-  return {
-    categoryId,
-    subcategoryId: subcategory.id,
-    product: randomProduct,
-  };
-}
-
-export async function getSubcategoryFilters(categoryId, subcategoryId) {
-  await fakeNetwork();
-
-  const subCategoryProducts = getCategoryAndSubcategory(categoryId, subcategoryId)
-    .subcategory.products;
-
+function getSubcategoryFilters(subcategoryProducts) {
   const filters = {};
 
-  subCategoryProducts.forEach((p) => {
+  subcategoryProducts.forEach((p) => {
     const specsFilters = p['specs-filters'];
 
     Object.entries(specsFilters).forEach(([name, value]) => {
@@ -161,12 +69,14 @@ export async function getSubcategoryFilters(categoryId, subcategoryId) {
     });
   });
 
+  Object.keys(filters).forEach((key) => {
+    filters[key] = Array.from(filters[key]);
+  });
+
   return filters;
 }
 
-async function filterBySpecs(subcategoryProducts, searchParams) {
-  await fakeNetwork();
-
+function filterBySpecs(subcategoryProducts, searchParams) {
   let filters = {};
 
   Array.from(searchParams).forEach(([key, value]) => {
@@ -276,9 +186,10 @@ function getProductsPerPage(subcategoryProducts, perView, pageNum, pageAmount) {
 }
 
 export async function getFilteredProductsAndMinMaxPrice(categoryId, subcategoryId, searchParams) {
-  const category = products.find((c) => c.id === categoryId);
-  const subcategory = category.subcategories.find((s) => s.id === subcategoryId);
-  const subcategoryProducts = subcategory.products;
+  await fakeNetwork();
+
+  const subcategoryProducts = Object.values(products.categories.entities[categoryId]
+    .subcategories.entities[subcategoryId].products.entities);
 
   const searchParamsMinPrice = searchParams.get('minPrice');
   const searchParamsMaxPrice = searchParams.get('maxPrice');
@@ -288,13 +199,12 @@ export async function getFilteredProductsAndMinMaxPrice(categoryId, subcategoryI
 
   const sortBy = searchParams.get('sortBy');
   searchParams.delete('sortBy');
-
   const perView = searchParams.get('perView');
   searchParams.delete('perView');
   const pageNum = searchParams.get('page');
   searchParams.delete('page');
 
-  let filteredProducts = await filterBySpecs(subcategoryProducts, searchParams);
+  let filteredProducts = filterBySpecs(subcategoryProducts, searchParams);
   const { minPrice, maxPrice } = getMinAndMaxPrice(filteredProducts);
 
   filteredProducts = filterByPrice(filteredProducts, searchParamsMinPrice, searchParamsMaxPrice);
@@ -311,12 +221,102 @@ export async function getFilteredProductsAndMinMaxPrice(categoryId, subcategoryI
     pageAmount,
   );
 
+  const subcategoryFilters = getSubcategoryFilters(subcategoryProducts);
+
   return {
+    subcategoryFilters,
     filteredAndSortedProducts,
     minPrice,
     maxPrice,
     productAmount,
     pageAmount,
+  };
+}
+
+// news API
+
+export async function getNewsPreviews() {
+  await fakeNetwork();
+
+  const newsFullObjs = Object.values(news.entities);
+  const newsShortObjs = newsFullObjs.map((n) => ({
+    name: n.name,
+    id: n.id,
+    date: n.date,
+    views: n.views,
+  }));
+
+  return newsShortObjs;
+}
+
+// =====
+
+export async function getCategoryAndSubcategories(categoryId) {
+  await fakeNetwork();
+
+  const category = products.find((c) => c.id === categoryId);
+
+  if (!category) throw new Error('Категорію не знайдено');
+
+  const subcategories = category.subcategories.map((subC) => ({
+    name: subC.name,
+    id: subC.id,
+    imgId: subC.imgId,
+    imgAlt: subC.imgAlt,
+  }));
+
+  return {
+    categoryName: category.name,
+    categoryId: category.id,
+    subcategories,
+  };
+}
+
+export function getCategoryAndSubcategory(categoryId, subcategoryId) {
+  const category = products.find((c) => c.id === categoryId);
+
+  if (!category) throw new Error('Категорію не знайдено');
+
+  const subcategory = category.subcategories.find((s) => s.id === subcategoryId);
+
+  return {
+    categoryName: category.name,
+    categoryId: category.id,
+    subcategory,
+  };
+}
+
+export async function getProduct(categoryId, subcategoryId, productId) {
+  await fakeNetwork();
+
+  const category = products.find((c) => c.id === categoryId);
+
+  if (!category) throw new Error('Категорію не знайдено');
+
+  const subcategory = category.subcategories.find((s) => s.id === subcategoryId);
+  const product = subcategory.products.find((p) => p.id === productId);
+
+  return {
+    categoryName: category.name,
+    categoryId: category.id,
+    subcategoryName: subcategory.name,
+    subcategoryId: subcategory.id,
+    product,
+  };
+}
+
+export async function getRandomProduct() {
+  await fakeNetwork();
+
+  const { categoryId, subcategory } = getCategoryAndSubcategory('enamels', 'alkyd_enamels');
+  const subcategoryProducts = subcategory.products.slice(0);
+
+  const randomProduct = (subcategoryProducts.sort(() => 0.5 - Math.random()))[0];
+
+  return {
+    categoryId,
+    subcategoryId: subcategory.id,
+    product: randomProduct,
   };
 }
 
@@ -788,34 +788,4 @@ export async function getRecommendedNews(id) {
   const recommendedNews = (allNewsPreviews.sort(() => 0.5 - Math.random())).slice(0, 3);
 
   return recommendedNews;
-}
-
-// breadCrumbs
-
-export async function getBreadCrumbsInfo(requestList) {
-  await fakeNetwork();
-
-  const result = {};
-
-  if (requestList.categoryId) {
-    const category = products.find((c) => c.id === requestList.categoryId);
-
-    result.category = {
-      id: category.id,
-      name: category.name,
-      link: `/${category.id}`,
-    };
-
-    if (requestList.subcategoryId) {
-      const subcategory = category.subcategories.find((s) => s.id === requestList.subcategoryId);
-
-      result.subcategory = {
-        id: subcategory.id,
-        name: subcategory.name,
-        link: `/${category.id}/${subcategory.id}`,
-      };
-    }
-  }
-
-  return result;
 }

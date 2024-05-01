@@ -42,6 +42,8 @@ import Compare from '../../assets/images/icons/compare.svg';
 import Favorite from '../../assets/images/icons/favorite.svg';
 import Cart from '../../assets/images/icons/cart.svg';
 
+import { useGetCategoriesQuery } from '../../queryAPI/queryAPI.js';
+
 export default function Header() {
   // const categoriesFetcher = useFetcher();
   // const wishlistFetcher = useFetcher();
@@ -146,6 +148,12 @@ export default function Header() {
   useEffect(searchInputValueInitialSetup, [searchInputValueInitialSetup]);
 
   // fetcher functions
+
+  const { data } = useGetCategoriesQuery();
+
+  if (data && categories === null) {
+    setCategories(data.entities);
+  }
 
   // useFetcherLoad(categoriesFetcher, '/getCategoriesAndSubcategories');
 
@@ -252,7 +260,7 @@ export default function Header() {
     if (!btn) return;
 
     const activeCategoryId = btn.dataset.categoryId;
-    const category = categories.find((c) => c.id === activeCategoryId);
+    const category = categories[activeCategoryId];
     setActiveCategory(category);
 
     setIsCategoryMenuOpen(false);
@@ -497,7 +505,7 @@ export default function Header() {
         />
         {windowWidth <= 1024 && (
         <>
-          {/* <HeaderCategoryMenu
+          <HeaderCategoryMenu
             isMenuOpen={isCategoryMenuOpen}
             categories={categories}
             categoryBtnOnClick={categoryBtnOnClick}
@@ -507,7 +515,7 @@ export default function Header() {
             isMenuOpen={isSubcategoryMenuOpen}
             category={activeCategory}
             backToCatalogOnClick={backToCatalogOnClick}
-          /> */}
+          />
         </>
         )}
       </div>

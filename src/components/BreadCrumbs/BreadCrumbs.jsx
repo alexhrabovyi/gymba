@@ -1,63 +1,23 @@
 import { useState, Fragment } from 'react';
-import { Link, useFetcher, useParams } from 'react-router-dom';
+import { Link, useParams } from 'react-router-dom';
 import classNames from 'classnames';
+import { useGetCategoriesQuery } from '../../queryAPI/queryAPI';
 import containerCls from '../../scss/_container.module.scss';
 import breadcrumbsCls from './BreadCrumbs.module.scss';
 
 export default function BreadCrumbs() {
   const params = useParams();
-  const breadCrumbsFetcher = useFetcher();
 
-  const [fetcherData, setFetcherData] = useState(null);
+  const [fetchedData, setFetchedData] = useState(null);
 
-  if (params.categoryId && params.subcategoryId) {
-    const requestList = {
-      categoryId: params.categoryId,
-    };
-
-    if (params.subcategoryId && params.productId) requestList.subcategoryId = params.subcategoryId;
-
-    if (!fetcherData && breadCrumbsFetcher.state === 'idle') {
-      const requestListJSON = JSON.stringify(requestList);
-
-      breadCrumbsFetcher.submit(requestListJSON, {
-        action: '/getBreadCrumbsInfo',
-        method: 'POST',
-        encType: 'application/json',
-      });
-    }
+  const { data } = useGetCategoriesQuery();
+  if (data && fetchedData === null) {
+    setFetchedData(data);
   }
 
-  if (breadCrumbsFetcher.data && breadCrumbsFetcher.data !== fetcherData) {
-    setFetcherData(breadCrumbsFetcher.data);
-  }
-
-  const links = [];
-
-  if (fetcherData) {
-    Object.values(fetcherData).forEach(({ id, name, link }) => {
-      links.push((
-        <Fragment key={id}>
-          <li>
-            <span className={breadcrumbsCls.circle} />
-          </li>
-          <li>
-            <Link
-              className={classNames(
-                breadcrumbsCls.link,
-              )}
-              to={link}
-              alt={name}
-            >
-              {name}
-            </Link>
-          </li>
-        </Fragment>
-      ));
-    });
-  } else if (params.articleId) {
-    links.push((
-      <Fragment key="news">
+  function createLink(id, name, link) {
+    return (
+      <Fragment key={id}>
         <li>
           <span className={breadcrumbsCls.circle} />
         </li>
@@ -66,14 +26,30 @@ export default function BreadCrumbs() {
             className={classNames(
               breadcrumbsCls.link,
             )}
-            to="/news"
-            alt="Новини"
+            to={link}
+            alt={name}
           >
-            Новини
+            {name}
           </Link>
         </li>
       </Fragment>
-    ));
+    );
+  }
+
+  const links = [];
+
+  if (fetchedData && params.categoryId && params.subcategoryId) {
+    const category = fetchedData.entities[params.categoryId];
+
+    links.push(createLink(category.id, category.name, `/${category.id}`));
+
+    if (params.subcategoryId && params.productId) {
+      const subcategory = category.subcategories.entities[params.subcategoryId];
+
+      links.push(createLink(subcategory.id, subcategory.name, `/${category.id}/${subcategory.id}`));
+    }
+  } else if (params.articleId) {
+    links.push(createLink('news', 'Новини', '/news'));
   }
 
   return (

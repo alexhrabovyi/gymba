@@ -9,7 +9,6 @@ import { HeaderAndFooterLayout } from '../layouts/HeaderAndFooterLayout/HeaderAn
 import { ErrorPage } from '../pages/Error/Error.jsx';
 import MainLazy from '../pages/Main/Main.lazy.jsx';
 import CategoryPageLazy from '../pages/Category/Category.lazy.jsx';
-import { loader as categoryLoader } from '../pages/Category/CategoryUtils.jsx';
 import ProductsPageLazy from '../pages/Products/Products.lazy.jsx';
 import ProductPageLazy from '../pages/Product/Product.lazy.jsx';
 import { loader as productPageLoader } from '../pages/Product/ProductUtils.jsx';
@@ -29,8 +28,6 @@ import { loader as newsArticleLoader } from '../pages/NewsArticle/NewsArticleUti
 import SearchPageLazy from '../pages/Search/Search.lazy.jsx';
 import { loader as getSearchPageLoader } from '../pages/Search/SearchUtils.jsx';
 import { GetCategoriesAndSubcategoriesPage, loader as getCategoriesAndSubcategoriesLoader } from '../pages/GetCategoriesAndSubcategories/GetCategoriesAndSubcategories.jsx';
-import { loader as getBreadCrumbsInfoLoader, action as getBreadCrumbsInfoAction } from '../pages/GetBreadCrumbsInfo/GetBreadCrumbsInfo.jsx';
-import { loader as getSubcategoryProductsLoader } from '../pages/GetSubcategoryProducts/GetSubcategoryProducts.jsx';
 import { loader as getAnalogueProductsLoader, action as getAnalogueProductsAction } from '../pages/GetAnalogueProducts/GetAnalogueProducts.jsx';
 import { GetCompareProductsPage, loader as getCompareProductsLoader } from '../pages/GetCompareProducts/GetCompareProducts.jsx';
 import { GetRandomProductPage, loader as getRandomProductLoader } from '../pages/GetRandomProduct/GetRandomProduct.jsx';
@@ -48,7 +45,6 @@ const router = createHashRouter([
           },
           {
             path: ':categoryId',
-            loader: categoryLoader,
             element: <CategoryPageLazy />,
           },
           {
@@ -109,15 +105,6 @@ const router = createHashRouter([
             path: 'getCategoriesAndSubcategories',
             loader: getCategoriesAndSubcategoriesLoader,
             element: <GetCategoriesAndSubcategoriesPage />,
-          },
-          {
-            path: 'getBreadCrumbsInfo',
-            loader: getBreadCrumbsInfoLoader,
-            action: getBreadCrumbsInfoAction,
-          },
-          {
-            path: 'getSubcategoryProducts/:categoryId/:subcategoryId',
-            loader: getSubcategoryProductsLoader,
           },
           {
             path: 'getAnalogueProducts',

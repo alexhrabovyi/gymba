@@ -1,4 +1,3 @@
-/* eslint-disable import/no-unresolved */
 import { Link } from 'react-router-dom';
 import classNames from 'classnames';
 import {
@@ -18,7 +17,7 @@ import ArrowRight from '../../../assets/images/icons/arrow-right.svg';
 const HeaderSubcategoryMenu = memo(({ isMenuOpen, category, backToCatalogOnClick }) => {
   const menuRef = useRef(null);
 
-  const subcategories = category?.subcategories;
+  const subcategories = category && Object.values(category.subcategories.entities);
 
   useToggleInteractiveElements(menuRef, isMenuOpen);
 
@@ -44,19 +43,17 @@ const HeaderSubcategoryMenu = memo(({ isMenuOpen, category, backToCatalogOnClick
   useOnResize(setupMenuHeight);
 
   const subcategoryLinkList = useMemo(() => (
-    <ul className={subcategoryMenuCls.linkList}>
-      {subcategories?.map((subC) => (
-        <li key={subC.id}>
-          <Link
-            to={`${category.id}/${subC.id}`}
-            className={classNames(linkCls.link, linkCls.link18px)}
-            alt={subC.name}
-          >
-            {subC.name}
-          </Link>
-        </li>
-      ))}
-    </ul>
+    subcategories?.map((subC) => (
+      <li key={subC.id}>
+        <Link
+          to={`${category.id}/${subC.id}`}
+          className={classNames(linkCls.link, linkCls.link18px)}
+          alt={subC.name}
+        >
+          {subC.name}
+        </Link>
+      </li>
+    ))
   ), [subcategories, category]);
 
   useEffect(() => {

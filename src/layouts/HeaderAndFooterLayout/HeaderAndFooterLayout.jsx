@@ -22,12 +22,12 @@ export function HeaderAndFooterLayout() {
   return (
     <>
       <Header />
-      {/* <Suspense fallback={fallback}>
+      <Suspense fallback={fallback}>
         <Outlet />
       </Suspense>
       <Suspense>
         <FooterLazy />
-      </Suspense> */}
+      </Suspense>
     </>
   );
 }

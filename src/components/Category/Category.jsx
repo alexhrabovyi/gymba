@@ -1,7 +1,7 @@
 import { useMemo, useState } from 'react';
-import { useFetcher, useParams } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import classNames from 'classnames';
-import useFetcherLoad from '../../hooks/useFetcherLoad.jsx';
+import { useGetCategoriesQuery } from '../../queryAPI/queryAPI.js';
 import ThreeDotsSpinnerBlock from '../common/ThreeDotsSpinnerBlock/ThreeDotsSpinnerBlock.jsx';
 import containerCls from '../../scss/_container.module.scss';
 import textCls from '../../scss/_text.module.scss';
@@ -9,24 +9,25 @@ import categoryCls from './Category.module.scss';
 import Subcategory from './Subcategory/Subcategory.jsx';
 
 export default function Category() {
-  const categoryFetcher = useFetcher();
   const categoryIdFromParams = useParams().categoryId;
 
   const [category, setCategory] = useState(null);
 
-  useFetcherLoad(categoryFetcher, `/${categoryIdFromParams}`);
+  const { data } = useGetCategoriesQuery();
 
-  if (categoryFetcher.data) {
-    const categoryFromFetcher = categoryFetcher.data.category;
+  if (data && category === null) {
+    const fetchedCategory = data.entities[categoryIdFromParams];
 
-    if (categoryFromFetcher !== category) {
-      setCategory(categoryFromFetcher);
+    if (!fetchedCategory) {
+      throw new Response(null, { status: 404 });
     }
+
+    setCategory(fetchedCategory);
   }
 
-  const categoryName = category?.categoryName;
-  const categoryId = category?.categoryId;
-  const subcategories = category?.subcategories;
+  const categoryName = category?.name;
+  const categoryId = category?.id;
+  const subcategories = category && Object.values(category.subcategories.entities);
 
   const subcategoryElements = useMemo(() => (
     subcategories?.map((s) => (

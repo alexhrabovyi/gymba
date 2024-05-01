@@ -7,7 +7,7 @@ import categoryCls from './CatalogCategory.module.scss';
 import linkCls from '../../../scss/_link.module.scss';
 
 export default function Category({ categoryProps, figureId }) {
-  const { subcategories } = categoryProps;
+  const subcategories = Object.values(categoryProps.subcategories.entities);
 
   const [figureSrc] = useState(() => import(`./images/figure_${figureId}.svg?url`));
   const [imgSrc] = useState(() => import(`../../../assets/images/categoryImgs/${categoryProps.id}.webp`));

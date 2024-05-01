@@ -1480,9 +1480,9 @@
             "other_household_goods"
           ],
           "entities": {
-            "name": "Батарейки",
-            "id": "batteries",
             "batteries": {
+              "name": "Батарейки",
+              "id": "batteries",
               "products": {
                 "ids": [],
                 "entities": {}
