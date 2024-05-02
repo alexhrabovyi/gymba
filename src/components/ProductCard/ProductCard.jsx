@@ -16,10 +16,11 @@ import Favorite from '../../assets/images/icons/favorite.svg';
 import Cart from '../../assets/images/icons/cart.svg';
 import Mark from '../../assets/images/icons/mark.svg';
 
+import { useGetWishlistIdsQuery, useAddWishlistIdMutation, useDeleteWishlistIdMutation } from '../../queryAPI/queryAPI.js';
+
 const ProductCard = memo(({
   name, categoryId, subcategoryId, productId, price, oldPrice, isShortCard,
 }) => {
-  // const wishlistFetcher = useFetcher();
   // const cartFetcher = useFetcher();
   // const compareFetcher = useFetcher();
 
@@ -28,18 +29,17 @@ const ProductCard = memo(({
   const [productInCart, setProductInCart] = useState(false);
   const [productInCompare, setProductInCompare] = useState(false);
 
-  // useFetcherLoad(wishlistFetcher, '/wishlist');
+  const { data: wishlistFetcherData } = useGetWishlistIdsQuery();
 
-  // if (wishlistFetcher.data) {
-  //   const productInWishlistFromFetcher = wishlistFetcher
-  //     .data.wishlistIds.find(([cId, subcId, pId]) => (
-  //       cId === categoryId && subcId === subcategoryId && pId === productId
-  //     ));
+  if (wishlistFetcherData) {
+    const isInWishlistIdsList = !!wishlistFetcherData.find(([cId, subcId, pId]) => (
+      cId === categoryId && subcId === subcategoryId && pId === productId
+    ));
 
-  //   if (productInWishlistFromFetcher !== productInWishlist) {
-  //     setProductInWishlist(productInWishlistFromFetcher);
-  //   }
-  // }
+    if (productInWishlist !== isInWishlistIdsList) {
+      setProductInWishlist(isInWishlistIdsList);
+    }
+  }
 
   // useFetcherLoad(cartFetcher, '/cart');
 
@@ -67,18 +67,6 @@ const ProductCard = memo(({
   //   }
   // }
 
-  // function optimisticWishlist() {
-  //   if (wishlistFetcher.state === 'loading') {
-  //     if (wishlistFetcher.formMethod === 'patch' && !productInWishlist) {
-  //       setProductInWishlist(true);
-  //     } else if (wishlistFetcher.formMethod === 'delete' && productInWishlist) {
-  //       setProductInWishlist(false);
-  //     }
-  //   }
-  // }
-
-  // optimisticWishlist();
-
   // function optimisticCart() {
   //   if (cartFetcher.state === 'loading') {
   //     if (cartFetcher.formMethod === 'patch' && !productInCart) {
@@ -103,23 +91,18 @@ const ProductCard = memo(({
 
   // optimisticCompare();
 
-  // function wishlistButtonOnClick() {
-  //   const data = JSON.stringify([categoryId, subcategoryId, productId]);
+  const [addToWishlistRequest] = useAddWishlistIdMutation();
+  const [deleteFromWishlistRequest] = useDeleteWishlistIdMutation();
 
-  //   if (!productInWishlist) {
-  //     wishlistFetcher.submit(data, {
-  //       action: '/wishlist',
-  //       method: 'PATCH',
-  //       encType: 'application/json',
-  //     });
-  //   } else {
-  //     wishlistFetcher.submit(data, {
-  //       action: '/wishlist',
-  //       method: 'DELETE',
-  //       encType: 'application/json',
-  //     });
-  //   }
-  // }
+  function wishlistButtonOnClick() {
+    const body = JSON.stringify([categoryId, subcategoryId, productId]);
+
+    if (!productInWishlist) {
+      addToWishlistRequest(body);
+    } else {
+      deleteFromWishlistRequest(body);
+    }
+  }
 
   // function cartButtonOnClick() {
   //   const data = JSON.stringify([categoryId, subcategoryId, productId]);
@@ -181,7 +164,7 @@ const ProductCard = memo(({
               productInWishlist && productCls.iconButton_active,
             )}
             aria-label={productInWishlist ? `Видалити ${name} зі списку бажань` : `Добавить ${name} до списку бажань`}
-            // onClick={wishlistButtonOnClick}
+            onClick={wishlistButtonOnClick}
           >
             <Favorite className={productCls.icon} />
           </button>

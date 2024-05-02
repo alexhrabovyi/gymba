@@ -4,4 +4,9 @@
   @include flex-builder(column, flex-start, flex-start);
 
   gap: 32px;
+
+  &_inactive {
+    opacity: 0.5;
+    pointer-events: none;
+  }
 }

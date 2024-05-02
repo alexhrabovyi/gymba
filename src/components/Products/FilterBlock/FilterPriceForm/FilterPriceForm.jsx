@@ -1,24 +1,24 @@
-/* eslint-disable consistent-return */
 import {
   useCallback, useEffect, useLayoutEffect, useRef, useState,
 } from 'react';
-import { useFetcher, useParams, useSearchParams } from 'react-router-dom';
+import { useParams, useSearchParams } from 'react-router-dom';
 import classNames from 'classnames';
+import { useGetProductsQuery } from '../../../../queryAPI/queryAPI';
 import textCls from '../../../../scss/_text.module.scss';
 import filterCls from './FilterPriceForm.module.scss';
 import ChevronUp from '../../../../assets/images/icons/chevronUp.svg';
 
 export default function FilterPriceForm() {
-  // const productsFetcher = useFetcher();
   const params = useParams();
   const [searchParams, setSearchParams] = useSearchParams();
 
   const [isClosed, setIsClose] = useState(false);
   const [formWasInteracted, setFormWasInteracted] = useState(false);
 
-  const [filteredProductsAndMinMaxPrice, setFilteredProductsAndMinMaxPrice] = useState(null);
-  const [prevFetchUrl, setPrevFetchUrl] = useState(null);
+  const [prevSearchParams, setPrevSearchParams] = useState(null);
 
+  const [fetchedMinPrice, setFetchedMinPrice] = useState(0);
+  const [fetchedMaxPrice, setFetchedMaxPrice] = useState(0);
   const [prevLoaderMinPrice, setPrevLoaderMinPrice] = useState(null);
   const [prevLoaderMaxPrice, setPrevLoaderMaxPrice] = useState(null);
   const [totalMinPrice, setTotalMinPrice] = useState(null);
@@ -36,35 +36,48 @@ export default function FilterPriceForm() {
   const minButtonRef = useRef(null);
   const maxButtonRef = useRef(null);
 
-  // setup functions
+  // fetcher functions
 
   const categoryIdParam = params.categoryId;
   const subcategoryIdParam = params.subcategoryId;
 
-  const fetchUrl = searchParams.size ? `/getSubcategoryProducts/${categoryIdParam}/${subcategoryIdParam}?${searchParams.toString()}`
-    : `/getSubcategoryProducts/${categoryIdParam}/${subcategoryIdParam}`;
+  const fetchUrl = searchParams.size ? `${categoryIdParam}/${subcategoryIdParam}?${searchParams.toString()}`
+    : `${categoryIdParam}/${subcategoryIdParam}`;
 
-  const initMinPrice = Number(filteredProductsAndMinMaxPrice?.minPrice) || 0;
-  const initMaxPrice = Number(filteredProductsAndMinMaxPrice?.maxPrice) || 0;
+  const { data: fetcherData } = useGetProductsQuery(fetchUrl);
+
+  if (fetcherData) {
+    if (fetchedMinPrice !== fetcherData.minPrice) {
+      setFetchedMinPrice(fetcherData.minPrice);
+    }
+
+    if (fetchedMaxPrice !== fetcherData.maxPrice) {
+      setFetchedMaxPrice(fetcherData.maxPrice);
+    }
+  }
+
+  // setup functions
 
   function setupPrices() {
-    if (prevLoaderMinPrice !== initMinPrice) setPrevLoaderMinPrice(initMinPrice);
-    if (prevLoaderMaxPrice !== initMaxPrice) setPrevLoaderMaxPrice(initMaxPrice);
+    if (prevLoaderMinPrice !== fetchedMinPrice) setPrevLoaderMinPrice(fetchedMinPrice);
+    if (prevLoaderMaxPrice !== fetchedMaxPrice) setPrevLoaderMaxPrice(fetchedMaxPrice);
 
     if (!formWasInteracted) {
       if (searchParams.has('minPrice')) {
         const searchParamsMinPrice = Number(searchParams.get('minPrice'));
         const searchParamsMaxPrice = Number(searchParams.get('maxPrice'));
 
-        if (initMinPrice > searchParamsMinPrice && prevLoaderMinPrice !== initMinPrice) {
+        if (fetchedMinPrice > searchParamsMinPrice && prevLoaderMinPrice !== fetchedMinPrice) {
           setTotalMinPrice(searchParamsMinPrice);
-        } else if (initMinPrice < searchParamsMinPrice && prevLoaderMinPrice !== initMinPrice) {
-          setTotalMinPrice(initMinPrice);
+        } else if (fetchedMinPrice < searchParamsMinPrice
+          && prevLoaderMinPrice !== fetchedMinPrice) {
+          setTotalMinPrice(fetchedMinPrice);
         }
-        if (initMaxPrice < searchParamsMaxPrice && prevLoaderMaxPrice !== initMaxPrice) {
+        if (fetchedMaxPrice < searchParamsMaxPrice && prevLoaderMaxPrice !== fetchedMaxPrice) {
           setTotalMaxPrice(searchParamsMaxPrice);
-        } else if (initMaxPrice > searchParamsMaxPrice && prevLoaderMaxPrice !== initMaxPrice) {
-          setTotalMaxPrice(initMaxPrice);
+        } else if (fetchedMaxPrice > searchParamsMaxPrice
+          && prevLoaderMaxPrice !== fetchedMaxPrice) {
+          setTotalMaxPrice(fetchedMaxPrice);
         }
 
         if (searchParamsMinPrice !== currentMinPrice) {
@@ -76,89 +89,61 @@ export default function FilterPriceForm() {
           setMaxInputValue(searchParamsMaxPrice);
         }
       } else {
-        if (totalMinPrice !== initMinPrice) setTotalMinPrice(initMinPrice);
-        if (totalMaxPrice !== initMaxPrice) setTotalMaxPrice(initMaxPrice);
+        if (totalMinPrice !== fetchedMinPrice) setTotalMinPrice(fetchedMinPrice);
+        if (totalMaxPrice !== fetchedMaxPrice) setTotalMaxPrice(fetchedMaxPrice);
 
-        if (currentMinPrice !== initMinPrice) {
-          setCurrentMinPrice(initMinPrice);
-          setMinInputValue(initMinPrice);
+        if (currentMinPrice !== fetchedMinPrice) {
+          setCurrentMinPrice(fetchedMinPrice);
+          setMinInputValue(fetchedMinPrice);
         }
-        if (currentMaxPrice !== initMaxPrice) {
-          setCurrentMaxPrice(initMaxPrice);
-          setMaxInputValue(initMaxPrice);
+        if (currentMaxPrice !== fetchedMaxPrice) {
+          setCurrentMaxPrice(fetchedMaxPrice);
+          setMaxInputValue(fetchedMaxPrice);
         }
       }
     } else {
-      if (initMinPrice > currentMinPrice && prevLoaderMinPrice !== initMinPrice) {
+      if (fetchedMinPrice > currentMinPrice && prevLoaderMinPrice !== fetchedMinPrice) {
         setTotalMinPrice(currentMinPrice);
-      } else if (initMinPrice < currentMinPrice && prevLoaderMinPrice !== initMinPrice) {
-        setTotalMinPrice(initMinPrice);
+      } else if (fetchedMinPrice < currentMinPrice && prevLoaderMinPrice !== fetchedMinPrice) {
+        setTotalMinPrice(fetchedMinPrice);
       }
 
-      if (initMaxPrice < currentMaxPrice && prevLoaderMaxPrice !== initMaxPrice) {
+      if (fetchedMaxPrice < currentMaxPrice && prevLoaderMaxPrice !== fetchedMaxPrice) {
         setTotalMaxPrice(currentMaxPrice);
-      } else if (initMaxPrice > currentMaxPrice && prevLoaderMaxPrice !== initMaxPrice) {
-        setTotalMaxPrice(initMaxPrice);
+      } else if (fetchedMaxPrice > currentMaxPrice && prevLoaderMaxPrice !== fetchedMaxPrice) {
+        setTotalMaxPrice(fetchedMaxPrice);
       }
     }
   }
 
   setupPrices();
 
-  const interactedFormOnNavigate = useCallback(() => {
-    if (productsFetcher.state === 'loading' && formWasInteracted) {
-      if (searchParams.has('minPrice')) {
-        const searchParamsMinPrice = Number(searchParams.get('minPrice'));
-        const searchParamsMaxPrice = Number(searchParams.get('maxPrice'));
+  function onPageBackForwardSetup() {
+    if (prevSearchParams !== searchParams) {
+      if (formWasInteracted) {
+        if (searchParams.has('minPrice')) {
+          const searchParamsMinPrice = Number(searchParams.get('minPrice'));
+          const searchParamsMaxPrice = Number(searchParams.get('maxPrice'));
 
-        if (searchParamsMinPrice !== currentMinPrice) {
-          setCurrentMinPrice(searchParamsMinPrice);
-          setMinInputValue(searchParamsMinPrice);
-        }
+          if (searchParamsMinPrice !== currentMinPrice) {
+            setCurrentMinPrice(searchParamsMinPrice);
+            setMinInputValue(searchParamsMinPrice);
+          }
 
-        if (searchParamsMaxPrice !== currentMaxPrice) {
-          setCurrentMaxPrice(searchParamsMaxPrice);
-          setMaxInputValue(searchParamsMaxPrice);
+          if (searchParamsMaxPrice !== currentMaxPrice) {
+            setCurrentMaxPrice(searchParamsMaxPrice);
+            setMaxInputValue(searchParamsMaxPrice);
+          }
+        } else {
+          setFormWasInteracted(false);
         }
-      } else {
-        setFormWasInteracted(false);
       }
+
+      setPrevSearchParams(searchParams);
     }
-  }, [productsFetcher, searchParams, currentMinPrice, currentMaxPrice, formWasInteracted]);
+  }
 
-  useLayoutEffect(interactedFormOnNavigate, [interactedFormOnNavigate]);
-
-  // fetcher functions
-
-  // const initialDataFetch = useCallback(() => {
-  //   if (productsFetcher.state === 'idle' && !productsFetcher.data) {
-  //     setPrevFetchUrl(fetchUrl);
-
-  //     productsFetcher.load(fetchUrl);
-  //   }
-  // }, [productsFetcher, fetchUrl]);
-
-  // useEffect(initialDataFetch, [initialDataFetch]);
-
-  // const dataFetchByInteraction = useCallback(() => {
-  //   if (prevFetchUrl !== fetchUrl) {
-  //     setPrevFetchUrl(fetchUrl);
-
-  //     productsFetcher.load(fetchUrl);
-  //   }
-  // }, [prevFetchUrl, fetchUrl, productsFetcher]);
-
-  // useEffect(dataFetchByInteraction, [dataFetchByInteraction]);
-
-  // function updateDataFromFetch() {
-  //   if (productsFetcher.data) {
-  //     if (productsFetcher.data.filteredProductsAndMinMaxPrice !== filteredProductsAndMinMaxPrice) {
-  //       setFilteredProductsAndMinMaxPrice(productsFetcher.data.filteredProductsAndMinMaxPrice);
-  //     }
-  //   }
-  // }
-
-  // updateDataFromFetch();
+  onPageBackForwardSetup();
 
   // helper functions
 
@@ -236,22 +221,22 @@ export default function FilterPriceForm() {
 
     const contentBlock = contentRef.current;
 
-    if (initMinPrice === initMaxPrice
-      && currentMinPrice === initMinPrice
-      && currentMaxPrice === initMaxPrice) {
+    if (fetchedMinPrice === fetchedMaxPrice
+      && currentMinPrice === fetchedMinPrice
+      && currentMaxPrice === fetchedMaxPrice) {
       contentBlock.style.opacity = '0.5';
       contentBlock.style.pointerEvents = 'none';
     }
 
     return () => {
-      if (initMinPrice === initMaxPrice
-        && currentMinPrice === initMinPrice
-        && currentMaxPrice === initMaxPrice) {
+      if (fetchedMinPrice === fetchedMaxPrice
+        && currentMinPrice === fetchedMinPrice
+        && currentMaxPrice === fetchedMaxPrice) {
         contentBlock.style.opacity = '';
         contentBlock.style.pointerEvents = '';
       }
     };
-  }, [formWasInteracted, initMinPrice, initMaxPrice, currentMinPrice, currentMaxPrice]);
+  }, [formWasInteracted, fetchedMinPrice, fetchedMaxPrice, currentMinPrice, currentMaxPrice]);
 
   useEffect(makeInactiveOnSameValues, [makeInactiveOnSameValues]);
 

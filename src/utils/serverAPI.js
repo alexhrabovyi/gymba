@@ -1,7 +1,14 @@
 /* eslint-disable max-len */
 import { http, HttpResponse } from 'msw';
 import { setupWorker } from 'msw/browser';
-import { getCategoriesAndSubcategories, getNewsPreviews, getFilteredProductsAndMinMaxPrice } from './dataAPI';
+import {
+  getCategoriesAndSubcategories,
+  getNewsPreviews,
+  getFilteredProductsAndMinMaxPrice,
+  getWishlistIds,
+  addIdToWishlist,
+  deleteIdFromWishlist,
+} from './dataAPI';
 
 export const handlers = [
   http.get('/fakeAPI/categories', async () => {
@@ -20,6 +27,25 @@ export const handlers = [
     const productsAndFilters = await getFilteredProductsAndMinMaxPrice(categoryIdParam, subcategoryIdParam, searchParams);
 
     return HttpResponse.json(productsAndFilters);
+  }),
+  http.get('/fakeAPI/wishlistIds', async () => {
+    const wishlistIds = await getWishlistIds();
+
+    return HttpResponse.json(wishlistIds);
+  }),
+  http.patch('/fakeAPI/wishlistIds', async ({ request }) => {
+    const [categoryId, subcategoryId, productId] = await request.json();
+
+    const response = await addIdToWishlist(categoryId, subcategoryId, productId);
+
+    return response;
+  }),
+  http.delete('/fakeAPI/wishlistIds', async ({ request }) => {
+    const [categoryId, subcategoryId, productId] = await request.json();
+
+    const response = await deleteIdFromWishlist(categoryId, subcategoryId, productId);
+
+    return response;
   }),
 ];
 

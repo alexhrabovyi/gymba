@@ -1,11 +1,11 @@
-/* eslint-disable no-shadow */
 import { memo, useMemo } from 'react';
+import classNames from 'classnames';
 import filterCls from './FilterBlock.module.scss';
 import FilterForm from './FilterForm/FilterForm.jsx';
 import FilterPriceForm from './FilterPriceForm/FilterPriceForm.jsx';
 import ThreeDotsSpinnerBlock from '../../common/ThreeDotsSpinnerBlock/ThreeDotsSpinnerBlock.jsx';
 
-const FilterBlock = memo(({ subcategoryFilters }) => {
+const FilterBlock = memo(({ subcategoryFilters, isFetching }) => {
   const filterElems = useMemo(() => {
     if (!subcategoryFilters) return;
 
@@ -20,7 +20,11 @@ const FilterBlock = memo(({ subcategoryFilters }) => {
   }, [subcategoryFilters]);
 
   return (
-    <div className={filterCls.filterBlock}>
+    <div className={classNames(
+      filterCls.filterBlock,
+      filterElems && isFetching && filterCls.filterBlock_inactive,
+    )}
+    >
       <FilterPriceForm />
       {filterElems || <ThreeDotsSpinnerBlock />}
     </div>

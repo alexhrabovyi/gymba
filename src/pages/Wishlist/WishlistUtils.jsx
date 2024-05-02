@@ -4,7 +4,6 @@ import {
   getWishlistAmount,
   getWishlistProductsPerPageAndPageAmount,
   addIdToWishlist,
-  deleteFromWishlist,
   deleteAllFromWishlist,
 } from '../../utils/dataAPI';
 

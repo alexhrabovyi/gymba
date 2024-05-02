@@ -1,10 +1,10 @@
 /* eslint-disable react/jsx-no-bind */
 import {
   useState, useCallback, useLayoutEffect, useMemo, useRef,
-  useEffect,
 } from 'react';
-import { useFetcher, useSearchParams, useParams } from 'react-router-dom';
+import { useSearchParams, useParams } from 'react-router-dom';
 import classNames from 'classnames';
+import { useGetCategoriesQuery, useGetProductsQuery } from '../../queryAPI/queryAPI.js';
 import useOnResize from '../../hooks/useOnResize.jsx';
 import containerCls from '../../scss/_container.module.scss';
 import textCls from '../../scss/_text.module.scss';
@@ -22,9 +22,6 @@ import FilterIcon from './images/filter.svg';
 import Line from '../../assets/images/icons/oblique.svg';
 import Button from '../common/Button/Button.jsx';
 
-import { useGetCategoriesQuery } from '../../queryAPI/queryAPI.js';
-import { useGetProductsQuery } from '../../queryAPI/queryAPI.js';
-
 export default function Products() {
   const [searchParams, setSearchParams] = useSearchParams();
   const params = useParams();
@@ -36,7 +33,6 @@ export default function Products() {
   const [productsAndInfo, setProductsAndInfo] = useState(null);
   const [isFilterMenuOpen, setIsFilterMenuOpen] = useState(false);
   const [windowWidth, setWindowWidth] = useState();
-  const [prevFetchUrl, setPrevFetchUrl] = useState(null);
 
   // setup functions
 
@@ -100,44 +96,6 @@ export default function Products() {
       setProductsAndInfo(fetchedProductsAndFilters);
     }
   }
-
-  // const initialDataFetch = useCallback(() => {
-  //   if (productsFetcher.state === 'idle' && !productsFetcher.data) {
-  //     setPrevFetchUrl(fetchUrl);
-
-  //     productsFetcher.load(fetchUrl);
-  //   }
-  // }, [productsFetcher, fetchUrl]);
-
-  // useEffect(initialDataFetch, [initialDataFetch]);
-
-  // const dataFetchByInteraction = useCallback(() => {
-  //   if (prevFetchUrl !== fetchUrl) {
-  //     setPrevFetchUrl(fetchUrl);
-
-  //     productsFetcher.load(fetchUrl);
-  //   }
-  // }, [prevFetchUrl, fetchUrl, productsFetcher]);
-
-  // useEffect(dataFetchByInteraction, [dataFetchByInteraction]);
-
-  // function updateDataFromFetch() {
-  //   if (productsFetcher.data) {
-  //     if (productsFetcher.data.categoryAndSubcategory !== categoryAndSubcategory) {
-  //       setCategoryAndSubcategory(productsFetcher.data.categoryAndSubcategory);
-  //     }
-
-  //     if (productsFetcher.data.subcategoryFilters !== subcategoryFilters) {
-  //       setSubcategoryFilters(productsFetcher.data.subcategoryFilters);
-  //     }
-
-  //     if (productsFetcher.data.filteredProductsAndMinMaxPrice !== filteredProductsAndMinMaxPrice) {
-  //       setFilteredProductsAndMinMaxPrice(productsFetcher.data.filteredProductsAndMinMaxPrice);
-  //     }
-  //   }
-  // }
-
-  // updateDataFromFetch();
 
   // productCards setup
 
@@ -281,7 +239,7 @@ export default function Products() {
               >
                 Усього товарів:
                 <span>
-                  {!isProductsFetching ? productAmount : 'Завантаження ...'}
+                  {!isProductsLoading ? productAmount : 'Завантаження ...'}
                 </span>
               </p>
             )}
@@ -333,6 +291,7 @@ export default function Products() {
           {windowWidth > 1024 && (
             <FilterBlock
               subcategoryFilters={subcategoryFilters}
+              isFetching={isProductsFetching}
             />
           )}
           <div className={classNames(
@@ -340,7 +299,7 @@ export default function Products() {
             isProductsFetching && !isProductsLoading && productsCls.products_inactive,
           )}
           >
-            {/* {windowWidth > 1024 && <AppliedFiltersBlock />} */}
+            {windowWidth > 1024 && <AppliedFiltersBlock />}
             {productCards === undefined ? (
               <ThreeDotsSpinnerBlock blockClassName={productsCls.spinnerBlock} />
             ) : (productCards.length > 0 ? productCards : noProductsBlock)}
@@ -352,7 +311,7 @@ export default function Products() {
           </div>
         </div>
       </main>
-      {/* {windowWidth <= 1024 && (
+      {windowWidth <= 1024 && (
       <LeftSideMenu
         isMenuOpen={isFilterMenuOpen}
         setIsMenuOpen={setIsFilterMenuOpen}
@@ -362,10 +321,11 @@ export default function Products() {
         <div className={productsCls.filterBlockInMenu}>
           <FilterBlock
             subcategoryFilters={subcategoryFilters}
+            isFetching={isProductsFetching}
           />
         </div>
       </LeftSideMenu>
-      )} */}
+      )}
     </>
   );
 }

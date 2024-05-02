@@ -233,6 +233,53 @@ export async function getFilteredProductsAndMinMaxPrice(categoryId, subcategoryI
   };
 }
 
+export async function getWishlistIds() {
+  await fakeNetwork();
+
+  const wishlistIds = JSON.parse(localStorage.getItem('wishlistIds')) || [];
+
+  return wishlistIds;
+}
+
+export async function addIdToWishlist(categoryId, subcategoryId, productId) {
+  await fakeNetwork();
+
+  let wishlistIds = localStorage.getItem('wishlistIds');
+
+  if (wishlistIds === null) {
+    wishlistIds = [];
+    wishlistIds.push([categoryId, subcategoryId, productId]);
+    localStorage.setItem('wishlistIds', JSON.stringify(wishlistIds));
+  } else {
+    wishlistIds = JSON.parse(wishlistIds);
+
+    const isAlreadyExist = wishlistIds.find(([cId, subcId, pId]) => (cId === categoryId
+      && subcId === subcategoryId && pId === productId));
+
+    if (!isAlreadyExist) {
+      wishlistIds.push([categoryId, subcategoryId, productId]);
+      localStorage.setItem('wishlistIds', JSON.stringify(wishlistIds));
+    }
+  }
+
+  return new Response(null, { status: 200, statusText: 'OK' });
+}
+
+export async function deleteIdFromWishlist(categoryId, subcategoryId, productId) {
+  await fakeNetwork();
+
+  const wishlistIds = JSON.parse(localStorage.getItem('wishlistIds')) || [];
+
+  const index = wishlistIds.findIndex(([cId, subcId, pId]) => (cId === categoryId
+    && subcId === subcategoryId && pId === productId));
+
+  if (index !== -1) wishlistIds.splice(index, 1);
+
+  localStorage.setItem('wishlistIds', JSON.stringify(wishlistIds));
+
+  return new Response(null, { status: 200, statusText: 'OK' });
+}
+
 // news API
 
 export async function getNewsPreviews() {
@@ -320,47 +367,8 @@ export async function getRandomProduct() {
   };
 }
 
-export function addIdToWishlist(categoryId, subcategoryId, productId) {
-  let wishlistIds = localStorage.getItem('wishlistIds');
-
-  if (wishlistIds === null) {
-    wishlistIds = [];
-    wishlistIds.push([categoryId, subcategoryId, productId]);
-    localStorage.setItem('wishlistIds', JSON.stringify(wishlistIds));
-  } else {
-    wishlistIds = JSON.parse(wishlistIds);
-
-    const isAlreadyExist = wishlistIds.find(([cId, subcId, pId]) => (cId === categoryId
-      && subcId === subcategoryId && pId === productId));
-
-    if (!isAlreadyExist) {
-      wishlistIds.push([categoryId, subcategoryId, productId]);
-      localStorage.setItem('wishlistIds', JSON.stringify(wishlistIds));
-    }
-  }
-}
-
-export function deleteFromWishlist(categoryId, subcategoryId, productId) {
-  const wishlistIds = JSON.parse(localStorage.getItem('wishlistIds')) || [];
-
-  const index = wishlistIds.findIndex(([cId, subcId, pId]) => (cId === categoryId
-    && subcId === subcategoryId && pId === productId));
-
-  if (index !== -1) wishlistIds.splice(index, 1);
-
-  localStorage.setItem('wishlistIds', JSON.stringify(wishlistIds));
-}
-
 export function deleteAllFromWishlist() {
   localStorage.removeItem('wishlistIds');
-}
-
-export async function getWishlistIds() {
-  await fakeNetwork();
-
-  const wishlistIds = JSON.parse(localStorage.getItem('wishlistIds')) || [];
-
-  return wishlistIds;
 }
 
 export async function getWishlistAmount() {
