@@ -2,9 +2,8 @@
 import {
   Suspense, memo, useState,
 } from 'react';
-import { Await, Link, useFetcher } from 'react-router-dom';
+import { Await, Link } from 'react-router-dom';
 import classNames from 'classnames';
-import useFetcherLoad from '../../hooks/useFetcherLoad.jsx';
 import beautifyNum from '../../utils/beautifyNum.js';
 import Spinner from '../common/Spinner/Spinner.jsx';
 import DynamicImage from '../common/DynamicImage/DynamicImage.jsx';
@@ -16,14 +15,21 @@ import Favorite from '../../assets/images/icons/favorite.svg';
 import Cart from '../../assets/images/icons/cart.svg';
 import Mark from '../../assets/images/icons/mark.svg';
 
-import { useGetWishlistIdsQuery, useAddWishlistIdMutation, useDeleteWishlistIdMutation } from '../../queryAPI/queryAPI.js';
+import {
+  useGetWishlistIdsQuery,
+  useAddWishlistIdMutation,
+  useDeleteWishlistIdMutation,
+  useGetCartIdsQuery,
+  useAddCartIdMutation,
+  useDeleteCartIdMutation,
+  useGetCompareIdsQuery,
+  useAddCompareIdMutation,
+  useDeleteCompareIdMutation,
+} from '../../queryAPI/queryAPI.js';
 
 const ProductCard = memo(({
   name, categoryId, subcategoryId, productId, price, oldPrice, isShortCard,
 }) => {
-  // const cartFetcher = useFetcher();
-  // const compareFetcher = useFetcher();
-
   const [imgSrc] = useState(() => import(`../../assets/images/productImgs/${productId}.webp`));
   const [productInWishlist, setProductInWishlist] = useState(false);
   const [productInCart, setProductInCart] = useState(false);
@@ -41,104 +47,59 @@ const ProductCard = memo(({
     }
   }
 
-  // useFetcherLoad(cartFetcher, '/cart');
+  const { data: cartFetcherData } = useGetCartIdsQuery();
 
-  // if (cartFetcher.data) {
-  //   const productInCartFromFetcher = cartFetcher.data.cartIds.find((cId) => (
-  //     cId.categoryId === categoryId
-  //       && cId.subcategoryId === subcategoryId && cId.productId === productId
-  //   ));
+  if (cartFetcherData) {
+    const isInCartIdsList = !!cartFetcherData.find((cId) => (cId.categoryId === categoryId
+      && cId.subcategoryId === subcategoryId && cId.productId === productId));
 
-  //   if (productInCartFromFetcher !== productInCart) {
-  //     setProductInCart(productInCartFromFetcher);
-  //   }
-  // }
+    if (productInCart !== isInCartIdsList) {
+      setProductInCart(isInCartIdsList);
+    }
+  }
 
-  // useFetcherLoad(compareFetcher, '/compare');
+  const { data: compareFetcherData } = useGetCompareIdsQuery();
 
-  // if (compareFetcher.data) {
-  //   const productInCompareFromFetcher = compareFetcher
-  //     .data.compareIds.find(([cId, subcId, pId]) => (
-  //       cId === categoryId && subcId === subcategoryId && pId === productId
-  //     ));
+  if (compareFetcherData) {
+    const isInCompareIdsList = !!compareFetcherData.find(([cId, subcId, pId]) => (
+      cId === categoryId && subcId === subcategoryId && pId === productId
+    ));
 
-  //   if (productInCompareFromFetcher !== productInCompare) {
-  //     setProductInCompare(productInCompareFromFetcher);
-  //   }
-  // }
+    if (productInCompare !== isInCompareIdsList) {
+      setProductInCompare(isInCompareIdsList);
+    }
+  }
 
-  // function optimisticCart() {
-  //   if (cartFetcher.state === 'loading') {
-  //     if (cartFetcher.formMethod === 'patch' && !productInCart) {
-  //       setProductInCart(true);
-  //     } else if (cartFetcher.formMethod === 'delete' && productInCart) {
-  //       setProductInCart(false);
-  //     }
-  //   }
-  // }
+  function sendMutationRequest(state, addMutationFunc, deleteMutationFunc) {
+    const body = JSON.stringify([categoryId, subcategoryId, productId]);
 
-  // optimisticCart();
-
-  // function optimisticCompare() {
-  //   if (compareFetcher.state === 'loading') {
-  //     if (compareFetcher.formMethod === 'patch' && !productInCompare) {
-  //       setProductInCompare(true);
-  //     } else if (compareFetcher.formMethod === 'delete' && productInCompare) {
-  //       setProductInCompare(false);
-  //     }
-  //   }
-  // }
-
-  // optimisticCompare();
+    if (!state) {
+      addMutationFunc(body);
+    } else {
+      deleteMutationFunc(body);
+    }
+  }
 
   const [addToWishlistRequest] = useAddWishlistIdMutation();
   const [deleteFromWishlistRequest] = useDeleteWishlistIdMutation();
 
   function wishlistButtonOnClick() {
-    const body = JSON.stringify([categoryId, subcategoryId, productId]);
-
-    if (!productInWishlist) {
-      addToWishlistRequest(body);
-    } else {
-      deleteFromWishlistRequest(body);
-    }
+    sendMutationRequest(productInWishlist, addToWishlistRequest, deleteFromWishlistRequest);
   }
 
-  // function cartButtonOnClick() {
-  //   const data = JSON.stringify([categoryId, subcategoryId, productId]);
+  const [addToCartRequest] = useAddCartIdMutation();
+  const [deleteFromCartRequest] = useDeleteCartIdMutation();
 
-  //   if (!productInCart) {
-  //     cartFetcher.submit(data, {
-  //       action: '/cart',
-  //       method: 'PATCH',
-  //       encType: 'application/json',
-  //     });
-  //   } else {
-  //     cartFetcher.submit(data, {
-  //       action: '/cart',
-  //       method: 'DELETE',
-  //       encType: 'application/json',
-  //     });
-  //   }
-  // }
+  function cartButtonOnClick() {
+    sendMutationRequest(productInCart, addToCartRequest, deleteFromCartRequest);
+  }
 
-  // function compareButtonOnClick() {
-  //   const data = JSON.stringify([categoryId, subcategoryId, productId]);
+  const [addToCompareRequest] = useAddCompareIdMutation();
+  const [deleteFromCompareRequest] = useDeleteCompareIdMutation();
 
-  //   if (!productInCompare) {
-  //     compareFetcher.submit(data, {
-  //       action: '/compare',
-  //       method: 'PATCH',
-  //       encType: 'application/json',
-  //     });
-  //   } else {
-  //     compareFetcher.submit(data, {
-  //       action: '/compare',
-  //       method: 'DELETE',
-  //       encType: 'application/json',
-  //     });
-  //   }
-  // }
+  function compareButtonOnClick() {
+    sendMutationRequest(productInCompare, addToCompareRequest, deleteFromCompareRequest);
+  }
 
   const productLink = `/${categoryId}/${subcategoryId}/${productId}`;
 
@@ -153,7 +114,7 @@ const ProductCard = memo(({
               productInCompare && productCls.iconButton_active,
             )}
             aria-label={productInCompare ? `Видалити ${name} з порівняння` : `Добавить ${name} в порівняння`}
-            // onClick={compareButtonOnClick}
+            onClick={compareButtonOnClick}
           >
             <Compare className={productCls.icon} />
           </button>
@@ -208,7 +169,7 @@ const ProductCard = memo(({
           <Button
             className={productCls.cartButton}
             ariaLabel={!productInCart ? `Додати ${name} до кошику` : `Видалити ${name} з кошика`}
-            // onClick={cartButtonOnClick}
+            onClick={cartButtonOnClick}
           >
             {!productInCart ? (
               <Cart className={productCls.cartIcon} />
@@ -255,7 +216,7 @@ const ProductCard = memo(({
               productInCompare && productCls.iconButton_active,
             )}
             aria-label={productInCompare ? `Видалити ${name} з порівняння` : `Додати ${name} в порівняння`}
-            // onClick={compareButtonOnClick}
+            onClick={compareButtonOnClick}
           >
             <Compare className={productCls.icon} />
           </button>
@@ -266,7 +227,7 @@ const ProductCard = memo(({
               productInWishlist && productCls.iconButton_active,
             )}
             aria-label={productInWishlist ? `Видалити ${name} зі списку бажань` : `Додати ${name} до списку бажань`}
-            // onClick={wishlistButtonOnClick}
+            onClick={wishlistButtonOnClick}
           >
             <Favorite className={productCls.icon} />
           </button>
@@ -288,7 +249,7 @@ const ProductCard = memo(({
         <Button
           className={productCls.longCartButton}
           ariaLabel={!productInCart ? `Додати ${name} до кошику` : `Видалити ${name} з кошика`}
-          // onClick={cartButtonOnClick}
+          onClick={cartButtonOnClick}
         >
           {!productInCart ? 'Додати до кошику' : 'У кошику'}
         </Button>

@@ -2,6 +2,8 @@
 import products from './products.json';
 import news from './news.json';
 
+// utils
+
 // async function fakeNetwork() {
 //   return new Promise((res) => {
 //     setTimeout(res, Math.random() * 800);
@@ -12,6 +14,51 @@ async function fakeNetwork() {
   return new Promise((res) => {
     setTimeout(res, 1500);
   });
+}
+
+async function getLocalStorageIds(localStorageKey) {
+  await fakeNetwork();
+
+  const ids = JSON.parse(localStorage.getItem(localStorageKey)) || [];
+
+  return ids;
+}
+
+async function addIdToStorage(localStorageKey, entitityToAdd, findFunc) {
+  await fakeNetwork();
+
+  let ids = localStorage.getItem(localStorageKey);
+
+  if (ids === null) {
+    ids = [];
+    ids.push(entitityToAdd);
+    localStorage.setItem(localStorageKey, JSON.stringify(ids));
+  } else {
+    ids = JSON.parse(ids);
+
+    const isAlreadyExist = ids.find(findFunc);
+
+    if (!isAlreadyExist) {
+      ids.push(entitityToAdd);
+      localStorage.setItem(localStorageKey, JSON.stringify(ids));
+    }
+  }
+
+  return new Response(null, { status: 200, statusText: 'OK' });
+}
+
+async function deleteIdFromStorage(localStorageKey, findFunc) {
+  await fakeNetwork();
+
+  const ids = JSON.parse(localStorage.getItem(localStorageKey)) || [];
+
+  const index = ids.findIndex(findFunc);
+
+  if (index !== -1) ids.splice(index, 1);
+
+  localStorage.setItem(localStorageKey, JSON.stringify(ids));
+
+  return new Response(null, { status: 200, statusText: 'OK' });
 }
 
 // =====
@@ -233,51 +280,66 @@ export async function getFilteredProductsAndMinMaxPrice(categoryId, subcategoryI
   };
 }
 
-export async function getWishlistIds() {
-  await fakeNetwork();
-
-  const wishlistIds = JSON.parse(localStorage.getItem('wishlistIds')) || [];
-
-  return wishlistIds;
+export function getWishlistIds() {
+  return getLocalStorageIds('wishlistIds');
 }
 
-export async function addIdToWishlist(categoryId, subcategoryId, productId) {
-  await fakeNetwork();
+export function addIdToWishlist(categoryId, subcategoryId, productId) {
+  const newIdEntitity = [categoryId, subcategoryId, productId];
+  const findFunc = ([cId, subcId, pId]) => (cId === categoryId
+    && subcId === subcategoryId && pId === productId);
 
-  let wishlistIds = localStorage.getItem('wishlistIds');
-
-  if (wishlistIds === null) {
-    wishlistIds = [];
-    wishlistIds.push([categoryId, subcategoryId, productId]);
-    localStorage.setItem('wishlistIds', JSON.stringify(wishlistIds));
-  } else {
-    wishlistIds = JSON.parse(wishlistIds);
-
-    const isAlreadyExist = wishlistIds.find(([cId, subcId, pId]) => (cId === categoryId
-      && subcId === subcategoryId && pId === productId));
-
-    if (!isAlreadyExist) {
-      wishlistIds.push([categoryId, subcategoryId, productId]);
-      localStorage.setItem('wishlistIds', JSON.stringify(wishlistIds));
-    }
-  }
-
-  return new Response(null, { status: 200, statusText: 'OK' });
+  return addIdToStorage('wishlistIds', newIdEntitity, findFunc);
 }
 
-export async function deleteIdFromWishlist(categoryId, subcategoryId, productId) {
-  await fakeNetwork();
+export function deleteIdFromWishlist(categoryId, subcategoryId, productId) {
+  const findFunction = ([cId, subcId, pId]) => (cId === categoryId
+    && subcId === subcategoryId && pId === productId);
 
-  const wishlistIds = JSON.parse(localStorage.getItem('wishlistIds')) || [];
+  return deleteIdFromStorage('wishlistIds', findFunction);
+}
 
-  const index = wishlistIds.findIndex(([cId, subcId, pId]) => (cId === categoryId
-    && subcId === subcategoryId && pId === productId));
+export function getCartIds() {
+  return getLocalStorageIds('cartIds');
+}
 
-  if (index !== -1) wishlistIds.splice(index, 1);
+export function addIdToCart(categoryId, subcategoryId, productId) {
+  const newIdEntitity = {
+    categoryId,
+    subcategoryId,
+    productId,
+    amount: 1,
+  };
+  const findFunc = (cId) => (cId.categoryId === categoryId
+    && cId.subcategoryId === subcategoryId && cId.productId === productId);
 
-  localStorage.setItem('wishlistIds', JSON.stringify(wishlistIds));
+  return addIdToStorage('cartIds', newIdEntitity, findFunc);
+}
 
-  return new Response(null, { status: 200, statusText: 'OK' });
+export function deleteFromCart(categoryId, subcategoryId, productId) {
+  const findFunction = (cId) => (cId.categoryId === categoryId
+    && cId.subcategoryId === subcategoryId && cId.productId === productId);
+
+  return deleteIdFromStorage('cartIds', findFunction);
+}
+
+export function getCompareIds() {
+  return getLocalStorageIds('compareIds');
+}
+
+export function addIdToCompare(categoryId, subcategoryId, productId) {
+  const newIdEntitity = [categoryId, subcategoryId, productId];
+  const findFunc = ([cId, subcId, pId]) => (cId === categoryId
+    && subcId === subcategoryId && pId === productId);
+
+  return addIdToStorage('compareIds', newIdEntitity, findFunc);
+}
+
+export function deleteFromCompare(categoryId, subcategoryId, productId) {
+  const findFunction = ([cId, subcId, pId]) => (cId === categoryId
+    && subcId === subcategoryId && pId === productId);
+
+  return deleteIdFromStorage('compareIds', findFunction);
 }
 
 // news API
@@ -404,57 +466,8 @@ export async function getWishlistProductsPerPageAndPageAmount(pageNum) {
   };
 }
 
-export function addIdToCart(categoryId, subcategoryId, productId) {
-  let cartIds = localStorage.getItem('cartIds');
-
-  if (cartIds === null) {
-    cartIds = [];
-    cartIds.push({
-      categoryId,
-      subcategoryId,
-      productId,
-      amount: 1,
-    });
-    localStorage.setItem('cartIds', JSON.stringify(cartIds));
-  } else {
-    cartIds = JSON.parse(cartIds);
-
-    const isAlreadyExist = cartIds.find((cId) => (cId.categoryId === categoryId
-      && cId.subcategoryId === subcategoryId && cId.productId === productId));
-
-    if (!isAlreadyExist) {
-      cartIds.push({
-        categoryId,
-        subcategoryId,
-        productId,
-        amount: 1,
-      });
-      localStorage.setItem('cartIds', JSON.stringify(cartIds));
-    }
-  }
-}
-
-export function deleteFromCart(categoryId, subcategoryId, productId) {
-  const cartIds = JSON.parse(localStorage.getItem('cartIds')) || [];
-
-  const index = cartIds.findIndex((cId) => (cId.categoryId === categoryId
-    && cId.subcategoryId === subcategoryId && cId.productId === productId));
-
-  if (index !== -1) cartIds.splice(index, 1);
-
-  localStorage.setItem('cartIds', JSON.stringify(cartIds));
-}
-
 export function deleteAllFromCart() {
   localStorage.removeItem('cartIds');
-}
-
-export async function getCartIds() {
-  await fakeNetwork();
-
-  const cartIds = JSON.parse(localStorage.getItem('cartIds')) || [];
-
-  return cartIds;
 }
 
 export async function getCartAmount() {
@@ -509,47 +522,8 @@ export async function getCartProductsAndTotalPrice() {
   };
 }
 
-export function addIdToCompare(categoryId, subcategoryId, productId) {
-  let compareIds = localStorage.getItem('compareIds');
-
-  if (compareIds === null) {
-    compareIds = [];
-    compareIds.push([categoryId, subcategoryId, productId]);
-    localStorage.setItem('compareIds', JSON.stringify(compareIds));
-  } else {
-    compareIds = JSON.parse(compareIds);
-
-    const isAlreadyExist = compareIds.find((cId, subcId, pId) => (cId === categoryId
-      && subcId === subcategoryId && pId === productId));
-
-    if (!isAlreadyExist) {
-      compareIds.push([categoryId, subcategoryId, productId]);
-      localStorage.setItem('compareIds', JSON.stringify(compareIds));
-    }
-  }
-}
-
-export function deleteFromCompare(categoryId, subcategoryId, productId) {
-  const compareIds = JSON.parse(localStorage.getItem('compareIds')) || [];
-
-  const index = compareIds.findIndex(([cId, subcId, pId]) => (cId === categoryId
-    && subcId === subcategoryId && pId === productId));
-
-  if (index !== -1) compareIds.splice(index, 1);
-
-  localStorage.setItem('compareIds', JSON.stringify(compareIds));
-}
-
 export function deleteAllFromCompare() {
   localStorage.removeItem('compareIds');
-}
-
-export async function getCompareIds() {
-  await fakeNetwork();
-
-  const compareIds = JSON.parse(localStorage.getItem('compareIds')) || [];
-
-  return compareIds;
 }
 
 export async function getCompareAmount() {
