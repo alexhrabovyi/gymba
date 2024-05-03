@@ -41,10 +41,14 @@ export default function BreadCrumbs() {
   if (fetchedData && params.categoryId && params.subcategoryId) {
     const category = fetchedData.entities[params.categoryId];
 
+    if (!category) return;
+
     links.push(createLink(category.id, category.name, `/${category.id}`));
 
     if (params.subcategoryId && params.productId) {
       const subcategory = category.subcategories.entities[params.subcategoryId];
+
+      if (!subcategory) return;
 
       links.push(createLink(subcategory.id, subcategory.name, `/${category.id}/${subcategory.id}`));
     }

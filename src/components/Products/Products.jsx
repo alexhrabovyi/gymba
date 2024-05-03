@@ -33,24 +33,21 @@ export default function Products() {
   const [productsAndInfo, setProductsAndInfo] = useState(null);
   const [isFilterMenuOpen, setIsFilterMenuOpen] = useState(false);
   const [windowWidth, setWindowWidth] = useState();
+  const [prevCategoryAndSubcategory, setPrevCategoryAndSubcategory] = useState(null);
 
   // setup functions
 
-  const categoryIdParam = params.categoryId;
-  const subcategoryIdParam = params.subcategoryId;
+  const { categoryId, subcategoryId } = params;
 
-  const categoryId = category?.id;
-  const subcategory = category?.subcategories.entities[subcategoryIdParam];
-  const subcategoryName = subcategory?.name;
-  const subcategoryId = subcategory?.id;
+  const subcategoryName = category?.subcategories.entities[subcategoryId]?.name;
 
   const filteredAndSortedProducts = useMemo(() => productsAndInfo
     ?.filteredAndSortedProducts, [productsAndInfo]);
   const productAmount = productsAndInfo?.productAmount;
   const pageAmount = productsAndInfo?.pageAmount;
 
-  const fetchUrl = searchParams.size ? `${categoryIdParam}/${subcategoryIdParam}?${searchParams.toString()}`
-    : `${categoryIdParam}/${subcategoryIdParam}`;
+  const fetchUrl = searchParams.size ? `${categoryId}/${subcategoryId}?${searchParams.toString()}`
+    : `${categoryId}/${subcategoryId}`;
 
   const getWindowWidth = useCallback(() => {
     setWindowWidth(window.innerWidth);
@@ -77,24 +74,36 @@ export default function Products() {
 
   const { data: fetchedCategories } = useGetCategoriesQuery();
 
-  if (fetchedCategories && category === null) {
-    setCategory(fetchedCategories.entities[categoryIdParam]);
+  if (fetchedCategories) {
+    if (fetchedCategories.entities[categoryId] !== category) {
+      setCategory(fetchedCategories.entities[categoryId]);
+    }
   }
 
   const {
     data: fetchedProductsAndFilters,
     isLoading: isProductsLoading,
     isFetching: isProductsFetching,
+    status: productsFetchingStatus,
   } = useGetProductsQuery(fetchUrl);
 
-  if (fetchedProductsAndFilters) {
-    if (subcategoryFilters === null) {
+  if (fetchedProductsAndFilters && productsFetchingStatus === 'fulfilled') {
+    if (!prevCategoryAndSubcategory
+      || prevCategoryAndSubcategory.categoryId !== categoryId
+      || prevCategoryAndSubcategory.subcategoryId !== subcategoryId
+    ) {
+      setPrevCategoryAndSubcategory({
+        categoryId,
+        subcategoryId,
+      });
       setSubcategoryFilters(fetchedProductsAndFilters.subcategoryFilters);
     }
 
     if (productsAndInfo !== fetchedProductsAndFilters) {
       setProductsAndInfo(fetchedProductsAndFilters);
     }
+  } else if (productsFetchingStatus === 'rejected') {
+    throw new Response(null, { status: 404, statusText: 'Not found' });
   }
 
   // productCards setup

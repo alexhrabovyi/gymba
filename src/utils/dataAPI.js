@@ -235,8 +235,15 @@ function getProductsPerPage(subcategoryProducts, perView, pageNum, pageAmount) {
 export async function getFilteredProductsAndMinMaxPrice(categoryId, subcategoryId, searchParams) {
   await fakeNetwork();
 
-  const subcategoryProducts = Object.values(products.categories.entities[categoryId]
-    .subcategories.entities[subcategoryId].products.entities);
+  const category = products.categories.entities[categoryId];
+
+  if (!category) throw new Response(null, { status: 404, statusText: 'Not found' });
+
+  const subcategory = category.subcategories.entities[subcategoryId];
+
+  if (!subcategory) throw new Response(null, { status: 404, statusText: 'Not found' });
+
+  const subcategoryProducts = Object.values(subcategory.products.entities);
 
   const searchParamsMinPrice = searchParams.get('minPrice');
   const searchParamsMaxPrice = searchParams.get('maxPrice');
@@ -270,14 +277,55 @@ export async function getFilteredProductsAndMinMaxPrice(categoryId, subcategoryI
 
   const subcategoryFilters = getSubcategoryFilters(subcategoryProducts);
 
-  return {
+  const body = JSON.stringify({
     subcategoryFilters,
     filteredAndSortedProducts,
     minPrice,
     maxPrice,
     productAmount,
     pageAmount,
-  };
+  });
+
+  return new Response(body, { status: 200, statusText: 'OK' });
+}
+
+export async function getProduct(categoryId, subcategoryId, productId) {
+  await fakeNetwork();
+
+  const category = products.categories.entities[categoryId];
+
+  if (!category) throw new Response(null, { status: 404, statusText: 'Not found' });
+
+  const subcategory = category.subcategories.entities[subcategoryId];
+
+  if (!subcategory) throw new Response(null, { status: 404, statusText: 'Not found' });
+
+  const product = subcategory.products.entities[productId];
+
+  if (!product) throw new Response(null, { status: 404, statusText: 'Not found' });
+
+  const body = JSON.stringify({
+    categoryName: category.name,
+    categoryId: category.id,
+    subcategoryName: subcategory.name,
+    subcategoryId: subcategory.id,
+    product,
+  });
+
+  return new Response(body, { status: 200, statusText: 'OK' });
+}
+
+export async function getAnalogueProducts(categoryId, subcategoryId, productId) {
+  await fakeNetwork();
+
+  const category = products.categories.entities[categoryId];
+  const subcategory = category.subcategories.entities[subcategoryId];
+  const subcategoryProducts = Object.values(subcategory.products.entities)
+    .filter((p) => p.id !== productId);
+
+  const randomProducts = (subcategoryProducts.sort(() => 0.5 - Math.random())).slice(0, 8);
+
+  return new Response(JSON.stringify(randomProducts), { status: 200, statusText: 'OK' });
 }
 
 export function getWishlistIds() {
@@ -392,25 +440,6 @@ export function getCategoryAndSubcategory(categoryId, subcategoryId) {
     categoryName: category.name,
     categoryId: category.id,
     subcategory,
-  };
-}
-
-export async function getProduct(categoryId, subcategoryId, productId) {
-  await fakeNetwork();
-
-  const category = products.find((c) => c.id === categoryId);
-
-  if (!category) throw new Error('Категорію не знайдено');
-
-  const subcategory = category.subcategories.find((s) => s.id === subcategoryId);
-  const product = subcategory.products.find((p) => p.id === productId);
-
-  return {
-    categoryName: category.name,
-    categoryId: category.id,
-    subcategoryName: subcategory.name,
-    subcategoryId: subcategory.id,
-    product,
   };
 }
 
@@ -576,15 +605,6 @@ export async function getCompareProductCards(categoryId, subcategoryId) {
     .all(compareIds.map(([cId, subcId, pId]) => getProduct(cId, subcId, pId)));
 
   return productCards;
-}
-
-export function getAnalogueProducts(categoryId, subcategoryId, productId) {
-  const { subcategories } = products.find((c) => c.id === categoryId);
-  const subcategoryProducts = (subcategories.find((s) => s.id === subcategoryId)).products
-    .filter((p) => p.id !== productId);
-  const randomProducts = (subcategoryProducts.sort(() => 0.5 - Math.random())).slice(0, 8);
-
-  return randomProducts;
 }
 
 async function getAllSearchResults(searchQuery) {

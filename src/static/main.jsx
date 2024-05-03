@@ -11,7 +11,6 @@ import MainLazy from '../pages/Main/Main.lazy.jsx';
 import CategoryPageLazy from '../pages/Category/Category.lazy.jsx';
 import ProductsPageLazy from '../pages/Products/Products.lazy.jsx';
 import ProductPageLazy from '../pages/Product/Product.lazy.jsx';
-import { loader as productPageLoader } from '../pages/Product/ProductUtils.jsx';
 import WishlistPageLazy from '../pages/Wishlist/Wishlist.lazy.jsx';
 import { loader as wishlistLoader, action as wishlistAction } from '../pages/Wishlist/WishlistUtils.jsx';
 import CartPageLazy from '../pages/Cart/Cart.lazy.jsx';
@@ -28,7 +27,6 @@ import { loader as newsArticleLoader } from '../pages/NewsArticle/NewsArticleUti
 import SearchPageLazy from '../pages/Search/Search.lazy.jsx';
 import { loader as getSearchPageLoader } from '../pages/Search/SearchUtils.jsx';
 import { GetCategoriesAndSubcategoriesPage, loader as getCategoriesAndSubcategoriesLoader } from '../pages/GetCategoriesAndSubcategories/GetCategoriesAndSubcategories.jsx';
-import { loader as getAnalogueProductsLoader, action as getAnalogueProductsAction } from '../pages/GetAnalogueProducts/GetAnalogueProducts.jsx';
 import { GetCompareProductsPage, loader as getCompareProductsLoader } from '../pages/GetCompareProducts/GetCompareProducts.jsx';
 import { GetRandomProductPage, loader as getRandomProductLoader } from '../pages/GetRandomProduct/GetRandomProduct.jsx';
 
@@ -53,7 +51,6 @@ const router = createHashRouter([
           },
           {
             path: ':categoryId/:subcategoryId/:productId',
-            loader: productPageLoader,
             element: <ProductPageLazy />,
           },
           {
@@ -105,11 +102,6 @@ const router = createHashRouter([
             path: 'getCategoriesAndSubcategories',
             loader: getCategoriesAndSubcategoriesLoader,
             element: <GetCategoriesAndSubcategoriesPage />,
-          },
-          {
-            path: 'getAnalogueProducts',
-            action: getAnalogueProductsAction,
-            loader: getAnalogueProductsLoader,
           },
           {
             path: 'getCompareProducts',

@@ -10,12 +10,17 @@ import {
 import {
   Link,
   NavLink,
-  useFetcher,
   Form,
   useLocation,
   useSearchParams,
 } from 'react-router-dom';
 import classNames from 'classnames';
+import {
+  useGetCategoriesQuery,
+  useGetWishlistIdsQuery,
+  useGetCartIdsQuery,
+  useGetCompareIdsQuery,
+} from '../../queryAPI/queryAPI.js';
 import useScrollToTop from '../../hooks/useScrollToTop.jsx';
 import useHideScrollbarOnOpen from '../../hooks/useHideScrollbarOnOpen.jsx';
 import useOnResize from '../../hooks/useOnResize.jsx';
@@ -42,13 +47,7 @@ import Compare from '../../assets/images/icons/compare.svg';
 import Favorite from '../../assets/images/icons/favorite.svg';
 import Cart from '../../assets/images/icons/cart.svg';
 
-import { useGetCategoriesQuery } from '../../queryAPI/queryAPI.js';
-
 export default function Header() {
-  // const categoriesFetcher = useFetcher();
-  // const wishlistFetcher = useFetcher();
-  // const cartFetcher = useFetcher();
-  // const compareFetcher = useFetcher();
   const location = useLocation();
   const [searchParams] = useSearchParams();
 
@@ -149,43 +148,35 @@ export default function Header() {
 
   // fetcher functions
 
-  const { data } = useGetCategoriesQuery();
+  const { data: fetchedCategories } = useGetCategoriesQuery();
 
-  if (data && categories === null) {
-    setCategories(data.entities);
+  if (fetchedCategories && categories === null) {
+    setCategories(fetchedCategories.entities);
   }
 
-  // useFetcherLoad(categoriesFetcher, '/getCategoriesAndSubcategories');
+  const { data: fetchedWishlistIds } = useGetWishlistIdsQuery();
 
-  // if (categoriesFetcher.data) {
-  //   if (categoriesFetcher.data.categories !== categories) {
-  //     setCategories(categoriesFetcher.data.categories);
-  //   }
-  // }
+  if (fetchedWishlistIds) {
+    if (fetchedWishlistIds.length !== wishlistAmount) {
+      setWishlistAmount(fetchedWishlistIds.length);
+    }
+  }
 
-  // useFetcherLoad(wishlistFetcher, '/wishlist');
+  const { data: fetchedCartIds } = useGetCartIdsQuery();
 
-  // if (wishlistFetcher.data) {
-  //   if (wishlistFetcher.data.wishlistAmount !== wishlistAmount) {
-  //     setWishlistAmount(wishlistFetcher.data.wishlistAmount);
-  //   }
-  // }
+  if (fetchedCartIds) {
+    if (fetchedCartIds.length !== cartAmount) {
+      setCartAmount(fetchedCartIds.length);
+    }
+  }
 
-  // useFetcherLoad(cartFetcher, '/cart');
+  const { data: fetchedCompareIds } = useGetCompareIdsQuery();
 
-  // if (cartFetcher.data) {
-  //   if (cartFetcher.data.cartAmount !== cartAmount) {
-  //     setCartAmount(cartFetcher.data.cartAmount);
-  //   }
-  // }
-
-  // useFetcherLoad(compareFetcher, '/compare');
-
-  // if (compareFetcher.data) {
-  //   if (compareFetcher.data.compareAmount !== compareAmount) {
-  //     setCompareAmount(compareFetcher.data.compareAmount);
-  //   }
-  // }
+  if (fetchedCompareIds) {
+    if (fetchedCompareIds.length !== compareAmount) {
+      setCompareAmount(fetchedCompareIds.length);
+    }
+  }
 
   // searchBlock functions
 

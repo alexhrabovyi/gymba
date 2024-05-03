@@ -4,11 +4,22 @@ import {
   useState, useEffect, Suspense, useMemo, useRef, useCallback, useLayoutEffect,
 } from 'react';
 import {
-  useParams, useFetcher, Await, Link,
+  useParams, Await, Link,
 } from 'react-router-dom';
 import classNames from 'classnames';
+import {
+  useGetProductQuery,
+  useGetWishlistIdsQuery,
+  useAddWishlistIdMutation,
+  useDeleteWishlistIdMutation,
+  useGetCartIdsQuery,
+  useAddCartIdMutation,
+  useDeleteCartIdMutation,
+  useGetCompareIdsQuery,
+  useAddCompareIdMutation,
+  useDeleteCompareIdMutation,
+} from '../../queryAPI/queryAPI.js';
 import useOnResize from '../../hooks/useOnResize.jsx';
-import useFetcherLoad from '../../hooks/useFetcherLoad.jsx';
 import findAllInteractiveElements from '../../utils/findAllInteractiveElements.js';
 import Spinner from '../common/Spinner/Spinner.jsx';
 import DynamicImage from '../common/DynamicImage/DynamicImage.jsx';
@@ -33,11 +44,6 @@ import Compare from '../../assets/images/icons/compare.svg';
 import Line from '../../assets/images/icons/oblique.svg';
 
 export default function Product() {
-  const productFetcher = useFetcher();
-  const wishlistFetcher = useFetcher();
-  const cartFetcher = useFetcher();
-  const compareFetcher = useFetcher();
-
   const params = useParams();
 
   const descTabPanelRef = useRef();
@@ -60,10 +66,9 @@ export default function Product() {
 
   // setup functions
 
-  const fetchUrl = `/${params.categoryId}/${params.subcategoryId}/${params.productId}`;
+  const fetchUrl = `${params.categoryId}/${params.subcategoryId}/${params.productId}`;
 
-  const categoryId = productData?.categoryId;
-  const subcategoryId = productData?.subcategoryId;
+  const { categoryId, subcategoryId, productId } = params;
   const product = useMemo(() => productData?.product, [productData]);
 
   const getWindowWidth = useCallback(() => {
@@ -78,88 +83,55 @@ export default function Product() {
 
   // fetch functions
 
-  useFetcherLoad(productFetcher, fetchUrl);
+  const {
+    status,
+    data: fetchedProduct,
+    isLoading,
+    isFetching,
+  } = useGetProductQuery(fetchUrl);
 
-  if (productFetcher.data) {
-    if (productFetcher.data.product !== productData) {
-      setProductData(productFetcher.data.product);
+  if (status === 'fulfilled') {
+    if (fetchedProduct !== productData) {
+      setProductData(fetchedProduct);
     }
+  } else if (status === 'rejected') {
+    throw new Response(null, { status: 404 });
   }
 
-  useFetcherLoad(wishlistFetcher, '/wishlist');
+  const { data: wishlistFetcherData } = useGetWishlistIdsQuery();
 
-  if (wishlistFetcher.data && product) {
-    const productInWishlistFromFetcher = wishlistFetcher
-      .data.wishlistIds.find(([cId, subcId, pId]) => (
-        cId === categoryId && subcId === subcategoryId && pId === product.id
-      ));
-
-    if (productInWishlistFromFetcher !== productInWishlist) {
-      setProductInWishlist(productInWishlistFromFetcher);
-    }
-  }
-
-  useFetcherLoad(cartFetcher, '/cart');
-
-  if (cartFetcher.data && product) {
-    const productInCartFromFetcher = cartFetcher.data.cartIds.find((cId) => (
-      cId.categoryId === categoryId
-        && cId.subcategoryId === subcategoryId && cId.productId === product.id
+  if (wishlistFetcherData) {
+    const isInWishlistIdsList = !!wishlistFetcherData.find(([cId, subcId, pId]) => (
+      cId === categoryId && subcId === subcategoryId && pId === productId
     ));
 
-    if (productInCartFromFetcher !== productInCart) {
-      setProductInCart(productInCartFromFetcher);
+    if (productInWishlist !== isInWishlistIdsList) {
+      setProductInWishlist(isInWishlistIdsList);
     }
   }
 
-  useFetcherLoad(compareFetcher, '/compare');
+  const { data: cartFetcherData } = useGetCartIdsQuery();
 
-  if (compareFetcher.data && product) {
-    const productInCompareFromFetcher = compareFetcher
-      .data.compareIds.find(([cId, subcId, pId]) => (
-        cId === categoryId && subcId === subcategoryId && pId === product.id
-      ));
+  if (cartFetcherData) {
+    const isInCartIdsList = !!cartFetcherData.find((cId) => (cId.categoryId === categoryId
+      && cId.subcategoryId === subcategoryId && cId.productId === productId));
 
-    if (productInCompareFromFetcher !== productInCompare) {
-      setProductInCompare(productInCompareFromFetcher);
+    if (productInCart !== isInCartIdsList) {
+      setProductInCart(isInCartIdsList);
     }
   }
 
-  function optimisticWishlist() {
-    if (wishlistFetcher.state === 'loading') {
-      if (wishlistFetcher.formMethod === 'patch' && !productInWishlist) {
-        setProductInWishlist(true);
-      } else if (wishlistFetcher.formMethod === 'delete' && productInWishlist) {
-        setProductInWishlist(false);
-      }
+  const { data: compareFetcherData } = useGetCompareIdsQuery();
+
+  if (compareFetcherData) {
+    const isInCompareIdsList = !!compareFetcherData.find(([cId, subcId, pId]) => (
+      cId === categoryId && subcId === subcategoryId && pId === productId
+    ));
+
+    if (productInCompare !== isInCompareIdsList) {
+      setProductInCompare(isInCompareIdsList);
     }
   }
-
-  optimisticWishlist();
-
-  function optimisticCart() {
-    if (cartFetcher.state === 'loading') {
-      if (cartFetcher.formMethod === 'patch' && !productInCart) {
-        setProductInCart(true);
-      } else if (cartFetcher.formMethod === 'delete' && productInCart) {
-        setProductInCart(false);
-      }
-    }
-  }
-
-  optimisticCart();
-
-  function optimisticCompare() {
-    if (compareFetcher.state === 'loading') {
-      if (compareFetcher.formMethod === 'patch' && !productInCompare) {
-        setProductInCompare(true);
-      } else if (compareFetcher.formMethod === 'delete' && productInCompare) {
-        setProductInCompare(false);
-      }
-    }
-  }
-
-  optimisticCompare();
 
   // main slider functions
 
@@ -312,7 +284,7 @@ export default function Product() {
 
   useEffect(disableTabPanelElements, [disableTabPanelElements]);
 
-  // descritption and specs block
+  // description and specs block
 
   const descriptionBlock = useMemo(() => {
     if (!product || !product.description) return;
@@ -408,59 +380,35 @@ export default function Product() {
 
   // event functions
 
-  function wishlistButtonOnClick() {
-    const data = JSON.stringify([categoryId, subcategoryId, product.id]);
+  function sendMutationRequest(state, addMutationFunc, deleteMutationFunc) {
+    const body = JSON.stringify([categoryId, subcategoryId, product.id]);
 
-    if (!productInWishlist) {
-      wishlistFetcher.submit(data, {
-        action: '/wishlist',
-        method: 'PATCH',
-        encType: 'application/json',
-      });
+    if (!state) {
+      addMutationFunc(body);
     } else {
-      wishlistFetcher.submit(data, {
-        action: '/wishlist',
-        method: 'DELETE',
-        encType: 'application/json',
-      });
+      deleteMutationFunc(body);
     }
   }
+
+  const [addToWishlistRequest] = useAddWishlistIdMutation();
+  const [deleteFromWishlistRequest] = useDeleteWishlistIdMutation();
+
+  function wishlistButtonOnClick() {
+    sendMutationRequest(productInWishlist, addToWishlistRequest, deleteFromWishlistRequest);
+  }
+
+  const [addToCartRequest] = useAddCartIdMutation();
+  const [deleteFromCartRequest] = useDeleteCartIdMutation();
 
   function cartButtonOnClick() {
-    const data = JSON.stringify([categoryId, subcategoryId, product.id]);
-
-    if (!productInCart) {
-      cartFetcher.submit(data, {
-        action: '/cart',
-        method: 'PATCH',
-        encType: 'application/json',
-      });
-      setIsCartBannerActive(true);
-    } else {
-      cartFetcher.submit(data, {
-        action: '/cart',
-        method: 'DELETE',
-        encType: 'application/json',
-      });
-    }
+    sendMutationRequest(productInCart, addToCartRequest, deleteFromCartRequest);
   }
 
-  function compareButtonOnClick() {
-    const data = JSON.stringify([categoryId, subcategoryId, product.id]);
+  const [addToCompareRequest] = useAddCompareIdMutation();
+  const [deleteFromCompareRequest] = useDeleteCompareIdMutation();
 
-    if (!productInCompare) {
-      compareFetcher.submit(data, {
-        action: '/compare',
-        method: 'PATCH',
-        encType: 'application/json',
-      });
-    } else {
-      compareFetcher.submit(data, {
-        action: '/compare',
-        method: 'DELETE',
-        encType: 'application/json',
-      });
-    }
+  function compareButtonOnClick() {
+    sendMutationRequest(productInCompare, addToCompareRequest, deleteFromCompareRequest);
   }
 
   function askQuestionBtnOnClick() {
@@ -469,7 +417,12 @@ export default function Product() {
 
   return (
     <>
-      <main className={classNames(containerCls.container, productCls.main)}>
+      <main className={classNames(
+        containerCls.container,
+        productCls.main,
+        !isLoading && isFetching && productCls.main_inactive,
+      )}
+      >
         <h1 className={classNames(
           textCls.text,
           textCls.textFw800,
@@ -728,7 +681,7 @@ export default function Product() {
             <RelatedProducts
               categoryId={categoryId}
               subcategoryId={subcategoryId}
-              productId={product.id}
+              productId={productId}
             />
           </>
         ) : (

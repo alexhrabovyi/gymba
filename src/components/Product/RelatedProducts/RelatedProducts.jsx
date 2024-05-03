@@ -1,19 +1,17 @@
 import {
-  memo, useEffect, useMemo, useState, useCallback, useLayoutEffect,
+  memo, useMemo, useState, useCallback, useLayoutEffect,
 } from 'react';
-import { useFetcher } from 'react-router-dom';
 import classNames from 'classnames';
+import { useGetAnalogueProductsQuery } from '../../../queryAPI/queryAPI.js';
 import useOnResize from '../../../hooks/useOnResize.jsx';
 import ProductCard from '../../ProductCard/ProductCard.jsx';
 import Slider from '../../common/Slider/Slider.jsx';
 import BigPrevNextButton from '../../common/BigPrevNextButton/BigPrevNextButton.jsx';
+import ThreeDotsSpinnerBlock from '../../common/ThreeDotsSpinnerBlock/ThreeDotsSpinnerBlock.jsx';
 import textCls from '../../../scss/_text.module.scss';
 import relatedProductsCls from './RelatedProducts.module.scss';
 
 const RelatedProducts = memo(({ categoryId, subcategoryId, productId }) => {
-  const fetcher = useFetcher();
-
-  const [currentProductId, setCurrentProductId] = useState(productId);
   const [windowWidth, setWindowWidth] = useState(null);
   const [products, setProducts] = useState();
   const [activeSlideId, setActiveSlideId] = useState(0);
@@ -28,23 +26,15 @@ const RelatedProducts = memo(({ categoryId, subcategoryId, productId }) => {
 
   useOnResize(getWindowWidth);
 
-  useEffect(() => {
-    if ((fetcher.state === 'idle' && !products) || currentProductId !== productId) {
-      const data = JSON.stringify([categoryId, subcategoryId, productId]);
+  const fetchUrl = `${categoryId}/${subcategoryId}/${productId}`;
 
-      fetcher.submit(data, {
-        action: '../getAnalogueProducts',
-        method: 'POST',
-        encType: 'application/json',
-      });
+  const { data: fetchedProducts } = useGetAnalogueProductsQuery(fetchUrl);
 
-      setCurrentProductId(productId);
+  if (fetchedProducts) {
+    if (products !== fetchedProducts) {
+      setProducts(fetchedProducts);
     }
-  }, [fetcher, products, currentProductId, categoryId, subcategoryId, productId]);
-
-  useEffect(() => {
-    if (fetcher.data && fetcher.data !== products) setProducts(fetcher.data);
-  }, [fetcher, products]);
+  }
 
   const productSlides = useMemo(() => {
     if (!products) return [];
@@ -91,24 +81,30 @@ const RelatedProducts = memo(({ categoryId, subcategoryId, productId }) => {
         Аналоги
       </p>
       <div className={relatedProductsCls.sliderBlock}>
-        <Slider
-          activeSlideId={activeSlideId}
-          setActiveSlideId={setActiveSlideId}
-          slides={productSlides}
-          gap="0"
-          perView={perView}
-        />
-        <BigPrevNextButton
-          className={relatedProductsCls.prevBtn}
-          isInactive={activeSlideId === 0}
-          isPrev
-          onClick={() => setActiveSlideId((id) => id - 1)}
-        />
-        <BigPrevNextButton
-          className={relatedProductsCls.nextBtn}
-          isInactive={activeSlideId === (productSlides.length - perView || 0)}
-          onClick={() => setActiveSlideId((id) => id + 1)}
-        />
+        {products ? (
+          <>
+            <Slider
+              activeSlideId={activeSlideId}
+              setActiveSlideId={setActiveSlideId}
+              slides={productSlides}
+              gap="0"
+              perView={perView}
+            />
+            <BigPrevNextButton
+              className={relatedProductsCls.prevBtn}
+              isInactive={activeSlideId === 0}
+              isPrev
+              onClick={() => setActiveSlideId((id) => id - 1)}
+            />
+            <BigPrevNextButton
+              className={relatedProductsCls.nextBtn}
+              isInactive={activeSlideId === (productSlides.length - perView || 0)}
+              onClick={() => setActiveSlideId((id) => id + 1)}
+            />
+          </>
+        ) : (
+          <ThreeDotsSpinnerBlock />
+        )}
       </div>
     </article>
   );

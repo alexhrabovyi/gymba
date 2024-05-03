@@ -13,16 +13,16 @@ export default function Category() {
 
   const [category, setCategory] = useState(null);
 
-  const { data } = useGetCategoriesQuery();
+  const { data, status } = useGetCategoriesQuery();
 
-  if (data && category === null) {
+  if (status === 'fulfilled') {
     const fetchedCategory = data.entities[categoryIdFromParams];
 
     if (!fetchedCategory) {
       throw new Response(null, { status: 404 });
+    } else if (fetchedCategory !== category) {
+      setCategory(fetchedCategory);
     }
-
-    setCategory(fetchedCategory);
   }
 
   const categoryName = category?.name;

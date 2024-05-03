@@ -11,6 +11,8 @@ const tagTypes = [
   'wishlistIds',
   'cartIds',
   'compareIds',
+  'product',
+  'analogueProducts',
 ];
 
 function createPatchDeleteMutation(queryFn, invalidatedTags, updateQueryFn) {
@@ -182,6 +184,14 @@ export const queryAPI = createApi(
           ),
         ),
       ),
+      getProduct: builder.query({
+        query: (partialUrl) => `/getProduct/${partialUrl}`,
+        providesTags: ['product'],
+      }),
+      getAnalogueProducts: builder.query({
+        query: (partialUrl) => `/getAnalogueProducts/${partialUrl}`,
+        providesTags: ['analogueProducts'],
+      }),
     }),
   },
 );
@@ -199,4 +209,6 @@ export const {
   useGetCompareIdsQuery,
   useAddCompareIdMutation,
   useDeleteCompareIdMutation,
+  useGetProductQuery,
+  useGetAnalogueProductsQuery,
 } = queryAPI;
