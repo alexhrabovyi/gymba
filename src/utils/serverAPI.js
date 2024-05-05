@@ -8,6 +8,7 @@ import {
   getWishlistIds,
   addIdToWishlist,
   deleteIdFromWishlist,
+  getWishlistProductsPerPageAndPageAmount,
   getCartIds,
   addIdToCart,
   deleteFromCart,
@@ -18,7 +19,7 @@ import {
   getAnalogueProducts,
 } from './dataAPI';
 
-async function addDeleteMutation(request, mutationFunc) {
+async function addOrDeleteMutation(request, mutationFunc) {
   const [categoryId, subcategoryId, productId] = await request.json();
 
   const response = await mutationFunc(categoryId, subcategoryId, productId);
@@ -46,22 +47,27 @@ export const handlers = [
 
     return HttpResponse.json(wishlistIds);
   }),
-  http.patch('/fakeAPI/wishlistIds', async ({ request }) => addDeleteMutation(request, addIdToWishlist)),
-  http.delete('/fakeAPI/wishlistIds', async ({ request }) => addDeleteMutation(request, deleteIdFromWishlist)),
+  http.patch('/fakeAPI/wishlistIds', async ({ request }) => addOrDeleteMutation(request, addIdToWishlist)),
+  http.delete('/fakeAPI/wishlistIds', async ({ request }) => addOrDeleteMutation(request, deleteIdFromWishlist)),
+  http.get('/fakeAPI/getWishlistProducts', async ({ request }) => {
+    const pageNum = new URL(request.url).searchParams.get('page');
+
+    return getWishlistProductsPerPageAndPageAmount(+pageNum);
+  }),
   http.get('/fakeAPI/cartIds', async () => {
     const cartIds = await getCartIds();
 
     return HttpResponse.json(cartIds);
   }),
-  http.patch('/fakeAPI/cartIds', async ({ request }) => addDeleteMutation(request, addIdToCart)),
-  http.delete('/fakeAPI/cartIds', async ({ request }) => addDeleteMutation(request, deleteFromCart)),
+  http.patch('/fakeAPI/cartIds', async ({ request }) => addOrDeleteMutation(request, addIdToCart)),
+  http.delete('/fakeAPI/cartIds', async ({ request }) => addOrDeleteMutation(request, deleteFromCart)),
   http.get('/fakeAPI/compareIds', async () => {
     const cartIds = await getCompareIds();
 
     return HttpResponse.json(cartIds);
   }),
-  http.patch('/fakeAPI/compareIds', async ({ request }) => addDeleteMutation(request, addIdToCompare)),
-  http.delete('/fakeAPI/compareIds', async ({ request }) => addDeleteMutation(request, deleteFromCompare)),
+  http.patch('/fakeAPI/compareIds', async ({ request }) => addOrDeleteMutation(request, addIdToCompare)),
+  http.delete('/fakeAPI/compareIds', async ({ request }) => addOrDeleteMutation(request, deleteFromCompare)),
   http.get('/fakeAPI/getProduct/:categoryId/:subcategoryId/:productId', async ({ params }) => {
     const { categoryId, subcategoryId, productId } = params;
 

@@ -1,7 +1,7 @@
-import { useMemo, useState } from 'react';
-import { useFetcher } from 'react-router-dom';
+import { useCallback, useMemo, useState } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import classNames from 'classnames';
-import useFetcherLoad from '../../hooks/useFetcherLoad.jsx';
+import { useGetWishlistProductsQuery } from '../../queryAPI/queryAPI.js';
 import ProductCard from '../ProductCard/ProductCard.jsx';
 import ThreeDotsSpinnerBlock from '../common/ThreeDotsSpinnerBlock/ThreeDotsSpinnerBlock.jsx';
 import PaginationBlock from '../PaginationBlock/PaginationBlock.jsx';
@@ -11,41 +11,90 @@ import wishlistCls from './Wishlist.module.scss';
 import BinIcon from '../../assets/images/icons/bin.svg';
 import Line from '../../assets/images/icons/oblique.svg';
 
+import { useDispatch } from 'react-redux';
+import { queryAPI } from '../../queryAPI/queryAPI.js';
+
 export default function Wishlist() {
-  const wishlistFetcher = useFetcher();
+  const [searchParams, setSearchParams] = useSearchParams();
+  const dispatch = useDispatch();
 
-  const [fetcherData, setFetcherData] = useState(null);
+  const [wishlistProducts, setWishlistProducts] = useState(null);
+  const [pageAmount, setPageAmount] = useState(1);
+  const [prevPageNum, setPrevPageNum] = useState();
 
-  const wishlistProducts = useMemo(() => fetcherData?.wishlistProducts, [fetcherData]);
-  const pageAmount = fetcherData?.pageAmount;
+  const currentPageNum = +searchParams.get('page') || 1;
 
-  useFetcherLoad(wishlistFetcher, '/wishlist');
+  const { data: fetcherData, isFetching, isLoading } = useGetWishlistProductsQuery(currentPageNum);
 
-  if (wishlistFetcher.data) {
-    if (wishlistFetcher.data.wishlistProductsPerPageAndPageAmount !== fetcherData) {
-      setFetcherData(wishlistFetcher.data.wishlistProductsPerPageAndPageAmount);
+  if (fetcherData) {
+    if (wishlistProducts !== fetcherData.wishlistProducts) {
+      setWishlistProducts(fetcherData.wishlistProducts);
+    }
+
+    if (pageAmount !== fetcherData.pageAmount) {
+      setPageAmount(fetcherData.pageAmount);
     }
   }
 
-  function optimisticDeleteAll() {
-    if (wishlistFetcher.state === 'loading'
-      && wishlistFetcher.formMethod === 'delete'
-      && wishlistProducts.length
-    ) {
-      setFetcherData({ wishlistProducts: [] });
+  function checkIsLoadingNextPageNum() {
+    if (prevPageNum !== currentPageNum && isFetching && !isLoading) {
+      return true;
+    }
+
+    if (prevPageNum !== currentPageNum && !isFetching) {
+      if (prevPageNum !== currentPageNum) {
+        setPrevPageNum(currentPageNum);
+      }
+      return false;
     }
   }
 
-  optimisticDeleteAll();
+  const isLoadingNextPageNum = checkIsLoadingNextPageNum();
 
-  function deleteBtnOnClick() {
-    const data = JSON.stringify('');
+  const productOnAddDeleteButton = useCallback((categoryId, subcategoryId, productId) => {
+    dispatch(queryAPI.util.updateQueryData('getWishlistProducts', currentPageNum, (draft) => {
+      const products = draft.wishlistProducts;
 
-    wishlistFetcher.submit(data, {
-      method: 'DELETE',
-      encType: 'application/json',
-    });
+      const index = products.findIndex((pObj) => (pObj.categoryId === categoryId
+        && pObj.subcategoryId === subcategoryId
+        && pObj.product.id === productId));
+
+      products.splice(index, 1);
+    }));
+  }, [dispatch, currentPageNum]);
+
+  function changePageWhenLastProductDeleted() {
+    if (wishlistProducts?.length === 0 && pageAmount !== 1) {
+      console.log(true);
+
+      if (currentPageNum <= pageAmount) {
+        searchParams.set('page', pageAmount - 1);
+        setSearchParams(searchParams);
+      }
+    }
   }
+
+  changePageWhenLastProductDeleted();
+
+  // function optimisticDeleteAll() {
+  //   if (wishlistFetcher.state === 'loading'
+  //     && wishlistFetcher.formMethod === 'delete'
+  //     && wishlistProducts.length
+  //   ) {
+  //     setFetcherData({ wishlistProducts: [] });
+  //   }
+  // }
+
+  // optimisticDeleteAll();
+
+  // function deleteBtnOnClick() {
+  //   const data = JSON.stringify('');
+
+  //   wishlistFetcher.submit(data, {
+  //     method: 'DELETE',
+  //     encType: 'application/json',
+  //   });
+  // }
 
   const products = useMemo(() => {
     if (!wishlistProducts) return;
@@ -60,9 +109,10 @@ export default function Wishlist() {
         price={wP.product.price}
         oldPrice={wP.product.oldPrice}
         isShortCard
+        wishlistMutationFunc={productOnAddDeleteButton}
       />
     ));
-  }, [wishlistProducts]);
+  }, [wishlistProducts, productOnAddDeleteButton]);
 
   return (
     <main
@@ -87,7 +137,7 @@ export default function Wishlist() {
         <button
           type="button"
           className={wishlistCls.deleteBtn}
-          onClick={deleteBtnOnClick}
+          // onClick={deleteBtnOnClick}
           aria-label="Видалити все"
         >
           <BinIcon
@@ -97,7 +147,11 @@ export default function Wishlist() {
         </button>
         )}
       </div>
-      <div className={wishlistCls.productBlock}>
+      <div className={classNames(
+        wishlistCls.productBlock,
+        isLoadingNextPageNum && wishlistCls.productBlock_inactive,
+      )}
+      >
         {products ? (
           products.length > 0 ? products : (
             <div className={wishlistCls.noProductBlock}>
@@ -129,11 +183,13 @@ export default function Wishlist() {
           />
         )}
       </div>
-      <div className={wishlistCls.paginationBlock}>
-        <PaginationBlock
-          pageAmount={pageAmount}
-        />
-      </div>
+      {products && (
+        <div className={wishlistCls.paginationBlock}>
+          <PaginationBlock
+            pageAmount={pageAmount}
+          />
+        </div>
+      )}
     </main>
   );
 }

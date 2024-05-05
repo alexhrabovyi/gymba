@@ -82,6 +82,11 @@
   @include media-s {
     grid-template-columns: repeat(2, 1fr);
   }
+
+  &_inactive {
+    opacity: 0.5;
+    pointer-events: none;
+  }
 }
 
 .noProductBlock {

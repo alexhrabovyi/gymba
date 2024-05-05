@@ -27,7 +27,7 @@ import Cart from '../../assets/images/icons/cart.svg';
 import Mark from '../../assets/images/icons/mark.svg';
 
 const ProductCard = memo(({
-  name, categoryId, subcategoryId, productId, price, oldPrice, isShortCard,
+  name, categoryId, subcategoryId, productId, price, oldPrice, isShortCard, wishlistMutationFunc,
 }) => {
   const [imgSrc] = useState(() => import(`../../assets/images/productImgs/${productId}.webp`));
   const [productInWishlist, setProductInWishlist] = useState(false);
@@ -84,6 +84,10 @@ const ProductCard = memo(({
 
   function wishlistButtonOnClick() {
     sendMutationRequest(productInWishlist, addToWishlistRequest, deleteFromWishlistRequest);
+
+    if (wishlistMutationFunc) {
+      wishlistMutationFunc(categoryId, subcategoryId, productId);
+    }
   }
 
   const [addToCartRequest] = useAddCartIdMutation();

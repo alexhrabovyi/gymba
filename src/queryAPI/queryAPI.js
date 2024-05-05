@@ -9,6 +9,7 @@ const tagTypes = [
   'news',
   'subcategoryProducts',
   'wishlistIds',
+  'wishlistProducts',
   'cartIds',
   'compareIds',
   'product',
@@ -32,6 +33,7 @@ function createPatchDeleteMutation(queryFn, invalidatedTags, updateQueryFn) {
 
 export const queryAPI = createApi(
   {
+    keepUnusedDataFor: 0,
     reducerPath: 'globalData',
     baseQuery: fetchBaseQuery({ baseUrl: '/fakeAPI' }),
     tagTypes,
@@ -65,7 +67,7 @@ export const queryAPI = createApi(
             method: 'PATCH',
             body,
           }),
-          [{ type: 'wishlistIds', id: 'LIST' }],
+          [{ type: 'wishlistIds', id: 'LIST' }, 'wishlistProducts'],
           (args) => (
             queryAPI.util.updateQueryData('getWishlistIds', undefined, (draft) => {
               const parsedBody = JSON.parse(args);
@@ -81,7 +83,7 @@ export const queryAPI = createApi(
             method: 'DELETE',
             body,
           }),
-          [{ type: 'wishlistIds', id: 'LIST' }],
+          [{ type: 'wishlistIds', id: 'LIST' }, 'wishlistProducts'],
           (args) => (
             queryAPI.util.updateQueryData('getWishlistIds', undefined, (draft) => {
               const [categoryId, subcategoryId, productId] = JSON.parse(args);
@@ -95,6 +97,10 @@ export const queryAPI = createApi(
           ),
         ),
       ),
+      getWishlistProducts: builder.query({
+        query: (page) => `/getWishlistProducts?page=${page}`,
+        providesTags: ['wishlistProducts'],
+      }),
       getCartIds: builder.query({
         query: () => '/cartIds',
         providesTags: [{ type: 'cartIds', id: 'LIST' }],
@@ -203,6 +209,7 @@ export const {
   useGetWishlistIdsQuery,
   useAddWishlistIdMutation,
   useDeleteWishlistIdMutation,
+  useGetWishlistProductsQuery,
   useGetCartIdsQuery,
   useAddCartIdMutation,
   useDeleteCartIdMutation,
