@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 import { createEntityAdapter } from '@reduxjs/toolkit';
 
@@ -33,7 +34,7 @@ function createPatchDeleteMutation(queryFn, invalidatedTags, updateQueryFn) {
 
 export const queryAPI = createApi(
   {
-    keepUnusedDataFor: 0,
+    // keepUnusedDataFor: 0,
     reducerPath: 'globalData',
     baseQuery: fetchBaseQuery({ baseUrl: '/fakeAPI' }),
     tagTypes,
@@ -93,6 +94,21 @@ export const queryAPI = createApi(
                 && draftPId === productId
               ));
               draft.splice(index, 1);
+            })
+          ),
+        ),
+      ),
+      deleteAllWishlistIds: builder.mutation(
+        createPatchDeleteMutation(
+          () => ({
+            url: '/wishlistIds',
+            method: 'DELETE',
+            body: JSON.stringify({ deleteAll: true }),
+          }),
+          [{ type: 'wishlistIds', id: 'LIST' }, 'wishlistProducts'],
+          () => (
+            queryAPI.util.updateQueryData('getWishlistIds', undefined, (draft) => {
+              draft = [];
             })
           ),
         ),
@@ -209,6 +225,7 @@ export const {
   useGetWishlistIdsQuery,
   useAddWishlistIdMutation,
   useDeleteWishlistIdMutation,
+  useDeleteAllWishlistIdsMutation,
   useGetWishlistProductsQuery,
   useGetCartIdsQuery,
   useAddCartIdMutation,

@@ -1,8 +1,10 @@
 import { useCallback, useMemo, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
+import { useDispatch } from 'react-redux';
 import classNames from 'classnames';
-import { useGetWishlistProductsQuery } from '../../queryAPI/queryAPI.js';
+import { queryAPI, useGetWishlistProductsQuery, useDeleteAllWishlistIdsMutation } from '../../queryAPI/queryAPI.js';
 import ProductCard from '../ProductCard/ProductCard.jsx';
+import SkeletonProductCard from '../SkeletonProductCard/SkeletonProductCard.jsx';
 import ThreeDotsSpinnerBlock from '../common/ThreeDotsSpinnerBlock/ThreeDotsSpinnerBlock.jsx';
 import PaginationBlock from '../PaginationBlock/PaginationBlock.jsx';
 import containerCls from '../../scss/_container.module.scss';
@@ -11,45 +13,21 @@ import wishlistCls from './Wishlist.module.scss';
 import BinIcon from '../../assets/images/icons/bin.svg';
 import Line from '../../assets/images/icons/oblique.svg';
 
-import { useDispatch } from 'react-redux';
-import { queryAPI } from '../../queryAPI/queryAPI.js';
-
 export default function Wishlist() {
   const [searchParams, setSearchParams] = useSearchParams();
   const dispatch = useDispatch();
 
   const [wishlistProducts, setWishlistProducts] = useState(null);
+  const [totalProductAmount, setTotalProductAmount] = useState(null);
   const [pageAmount, setPageAmount] = useState(1);
-  const [prevPageNum, setPrevPageNum] = useState();
+  const [prevPageNum, setPrevPageNum] = useState(null);
 
+  const [deleteAllWishlistIds] = useDeleteAllWishlistIdsMutation();
+
+  const perView = 12;
   const currentPageNum = +searchParams.get('page') || 1;
 
-  const { data: fetcherData, isFetching, isLoading } = useGetWishlistProductsQuery(currentPageNum);
-
-  if (fetcherData) {
-    if (wishlistProducts !== fetcherData.wishlistProducts) {
-      setWishlistProducts(fetcherData.wishlistProducts);
-    }
-
-    if (pageAmount !== fetcherData.pageAmount) {
-      setPageAmount(fetcherData.pageAmount);
-    }
-  }
-
-  function checkIsLoadingNextPageNum() {
-    if (prevPageNum !== currentPageNum && isFetching && !isLoading) {
-      return true;
-    }
-
-    if (prevPageNum !== currentPageNum && !isFetching) {
-      if (prevPageNum !== currentPageNum) {
-        setPrevPageNum(currentPageNum);
-      }
-      return false;
-    }
-  }
-
-  const isLoadingNextPageNum = checkIsLoadingNextPageNum();
+  // event functions
 
   const productOnAddDeleteButton = useCallback((categoryId, subcategoryId, productId) => {
     dispatch(queryAPI.util.updateQueryData('getWishlistProducts', currentPageNum, (draft) => {
@@ -60,15 +38,45 @@ export default function Wishlist() {
         && pObj.product.id === productId));
 
       products.splice(index, 1);
+
+      draft.totalProductAmount -= 1;
     }));
   }, [dispatch, currentPageNum]);
 
+  function deleteAllBtnOnClick() {
+    deleteAllWishlistIds();
+
+    dispatch(queryAPI.util.updateQueryData('getWishlistProducts', currentPageNum, (draft) => {
+      draft.wishlistProducts = [];
+      draft.pageAmount = 0;
+      draft.totalProductAmount = 0;
+    }));
+  }
+
+  // fetch functions
+
+  const { data: fetcherData, isFetching, isLoading } = useGetWishlistProductsQuery(currentPageNum);
+
+  if (fetcherData) {
+    if (wishlistProducts !== fetcherData.wishlistProducts) {
+      setWishlistProducts(fetcherData.wishlistProducts);
+    }
+
+    if (totalProductAmount !== fetcherData.totalProductAmount) {
+      setTotalProductAmount(fetcherData.totalProductAmount);
+    }
+
+    if (pageAmount !== fetcherData.pageAmount) {
+      setPageAmount(fetcherData.pageAmount);
+    }
+  }
+
+  // setup functions
+
   function changePageWhenLastProductDeleted() {
     if (wishlistProducts?.length === 0 && pageAmount !== 1) {
-      console.log(true);
-
-      if (currentPageNum <= pageAmount) {
-        searchParams.set('page', pageAmount - 1);
+      if (currentPageNum <= pageAmount && currentPageNum !== 1) {
+        searchParams.set('page', currentPageNum - 1);
         setSearchParams(searchParams);
       }
     }
@@ -76,25 +84,18 @@ export default function Wishlist() {
 
   changePageWhenLastProductDeleted();
 
-  // function optimisticDeleteAll() {
-  //   if (wishlistFetcher.state === 'loading'
-  //     && wishlistFetcher.formMethod === 'delete'
-  //     && wishlistProducts.length
-  //   ) {
-  //     setFetcherData({ wishlistProducts: [] });
-  //   }
-  // }
+  function checkIsLoadingNextPageNum() {
+    if (!isLoading && isFetching && prevPageNum !== currentPageNum) {
+      return true;
+    }
 
-  // optimisticDeleteAll();
+    if (!isFetching && prevPageNum !== currentPageNum) {
+      setPrevPageNum(currentPageNum);
+      return false;
+    }
+  }
 
-  // function deleteBtnOnClick() {
-  //   const data = JSON.stringify('');
-
-  //   wishlistFetcher.submit(data, {
-  //     method: 'DELETE',
-  //     encType: 'application/json',
-  //   });
-  // }
+  const isLoadingNextPageNum = checkIsLoadingNextPageNum();
 
   const products = useMemo(() => {
     if (!wishlistProducts) return;
@@ -113,6 +114,25 @@ export default function Wishlist() {
       />
     ));
   }, [wishlistProducts, productOnAddDeleteButton]);
+
+  function addSkeletonProduct() {
+    products.push(<SkeletonProductCard />);
+  }
+
+  function isSkeletonProductNeeded() {
+    if (!products) return;
+
+    if (products.length < perView && !checkIsLoadingNextPageNum()) {
+      const lastCardOnPageIndex = currentPageNum * perView - 1;
+      return totalProductAmount > lastCardOnPageIndex;
+    }
+
+    return false;
+  }
+
+  if (isSkeletonProductNeeded()) {
+    addSkeletonProduct();
+  }
 
   return (
     <main
@@ -137,7 +157,7 @@ export default function Wishlist() {
         <button
           type="button"
           className={wishlistCls.deleteBtn}
-          // onClick={deleteBtnOnClick}
+          onClick={deleteAllBtnOnClick}
           aria-label="Видалити все"
         >
           <BinIcon

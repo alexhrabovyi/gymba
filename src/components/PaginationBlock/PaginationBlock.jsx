@@ -1,7 +1,7 @@
 import {
   memo, useState, Fragment, useCallback, useLayoutEffect, useEffect, useRef,
 } from 'react';
-import { useNavigation, useSearchParams } from 'react-router-dom';
+import { useSearchParams } from 'react-router-dom';
 import classNames from 'classnames';
 import paginationCls from './PaginationBlock.module.scss';
 import ThreeDots from './images/threeDots.svg';
@@ -9,7 +9,6 @@ import useOnResize from '../../hooks/useOnResize.jsx';
 
 const PaginationBlock = memo(({ pageAmount }) => {
   const [searchParams, setSearchParams] = useSearchParams();
-  const navigation = useNavigation();
 
   const formRef = useRef(null);
 
@@ -39,23 +38,19 @@ const PaginationBlock = memo(({ pageAmount }) => {
     setSearchParams(searchParams);
   }
 
-  const onNavigation = useCallback(() => {
-    if (navigation.state === 'loading') {
-      const urlSearchParams = new URLSearchParams(navigation.location.search);
+  const onBackForward = useCallback(() => {
+    if (searchParams.has('page')) {
+      const searchParamValue = +searchParams.get('page');
 
-      if (urlSearchParams.has('page')) {
-        const searchParamValue = +urlSearchParams.get('page');
-
-        if (searchParamValue !== currentPageNum) {
-          setCurrentPageNum(searchParamValue);
-        }
-      } else if (currentPageNum !== 1) {
-        setCurrentPageNum(1);
+      if (searchParamValue !== currentPageNum) {
+        setCurrentPageNum(searchParamValue);
       }
+    } else if (currentPageNum !== 1) {
+      setCurrentPageNum(1);
     }
-  }, [navigation, currentPageNum]);
+  }, [searchParams, currentPageNum]);
 
-  useEffect(onNavigation, [onNavigation]);
+  useEffect(onBackForward, [onBackForward]);
 
   function formOnSubmit(e) {
     e.preventDefault();

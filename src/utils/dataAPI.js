@@ -374,7 +374,15 @@ export function deleteIdFromWishlist(categoryId, subcategoryId, productId) {
   return deleteIdFromStorage('wishlistIds', findFunction);
 }
 
-export function getAllWishlistProducts() {
+export async function deleteAllFromWishlist() {
+  await fakeNetwork();
+
+  localStorage.removeItem('wishlistIds');
+
+  return new Response(null, { status: 200, statusText: 'OK' });
+}
+
+function getAllWishlistProducts() {
   const wishlistIds = getLocalStorageIds('wishlistIds');
 
   const wishlistProducts = wishlistIds.map(([cId, subcId, pId]) => (
@@ -386,7 +394,7 @@ export function getAllWishlistProducts() {
 export async function getWishlistProductsPerPageAndPageAmount(pageNum) {
   await fakeNetwork();
 
-  const perView = 4;
+  const perView = 12;
   const allWishlistProducts = getAllWishlistProducts();
   const wishlistProductsAmount = allWishlistProducts.length;
   const pageAmount = getPageAmount(wishlistProductsAmount, perView);
@@ -399,6 +407,7 @@ export async function getWishlistProductsPerPageAndPageAmount(pageNum) {
   const wishlistProducts = allWishlistProducts.slice(firstPageProduct, lastPageProduct);
 
   const body = JSON.stringify({
+    totalProductAmount: wishlistProductsAmount,
     wishlistProducts,
     pageAmount,
   });
@@ -519,16 +528,6 @@ export async function getRandomProduct() {
     subcategoryId: subcategory.id,
     product: randomProduct,
   };
-}
-
-export function deleteAllFromWishlist() {
-  localStorage.removeItem('wishlistIds');
-}
-
-export async function getWishlistAmount() {
-  const wishlistIds = await getWishlistIds();
-
-  return wishlistIds.length;
 }
 
 export function deleteAllFromCart() {
