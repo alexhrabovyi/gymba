@@ -14,7 +14,6 @@ import ProductPageLazy from '../pages/Product/Product.lazy.jsx';
 import WishlistPageLazy from '../pages/Wishlist/Wishlist.lazy.jsx';
 import CartPageLazy from '../pages/Cart/Cart.lazy.jsx';
 import ComparePageLazy from '../pages/Compare/Compare.lazy.jsx';
-import { loader as compareLoader, action as compareAction } from '../pages/Compare/CompareUtils.jsx';
 import DeliveryPageLazy from '../pages/Delivery/Delivery.lazy.jsx';
 import PaymentPageLazy from '../pages/Payment/Payment.lazy.jsx';
 import ContactsPageLazy from '../pages/Contacts/Contact.lazy.jsx';
@@ -25,7 +24,6 @@ import { loader as newsArticleLoader } from '../pages/NewsArticle/NewsArticleUti
 import SearchPageLazy from '../pages/Search/Search.lazy.jsx';
 import { loader as getSearchPageLoader } from '../pages/Search/SearchUtils.jsx';
 import { GetCategoriesAndSubcategoriesPage, loader as getCategoriesAndSubcategoriesLoader } from '../pages/GetCategoriesAndSubcategories/GetCategoriesAndSubcategories.jsx';
-import { GetCompareProductsPage, loader as getCompareProductsLoader } from '../pages/GetCompareProducts/GetCompareProducts.jsx';
 import { GetRandomProductPage, loader as getRandomProductLoader } from '../pages/GetRandomProduct/GetRandomProduct.jsx';
 
 const router = createHashRouter([
@@ -61,8 +59,6 @@ const router = createHashRouter([
           },
           {
             path: 'compare',
-            loader: compareLoader,
-            action: compareAction,
             element: <ComparePageLazy />,
           },
           {
@@ -96,11 +92,6 @@ const router = createHashRouter([
             path: 'getCategoriesAndSubcategories',
             loader: getCategoriesAndSubcategoriesLoader,
             element: <GetCategoriesAndSubcategoriesPage />,
-          },
-          {
-            path: 'getCompareProducts',
-            loader: getCompareProductsLoader,
-            element: <GetCompareProductsPage />,
           },
           {
             path: 'getRandomProduct',

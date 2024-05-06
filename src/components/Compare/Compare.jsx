@@ -1,9 +1,8 @@
 import {
   useState, useMemo, useEffect, useCallback, Fragment, useRef,
 } from 'react';
-import { useFetcher } from 'react-router-dom';
 import classNames from 'classnames';
-import useFetcherLoad from '../../hooks/useFetcherLoad.jsx';
+import { useGetCompareSubcategoriesQuery, useGetCompareProductsQuery } from '../../queryAPI/queryAPI.js';
 import ProductCard from '../ProductCard/ProductCard.jsx';
 import containerCls from '../../scss/_container.module.scss';
 import textCls from '../../scss/_text.module.scss';
@@ -15,157 +14,137 @@ import Line from '../../assets/images/icons/oblique.svg';
 import ThreeDotsSpinnerBlock from '../common/ThreeDotsSpinnerBlock/ThreeDotsSpinnerBlock.jsx';
 
 export default function Compare() {
-  // const { compareSubcategoriesBtnInfo } = useLoaderData();
-  const compareFetcher = useFetcher();
-  const getCompareProductsFetcher = useFetcher();
-
   const productBlockRef = useRef();
   const specsTableRef = useRef();
 
-  const [compareFetcherData, setCompareFetcherData] = useState(null);
+  const [compareSubcategories, setCompareSubcategories] = useState(null);
   const [activeSubcategoryId, setActiveSubcategoryId] = useState(null);
-  const [searchParamsString, setSearchParamsString] = useState(null);
-  const [prevSearchParamsString, setPrevSearchParamsString] = useState(null);
-  const [productCardObjs, setProductCardObjs] = useState(null);
+  const [productObjs, setProductObjs] = useState(null);
   const [displayedSpecsType, setDisplayedSpecsType] = useState('all');
 
   // basic setup functions
 
-  const initialActiveSubcategoryIdSetup = useCallback(() => {
-    if (activeSubcategoryId === null && compareFetcherData) {
-      setActiveSubcategoryId(compareFetcherData[0]?.subcategoryId);
-    }
-  }, [activeSubcategoryId, compareFetcherData]);
-
-  useEffect(initialActiveSubcategoryIdSetup, [initialActiveSubcategoryIdSetup]);
-
-  const activeSubcategoryBtnIndex = compareFetcherData
-    ?.findIndex(({ subcategoryId }) => subcategoryId === activeSubcategoryId);
-  const activeSubcategoryCategory = (
-    compareFetcherData?.[activeSubcategoryBtnIndex]?.categoryId
-  );
-
-  const updateActiveSubcategoryId = useCallback(() => {
-    if (!compareFetcherData) return;
-
-    const isActiveSubcategoryStillExist = compareFetcherData
-      .find(({ subcategoryId }) => subcategoryId === activeSubcategoryId);
-
-    if (!isActiveSubcategoryStillExist && compareFetcherData) {
-      setActiveSubcategoryId(compareFetcherData[0]?.subcategoryId);
-    }
-  }, [compareFetcherData, activeSubcategoryId]);
-
-  useEffect(updateActiveSubcategoryId, [updateActiveSubcategoryId]);
-
-  function setupSearchParamsString() {
-    if (activeSubcategoryId !== null) {
-      const newSearchParamsString = new URLSearchParams({
-        categoryId: activeSubcategoryCategory,
-        subcategoryId: activeSubcategoryId,
-      }).toString();
-
-      if (newSearchParamsString !== searchParamsString) {
-        setSearchParamsString(newSearchParamsString);
-      }
-
-      if (prevSearchParamsString === null) {
-        setPrevSearchParamsString(newSearchParamsString);
-      }
+  function initialActiveSubcategoryIdSetup() {
+    if (activeSubcategoryId === null && compareSubcategories) {
+      setActiveSubcategoryId(compareSubcategories[0]?.subcategoryId);
     }
   }
 
-  setupSearchParamsString();
+  initialActiveSubcategoryIdSetup();
+
+  const activeSubcategoryBtnIndex = compareSubcategories
+    ?.findIndex(({ subcategoryId }) => subcategoryId === activeSubcategoryId);
+  const activeSubcategoryCategoryId = (
+    compareSubcategories?.[activeSubcategoryBtnIndex]?.categoryId
+  );
+
+  // const updateActiveSubcategoryId = useCallback(() => {
+  //   if (!compareSubcategories) return;
+
+  //   const isActiveSubcategoryStillExist = compareSubcategories
+  //     .find(({ subcategoryId }) => subcategoryId === activeSubcategoryId);
+
+  //   if (!isActiveSubcategoryStillExist && compareSubcategories) {
+  //     setActiveSubcategoryId(compareSubcategories[0]?.subcategoryId);
+  //   }
+  // }, [compareSubcategories, activeSubcategoryId]);
+
+  // useEffect(updateActiveSubcategoryId, [updateActiveSubcategoryId]);
+
+  // needs to check
+  function updateActiveSubcategoryIdOnDelete() {
+    if (!compareSubcategories) return;
+
+    const isActiveSubcategoryStillExist = compareSubcategories
+      .find(({ subcategoryId }) => subcategoryId === activeSubcategoryId);
+
+    if (!isActiveSubcategoryStillExist && compareSubcategories) {
+      setActiveSubcategoryId(compareSubcategories[0]?.subcategoryId);
+    }
+  }
+
+  updateActiveSubcategoryIdOnDelete();
 
   const resetScrollLeftOnNewCards = useCallback(() => {
-    if (productCardObjs?.length) {
+    if (productObjs?.length) {
       productBlockRef.current.scrollLeft = 0;
       specsTableRef.current.scrollLeft = 0;
     }
-  }, [productCardObjs]);
+  }, [productObjs]);
 
   useEffect(resetScrollLeftOnNewCards, [resetScrollLeftOnNewCards]);
 
   // fetch functions
 
-  useFetcherLoad(compareFetcher, '/compare');
+  const { data: fetchedCompareSubcategories } = useGetCompareSubcategoriesQuery();
 
-  if (compareFetcher.data) {
-    if (compareFetcher.data.compareSubcategoriesBtnInfo !== compareFetcherData) {
-      setCompareFetcherData(compareFetcher.data.compareSubcategoriesBtnInfo);
+  if (fetchedCompareSubcategories) {
+    if (compareSubcategories !== fetchedCompareSubcategories) {
+      setCompareSubcategories(fetchedCompareSubcategories);
     }
   }
 
-  const initialRequestCompareProducts = useCallback(() => {
-    if (getCompareProductsFetcher.state === 'idle' && !getCompareProductsFetcher.data
-      && searchParamsString !== null) {
-      const action = `/getCompareProducts?${searchParamsString}`;
+  const shouldSkip = !activeSubcategoryCategoryId;
+  const requestObj = useMemo(() => ({
+    categoryId: activeSubcategoryCategoryId,
+    subcategoryId: activeSubcategoryId,
+  }), [activeSubcategoryCategoryId, activeSubcategoryId]);
 
-      getCompareProductsFetcher.load(action);
-    }
-  }, [getCompareProductsFetcher, searchParamsString]);
+  const { data: fetchedProducts } = useGetCompareProductsQuery(requestObj, { skip: shouldSkip });
 
-  useEffect(initialRequestCompareProducts, [initialRequestCompareProducts]);
-
-  const requestCompareProducts = useCallback(() => {
-    if (prevSearchParamsString !== searchParamsString) {
-      setPrevSearchParamsString(searchParamsString);
-
-      const action = `/getCompareProducts?${searchParamsString}`;
-
-      getCompareProductsFetcher.load(action);
-    }
-  }, [prevSearchParamsString, searchParamsString, getCompareProductsFetcher]);
-
-  useEffect(requestCompareProducts, [requestCompareProducts]);
-
-  function updateProductCartObjs() {
-    if (getCompareProductsFetcher.data) {
-      const compareProductsFromFetcher = getCompareProductsFetcher.data.productCards;
-
-      if (productCardObjs && productCardObjs.length === 0
-        && compareProductsFromFetcher.length === 0) return;
-
-      if (compareProductsFromFetcher !== productCardObjs) {
-        setProductCardObjs(compareProductsFromFetcher);
-      }
+  if (fetchedProducts) {
+    if (productObjs !== fetchedProducts) {
+      setProductObjs(fetchedProducts);
     }
   }
 
-  updateProductCartObjs();
+  // function updateProductCartObjs() {
+  //   if (getCompareProductsFetcher.data) {
+  //     const compareProductsFromFetcher = getCompareProductsFetcher.data.productCards;
 
-  function optimisticDeleteAllBtn() {
-    if (compareFetcher.state === 'loading'
-    && compareFetcher.formMethod === 'delete') {
-      if (compareFetcherData !== null) {
-        setCompareFetcherData(null);
-        setProductCardObjs([]);
-      }
-    }
-  }
+  //     if (productObjs && productObjs.length === 0
+  //       && compareProductsFromFetcher.length === 0) return;
 
-  optimisticDeleteAllBtn();
+  //     if (compareProductsFromFetcher !== productObjs) {
+  //       setProductObjs(compareProductsFromFetcher);
+  //     }
+  //   }
+  // }
+
+  // updateProductCartObjs();
+
+  // function optimisticDeleteAllBtn() {
+  //   if (compareFetcher.state === 'loading'
+  //   && compareFetcher.formMethod === 'delete') {
+  //     if (compareFetcherData !== null) {
+  //       setCompareFetcherData(null);
+  //       setProductObjs([]);
+  //     }
+  //   }
+  // }
+
+  // optimisticDeleteAllBtn();
 
   // event handler functions
 
   function deleteAllBtnOnClick() {
     const data = JSON.stringify('');
 
-    compareFetcher.submit(data, {
-      method: 'DELETE',
-      encType: 'application/json',
-    });
+    // compareFetcher.submit(data, {
+    //   method: 'DELETE',
+    //   encType: 'application/json',
+    // });
   }
 
   function prevControlButtonOnClick() {
     setActiveSubcategoryId(
-      compareFetcherData[activeSubcategoryBtnIndex - 1].subcategoryId,
+      compareSubcategories[activeSubcategoryBtnIndex - 1].subcategoryId,
     );
   }
 
   function nextControlButtonOnClick() {
     setActiveSubcategoryId(
-      compareFetcherData[activeSubcategoryBtnIndex + 1].subcategoryId,
+      compareSubcategories[activeSubcategoryBtnIndex + 1].subcategoryId,
     );
   }
 
@@ -187,11 +166,11 @@ export default function Compare() {
 
   const isPrevControlBtnDisabled = activeSubcategoryBtnIndex === 0;
   const isNextControlBtnDisabled = (
-    activeSubcategoryBtnIndex === (compareFetcherData ? compareFetcherData.length - 1 : null)
+    activeSubcategoryBtnIndex === (compareSubcategories ? compareSubcategories.length - 1 : null)
   );
 
   const subcategoryBtns = useMemo(() => (
-    compareFetcherData?.map(({ categoryId, subcategoryId, subcategoryName }) => (
+    compareSubcategories?.map(({ categoryId, subcategoryId, subcategoryName }) => (
       <div
         key={subcategoryId}
         className={classNames(
@@ -215,10 +194,10 @@ export default function Compare() {
           onClick={() => {
             const data = JSON.stringify([categoryId, subcategoryId]);
 
-            compareFetcher.submit(data, {
-              method: 'DELETE',
-              encType: 'application/json',
-            });
+            // compareFetcher.submit(data, {
+            //   method: 'DELETE',
+            //   encType: 'application/json',
+            // });
           }}
           aria-label={`Видалити категорію ${subcategoryName} з порівняння`}
         >
@@ -229,12 +208,12 @@ export default function Compare() {
         {subcategoryName}
       </div>
     ))
-  ), [compareFetcherData, activeSubcategoryId, compareFetcher]);
+  ), [compareSubcategories, activeSubcategoryId]);
 
   // setup product cards
 
   const productCards = useMemo(() => (
-    productCardObjs?.map((pC) => (
+    productObjs?.map((pC) => (
       <div
         key={pC.product.id}
         className={compareCls.productCard}
@@ -250,23 +229,23 @@ export default function Compare() {
         />
       </div>
     ))
-  ), [productCardObjs]);
+  ), [productObjs]);
 
   // setup specs
 
   const allSpecFilterNames = useMemo(() => {
-    if (!productCardObjs || !productCardObjs.length) return;
+    if (!productObjs || !productObjs.length) return;
 
     const filters = new Set();
 
-    productCardObjs.forEach(({ product }) => {
+    productObjs.forEach(({ product }) => {
       const specsFilters = product['specs-filters'];
 
       Object.entries(specsFilters).forEach(([name]) => filters.add(name));
     });
 
     return Array.from(filters).sort((a, b) => a.localeCompare(b));
-  }, [productCardObjs]);
+  }, [productObjs]);
 
   const allSpecFilterNamesAndValues = useMemo(() => {
     if (!allSpecFilterNames) return;
@@ -275,7 +254,7 @@ export default function Compare() {
 
     allSpecFilterNames.forEach((n) => { nameAndValues[n] = []; });
 
-    productCardObjs.forEach(({ product }) => {
+    productObjs.forEach(({ product }) => {
       const productSpecsFilters = product['specs-filters'];
 
       allSpecFilterNames.forEach((name) => {
@@ -286,7 +265,7 @@ export default function Compare() {
         }
 
         if (typeof productSpecFilterValue === 'object') {
-          productSpecFilterValue = productSpecFilterValue.sort((a, b) => a.localeCompare(b)).join(', ');
+          productSpecFilterValue = productSpecFilterValue.slice().sort((a, b) => a.localeCompare(b)).join(', ');
         }
 
         nameAndValues[name].push(productSpecFilterValue);
@@ -294,7 +273,7 @@ export default function Compare() {
     });
 
     return nameAndValues;
-  }, [productCardObjs, allSpecFilterNames]);
+  }, [productObjs, allSpecFilterNames]);
 
   const sortedSpecFilterNameAndValue = useMemo(() => {
     if (!allSpecFilterNamesAndValues) return;
@@ -342,7 +321,7 @@ export default function Compare() {
   const tableRows = useMemo(() => {
     if (!sortedSpecFilterNameAndValue) return;
 
-    const productIds = productCardObjs.map(({ product }) => product.id);
+    const productIds = productObjs.map(({ product }) => product.id);
 
     const rows = Object.entries(sortedSpecFilterNameAndValue).map(([name, value]) => {
       const cells = value.map((v, i) => (
@@ -373,12 +352,12 @@ export default function Compare() {
     });
 
     return rows;
-  }, [sortedSpecFilterNameAndValue, productCardObjs]);
+  }, [sortedSpecFilterNameAndValue, productObjs]);
 
   return (
     <main className={classNames(
       compareCls.main,
-      (productCardObjs?.length === 0 || !productCardObjs) && compareCls.main_marginBottom,
+      (productObjs?.length === 0 || !productObjs) && compareCls.main_marginBottom,
     )}
     >
       <div className={classNames(
@@ -455,7 +434,7 @@ export default function Compare() {
           )}
         </div>
         )}
-        {productCardObjs && productCardObjs.length > 0 && (
+        {productObjs && productObjs.length > 0 && (
         <>
           <div
             ref={productBlockRef}
@@ -513,10 +492,10 @@ export default function Compare() {
           </div>
         </>
         )}
-        {!productCardObjs && (
+        {!productObjs && (
           <ThreeDotsSpinnerBlock />
         )}
-        {productCardObjs && productCardObjs.length === 0 && (
+        {productObjs && productObjs.length === 0 && (
           <div className={compareCls.noProductBlock}>
             <div className={compareCls.noProductContent}>
               <Line className={compareCls.noProductLine} />
@@ -541,7 +520,7 @@ export default function Compare() {
           </div>
         )}
       </div>
-      {productCardObjs && productCardObjs.length > 0 && (
+      {productObjs && productObjs.length > 0 && (
         <div className={classNames(
           containerCls.container,
           compareCls.specsBlock,

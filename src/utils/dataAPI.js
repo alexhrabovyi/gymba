@@ -16,7 +16,21 @@ async function fakeNetwork() {
   });
 }
 
-export function getProductCard(categoryId, subcategoryId, productId) {
+function getCategoryAndSubcategory(categoryId, subcategoryId) {
+  const category = products.categories.entities[categoryId];
+
+  if (!category) throw new Response(null, { status: 404, statusText: 'Not found' });
+
+  const subcategory = category.subcategories.entities[subcategoryId];
+
+  return {
+    categoryName: category.name,
+    categoryId: category.id,
+    subcategory,
+  };
+}
+
+function getProductCard(categoryId, subcategoryId, productId) {
   const category = products.categories.entities[categoryId];
 
   if (!category) throw new Response(null, { status: 404, statusText: 'Not found' });
@@ -40,6 +54,28 @@ export function getProductCard(categoryId, subcategoryId, productId) {
       price: product.price,
       oldPrice: product.oldPrice,
     },
+  };
+}
+
+function getProductFullObj(categoryId, subcategoryId, productId) {
+  const category = products.categories.entities[categoryId];
+
+  if (!category) throw new Response(null, { status: 404, statusText: 'Not found' });
+
+  const subcategory = category.subcategories.entities[subcategoryId];
+
+  if (!subcategory) throw new Response(null, { status: 404, statusText: 'Not found' });
+
+  const product = subcategory.products.entities[productId];
+
+  if (!product) throw new Response(null, { status: 404, statusText: 'Not found' });
+
+  return {
+    categoryName: category.name,
+    categoryId: category.id,
+    subcategoryName: subcategory.name,
+    subcategoryId: subcategory.id,
+    product,
   };
 }
 
@@ -102,6 +138,7 @@ function getAllProductsFromStorage(localStorageKey) {
 }
 
 // =====
+
 export async function getCategoriesAndSubcategories() {
   await fakeNetwork();
 
@@ -332,27 +369,9 @@ export async function getFilteredProductsAndMinMaxPrice(categoryId, subcategoryI
 export async function getProduct(categoryId, subcategoryId, productId) {
   await fakeNetwork();
 
-  const category = products.categories.entities[categoryId];
+  const product = getProductFullObj(categoryId, subcategoryId, productId);
 
-  if (!category) throw new Response(null, { status: 404, statusText: 'Not found' });
-
-  const subcategory = category.subcategories.entities[subcategoryId];
-
-  if (!subcategory) throw new Response(null, { status: 404, statusText: 'Not found' });
-
-  const product = subcategory.products.entities[productId];
-
-  if (!product) throw new Response(null, { status: 404, statusText: 'Not found' });
-
-  const body = JSON.stringify({
-    categoryName: category.name,
-    categoryId: category.id,
-    subcategoryName: subcategory.name,
-    subcategoryId: subcategory.id,
-    product,
-  });
-
-  return new Response(body, { status: 200, statusText: 'OK' });
+  return new Response(JSON.stringify(product), { status: 200, statusText: 'OK' });
 }
 
 export async function getAnalogueProducts(categoryId, subcategoryId, productId) {
@@ -499,6 +518,48 @@ export function deleteFromCompare(categoryId, subcategoryId, productId) {
   return deleteIdFromStorage('compareIds', findFunction);
 }
 
+export async function getCompareSubcategories() {
+  await fakeNetwork();
+
+  const compareIds = getLocalStorageIds('compareIds');
+
+  const uniqueCompareCategoryAndSubcategory = [];
+  compareIds.forEach(([cId, subcId]) => {
+    const isAlreadyExist = uniqueCompareCategoryAndSubcategory
+      .find(([uCId, uSubcId]) => uCId === cId && uSubcId === subcId);
+
+    if (!isAlreadyExist) uniqueCompareCategoryAndSubcategory.push([cId, subcId]);
+  });
+
+  const compareSubcategoriesBtnInfo = uniqueCompareCategoryAndSubcategory.map(([cId, subcId]) => {
+    const { categoryId, subcategory } = getCategoryAndSubcategory(cId, subcId);
+
+    return {
+      categoryId,
+      subcategoryId: subcategory.id,
+      subcategoryName: subcategory.name,
+    };
+  });
+
+  const data = JSON.stringify(compareSubcategoriesBtnInfo);
+
+  return new Response(data, { status: 200, statusText: 'OK' });
+}
+
+export async function getCompareProductCards(categoryId, subcategoryId) {
+  await fakeNetwork();
+
+  if (categoryId === null || subcategoryId === null) throw new Response(null, { status: 404, statusText: 'Not found' });
+
+  let compareIds = getLocalStorageIds('compareIds');
+
+  compareIds = compareIds.filter(([cId, subcId]) => cId === categoryId && subcId === subcategoryId);
+
+  const productCards = compareIds.map(([cId, subcId, pId]) => getProductFullObj(cId, subcId, pId));
+
+  return new Response(JSON.stringify(productCards), { status: 200, statusText: 'OK' });
+}
+
 // news API
 
 export async function getNewsPreviews() {
@@ -538,20 +599,6 @@ export async function getCategoryAndSubcategories(categoryId) {
   };
 }
 
-export function getCategoryAndSubcategory(categoryId, subcategoryId) {
-  const category = products.find((c) => c.id === categoryId);
-
-  if (!category) throw new Error('Категорію не знайдено');
-
-  const subcategory = category.subcategories.find((s) => s.id === subcategoryId);
-
-  return {
-    categoryName: category.name,
-    categoryId: category.id,
-    subcategory,
-  };
-}
-
 export async function getRandomProduct() {
   await fakeNetwork();
 
@@ -577,30 +624,6 @@ export async function getCompareAmount() {
   return compareIds.length;
 }
 
-export async function getCompareSubcategoriesBtnInfo() {
-  const compareIds = await getCompareIds();
-
-  const uniqueCompareCategoryAndSubcategory = [];
-  compareIds.forEach(([cId, subcId]) => {
-    const isAlreadyExist = uniqueCompareCategoryAndSubcategory
-      .find(([uCId, uSubcId]) => uCId === cId && uSubcId === subcId);
-
-    if (!isAlreadyExist) uniqueCompareCategoryAndSubcategory.push([cId, subcId]);
-  });
-
-  const compareSubcategoriesBtnInfo = uniqueCompareCategoryAndSubcategory.map(([cId, subcId]) => {
-    const { categoryId, subcategory } = getCategoryAndSubcategory(cId, subcId);
-
-    return {
-      categoryId,
-      subcategoryId: subcategory.id,
-      subcategoryName: subcategory.name,
-    };
-  });
-
-  return compareSubcategoriesBtnInfo;
-}
-
 export async function deleteSubcFromCompare(categoryId, subcategoryId) {
   let compareIds = await getCompareIds();
 
@@ -608,19 +631,6 @@ export async function deleteSubcFromCompare(categoryId, subcategoryId) {
     || (cId === categoryId && subcId !== subcategoryId));
 
   localStorage.setItem('compareIds', JSON.stringify(compareIds));
-}
-
-export async function getCompareProductCards(categoryId, subcategoryId) {
-  if (categoryId === null || subcategoryId === null) throw new Error('Некорректний запит');
-
-  let compareIds = await getCompareIds();
-
-  compareIds = compareIds.filter(([cId, subcId]) => cId === categoryId && subcId === subcategoryId);
-
-  const productCards = await Promise
-    .all(compareIds.map(([cId, subcId, pId]) => getProduct(cId, subcId, pId)));
-
-  return productCards;
 }
 
 async function getAllSearchResults(searchQuery) {

@@ -14,6 +14,8 @@ const tagTypes = [
   'cartIds',
   'cartProducts',
   'compareIds',
+  'compareSubcategories',
+  'compareProducts',
   'product',
   'analogueProducts',
 ];
@@ -215,7 +217,7 @@ export const queryAPI = createApi(
             method: 'POST',
             body,
           }),
-          [{ type: 'compareIds', id: 'LIST' }],
+          [{ type: 'compareIds', id: 'LIST' }, 'compareSubcategories', 'compareProducts'],
           (args) => (
             queryAPI.util.updateQueryData('getCompareIds', undefined, (draft) => {
               const parsedBody = JSON.parse(args);
@@ -231,7 +233,7 @@ export const queryAPI = createApi(
             method: 'DELETE',
             body,
           }),
-          [{ type: 'compareIds', id: 'LIST' }],
+          [{ type: 'compareIds', id: 'LIST' }, 'compareSubcategories', 'compareProducts'],
           (args) => (
             queryAPI.util.updateQueryData('getCompareIds', undefined, (draft) => {
               const [categoryId, subcategoryId, productId] = JSON.parse(args);
@@ -245,6 +247,14 @@ export const queryAPI = createApi(
           ),
         ),
       ),
+      getCompareSubcategories: builder.query({
+        query: () => '/getCompareSubcategories',
+        providesTags: ['compareSubcategories'],
+      }),
+      getCompareProducts: builder.query({
+        query: ({ categoryId, subcategoryId }) => `/getCompareProducts/${categoryId}/${subcategoryId}`,
+        providesTags: ['compareProducts'],
+      }),
       getProduct: builder.query({
         query: (partialUrl) => `/getProduct/${partialUrl}`,
         providesTags: ['product'],
@@ -275,6 +285,8 @@ export const {
   useGetCompareIdsQuery,
   useAddCompareIdMutation,
   useDeleteCompareIdMutation,
+  useGetCompareSubcategoriesQuery,
+  useGetCompareProductsQuery,
   useGetProductQuery,
   useGetAnalogueProductsQuery,
 } = queryAPI;

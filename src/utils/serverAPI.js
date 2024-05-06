@@ -19,6 +19,8 @@ import {
   getCompareIds,
   addIdToCompare,
   deleteFromCompare,
+  getCompareSubcategories,
+  getCompareProductCards,
   getProduct,
   getAnalogueProducts,
 } from './dataAPI';
@@ -96,6 +98,12 @@ export const handlers = [
   }),
   http.post('/fakeAPI/compareIds', async ({ request }) => addMutation(request, addIdToCompare)),
   http.delete('/fakeAPI/compareIds', async ({ request }) => deleteMutation(request, deleteFromCompare)),
+  http.get('/fakeAPI/getCompareSubcategories', async () => getCompareSubcategories()),
+  http.get('/fakeAPI/getCompareProducts/:categoryId/:subcategoryId', async ({ params }) => {
+    const { categoryId, subcategoryId } = params;
+
+    return getCompareProductCards(categoryId, subcategoryId);
+  }),
   http.get('/fakeAPI/getProduct/:categoryId/:subcategoryId/:productId', async ({ params }) => {
     const { categoryId, subcategoryId, productId } = params;
 
