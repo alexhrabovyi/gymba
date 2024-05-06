@@ -13,7 +13,6 @@ import ProductsPageLazy from '../pages/Products/Products.lazy.jsx';
 import ProductPageLazy from '../pages/Product/Product.lazy.jsx';
 import WishlistPageLazy from '../pages/Wishlist/Wishlist.lazy.jsx';
 import CartPageLazy from '../pages/Cart/Cart.lazy.jsx';
-import { loader as cartLoader, action as cartAction } from '../pages/Cart/CartUtils.jsx';
 import ComparePageLazy from '../pages/Compare/Compare.lazy.jsx';
 import { loader as compareLoader, action as compareAction } from '../pages/Compare/CompareUtils.jsx';
 import DeliveryPageLazy from '../pages/Delivery/Delivery.lazy.jsx';
@@ -58,8 +57,6 @@ const router = createHashRouter([
           },
           {
             path: 'cart',
-            loader: cartLoader,
-            action: cartAction,
             element: <CartPageLazy />,
           },
           {

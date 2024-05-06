@@ -7,7 +7,7 @@ import paginationCls from './PaginationBlock.module.scss';
 import ThreeDots from './images/threeDots.svg';
 import useOnResize from '../../hooks/useOnResize.jsx';
 
-const PaginationBlock = memo(({ pageAmount }) => {
+const PaginationBlock = memo(({ pageAmount, elemToScrollRef }) => {
   const [searchParams, setSearchParams] = useSearchParams();
 
   const formRef = useRef(null);
@@ -57,6 +57,8 @@ const PaginationBlock = memo(({ pageAmount }) => {
 
     searchParams.set('page', currentPageNum);
     setSearchParams(searchParams);
+
+    elemToScrollRef?.current.scrollIntoView({ block: 'center' });
   }
 
   let additionalBtnsAvailable;
@@ -157,6 +159,7 @@ const PaginationBlock = memo(({ pageAmount }) => {
               setCurrentPageNum(1);
               searchParams.set('page', 1);
               setSearchParams(searchParams);
+              elemToScrollRef?.current.scrollIntoView();
             }}
             className={classNames(
               paginationCls.paginationButton,
@@ -173,6 +176,7 @@ const PaginationBlock = memo(({ pageAmount }) => {
               setCurrentPageNum(additionalStartBtnId);
               searchParams.set('page', additionalStartBtnId);
               setSearchParams(searchParams);
+              elemToScrollRef?.current.scrollIntoView();
             }}
             className={paginationCls.additionalButton}
             aria-label={`Перейти на сторінку товарів ${additionalStartBtnId}`}
@@ -191,6 +195,7 @@ const PaginationBlock = memo(({ pageAmount }) => {
               setCurrentPageNum(additionalEndBtnId);
               searchParams.set('page', additionalEndBtnId);
               setSearchParams(searchParams);
+              elemToScrollRef?.current.scrollIntoView();
             }}
             className={paginationCls.additionalButton}
             aria-label={`Перейти на сторінку товарів ${additionalEndBtnId}`}
@@ -204,6 +209,7 @@ const PaginationBlock = memo(({ pageAmount }) => {
               setCurrentPageNum(pageAmount);
               searchParams.set('page', pageAmount);
               setSearchParams(searchParams);
+              elemToScrollRef?.current.scrollIntoView();
             }}
             className={classNames(
               paginationCls.paginationButton,

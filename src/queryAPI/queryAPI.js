@@ -12,6 +12,7 @@ const tagTypes = [
   'wishlistIds',
   'wishlistProducts',
   'cartIds',
+  'cartProducts',
   'compareIds',
   'product',
   'analogueProducts',
@@ -34,7 +35,7 @@ function createPatchDeleteMutation(queryFn, invalidatedTags, updateQueryFn) {
 
 export const queryAPI = createApi(
   {
-    // keepUnusedDataFor: 0,
+    keepUnusedDataFor: 0,
     reducerPath: 'globalData',
     baseQuery: fetchBaseQuery({ baseUrl: '/fakeAPI' }),
     tagTypes,
@@ -65,7 +66,7 @@ export const queryAPI = createApi(
         createPatchDeleteMutation(
           (body) => ({
             url: '/wishlistIds',
-            method: 'PATCH',
+            method: 'POST',
             body,
           }),
           [{ type: 'wishlistIds', id: 'LIST' }, 'wishlistProducts'],
@@ -108,7 +109,7 @@ export const queryAPI = createApi(
           [{ type: 'wishlistIds', id: 'LIST' }, 'wishlistProducts'],
           () => (
             queryAPI.util.updateQueryData('getWishlistIds', undefined, (draft) => {
-              draft = [];
+              draft.splice(0);
             })
           ),
         ),
@@ -125,10 +126,10 @@ export const queryAPI = createApi(
         createPatchDeleteMutation(
           (body) => ({
             url: '/cartIds',
-            method: 'PATCH',
+            method: 'POST',
             body,
           }),
-          [{ type: 'cartIds', id: 'LIST' }],
+          [{ type: 'cartIds', id: 'LIST' }, 'cartProducts'],
           (args) => (
             queryAPI.util.updateQueryData('getCartIds', undefined, (draft) => {
               const [categoryId, subcategoryId, productId] = JSON.parse(args);
@@ -144,6 +145,25 @@ export const queryAPI = createApi(
           ),
         ),
       ),
+      editCartIdAmount: builder.mutation(
+        createPatchDeleteMutation(
+          (body) => ({
+            url: '/cartIds',
+            method: 'PATCH',
+            body,
+          }),
+          [{ type: 'cartIds', id: 'LIST' }, 'cartProducts'],
+          (args) => (
+            queryAPI.util.updateQueryData('getCartIds', undefined, (draft) => {
+              const [categoryId, subcategoryId, productId, amount] = JSON.parse(args);
+              const product = draft.find((dObj) => dObj.categoryId === categoryId
+                && dObj.subcategoryId === subcategoryId && dObj.productId === productId);
+
+              product.amount = amount;
+            })
+          ),
+        ),
+      ),
       deleteCartId: builder.mutation(
         createPatchDeleteMutation(
           (body) => ({
@@ -151,7 +171,7 @@ export const queryAPI = createApi(
             method: 'DELETE',
             body,
           }),
-          [{ type: 'cartIds', id: 'LIST' }],
+          [{ type: 'cartIds', id: 'LIST' }, 'cartProducts'],
           (args) => (
             queryAPI.util.updateQueryData('getCartIds', undefined, (draft) => {
               const [categoryId, subcategoryId, productId] = JSON.parse(args);
@@ -165,6 +185,25 @@ export const queryAPI = createApi(
           ),
         ),
       ),
+      deleteAllCartIds: builder.mutation(
+        createPatchDeleteMutation(
+          () => ({
+            url: '/cartIds',
+            method: 'DELETE',
+            body: JSON.stringify({ deleteAll: true }),
+          }),
+          [{ type: 'cartIds', id: 'LIST' }, 'cartProducts'],
+          () => (
+            queryAPI.util.updateQueryData('getCartIds', undefined, (draft) => {
+              draft.splice(0);
+            })
+          ),
+        ),
+      ),
+      getCartProducts: builder.query({
+        query: () => '/getCartProducts',
+        providesTags: ['cartProducts'],
+      }),
       getCompareIds: builder.query({
         query: () => '/compareIds',
         providesTags: [{ type: 'compareIds', id: 'LIST' }],
@@ -173,7 +212,7 @@ export const queryAPI = createApi(
         createPatchDeleteMutation(
           (body) => ({
             url: '/compareIds',
-            method: 'PATCH',
+            method: 'POST',
             body,
           }),
           [{ type: 'compareIds', id: 'LIST' }],
@@ -229,7 +268,10 @@ export const {
   useGetWishlistProductsQuery,
   useGetCartIdsQuery,
   useAddCartIdMutation,
+  useEditCartIdAmountMutation,
   useDeleteCartIdMutation,
+  useDeleteAllCartIdsMutation,
+  useGetCartProductsQuery,
   useGetCompareIdsQuery,
   useAddCompareIdMutation,
   useDeleteCompareIdMutation,

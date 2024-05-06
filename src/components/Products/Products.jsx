@@ -26,6 +26,7 @@ export default function Products() {
   const [searchParams, setSearchParams] = useSearchParams();
   const params = useParams();
 
+  const titleRef = useRef();
   const openFilterMenuBtnRef = useRef();
 
   const [category, setCategory] = useState(null);
@@ -212,13 +213,15 @@ export default function Products() {
   return (
     <>
       <main className={classNames(containerCls.container, productsCls.main)}>
-        <h1 className={classNames(
-          textCls.text,
-          textCls.textFw800,
-          textCls.text48px,
-          textCls.textBlack,
-          productsCls.title,
-        )}
+        <h1
+          className={classNames(
+            textCls.text,
+            textCls.textFw800,
+            textCls.text48px,
+            textCls.textBlack,
+            productsCls.title,
+          )}
+          ref={titleRef}
         >
           {subcategoryName}
         </h1>
@@ -314,6 +317,7 @@ export default function Products() {
             ) : (productCards.length > 0 ? productCards : noProductsBlock)}
             <div className={productsCls.paginationBlock}>
               <PaginationBlock
+                elemToScrollRef={titleRef}
                 pageAmount={pageAmount}
               />
             </div>

@@ -1,6 +1,8 @@
 import { Suspense, useState } from 'react';
-import { Link, Await, useFetcher } from 'react-router-dom';
+import { Link, Await } from 'react-router-dom';
+import { useDispatch } from 'react-redux';
 import classNames from 'classnames';
+import { queryAPI, useDeleteCartIdMutation, useEditCartIdAmountMutation } from '../../../queryAPI/queryAPI.js';
 import beautifyNum from '../../../utils/beautifyNum.js';
 import Spinner from '../../common/Spinner/Spinner.jsx';
 import DynamicImage from '../../common/DynamicImage/DynamicImage.jsx';
@@ -11,27 +13,35 @@ import BinIcon from '../../../assets/images/icons/bin.svg';
 export default function CartProduct({
   categoryId, subcategoryId, productId, name, price, oldPrice, amount, totalPrice,
 }) {
-  const fetcher = useFetcher();
+  const dispatch = useDispatch();
+
+  const [deleteProductIdRequest] = useDeleteCartIdMutation();
+  const [editProductAmountRequest] = useEditCartIdAmountMutation();
+
   const [imgSrc] = useState(() => import(`../../../assets/images/productImgs/${productId}.webp`));
 
   function submitNewAmount(newAmount) {
     const data = JSON.stringify([categoryId, subcategoryId, productId, newAmount]);
+    editProductAmountRequest(data);
 
-    fetcher.submit(data, {
-      action: '/cart',
-      method: 'PATCH',
-      encType: 'application/json',
-    });
+    dispatch(queryAPI.util.updateQueryData('getCartProducts', undefined, (draft) => {
+      const productObj = draft.find((p) => p.categoryId === categoryId
+        && p.subcategoryId === subcategoryId && p.product.id === productId);
+
+      productObj.amount = newAmount;
+    }));
   }
 
   function deleteBtnOnClick() {
     const data = JSON.stringify([categoryId, subcategoryId, productId]);
+    deleteProductIdRequest(data);
 
-    fetcher.submit(data, {
-      action: '/cart',
-      method: 'DELETE',
-      encType: 'application/json',
-    });
+    dispatch(queryAPI.util.updateQueryData('getCartProducts', undefined, (draft) => {
+      const index = draft.findIndex((p) => p.categoryId === categoryId
+        && p.subcategoryId === subcategoryId && p.product.id === productId);
+
+      draft.splice(index, 1);
+    }));
   }
 
   return (

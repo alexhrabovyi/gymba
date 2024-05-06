@@ -1,4 +1,6 @@
-import { useCallback, useMemo, useState } from 'react';
+import {
+  useCallback, useMemo, useState, useRef,
+} from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 import classNames from 'classnames';
@@ -16,6 +18,8 @@ import Line from '../../assets/images/icons/oblique.svg';
 export default function Wishlist() {
   const [searchParams, setSearchParams] = useSearchParams();
   const dispatch = useDispatch();
+
+  const titleRef = useRef();
 
   const [wishlistProducts, setWishlistProducts] = useState(null);
   const [totalProductAmount, setTotalProductAmount] = useState(null);
@@ -150,6 +154,7 @@ export default function Wishlist() {
             textCls.textBlack,
             wishlistCls.title,
           )}
+          ref={titleRef}
         >
           Список бажань
         </h1>
@@ -207,6 +212,7 @@ export default function Wishlist() {
         <div className={wishlistCls.paginationBlock}>
           <PaginationBlock
             pageAmount={pageAmount}
+            elemToScrollRef={titleRef}
           />
         </div>
       )}

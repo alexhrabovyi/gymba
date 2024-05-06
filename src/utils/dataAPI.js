@@ -86,6 +86,21 @@ async function deleteIdFromStorage(localStorageKey, findFunc) {
   return new Response(null, { status: 200, statusText: 'OK' });
 }
 
+function deleteAllFromStorage(localStorageKey) {
+  localStorage.removeItem(localStorageKey);
+
+  return new Response(null, { status: 200, statusText: 'OK' });
+}
+
+function getAllProductsFromStorage(localStorageKey) {
+  const ids = getLocalStorageIds(localStorageKey);
+
+  const productsForIds = ids.map(([cId, subcId, pId]) => (
+    getProductCard(cId, subcId, pId)));
+
+  return productsForIds;
+}
+
 // =====
 export async function getCategoriesAndSubcategories() {
   await fakeNetwork();
@@ -377,25 +392,14 @@ export function deleteIdFromWishlist(categoryId, subcategoryId, productId) {
 export async function deleteAllFromWishlist() {
   await fakeNetwork();
 
-  localStorage.removeItem('wishlistIds');
-
-  return new Response(null, { status: 200, statusText: 'OK' });
-}
-
-function getAllWishlistProducts() {
-  const wishlistIds = getLocalStorageIds('wishlistIds');
-
-  const wishlistProducts = wishlistIds.map(([cId, subcId, pId]) => (
-    getProductCard(cId, subcId, pId)));
-
-  return wishlistProducts;
+  return deleteAllFromStorage('wishlistIds');
 }
 
 export async function getWishlistProductsPerPageAndPageAmount(pageNum) {
   await fakeNetwork();
 
   const perView = 12;
-  const allWishlistProducts = getAllWishlistProducts();
+  const allWishlistProducts = getAllProductsFromStorage('wishlistIds');
   const wishlistProductsAmount = allWishlistProducts.length;
   const pageAmount = getPageAmount(wishlistProductsAmount, perView);
 
@@ -434,11 +438,44 @@ export function addIdToCart(categoryId, subcategoryId, productId) {
   return addIdToStorage('cartIds', newIdEntitity, findFunc);
 }
 
+export async function editProductAmountInCart(categoryId, subcategoryId, productId, newAmount) {
+  await fakeNetwork();
+
+  const cartIds = getLocalStorageIds('cartIds');
+
+  const cartObj = cartIds.find((cId) => cId.categoryId === categoryId
+    && cId.subcategoryId === subcategoryId && cId.productId === productId);
+  cartObj.amount = newAmount;
+
+  localStorage.setItem('cartIds', JSON.stringify(cartIds));
+
+  return new Response(null, { status: 200, statusText: 'OK' });
+}
+
 export function deleteFromCart(categoryId, subcategoryId, productId) {
   const findFunction = (cId) => (cId.categoryId === categoryId
     && cId.subcategoryId === subcategoryId && cId.productId === productId);
 
   return deleteIdFromStorage('cartIds', findFunction);
+}
+
+export async function deleteAllFromCart() {
+  await fakeNetwork();
+
+  return deleteAllFromStorage('cartIds');
+}
+
+export async function getCartProducts() {
+  await fakeNetwork();
+
+  const cartIds = getLocalStorageIds('cartIds');
+
+  return cartIds.map((idObj) => {
+    const productObj = getProductCard(idObj.categoryId, idObj.subcategoryId, idObj.productId);
+    productObj.amount = idObj.amount;
+
+    return productObj;
+  });
 }
 
 export async function getCompareIds() {
@@ -527,62 +564,6 @@ export async function getRandomProduct() {
     categoryId,
     subcategoryId: subcategory.id,
     product: randomProduct,
-  };
-}
-
-export function deleteAllFromCart() {
-  localStorage.removeItem('cartIds');
-}
-
-export async function getCartAmount() {
-  const cartIds = await getCartIds();
-
-  return cartIds.length;
-}
-
-export async function editProductAmountInCart(categoryId, subcategoryId, productId, newAmount) {
-  const cartIds = await getCartIds();
-
-  const cartObj = cartIds.find((cId) => cId.categoryId === categoryId
-    && cId.subcategoryId === subcategoryId && cId.productId === productId);
-  cartObj.amount = newAmount;
-
-  localStorage.setItem('cartIds', JSON.stringify(cartIds));
-}
-
-async function getCartProducts() {
-  const cartIds = await getCartIds();
-
-  const cartProductPromises = await Promise.all(cartIds.map((cId) => (
-    getProduct(cId.categoryId, cId.subcategoryId, cId.productId)
-  )));
-
-  const cartProducts = cartIds.map((cId, i) => {
-    const product = cartProductPromises[i];
-    const { amount } = cId;
-    const totalPrice = +product.product.price * +amount;
-
-    return {
-      ...product,
-      amount,
-      totalPrice,
-    };
-  });
-
-  return cartProducts;
-}
-
-function getCartTotalPrice(cartProducts) {
-  return cartProducts.reduce((totalPrice, cP) => totalPrice += cP.totalPrice, 0);
-}
-
-export async function getCartProductsAndTotalPrice() {
-  const cartProducts = await getCartProducts();
-  const totalPrice = getCartTotalPrice(cartProducts);
-
-  return {
-    cartProducts,
-    totalPrice,
   };
 }
 

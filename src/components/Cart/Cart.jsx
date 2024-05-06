@@ -1,7 +1,7 @@
 import { useState, useMemo } from 'react';
-import { useFetcher } from 'react-router-dom';
+import { useDispatch } from 'react-redux';
 import classNames from 'classnames';
-import useFetcherLoad from '../../hooks/useFetcherLoad.jsx';
+import { queryAPI, useGetCartProductsQuery, useDeleteAllCartIdsMutation } from '../../queryAPI/queryAPI.js';
 import beautifyNum from '../../utils/beautifyNum.js';
 import CartProduct from './CartProduct/CartProduct.jsx';
 import Button from '../common/Button/Button.jsx';
@@ -13,39 +13,29 @@ import Line from '../../assets/images/icons/oblique.svg';
 import ThreeDotsSpinnerBlock from '../common/ThreeDotsSpinnerBlock/ThreeDotsSpinnerBlock.jsx';
 
 export default function Cart() {
-  const cartFetcher = useFetcher();
+  const dispatch = useDispatch();
 
-  const [fetcherData, setFetcherData] = useState(null);
+  const [deleteAllRequest] = useDeleteAllCartIdsMutation();
 
-  const cartProducts = useMemo(() => fetcherData?.cartProducts, [fetcherData]);
-  const totalPrice = fetcherData?.totalPrice;
+  const [cartProducts, setCartProducts] = useState(null);
 
-  useFetcherLoad(cartFetcher, '/cart');
+  const totalPrice = useMemo(() => (cartProducts
+    ?.reduce((acc, pObj) => acc + pObj.amount * pObj.product.price, 0)), [cartProducts]);
 
-  if (cartFetcher.data) {
-    if (cartFetcher.data.cartProductsAndTotalPrice !== fetcherData) {
-      setFetcherData(cartFetcher.data.cartProductsAndTotalPrice);
+  const { data: fetcherData } = useGetCartProductsQuery();
+
+  if (fetcherData) {
+    if (fetcherData !== cartProducts) {
+      setCartProducts(fetcherData);
     }
   }
 
-  function optimisticDeleteAll() {
-    if (cartFetcher.state === 'loading'
-      && cartFetcher.formMethod === 'delete'
-      && cartProducts.length
-    ) {
-      setFetcherData({ cartProducts: [] });
-    }
-  }
+  function deleteAllBtnOnClick() {
+    deleteAllRequest();
 
-  optimisticDeleteAll();
-
-  function deleteBtnOnClick() {
-    const data = JSON.stringify('');
-
-    cartFetcher.submit(data, {
-      method: 'DELETE',
-      encType: 'application/json',
-    });
+    dispatch(queryAPI.util.updateQueryData('getCartProducts', undefined, (draft) => {
+      draft.splice(0);
+    }));
   }
 
   const products = useMemo(() => {
@@ -61,7 +51,7 @@ export default function Cart() {
         price={cP.product.price}
         oldPrice={cP.product.oldPrice}
         amount={cP.amount}
-        totalPrice={cP.totalPrice}
+        totalPrice={cP.amount * cP.product.price}
       />
     ));
   }, [cartProducts]);
@@ -89,7 +79,7 @@ export default function Cart() {
         <button
           type="button"
           className={cartCls.deleteBtn}
-          onClick={deleteBtnOnClick}
+          onClick={deleteAllBtnOnClick}
           aria-label="Видалити все"
         >
           <BinIcon
