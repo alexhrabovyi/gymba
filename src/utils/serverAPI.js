@@ -3,7 +3,7 @@ import { http, HttpResponse } from 'msw';
 import { setupWorker } from 'msw/browser';
 import {
   getCategoriesAndSubcategories,
-  getNewsPreviews,
+  getNewsPreviewsPerPageAndPageAmount,
   getFilteredProductsAndMinMaxPrice,
   getWishlistIds,
   addIdToWishlist,
@@ -54,8 +54,10 @@ export const handlers = [
     const categories = await getCategoriesAndSubcategories();
     return HttpResponse.json(categories);
   }),
-  http.get('/fakeAPI/news', async () => {
-    const newsPreviews = await getNewsPreviews();
+  http.get('/fakeAPI/news', async ({ request }) => {
+    const pageNum = new URL(request.url).searchParams.get('page') || 1;
+
+    const newsPreviews = await getNewsPreviewsPerPageAndPageAmount(pageNum);
     return HttpResponse.json(newsPreviews);
   }),
   http.get('/fakeAPI/getProducts/:categoryId/:subcategoryId', async ({ request, params }) => {

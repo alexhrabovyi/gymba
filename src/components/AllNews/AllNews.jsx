@@ -1,34 +1,38 @@
 import { useState, useMemo } from 'react';
-import { useFetcher } from 'react-router-dom';
+import { useSearchParams } from 'react-router-dom';
 import classNames from 'classnames';
+import { useGetNewsQuery } from '../../queryAPI/queryAPI.js';
 import NewsPreview from '../common/NewsPreview/NewsPreview.jsx';
 import ThreeDotsSpinnerBlock from '../common/ThreeDotsSpinnerBlock/ThreeDotsSpinnerBlock.jsx';
 import PaginationBlock from '../PaginationBlock/PaginationBlock.jsx';
 import containerCls from '../../scss/_container.module.scss';
 import textCls from '../../scss/_text.module.scss';
 import newsCls from './AllNews.module.scss';
-import useFetcherLoad from '../../hooks/useFetcherLoad.jsx';
 
 export default function AllNews() {
-  const newsFetcher = useFetcher();
+  const [searchParams] = useSearchParams();
 
-  const [newsFetcherData, setNewsFetcherData] = useState(null);
+  const [newsPreviewsObjs, setNewsPreviewsObjs] = useState(null);
+  const [pageAmount, setPageAmount] = useState(null);
 
-  const newsPreviews = newsFetcherData?.newsPreviews;
-  const pageAmount = newsFetcherData?.pageAmount;
+  const currentPageNum = searchParams.get('page') || 1;
 
-  useFetcherLoad(newsFetcher, '/news');
+  const { data: fetchedData, isLoading, isFetching } = useGetNewsQuery(currentPageNum);
 
-  if (newsFetcher.data) {
-    if (newsFetcher.data.newsPreviewsPerPageAndPageAmount !== newsFetcherData) {
-      setNewsFetcherData(newsFetcher.data.newsPreviewsPerPageAndPageAmount);
+  if (fetchedData) {
+    if (newsPreviewsObjs !== fetchedData.previews) {
+      setNewsPreviewsObjs(fetchedData.previews);
+    }
+
+    if (pageAmount !== fetchedData.pageAmount) {
+      setPageAmount(fetchedData.pageAmount);
     }
   }
 
   const newsPreviewsElements = useMemo(() => {
-    if (!newsPreviews) return;
+    if (!newsPreviewsObjs) return;
 
-    return newsPreviews.map((n) => (
+    return newsPreviewsObjs.map((n) => (
       <NewsPreview
         key={n.id}
         name={n.name}
@@ -37,7 +41,7 @@ export default function AllNews() {
         views={n.views}
       />
     ));
-  }, [newsPreviews]);
+  }, [newsPreviewsObjs]);
 
   return (
     <main className={classNames(
@@ -56,7 +60,11 @@ export default function AllNews() {
         Новини
       </h1>
       {newsPreviewsElements ? (
-        <div className={newsCls.newsPreviews}>
+        <div className={classNames(
+          newsCls.newsPreviews,
+          !isLoading && isFetching && newsCls.newsPreviews_inactive,
+        )}
+        >
           {newsPreviewsElements}
         </div>
       ) : (

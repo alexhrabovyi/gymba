@@ -3,7 +3,6 @@ import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 import { createEntityAdapter } from '@reduxjs/toolkit';
 
 const categoriesAdapter = createEntityAdapter();
-const newsAdapter = createEntityAdapter();
 
 const tagTypes = [
   'categories',
@@ -50,10 +49,7 @@ export const queryAPI = createApi(
         providesTags: ['categories'],
       }),
       getNews: builder.query({
-        query: () => '/news',
-        transformResponse(response) {
-          return newsAdapter.addMany(newsAdapter.getInitialState(), response);
-        },
+        query: (pageNum) => (pageNum ? `/news?page=${pageNum}` : '/news'),
         providesTags: ['news'],
       }),
       getProducts: builder.query({

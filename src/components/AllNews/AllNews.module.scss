@@ -49,6 +49,11 @@
   @media (max-width: 450px) {
     grid-template-columns: 1fr;
   }
+
+  &_inactive {
+    opacity: 0.5;
+    pointer-events: none;
+  }
 }
 
 .paginationBlock {

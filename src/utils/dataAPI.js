@@ -582,9 +582,7 @@ export async function getCompareProductCards(categoryId, subcategoryId) {
 
 // news API
 
-export async function getNewsPreviews() {
-  await fakeNetwork();
-
+function getAllNewsPreviews() {
   const newsFullObjs = Object.values(news.entities);
   const newsShortObjs = newsFullObjs.map((n) => ({
     name: n.name,
@@ -594,6 +592,28 @@ export async function getNewsPreviews() {
   }));
 
   return newsShortObjs;
+}
+
+export async function getNewsPreviewsPerPageAndPageAmount(pageNum) {
+  await fakeNetwork();
+
+  const allNewsPreviews = getAllNewsPreviews();
+  const allNewsPreviewsAmount = allNewsPreviews.length;
+  const perView = 12;
+
+  const pageAmount = getPageAmount(allNewsPreviewsAmount, perView);
+
+  if (pageNum === null || pageNum > pageAmount) pageNum = 1;
+
+  const firstPageNewsPreview = (+pageNum - 1) * +perView;
+  const lastPageNewsPreview = +pageNum * +perView;
+
+  const newsPreviewsPerPage = allNewsPreviews.slice(firstPageNewsPreview, lastPageNewsPreview);
+
+  return {
+    pageAmount,
+    previews: newsPreviewsPerPage,
+  };
 }
 
 // =====
@@ -756,48 +776,6 @@ export async function getSearchResultsPerPageAndPageAmount(searchQuery, pageNum)
 }
 
 // news
-
-async function getAllNewsPreviews() {
-  await fakeNetwork();
-
-  const newsPreviews = news.map((n) => ({
-    name: n.name,
-    id: n.id,
-    date: n.date,
-    views: n.views,
-  }));
-
-  return newsPreviews;
-}
-
-export async function getFourNewsPreviews() {
-  const newsPreviews = (await getAllNewsPreviews()).slice(0, 4);
-
-  return newsPreviews;
-}
-
-function getNewsPreviewsPerPage(allNewsPreviews, pageAmount, perView, pageNum) {
-  if (pageNum === null || pageNum > pageAmount) pageNum = 1;
-
-  const firstPageNewsPreview = (+pageNum - 1) * +perView;
-  const lastPageNewsPreview = +pageNum * +perView;
-
-  return allNewsPreviews.slice(firstPageNewsPreview, lastPageNewsPreview);
-}
-
-export async function getNewsPreviewsPerPageAndPageAmount(pageNum) {
-  const allNewsPreviews = await getAllNewsPreviews();
-  const allNewsPreviewsAmount = allNewsPreviews.length;
-  const perView = 12;
-
-  const pageAmount = getPageAmount(allNewsPreviewsAmount, perView);
-  const newsPreviewsPerPage = getNewsPreviewsPerPage(allNewsPreviews, pageAmount, perView, pageNum);
-
-  return {
-    pageAmount,
-    newsPreviews: newsPreviewsPerPage,
-  };
-}
 
 export async function getNewsArticle(id) {
   await fakeNetwork();

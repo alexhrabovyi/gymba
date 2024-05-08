@@ -21,7 +21,7 @@ export default function NewsPreviews() {
   const { data } = useGetNewsQuery();
 
   if (data && news === null) {
-    setNews(Object.values(data.entities));
+    setNews(data.previews);
   }
 
   const getWindowWidth = useCallback(() => {
