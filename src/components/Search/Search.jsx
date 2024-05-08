@@ -1,13 +1,9 @@
-/* eslint-disable react/no-array-index-key */
 import {
   useMemo, Suspense, useState, useCallback, useLayoutEffect,
-  useEffect,
 } from 'react';
-import {
-  Link, Await, useSearchParams,
-  useFetcher,
-} from 'react-router-dom';
+import { Link, Await, useSearchParams } from 'react-router-dom';
 import classNames from 'classnames';
+import { useGetSearchResultsQuery } from '../../queryAPI/queryAPI.js';
 import useOnResize from '../../hooks/useOnResize.jsx';
 import ProductCard from '../ProductCard/ProductCard.jsx';
 import Spinner from '../common/Spinner/Spinner.jsx';
@@ -20,42 +16,34 @@ import LineIcon from '../../assets/images/icons/oblique.svg';
 import ThreeDotsSpinnerBlock from '../common/ThreeDotsSpinnerBlock/ThreeDotsSpinnerBlock.jsx';
 
 export default function Search() {
-  const searchFetcher = useFetcher();
   const [searchParams] = useSearchParams();
 
-  const [searchFetcherData, setSearchFetcherData] = useState(null);
+  const [searchResults, setSearchResults] = useState(null);
+  const [pageAmount, setPageAmount] = useState(null);
   const [isShortProductCard, setIsShortProductCard] = useState(false);
-  const [fetchURL, setFetchUrl] = useState(null);
-  const [prevFetchUrl, setPrevFetchUrl] = useState(null);
 
-  const searchValue = searchParams.get('search');
+  const searchQuery = searchParams.get('search');
 
-  const searchResults = useMemo(() => searchFetcherData?.searchResults, [searchFetcherData]);
-  const pageAmount = searchFetcherData?.pageAmount;
+  const requestParams = useMemo(() => ({
+    searchQuery,
+    pageNum: +searchParams.get('page') || 1,
+  }), [searchQuery, searchParams]);
 
-  const setupFetchUrl = useCallback(() => {
-    const newFetchURL = `/search?${searchParams.toString()}`;
+  const shouldSkip = searchQuery === null;
 
-    if (newFetchURL !== fetchURL) {
-      setFetchUrl(newFetchURL);
+  const {
+    data: fetchedSearchResults,
+    isLoading,
+    isFetching,
+  } = useGetSearchResultsQuery(requestParams, { skip: shouldSkip });
+
+  if (fetchedSearchResults) {
+    if (searchResults !== fetchedSearchResults.searchResults) {
+      setSearchResults(fetchedSearchResults.searchResults);
     }
-  }, [searchParams, fetchURL]);
 
-  useEffect(setupFetchUrl);
-
-  const requestFetcherData = useCallback(() => {
-    if (fetchURL !== prevFetchUrl) {
-      setPrevFetchUrl(fetchURL);
-
-      searchFetcher.load(fetchURL);
-    }
-  }, [fetchURL, prevFetchUrl, searchFetcher]);
-
-  useEffect(requestFetcherData);
-
-  if (searchFetcher.data) {
-    if (searchFetcher.data.searchResultAndPageAmount !== searchFetcherData) {
-      setSearchFetcherData(searchFetcher.data.searchResultAndPageAmount);
+    if (pageAmount !== fetchedSearchResults.pageAmount) {
+      setPageAmount(fetchedSearchResults.pageAmount);
     }
   }
 
@@ -134,7 +122,10 @@ export default function Search() {
               alt={name}
             >
               <Suspense fallback={<Spinner className={searchCls.imgSpinner} />}>
-                <Await resolve={imgSrc}>
+                <Await
+                  resolve={imgSrc}
+                  errorElement={<div style={{ display: 'none' }} />}
+                >
                   <DynamicImage
                     className={searchCls.img}
                     alt={name}
@@ -160,50 +151,58 @@ export default function Search() {
     );
   }, [searchResults, isShortProductCard]);
 
+  const noResultsBlock = (
+    <div className={searchCls.noResultBlock}>
+      <div className={searchCls.noResultContent}>
+        <LineIcon className={searchCls.noResultLine} />
+        <p className={classNames(
+          textCls.text,
+          textCls.textFw800,
+          textCls.text32px,
+          searchCls.noResultText,
+        )}
+        >
+          Нічого не знайдено
+        </p>
+        <p className={classNames(
+          textCls.text,
+          textCls.text24px,
+          textCls.textGrey,
+        )}
+        >
+          Переконайтеся у правильності формулювання вашого запиту, спробуйте використати
+          альтернативні варіанти або більш узагальнені терміни.
+        </p>
+      </div>
+    </div>
+  );
+
   return (
     <main className={classNames(
       containerCls.container,
       searchCls.main,
     )}
     >
-      {searchResults !== undefined ? (
+      {searchResults && (
         <div className={classNames(
           searchCls.searchResults,
-          searchFetcher.state === 'loading' && searchCls.searchResults_inactive,
+          !isLoading && isFetching && searchCls.searchResults_inactive,
         )}
         >
           {searchResults.length ? (
             searchResultList
           ) : (
-            <div className={searchCls.noResultBlock}>
-              <div className={searchCls.noResultContent}>
-                <LineIcon className={searchCls.noResultLine} />
-                <p className={classNames(
-                  textCls.text,
-                  textCls.textFw800,
-                  textCls.text32px,
-                  searchCls.noResultText,
-                )}
-                >
-                  Нічого не знайдено
-                </p>
-                <p className={classNames(
-                  textCls.text,
-                  textCls.text24px,
-                  textCls.textGrey,
-                )}
-                >
-                  Переконайтеся у правильності формулювання вашого запиту, спробуйте використати
-                  альтернативні варіанти або більш узагальнені терміни.
-                </p>
-              </div>
-            </div>
+            noResultsBlock
           )}
         </div>
-      ) : (
+      )}
+      {(!searchResults && searchQuery) && (
         <ThreeDotsSpinnerBlock />
       )}
-      {searchValue && (
+      {(!searchResults && !searchQuery) && (
+        noResultsBlock
+      )}
+      {!!pageAmount && (
         <div className={searchCls.paginationBlock}>
           <PaginationBlock
             pageAmount={pageAmount}

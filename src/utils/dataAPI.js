@@ -1,18 +1,11 @@
-/* eslint-disable no-return-assign */
 import products from './products.json';
 import news from './news.json';
 
 // utils
 
-// async function fakeNetwork() {
-//   return new Promise((res) => {
-//     setTimeout(res, Math.random() * 800);
-//   });
-// }
-
 async function fakeNetwork() {
   return new Promise((res) => {
-    setTimeout(res, 1500);
+    setTimeout(res, Math.random() * 800);
   });
 }
 

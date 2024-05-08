@@ -20,9 +20,6 @@ import ContactsPageLazy from '../pages/Contacts/Contact.lazy.jsx';
 import NewsPageLazy from '../pages/News/News.lazy.jsx';
 import NewsArticlePageLazy from '../pages/NewsArticle/NewsArticle.lazy.jsx';
 import SearchPageLazy from '../pages/Search/Search.lazy.jsx';
-import { loader as getSearchPageLoader } from '../pages/Search/SearchUtils.jsx';
-import { GetCategoriesAndSubcategoriesPage, loader as getCategoriesAndSubcategoriesLoader } from '../pages/GetCategoriesAndSubcategories/GetCategoriesAndSubcategories.jsx';
-import { GetRandomProductPage, loader as getRandomProductLoader } from '../pages/GetRandomProduct/GetRandomProduct.jsx';
 
 const router = createHashRouter([
   {
@@ -81,18 +78,7 @@ const router = createHashRouter([
           },
           {
             path: 'search',
-            loader: getSearchPageLoader,
             element: <SearchPageLazy />,
-          },
-          {
-            path: 'getCategoriesAndSubcategories',
-            loader: getCategoriesAndSubcategoriesLoader,
-            element: <GetCategoriesAndSubcategoriesPage />,
-          },
-          {
-            path: 'getRandomProduct',
-            loader: getRandomProductLoader,
-            element: <GetRandomProductPage />,
           },
         ],
       },
