@@ -19,7 +19,6 @@ import PaymentPageLazy from '../pages/Payment/Payment.lazy.jsx';
 import ContactsPageLazy from '../pages/Contacts/Contact.lazy.jsx';
 import NewsPageLazy from '../pages/News/News.lazy.jsx';
 import NewsArticlePageLazy from '../pages/NewsArticle/NewsArticle.lazy.jsx';
-import { loader as newsArticleLoader } from '../pages/NewsArticle/NewsArticleUtils.jsx';
 import SearchPageLazy from '../pages/Search/Search.lazy.jsx';
 import { loader as getSearchPageLoader } from '../pages/Search/SearchUtils.jsx';
 import { GetCategoriesAndSubcategoriesPage, loader as getCategoriesAndSubcategoriesLoader } from '../pages/GetCategoriesAndSubcategories/GetCategoriesAndSubcategories.jsx';
@@ -78,7 +77,6 @@ const router = createHashRouter([
           },
           {
             path: 'news/:articleId',
-            loader: newsArticleLoader,
             element: <NewsArticlePageLazy />,
           },
           {

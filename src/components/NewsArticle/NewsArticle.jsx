@@ -5,10 +5,9 @@
 import {
   useState, Suspense, useCallback, useMemo,
 } from 'react';
-import {
-  Await, Link, useFetcher, useParams,
-} from 'react-router-dom';
+import { Await, Link, useParams } from 'react-router-dom';
 import classNames from 'classnames';
+import { useGetNewsArticleQuery, useGetRecommendedNewsQuery } from '../../queryAPI/queryAPI.js';
 import Spinner from '../common/Spinner/Spinner.jsx';
 import DynamicImage from '../common/DynamicImage/DynamicImage.jsx';
 import ThreeDotsSpinnerBlock from '../common/ThreeDotsSpinnerBlock/ThreeDotsSpinnerBlock.jsx';
@@ -17,24 +16,37 @@ import linkCls from '../../scss/_link.module.scss';
 import articleCls from './NewsArticle.module.scss';
 import LineIcon from '../../assets/images/icons/oblique.svg';
 import ViewsIcon from '../../assets/images/icons/views.svg';
-import useFetcherLoad from '../../hooks/useFetcherLoad.jsx';
 
 export default function NewsArticle() {
-  const articleFetcher = useFetcher();
   const params = useParams();
 
-  const [articleFetcherData, setArticleFetcherData] = useState();
+  const [articleObj, setArticleObj] = useState(null);
+  const [recommendedNewsObjs, setRecommendedNewsObjs] = useState(null);
 
-  const fetchUrl = `/news/${params.articleId}`;
+  const { articleId } = params;
 
-  const articleObj = useMemo(() => articleFetcherData?.articleObj, [articleFetcherData]);
-  const recommendedNews = useMemo(() => articleFetcherData?.recommendedNews, [articleFetcherData]);
+  const {
+    data: fetchedArticleObj,
+    status,
+    isLoading: isArticleLoading,
+    isFetching: isArticleFetching,
+  } = useGetNewsArticleQuery(articleId);
 
-  useFetcherLoad(articleFetcher, fetchUrl);
+  if (fetchedArticleObj) {
+    if (fetchedArticleObj !== articleObj) {
+      setArticleObj(fetchedArticleObj);
+    }
+  }
 
-  if (articleFetcher.data) {
-    if (articleFetcher.data !== articleFetcherData) {
-      setArticleFetcherData(articleFetcher.data);
+  if (status === 'rejected') {
+    throw new Response(null, { status: 404, statusText: 'Not found' });
+  }
+
+  const { data: fetchedRecommendedNews } = useGetRecommendedNewsQuery(articleId);
+
+  if (fetchedRecommendedNews) {
+    if (recommendedNewsObjs !== fetchedRecommendedNews) {
+      setRecommendedNewsObjs(fetchedRecommendedNews);
     }
   }
 
@@ -254,9 +266,9 @@ export default function NewsArticle() {
     createContentParagraphs, createContentQuoteBlock, createContentTable]);
 
   const recommendedNewsList = useMemo(() => {
-    if (!recommendedNews) return;
+    if (!recommendedNewsObjs) return;
 
-    const recommendedNewsListElements = recommendedNews.map((rN) => (
+    const recommendedNewsListElements = recommendedNewsObjs.map((rN) => (
       <li
         key={rN.id}
         className={articleCls.recommendedNewsListElement}
@@ -283,12 +295,13 @@ export default function NewsArticle() {
         {recommendedNewsListElements}
       </ul>
     );
-  }, [recommendedNews]);
+  }, [recommendedNewsObjs]);
 
   return (
     <main className={classNames(
       containerCls.container,
       articleCls.main,
+      !isArticleLoading && isArticleFetching && articleCls.main_inactive,
     )}
     >
       <h1 className={articleCls.h1}>
@@ -304,7 +317,7 @@ export default function NewsArticle() {
               <p className={articleCls.recommendArticlesTitle}>
                 Дивіться також
               </p>
-              {recommendedNewsList}
+              {recommendedNewsList || <ThreeDotsSpinnerBlock />}
             </article>
           </div>
           <div className={articleCls.dateAndViewsBlock}>

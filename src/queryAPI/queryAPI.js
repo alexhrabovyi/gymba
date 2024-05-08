@@ -6,7 +6,6 @@ const categoriesAdapter = createEntityAdapter();
 
 const tagTypes = [
   'categories',
-  'news',
   'subcategoryProducts',
   'wishlistIds',
   'wishlistProducts',
@@ -15,6 +14,9 @@ const tagTypes = [
   'compareIds',
   'compareSubcategories',
   'compareProducts',
+  'news',
+  'newsArticle',
+  'recommendedNews',
   'product',
   'analogueProducts',
 ];
@@ -47,10 +49,6 @@ export const queryAPI = createApi(
           return categoriesAdapter.addMany(categoriesAdapter.getInitialState(), response);
         },
         providesTags: ['categories'],
-      }),
-      getNews: builder.query({
-        query: (pageNum) => (pageNum ? `/news?page=${pageNum}` : '/news'),
-        providesTags: ['news'],
       }),
       getProducts: builder.query({
         query: (partialUrl) => `/getProducts/${partialUrl}`,
@@ -276,6 +274,18 @@ export const queryAPI = createApi(
         query: ({ categoryId, subcategoryId }) => `/getCompareProducts/${categoryId}/${subcategoryId}`,
         providesTags: ['compareProducts'],
       }),
+      getNews: builder.query({
+        query: (pageNum) => (pageNum ? `/news?page=${pageNum}` : '/news'),
+        providesTags: ['news'],
+      }),
+      getNewsArticle: builder.query({
+        query: (articleId) => `/newsArticle/${articleId}`,
+        providesTags: ['newsArticle'],
+      }),
+      getRecommendedNews: builder.query({
+        query: (articleId) => `/getRecommendedNews/${articleId}`,
+        providesTags: ['recommendedNews'],
+      }),
       getProduct: builder.query({
         query: (partialUrl) => `/getProduct/${partialUrl}`,
         providesTags: ['product'],
@@ -290,7 +300,6 @@ export const queryAPI = createApi(
 
 export const {
   useGetCategoriesQuery,
-  useGetNewsQuery,
   useGetProductsQuery,
   useGetWishlistIdsQuery,
   useAddWishlistIdMutation,
@@ -309,6 +318,9 @@ export const {
   useGetCompareSubcategoriesQuery,
   useDeleteCompareSubcategoryMutation,
   useGetCompareProductsQuery,
+  useGetNewsQuery,
+  useGetNewsArticleQuery,
+  useGetRecommendedNewsQuery,
   useGetProductQuery,
   useGetAnalogueProductsQuery,
 } = queryAPI;

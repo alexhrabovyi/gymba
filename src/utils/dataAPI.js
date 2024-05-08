@@ -616,6 +616,27 @@ export async function getNewsPreviewsPerPageAndPageAmount(pageNum) {
   };
 }
 
+export async function getNewsArticle(articleId) {
+  await fakeNetwork();
+
+  const article = news.entities[articleId];
+
+  if (!article) throw new Response(null, { status: 404, statusText: 'Not found' });
+
+  return new Response(JSON.stringify(article), { status: 200, statusText: 'OK' });
+}
+
+export async function getRecommendedNews(id) {
+  await fakeNetwork();
+
+  let allNewsPreviews = getAllNewsPreviews();
+  allNewsPreviews = allNewsPreviews.filter((n) => n.id !== id);
+
+  const recommendedNews = (allNewsPreviews.sort(() => 0.5 - Math.random())).slice(0, 3);
+
+  return recommendedNews;
+}
+
 // =====
 
 export async function getCategoryAndSubcategories(categoryId) {
@@ -773,26 +794,4 @@ export async function getSearchResultsPerPageAndPageAmount(searchQuery, pageNum)
     searchResults,
     pageAmount,
   };
-}
-
-// news
-
-export async function getNewsArticle(id) {
-  await fakeNetwork();
-
-  const article = news.find((n) => n.id === id);
-
-  if (!article) throw new Error('Статтю не знайдено');
-
-  return article;
-}
-
-export async function getRecommendedNews(id) {
-  const allNewsPreviews = await getAllNewsPreviews();
-  const index = news.findIndex((n) => n.id === id);
-  allNewsPreviews.splice(index, 1);
-
-  const recommendedNews = (allNewsPreviews.sort(() => 0.5 - Math.random())).slice(0, 3);
-
-  return recommendedNews;
 }

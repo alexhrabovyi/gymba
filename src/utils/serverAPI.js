@@ -3,7 +3,6 @@ import { http, HttpResponse } from 'msw';
 import { setupWorker } from 'msw/browser';
 import {
   getCategoriesAndSubcategories,
-  getNewsPreviewsPerPageAndPageAmount,
   getFilteredProductsAndMinMaxPrice,
   getWishlistIds,
   addIdToWishlist,
@@ -23,6 +22,9 @@ import {
   deleteCompareSubcategory,
   deleteAllCompareSubcategories,
   getCompareProductCards,
+  getNewsPreviewsPerPageAndPageAmount,
+  getNewsArticle,
+  getRecommendedNews,
   getProduct,
   getAnalogueProducts,
 } from './dataAPI';
@@ -53,12 +55,6 @@ export const handlers = [
   http.get('/fakeAPI/categories', async () => {
     const categories = await getCategoriesAndSubcategories();
     return HttpResponse.json(categories);
-  }),
-  http.get('/fakeAPI/news', async ({ request }) => {
-    const pageNum = new URL(request.url).searchParams.get('page') || 1;
-
-    const newsPreviews = await getNewsPreviewsPerPageAndPageAmount(pageNum);
-    return HttpResponse.json(newsPreviews);
   }),
   http.get('/fakeAPI/getProducts/:categoryId/:subcategoryId', async ({ request, params }) => {
     const { categoryId, subcategoryId } = params;
@@ -120,6 +116,24 @@ export const handlers = [
     const { categoryId, subcategoryId } = params;
 
     return getCompareProductCards(categoryId, subcategoryId);
+  }),
+  http.get('/fakeAPI/news', async ({ request }) => {
+    const pageNum = new URL(request.url).searchParams.get('page') || 1;
+
+    const newsPreviews = await getNewsPreviewsPerPageAndPageAmount(pageNum);
+    return HttpResponse.json(newsPreviews);
+  }),
+  http.get('/fakeAPI/newsArticle/:articleId', async ({ params }) => {
+    const { articleId } = params;
+
+    return getNewsArticle(articleId);
+  }),
+  http.get('/fakeAPI/getRecommendedNews/:articleId', async ({ params }) => {
+    const { articleId } = params;
+
+    const recommendedNews = await getRecommendedNews(articleId);
+
+    return HttpResponse.json(recommendedNews);
   }),
   http.get('/fakeAPI/getProduct/:categoryId/:subcategoryId/:productId', async ({ params }) => {
     const { categoryId, subcategoryId, productId } = params;

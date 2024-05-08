@@ -27,6 +27,11 @@
   @include media-xs {
     margin-top: 40px; 
   }
+
+  &_inactive {
+    opacity: 0.5;
+    pointer-events: none;
+  }
 }
 
 .h1 {
