@@ -546,6 +546,26 @@ export async function getCompareSubcategories() {
   return new Response(data, { status: 200, statusText: 'OK' });
 }
 
+export async function deleteCompareSubcategory(categoryId, subcategoryId) {
+  await fakeNetwork();
+
+  let compareIds = getLocalStorageIds('compareIds');
+  compareIds = compareIds.filter(([cId, sId]) => cId !== categoryId && sId !== subcategoryId);
+  compareIds = JSON.stringify(compareIds);
+
+  localStorage.setItem('compareIds', compareIds);
+
+  return new Response(null, { status: 200, statusText: 'OK' });
+}
+
+export async function deleteAllCompareSubcategories() {
+  await fakeNetwork();
+
+  localStorage.setItem('compareIds', JSON.stringify([]));
+
+  return new Response(null, { status: 200, statusText: 'OK' });
+}
+
 export async function getCompareProductCards(categoryId, subcategoryId) {
   await fakeNetwork();
 
@@ -612,25 +632,6 @@ export async function getRandomProduct() {
     subcategoryId: subcategory.id,
     product: randomProduct,
   };
-}
-
-export function deleteAllFromCompare() {
-  localStorage.removeItem('compareIds');
-}
-
-export async function getCompareAmount() {
-  const compareIds = await getCompareIds();
-
-  return compareIds.length;
-}
-
-export async function deleteSubcFromCompare(categoryId, subcategoryId) {
-  let compareIds = await getCompareIds();
-
-  compareIds = compareIds.filter(([cId, subcId]) => cId !== categoryId
-    || (cId === categoryId && subcId !== subcategoryId));
-
-  localStorage.setItem('compareIds', JSON.stringify(compareIds));
 }
 
 async function getAllSearchResults(searchQuery) {

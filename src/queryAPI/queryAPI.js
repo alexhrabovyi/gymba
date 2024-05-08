@@ -248,9 +248,34 @@ export const queryAPI = createApi(
         ),
       ),
       getCompareSubcategories: builder.query({
-        query: () => '/getCompareSubcategories',
+        query: () => '/compareSubcategories',
         providesTags: ['compareSubcategories'],
       }),
+      deleteCompareSubcategory: builder.mutation(
+        createPatchDeleteMutation(
+          (body) => ({
+            url: '/compareSubcategories',
+            method: 'DELETE',
+            body,
+          }),
+          [{ type: 'compareIds', id: 'LIST' }, 'compareSubcategories', 'compareProducts'],
+          (args) => (
+            queryAPI.util.updateQueryData('getCompareSubcategories', undefined, (draft) => {
+              const request = JSON.parse(args);
+
+              if (request.deleteAll) {
+                draft.splice(0);
+              } else {
+                const [categoryId, subcategoryId] = request;
+                const index = draft.findIndex((subcObj) => (
+                  subcObj.categoryId === categoryId && subcObj.subcategoryId === subcategoryId
+                ));
+                draft.splice(index, 1);
+              }
+            })
+          ),
+        ),
+      ),
       getCompareProducts: builder.query({
         query: ({ categoryId, subcategoryId }) => `/getCompareProducts/${categoryId}/${subcategoryId}`,
         providesTags: ['compareProducts'],
@@ -286,6 +311,7 @@ export const {
   useAddCompareIdMutation,
   useDeleteCompareIdMutation,
   useGetCompareSubcategoriesQuery,
+  useDeleteCompareSubcategoryMutation,
   useGetCompareProductsQuery,
   useGetProductQuery,
   useGetAnalogueProductsQuery,

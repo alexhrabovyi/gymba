@@ -3,7 +3,12 @@ import {
 } from 'react';
 import { useDispatch } from 'react-redux';
 import classNames from 'classnames';
-import { queryAPI, useGetCompareSubcategoriesQuery, useGetCompareProductsQuery } from '../../queryAPI/queryAPI.js';
+import {
+  queryAPI,
+  useGetCompareSubcategoriesQuery,
+  useGetCompareProductsQuery,
+  useDeleteCompareSubcategoryMutation,
+} from '../../queryAPI/queryAPI.js';
 import ProductCard from '../ProductCard/ProductCard.jsx';
 import containerCls from '../../scss/_container.module.scss';
 import textCls from '../../scss/_text.module.scss';
@@ -26,6 +31,8 @@ export default function Compare() {
   const [activeCategoryId, setActiveCategoryId] = useState(null);
   const [productObjs, setProductObjs] = useState(null);
   const [displayedSpecsType, setDisplayedSpecsType] = useState('all');
+
+  const [deleteSubcategoryRequest] = useDeleteCompareSubcategoryMutation();
 
   // basic setup functions
 
@@ -71,6 +78,9 @@ export default function Compare() {
 
   useEffect(resetScrollLeftOnNewCards, [resetScrollLeftOnNewCards]);
 
+  const isFetchingProductsForAnotherSubcategory = productObjs
+    ?.[0]?.subcategoryId !== activeSubcategoryId;
+
   // fetch functions
 
   const { data: fetchedCompareSubcategories } = useGetCompareSubcategoriesQuery();
@@ -87,10 +97,7 @@ export default function Compare() {
     subcategoryId: activeSubcategoryId,
   }), [activeCategoryId, activeSubcategoryId]);
 
-  const {
-    data: fetchedProducts,
-    isFetching: isProductsFetching,
-  } = useGetCompareProductsQuery(requestObj, { skip: shouldSkip });
+  const { data: fetchedProducts } = useGetCompareProductsQuery(requestObj, { skip: shouldSkip });
 
   if (fetchedProducts) {
     if (productObjs !== fetchedProducts) {
@@ -122,12 +129,13 @@ export default function Compare() {
   }, [productObjs, dispatch, requestObj]);
 
   function deleteAllBtnOnClick() {
-    const data = JSON.stringify('');
+    const data = JSON.stringify({ deleteAll: true });
 
-    // compareFetcher.submit(data, {
-    //   method: 'DELETE',
-    //   encType: 'application/json',
-    // });
+    deleteSubcategoryRequest(data);
+
+    dispatch(queryAPI.util.updateQueryData('getCompareProducts', requestObj, (draft) => {
+      draft.splice(0);
+    }));
   }
 
   function prevControlButtonOnClick() {
@@ -188,10 +196,13 @@ export default function Compare() {
           onClick={() => {
             const data = JSON.stringify([categoryId, subcategoryId]);
 
-            // compareFetcher.submit(data, {
-            //   method: 'DELETE',
-            //   encType: 'application/json',
-            // });
+            deleteSubcategoryRequest(data);
+
+            if (compareSubcategories.length === 1) {
+              dispatch(queryAPI.util.updateQueryData('getCompareProducts', requestObj, (draft) => {
+                draft.splice(0);
+              }));
+            }
           }}
           aria-label={`Видалити категорію ${subcategoryName} з порівняння`}
         >
@@ -202,7 +213,7 @@ export default function Compare() {
         {subcategoryName}
       </div>
     ))
-  ), [compareSubcategories, activeSubcategoryId]);
+  ), [compareSubcategories, activeSubcategoryId, deleteSubcategoryRequest, dispatch, requestObj]);
 
   // setup product cards
 
@@ -435,7 +446,7 @@ export default function Compare() {
             ref={productBlockRef}
             className={classNames(
               compareCls.productBlock,
-              isProductsFetching && compareCls.productBlock_inactive,
+              isFetchingProductsForAnotherSubcategory && compareCls.productBlock_inactive,
             )}
             onScroll={productBlockOnScroll}
           >

@@ -20,6 +20,8 @@ import {
   addIdToCompare,
   deleteFromCompare,
   getCompareSubcategories,
+  deleteCompareSubcategory,
+  deleteAllCompareSubcategories,
   getCompareProductCards,
   getProduct,
   getAnalogueProducts,
@@ -98,7 +100,20 @@ export const handlers = [
   }),
   http.post('/fakeAPI/compareIds', async ({ request }) => addMutation(request, addIdToCompare)),
   http.delete('/fakeAPI/compareIds', async ({ request }) => deleteMutation(request, deleteFromCompare)),
-  http.get('/fakeAPI/getCompareSubcategories', async () => getCompareSubcategories()),
+  http.get('/fakeAPI/compareSubcategories', async () => getCompareSubcategories()),
+  http.delete('/fakeAPI/compareSubcategories', async ({ request }) => {
+    const requestData = await request.json();
+    let response;
+
+    if (requestData.deleteAll) {
+      response = await deleteAllCompareSubcategories();
+    } else {
+      const [categoryId, subcategoryId] = requestData;
+      response = await deleteCompareSubcategory(categoryId, subcategoryId);
+    }
+
+    return response;
+  }),
   http.get('/fakeAPI/getCompareProducts/:categoryId/:subcategoryId', async ({ params }) => {
     const { categoryId, subcategoryId } = params;
 
