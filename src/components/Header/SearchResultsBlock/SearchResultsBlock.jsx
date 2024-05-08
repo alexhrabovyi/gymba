@@ -1,13 +1,13 @@
-/* eslint-disable import/no-unresolved */
 /* eslint-disable no-restricted-globals */
-/* eslint-disable react/no-array-index-key */
 /* eslint-disable jsx-a11y/no-static-element-interactions */
 import {
-  Fragment, Suspense, memo, useState, useCallback, useLayoutEffect, useRef,
-  useEffect,
+  Fragment, Suspense, memo, useState, useCallback,
+  useLayoutEffect, useRef, useMemo, useEffect,
 } from 'react';
-import { Link, useFetcher, Await } from 'react-router-dom';
+import { Link, Await } from 'react-router-dom';
+import { nanoid } from '@reduxjs/toolkit';
 import classNames from 'classnames';
+import { useGetSearchResultsQuery } from '../../../queryAPI/queryAPI.js';
 import useOnResize from '../../../hooks/useOnResize.jsx';
 import findAllInteractiveElements from '../../../utils/findAllInteractiveElements';
 import Spinner from '../../common/Spinner/Spinner.jsx';
@@ -25,16 +25,20 @@ const SearchResultBlock = memo(({
   setIsActive,
   searchValue,
 }) => {
-  const searchResultsFetcher = useFetcher();
-
   const searchBlockRef = useRef();
 
-  const [prevSearchValue, setPrevSearchValue] = useState(searchValue);
   const [searchResults, setSearchResults] = useState(null);
   const [windowWidth, setWindowWidth] = useState(null);
   const [searchResultList, setSearchResultList] = useState(null);
 
+  // setup functions
+
   const isOpen = isActive && searchValue?.length;
+
+  const requestParams = useMemo(() => ({
+    searchQuery: searchValue,
+    pageNum: 1,
+  }), [searchValue]);
 
   const searchParamsString = new URLSearchParams({
     search: searchValue,
@@ -98,37 +102,24 @@ const SearchResultBlock = memo(({
 
   toggleInteractiveElements();
 
-  if (searchValue === '' && searchResults !== null) {
-    setSearchResults(null);
-  }
+  // fetch functions
 
-  function requestSearchResults() {
-    if (prevSearchValue !== searchValue && searchValue.length) {
-      setPrevSearchValue(searchValue);
+  const shouldSkip = !searchValue?.length;
 
-      const action = `/search?${searchParamsString}`;
+  const {
+    data: fetchedResults,
+    isLoading: isLoadingResults,
+    isFetching: isFetchingResults,
+  } = useGetSearchResultsQuery(requestParams, { skip: shouldSkip });
 
-      searchResultsFetcher.load(action);
+  if (fetchedResults) {
+    if (searchResults !== fetchedResults.searchResults) {
+      setSearchResults(fetchedResults.searchResults);
     }
   }
 
-  requestSearchResults();
-
-  function updateSearchResults() {
-    if (searchResultsFetcher.data && searchValue !== '') {
-      const searchResultsFromFetcher = searchResultsFetcher
-        .data.searchResultAndPageAmount.searchResults;
-
-      if (searchResultsFromFetcher !== searchResults) {
-        setSearchResults(searchResultsFromFetcher);
-      }
-    }
-  }
-
-  updateSearchResults();
-
-  const setupSearchResultList = useCallback(() => {
-    if (!searchResults || searchResultsFetcher.state === 'loading') return;
+  const createSearchResultList = useCallback(() => {
+    if (!searchResults || isFetchingResults) return;
 
     const listElems = searchResults.slice(0, 5).map((sR) => {
       let key;
@@ -170,7 +161,7 @@ const SearchResultBlock = memo(({
         matchIndexes.forEach((matchIndex, i) => {
           const startText = text.slice(startIndex, matchIndex);
           result.push(
-            <Fragment key={startText + i}>
+            <Fragment key={startText + nanoid()}>
               {startText}
             </Fragment>,
           );
@@ -178,7 +169,7 @@ const SearchResultBlock = memo(({
           const selectedText = text.slice(matchIndex, matchIndex + searchValueLength);
           result.push(
             <span
-              key={selectedText + i}
+              key={selectedText + nanoid()}
               className={searchCls.matchedText}
             >
               {selectedText}
@@ -190,7 +181,7 @@ const SearchResultBlock = memo(({
           if (i === matchIndexes.length - 1) {
             const endText = text.slice(startIndex);
             result.push(
-              <Fragment key={endText + i}>
+              <Fragment key={endText + nanoid()}>
                 {endText}
               </Fragment>,
             );
@@ -253,9 +244,9 @@ const SearchResultBlock = memo(({
     );
 
     setSearchResultList(newSearchResultList);
-  }, [searchResults, searchResultsFetcher, searchValue]);
+  }, [searchResults, isFetchingResults, searchValue]);
 
-  useEffect(setupSearchResultList, [setupSearchResultList]);
+  useEffect(createSearchResultList, [createSearchResultList]);
 
   return (
     <div
@@ -279,7 +270,7 @@ const SearchResultBlock = memo(({
         {isActive && searchResultList ? (
           <div className={classNames(
             searchCls.loadingBlock,
-            searchResultsFetcher.state === 'loading' && searchCls.loadingBlock_active,
+            !isLoadingResults && isFetchingResults && searchCls.loadingBlock_inactive,
           )}
           >
             {searchResultList}

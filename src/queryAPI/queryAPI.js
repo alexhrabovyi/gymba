@@ -1,4 +1,3 @@
-/* eslint-disable no-unused-vars */
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 import { createEntityAdapter } from '@reduxjs/toolkit';
 
@@ -19,6 +18,8 @@ const tagTypes = [
   'recommendedNews',
   'product',
   'analogueProducts',
+  'randomProduct',
+  'searchResults',
 ];
 
 function createPatchDeleteMutation(queryFn, invalidatedTags, updateQueryFn) {
@@ -294,6 +295,14 @@ export const queryAPI = createApi(
         query: (partialUrl) => `/getAnalogueProducts/${partialUrl}`,
         providesTags: ['analogueProducts'],
       }),
+      getRandomProduct: builder.query({
+        query: () => '/getRandomProduct',
+        providesTags: ['randomProduct'],
+      }),
+      getSearchResults: builder.query({
+        query: ({ searchQuery, pageNum }) => `/search?search=${searchQuery}&page=${pageNum}`,
+        providesTags: ['searchResults'],
+      }),
     }),
   },
 );
@@ -323,4 +332,6 @@ export const {
   useGetRecommendedNewsQuery,
   useGetProductQuery,
   useGetAnalogueProductsQuery,
+  useGetRandomProductQuery,
+  useGetSearchResultsQuery,
 } = queryAPI;

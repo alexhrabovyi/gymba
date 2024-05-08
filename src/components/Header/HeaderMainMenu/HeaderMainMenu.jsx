@@ -1,12 +1,13 @@
-/* eslint-disable import/no-unresolved */
 import {
   memo, useEffect, useRef, useState, useCallback, useLayoutEffect, useMemo, Suspense,
 } from 'react';
 import { Link, NavLink, Await } from 'react-router-dom';
 import classNames from 'classnames';
+import { useGetWishlistIdsQuery, useGetCompareIdsQuery, useGetRandomProductQuery } from '../../../queryAPI/queryAPI.js';
 import useOnResize from '../../../hooks/useOnResize.jsx';
 import findAllInteractiveElements from '../../../utils/findAllInteractiveElements.js';
 import getScrollWidth from '../../../utils/getScrollWidth.jsx';
+import ThreeDotsSpinnerBlock from '../../common/ThreeDotsSpinnerBlock/ThreeDotsSpinnerBlock.jsx';
 import Spinner from '../../common/Spinner/Spinner.jsx';
 import DynamicImage from '../../common/DynamicImage/DynamicImage.jsx';
 import containerCls from '../../../scss/_container.module.scss';
@@ -19,8 +20,6 @@ import Favorite from '../../../assets/images/icons/favorite.svg';
 import ChevronRight from '../../../assets/images/icons/chevronRight.svg';
 import Tag from '../images/tag.svg';
 import Phone from '../images/phone.svg';
-
-import ThreeDotsSpinnerBlock from '../../common/ThreeDotsSpinnerBlock/ThreeDotsSpinnerBlock.jsx';
 
 const HeaderMainMenu = memo(({
   isMenuOpen, categories, catalogBtnOnClick, openLoginPopupBtnOnClick,
@@ -132,6 +131,30 @@ const HeaderMainMenu = memo(({
   }, [isMenuOpen]);
 
   // fetcher functions
+
+  const { data: fetchedWishlistIds } = useGetWishlistIdsQuery();
+
+  if (fetchedWishlistIds) {
+    if (fetchedWishlistIds.length !== wishlistAmount) {
+      setWishlistAmount(fetchedWishlistIds.length);
+    }
+  }
+
+  const { data: fetchedCompareIds } = useGetCompareIdsQuery();
+
+  if (fetchedCompareIds) {
+    if (fetchedCompareIds.length !== compareAmount) {
+      setCompareAmount(fetchedCompareIds.length);
+    }
+  }
+
+  const { data: fetchedRandomProduct } = useGetRandomProductQuery();
+
+  if (fetchedRandomProduct) {
+    if (fetchedRandomProduct !== randomProduct) {
+      setRandomProduct(fetchedRandomProduct);
+    }
+  }
 
   // element creating functions
 

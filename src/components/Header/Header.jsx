@@ -25,7 +25,6 @@ import useScrollToTop from '../../hooks/useScrollToTop.jsx';
 import useHideScrollbarOnOpen from '../../hooks/useHideScrollbarOnOpen.jsx';
 import useOnResize from '../../hooks/useOnResize.jsx';
 import getScrollWidth from '../../utils/getScrollWidth.jsx';
-import useFetcherLoad from '../../hooks/useFetcherLoad.jsx';
 import Button from '../common/Button/Button.jsx';
 import HeaderMainMenu from './HeaderMainMenu/HeaderMainMenu.jsx';
 import HeaderCategoryMenu from './HeaderCategoryMenu/HeaderCategoryMenu.jsx';
@@ -523,14 +522,14 @@ export default function Header() {
         setIsActive={setIsLoginPopupOpen}
         openButtonRef={openLoginPopupBtnRef}
       /> */}
-      {/* <SearchResultBlock
+      <SearchResultBlock
         isActive={isSearchBlockActive}
         setIsActive={setIsSearchBlockActive}
         inputLeft={searchBlockStyles?.left}
         inputWidth={searchBlockStyles?.width}
         headerBottom={searchBlockStyles?.headerBottom}
         searchValue={searchValue}
-      /> */}
+      />
     </>
   );
 }

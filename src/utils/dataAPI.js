@@ -580,91 +580,11 @@ export async function getCompareProductCards(categoryId, subcategoryId) {
   return new Response(JSON.stringify(productCards), { status: 200, statusText: 'OK' });
 }
 
-// news API
-
-function getAllNewsPreviews() {
-  const newsFullObjs = Object.values(news.entities);
-  const newsShortObjs = newsFullObjs.map((n) => ({
-    name: n.name,
-    id: n.id,
-    date: n.date,
-    views: n.views,
-  }));
-
-  return newsShortObjs;
-}
-
-export async function getNewsPreviewsPerPageAndPageAmount(pageNum) {
-  await fakeNetwork();
-
-  const allNewsPreviews = getAllNewsPreviews();
-  const allNewsPreviewsAmount = allNewsPreviews.length;
-  const perView = 12;
-
-  const pageAmount = getPageAmount(allNewsPreviewsAmount, perView);
-
-  if (pageNum === null || pageNum > pageAmount) pageNum = 1;
-
-  const firstPageNewsPreview = (+pageNum - 1) * +perView;
-  const lastPageNewsPreview = +pageNum * +perView;
-
-  const newsPreviewsPerPage = allNewsPreviews.slice(firstPageNewsPreview, lastPageNewsPreview);
-
-  return {
-    pageAmount,
-    previews: newsPreviewsPerPage,
-  };
-}
-
-export async function getNewsArticle(articleId) {
-  await fakeNetwork();
-
-  const article = news.entities[articleId];
-
-  if (!article) throw new Response(null, { status: 404, statusText: 'Not found' });
-
-  return new Response(JSON.stringify(article), { status: 200, statusText: 'OK' });
-}
-
-export async function getRecommendedNews(id) {
-  await fakeNetwork();
-
-  let allNewsPreviews = getAllNewsPreviews();
-  allNewsPreviews = allNewsPreviews.filter((n) => n.id !== id);
-
-  const recommendedNews = (allNewsPreviews.sort(() => 0.5 - Math.random())).slice(0, 3);
-
-  return recommendedNews;
-}
-
-// =====
-
-export async function getCategoryAndSubcategories(categoryId) {
-  await fakeNetwork();
-
-  const category = products.find((c) => c.id === categoryId);
-
-  if (!category) throw new Error('Категорію не знайдено');
-
-  const subcategories = category.subcategories.map((subC) => ({
-    name: subC.name,
-    id: subC.id,
-    imgId: subC.imgId,
-    imgAlt: subC.imgAlt,
-  }));
-
-  return {
-    categoryName: category.name,
-    categoryId: category.id,
-    subcategories,
-  };
-}
-
 export async function getRandomProduct() {
   await fakeNetwork();
 
   const { categoryId, subcategory } = getCategoryAndSubcategory('enamels', 'alkyd_enamels');
-  const subcategoryProducts = subcategory.products.slice(0);
+  const subcategoryProducts = Object.values(subcategory.products.entities);
 
   const randomProduct = (subcategoryProducts.sort(() => 0.5 - Math.random()))[0];
 
@@ -675,9 +595,9 @@ export async function getRandomProduct() {
   };
 }
 
-async function getAllSearchResults(searchQuery) {
-  await fakeNetwork();
+// search API
 
+function getAllSearchResults(searchQuery) {
   const firstOrderRegExp = new RegExp(`^${searchQuery}`, 'i');
   const lastOrderRegExp = new RegExp(`${searchQuery}`, 'i');
 
@@ -688,20 +608,20 @@ async function getAllSearchResults(searchQuery) {
   const firstOrderResults = [];
   const lastOrderResults = [];
 
-  products.forEach((c) => {
+  Object.values(products.categories.entities).forEach((c) => {
     allCategories.push({
       id: c.id,
       name: c.name,
     });
 
-    c.subcategories.forEach((s) => {
+    Object.values(c.subcategories.entities).forEach((s) => {
       allSubcategories.push({
         categoryId: c.id,
         id: s.id,
         name: s.name,
       });
 
-      s.products?.forEach((p) => allProducts.push({
+      Object.values(s.products.entities).forEach((p) => allProducts.push({
         categoryId: c.id,
         subcategoryId: s.id,
         product: p,
@@ -709,7 +629,7 @@ async function getAllSearchResults(searchQuery) {
     });
   });
 
-  news.forEach((n) => {
+  Object.values(news.entities).forEach((n) => {
     allNews.push({
       id: n.id,
       name: n.name,
@@ -778,8 +698,10 @@ async function getAllSearchResults(searchQuery) {
 }
 
 export async function getSearchResultsPerPageAndPageAmount(searchQuery, pageNum) {
+  await fakeNetwork();
+
   const perView = 12;
-  const allSearchResults = await getAllSearchResults(searchQuery);
+  const allSearchResults = getAllSearchResults(searchQuery);
   const searchResultsAmount = allSearchResults.length;
   const pageAmount = getPageAmount(searchResultsAmount, perView);
 
@@ -794,4 +716,61 @@ export async function getSearchResultsPerPageAndPageAmount(searchQuery, pageNum)
     searchResults,
     pageAmount,
   };
+}
+
+// news API
+
+function getAllNewsPreviews() {
+  const newsFullObjs = Object.values(news.entities);
+  const newsShortObjs = newsFullObjs.map((n) => ({
+    name: n.name,
+    id: n.id,
+    date: n.date,
+    views: n.views,
+  }));
+
+  return newsShortObjs;
+}
+
+export async function getNewsPreviewsPerPageAndPageAmount(pageNum) {
+  await fakeNetwork();
+
+  const allNewsPreviews = getAllNewsPreviews();
+  const allNewsPreviewsAmount = allNewsPreviews.length;
+  const perView = 12;
+
+  const pageAmount = getPageAmount(allNewsPreviewsAmount, perView);
+
+  if (pageNum === null || pageNum > pageAmount) pageNum = 1;
+
+  const firstPageNewsPreview = (+pageNum - 1) * +perView;
+  const lastPageNewsPreview = +pageNum * +perView;
+
+  const newsPreviewsPerPage = allNewsPreviews.slice(firstPageNewsPreview, lastPageNewsPreview);
+
+  return {
+    pageAmount,
+    previews: newsPreviewsPerPage,
+  };
+}
+
+export async function getNewsArticle(articleId) {
+  await fakeNetwork();
+
+  const article = news.entities[articleId];
+
+  if (!article) throw new Response(null, { status: 404, statusText: 'Not found' });
+
+  return new Response(JSON.stringify(article), { status: 200, statusText: 'OK' });
+}
+
+export async function getRecommendedNews(id) {
+  await fakeNetwork();
+
+  let allNewsPreviews = getAllNewsPreviews();
+  allNewsPreviews = allNewsPreviews.filter((n) => n.id !== id);
+
+  const recommendedNews = (allNewsPreviews.sort(() => 0.5 - Math.random())).slice(0, 3);
+
+  return recommendedNews;
 }

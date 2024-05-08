@@ -27,6 +27,8 @@ import {
   getRecommendedNews,
   getProduct,
   getAnalogueProducts,
+  getRandomProduct,
+  getSearchResultsPerPageAndPageAmount,
 } from './dataAPI';
 
 async function addMutation(request, addFunc) {
@@ -144,6 +146,21 @@ export const handlers = [
     const { categoryId, subcategoryId, productId } = params;
 
     return getAnalogueProducts(categoryId, subcategoryId, productId);
+  }),
+  http.get('/fakeAPI/getRandomProduct', async () => {
+    const randomProduct = await getRandomProduct();
+
+    return HttpResponse.json(randomProduct);
+  }),
+  http.get('/fakeAPI/search', async ({ request }) => {
+    const { searchParams } = new URL(request.url);
+
+    const searchQuery = searchParams.get('search');
+    const pageNum = +searchParams.get('page');
+
+    const searchResults = await getSearchResultsPerPageAndPageAmount(searchQuery, pageNum);
+
+    return HttpResponse.json(searchResults);
   }),
 ];
 
