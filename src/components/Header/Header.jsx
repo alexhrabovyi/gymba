@@ -517,11 +517,11 @@ export default function Header() {
         )}
         onClick={backdropOnClick}
       />
-      {/* <LoginRegisterPopup
+      <LoginRegisterPopup
         isActive={isLoginPopupOpen}
         setIsActive={setIsLoginPopupOpen}
         openButtonRef={openLoginPopupBtnRef}
-      /> */}
+      />
       <SearchResultBlock
         isActive={isSearchBlockActive}
         setIsActive={setIsSearchBlockActive}

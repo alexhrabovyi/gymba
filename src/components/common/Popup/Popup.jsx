@@ -23,6 +23,8 @@ const Popup = memo(({
   const calcPopupHeight = useCallback(() => {
     const popup = popupRef.current;
 
+    if (!popup) return;
+
     popup.style.height = '';
     popup.style.overflowY = '';
 
@@ -35,7 +37,7 @@ const Popup = memo(({
     }
   }, []);
 
-  useLayoutEffect(calcPopupHeight, [calcPopupHeight]);
+  useLayoutEffect(calcPopupHeight);
   useOnResize(calcPopupHeight);
 
   const focusOnOpen = useCallback(() => {
