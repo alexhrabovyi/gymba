@@ -4,6 +4,7 @@ import {
 import { useParams, useSearchParams } from 'react-router-dom';
 import classNames from 'classnames';
 import { useGetProductsQuery } from '../../../../queryAPI/queryAPI';
+import useOnResize from '../../../../hooks/useOnResize.jsx';
 import textCls from '../../../../scss/_text.module.scss';
 import filterCls from './FilterPriceForm.module.scss';
 import ChevronUp from '../../../../assets/images/icons/chevronUp.svg';
@@ -31,6 +32,7 @@ export default function FilterPriceForm() {
   const [maxButtonLeft, setMaxButtonLeft] = useState(null);
 
   const contentRef = useRef(null);
+  const formRef = useRef(null);
   const mainLineRef = useRef(null);
   const activeLineRef = useRef(null);
   const minButtonRef = useRef(null);
@@ -213,6 +215,7 @@ export default function FilterPriceForm() {
   }, [currentMinPrice, currentMaxPrice, calcAndUpdateButtonLeft]);
 
   useLayoutEffect(calcAndUpdateButtonsLeft, [calcAndUpdateButtonsLeft]);
+  useOnResize(calcAndUpdateButtonsLeft);
 
   // style functions
 
@@ -257,6 +260,17 @@ export default function FilterPriceForm() {
 
     setFormWasInteracted(true);
 
+    let filterMenuHasScroll = false;
+
+    const filterMenu = document.querySelector('#filterBlockMenu');
+
+    if (filterMenu) {
+      if (filterMenu.style.overflowY === 'scroll') {
+        filterMenuHasScroll = true;
+        filterMenu.style.overflowY = 'hidden';
+      }
+    }
+
     const { buttonType } = e.target.dataset;
     const button = buttonType === 'min' ? minButtonRef.current : maxButtonRef.current;
 
@@ -299,6 +313,11 @@ export default function FilterPriceForm() {
 
     function roundButtonOnUp() {
       button.removeEventListener('pointermove', roundButtonOnMove);
+      formRef.current.requestSubmit();
+
+      if (filterMenuHasScroll) {
+        filterMenu.style.overflowY = 'scroll';
+      }
     }
 
     button.addEventListener('pointermove', roundButtonOnMove);
@@ -349,6 +368,10 @@ export default function FilterPriceForm() {
         setMaxInputValue(value);
         setCurrentMaxPrice(value);
       }
+
+      setTimeout(() => {
+        formRef.current.requestSubmit();
+      }, 0);
     }
   }
 
@@ -472,6 +495,7 @@ export default function FilterPriceForm() {
     <form
       onSubmit={formOnSubmit}
       className={filterCls.form}
+      ref={formRef}
     >
       <button
         type="button"
@@ -511,7 +535,7 @@ export default function FilterPriceForm() {
             ref={minButtonRef}
             onPointerDown={roundButtonOnDown}
             onKeyDown={roundButtonOnKeyDown}
-            type="submit"
+            type="button"
             data-button-type="min"
             className={filterCls.roundButton}
             style={{ left: `${minButtonLeft}%` }}
@@ -525,7 +549,7 @@ export default function FilterPriceForm() {
             ref={maxButtonRef}
             onPointerDown={roundButtonOnDown}
             onKeyDown={roundButtonOnKeyDown}
-            type="submit"
+            type="button"
             data-button-type="max"
             className={filterCls.roundButton}
             style={{ left: `${maxButtonLeft}%` }}

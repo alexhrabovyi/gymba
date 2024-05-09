@@ -1,8 +1,7 @@
 import { Link } from 'react-router-dom';
 import classNames from 'classnames';
 import {
-  memo, useRef, useEffect, useLayoutEffect, useCallback,
-  useMemo,
+  memo, useRef, useEffect, useCallback, useMemo,
 } from 'react';
 import useToggleInteractiveElements from '../../../hooks/useToggleInteractiveElements.jsx';
 import useOnResize from '../../../hooks/useOnResize.jsx';
@@ -19,10 +18,12 @@ const HeaderSubcategoryMenu = memo(({ isMenuOpen, category, backToCatalogOnClick
 
   const subcategories = category && Object.values(category.subcategories.entities);
 
-  useToggleInteractiveElements(menuRef, isMenuOpen);
+  useToggleInteractiveElements(menuRef, isMenuOpen, [category]);
 
   const setupMenuHeight = useCallback(() => {
     const menu = menuRef.current;
+
+    if (!menu) return;
 
     menu.style.overflowY = '';
     menu.style.height = '';
@@ -39,7 +40,7 @@ const HeaderSubcategoryMenu = memo(({ isMenuOpen, category, backToCatalogOnClick
     });
   }, []);
 
-  useLayoutEffect(setupMenuHeight, [setupMenuHeight]);
+  setupMenuHeight();
   useOnResize(setupMenuHeight);
 
   const subcategoryLinkList = useMemo(() => (

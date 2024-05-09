@@ -32,8 +32,11 @@ const HeaderMainMenu = memo(({
   const [compareAmount, setCompareAmount] = useState(null);
   const [randomProduct, setRandomProduct] = useState(null);
 
-  const activeCategory = categories?.[activeCategoryId];
-  const subcategories = activeCategory?.subcategories.entities;
+  const activeCategory = useMemo(
+    () => categories?.[activeCategoryId],
+    [categories, activeCategoryId],
+  );
+  const subcategories = useMemo(() => activeCategory?.subcategories.entities, [activeCategory]);
 
   // setup functions
 
@@ -44,11 +47,13 @@ const HeaderMainMenu = memo(({
   useLayoutEffect(getWindowWidth, [getWindowWidth]);
   useOnResize(getWindowWidth);
 
-  const setupActiveCategory = useCallback(() => {
-    setActiveCategoryId(categories && Object.keys(categories)[0]);
-  }, [categories]);
+  const initialSetupActiveCategory = useCallback(() => {
+    if (activeCategoryId === null && categories) {
+      setActiveCategoryId(Object.keys(categories)[0]);
+    }
+  }, [activeCategoryId, categories]);
 
-  useEffect(setupActiveCategory);
+  useEffect(initialSetupActiveCategory);
 
   function useToggleInteractiveElements() {
     if (menuRef.current) {

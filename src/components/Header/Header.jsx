@@ -85,7 +85,9 @@ export default function Header() {
   useOnResize(getWindowWidth);
 
   const setupActiveCategory = useCallback(() => {
-    setActiveCategory(categories?.[0]);
+    if (!categories) return;
+
+    setActiveCategory(Object.values(categories)?.[0]);
   }, [categories]);
 
   useEffect(setupActiveCategory, [setupActiveCategory]);

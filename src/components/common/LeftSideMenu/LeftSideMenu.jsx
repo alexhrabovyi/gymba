@@ -1,6 +1,6 @@
 /* eslint-disable jsx-a11y/no-static-element-interactions */
 import {
-  memo, useRef, useCallback, useLayoutEffect, useEffect,
+  memo, useRef, useCallback, useEffect,
 } from 'react';
 import classNames from 'classnames';
 import useHideScrollbarOnOpen from '../../../hooks/useHideScrollbarOnOpen.jsx';
@@ -12,7 +12,7 @@ import menuCls from './LeftSideMenu.module.scss';
 import CrossIcon from '../../../assets/images/icons/cross.svg';
 
 const LeftSideMenu = memo(({
-  children, isMenuOpen, setIsMenuOpen, label, openButton,
+  children, isMenuOpen, setIsMenuOpen, label, openButton, id,
 }) => {
   const menuBackdropRef = useRef(null);
   const menuRef = useRef(null);
@@ -22,6 +22,8 @@ const LeftSideMenu = memo(({
 
   const calcMenuHeight = useCallback(() => {
     const menu = menuRef.current;
+
+    if (!menu) return;
 
     menu.style.height = '';
     menu.style.overflowY = '';
@@ -33,7 +35,7 @@ const LeftSideMenu = memo(({
     menu.style.height = `${maximumMenuHeight}px`;
   }, []);
 
-  useLayoutEffect(calcMenuHeight, [calcMenuHeight]);
+  calcMenuHeight();
   useOnResize(calcMenuHeight);
 
   const focusOnOpen = useCallback(() => {
@@ -59,6 +61,7 @@ const LeftSideMenu = memo(({
       onClick={backdropOnClick}
     >
       <div
+        id={id || null}
         ref={menuRef}
         className={classNames(
           containerCls.container,

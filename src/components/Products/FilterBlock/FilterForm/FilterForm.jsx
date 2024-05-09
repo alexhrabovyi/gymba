@@ -13,7 +13,7 @@ export default function FilterForm({ name, values, initIsClosed = false }) {
   const [isAdditionalClosed, setIsAdditionalClosed] = useState(true);
   const [params, setParams] = useState([]);
 
-  const isAdditionalAccordionNeeded = values.size >= 8;
+  const isAdditionalAccordionNeeded = values.length >= 8;
 
   useEffect(() => {
     if (searchParams.has(name)) {
@@ -38,7 +38,7 @@ export default function FilterForm({ name, values, initIsClosed = false }) {
     setSearchParams(URLParams);
   }
 
-  const checkboxes = Array.from(values).sort().map((value, i) => (
+  const checkboxes = values.slice().sort().map((value, i) => (
     <li
       key={value}
       hidden={isAdditionalAccordionNeeded && isAdditionalClosed && i > 4}

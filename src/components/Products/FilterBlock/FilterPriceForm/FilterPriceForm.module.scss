@@ -51,6 +51,8 @@
 
 .roundButtonBlock {
   position: relative;
+  user-select: none;
+  user-select: none;
 }
 
 .mainLine {
@@ -85,6 +87,16 @@
 
   &:active {
     background-color: $blue-active;
+  }
+
+  @include media-m {
+    width: 14px;
+    height: 14px;
+  }
+
+  @include media-s {
+    width: 16px;
+    height: 16px;
   }
 }
 

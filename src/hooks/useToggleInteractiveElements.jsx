@@ -1,7 +1,12 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import { useCallback, useEffect } from 'react';
 import findAllInteractiveElements from '../utils/findAllInteractiveElements';
 
-export default function useToggleInteractiveElements(mainElementRef, isActive) {
+export default function useToggleInteractiveElements(
+  mainElementRef,
+  isActive,
+  additionalDependeciesArr = [],
+) {
   const disableInteractiveElements = useCallback(() => {
     const mainElement = mainElementRef.current;
 
@@ -38,7 +43,7 @@ export default function useToggleInteractiveElements(mainElementRef, isActive) {
         });
       }
     };
-  }, [mainElementRef, isActive]);
+  }, [mainElementRef, isActive, ...additionalDependeciesArr]);
 
   useEffect(disableInteractiveElements, [disableInteractiveElements]);
 }

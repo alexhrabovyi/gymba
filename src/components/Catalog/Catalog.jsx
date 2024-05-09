@@ -18,6 +18,7 @@ import textCls from '../../scss/_text.module.scss';
 import catalogCls from './Catalog.module.scss';
 
 export default function Catalog() {
+  const catalogRef = useRef(null);
   const categoryBlockRef = useRef(null);
 
   const [categories, setCategories] = useState(null);
@@ -56,6 +57,7 @@ export default function Catalog() {
       categoryBlock.style.height = `${calcExpandedHeight()}px`;
     } else {
       categoryBlock.style.height = `${calcCollapsedHeight()}px`;
+      catalogRef.current.scrollIntoView();
     }
   }, [isAccordionOpen, calcExpandedHeight, calcCollapsedHeight]);
 
@@ -69,9 +71,7 @@ export default function Catalog() {
 
   useOnResize(checkAccordionOnResize);
 
-  useLayoutEffect(() => {
-    checkAccordionOnResize();
-  }, [checkAccordionOnResize]);
+  useLayoutEffect(checkAccordionOnResize, [checkAccordionOnResize]);
 
   const changeHeightOnResize = useCallback(() => {
     if (!isAccordionNeeded) return;
@@ -91,7 +91,7 @@ export default function Catalog() {
   useEffect(() => {
     const categoryBlock = categoryBlockRef.current;
 
-    if (isAccordionNeeded && categories?.length > 3) {
+    if (isAccordionNeeded && categories) {
       categoryBlock.style.height = `${calcCollapsedHeight()}px`;
       categoryBlock.style.overflowY = 'hidden';
     }
@@ -122,7 +122,10 @@ export default function Catalog() {
   }, [categories]);
 
   return (
-    <main className={classNames(catalogCls.catalog, containerCls.container)}>
+    <main
+      className={classNames(catalogCls.catalog, containerCls.container)}
+      ref={catalogRef}
+    >
       <h1
         className={classNames(
           catalogCls.title,

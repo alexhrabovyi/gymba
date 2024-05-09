@@ -47,7 +47,7 @@ export default function Products() {
   const productAmount = productsAndInfo?.productAmount;
   const pageAmount = productsAndInfo?.pageAmount;
 
-  const fetchUrl = searchParams.size ? `${categoryId}/${subcategoryId}?${searchParams.toString()}`
+  const fetchUrl = Array.from(searchParams).length ? `${categoryId}/${subcategoryId}?${searchParams.toString()}`
     : `${categoryId}/${subcategoryId}`;
 
   const getWindowWidth = useCallback(() => {
@@ -330,6 +330,7 @@ export default function Products() {
         setIsMenuOpen={setIsFilterMenuOpen}
         label="Меню фільтрів"
         openButton={openFilterMenuBtnRef.current}
+        id="filterBlockMenu"
       >
         <div className={productsCls.filterBlockInMenu}>
           <FilterBlock

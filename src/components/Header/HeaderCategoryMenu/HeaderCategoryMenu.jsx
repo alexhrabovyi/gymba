@@ -19,7 +19,7 @@ const HeaderCategoryMenu = memo(({
 }) => {
   const menuRef = useRef(null);
 
-  useToggleInteractiveElements(menuRef, isMenuOpen);
+  useToggleInteractiveElements(menuRef, isMenuOpen, [categories]);
 
   const setupMenuHeight = useCallback(() => {
     const menu = menuRef.current;
