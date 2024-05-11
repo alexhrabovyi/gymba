@@ -52,7 +52,6 @@
 .roundButtonBlock {
   position: relative;
   user-select: none;
-  user-select: none;
 }
 
 .mainLine {
@@ -80,6 +79,7 @@
   background-color: $blue;
   cursor: pointer;
   transform: translateY(-50%);
+  touch-action: none;
 
   &:hover {
     background-color: $dark-blue;

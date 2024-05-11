@@ -47,7 +47,7 @@ export default function Delivery() {
               доставки товару.
             </p>
             <LinkWithArrow
-              to="#mainInformation"
+              to="#/delivery#mainInformation"
               alt="Гортайте далі"
               className={deliveryCls.LinkWithArrow}
               arrowDown

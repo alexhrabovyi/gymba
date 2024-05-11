@@ -208,7 +208,7 @@ export default function Wishlist() {
           />
         )}
       </div>
-      {products && (
+      {!!products?.length && (
         <div className={wishlistCls.paginationBlock}>
           <PaginationBlock
             pageAmount={pageAmount}
