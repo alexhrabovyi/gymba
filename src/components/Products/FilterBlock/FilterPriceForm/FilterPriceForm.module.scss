@@ -78,8 +78,8 @@
   border-radius: 50%;
   background-color: $blue;
   cursor: pointer;
-  transform: translateY(-50%);
   touch-action: none;
+  transform: translateY(-50%);
 
   &:hover {
     background-color: $dark-blue;
