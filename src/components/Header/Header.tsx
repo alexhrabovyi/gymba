@@ -1,5 +1,3 @@
-/* eslint-disable react-hooks/exhaustive-deps */
-/* eslint-disable jsx-a11y/no-static-element-interactions */
 import {
   useState,
   useRef,
@@ -20,17 +18,17 @@ import {
   useGetWishlistIdsQuery,
   useGetCartIdsQuery,
   useGetCompareIdsQuery,
-} from '../../queryAPI/queryAPI.js';
-import useScrollToTop from '../../hooks/useScrollToTop.jsx';
-import useHideScrollbarOnOpen from '../../hooks/useHideScrollbarOnOpen.jsx';
-import useOnResize from '../../hooks/useOnResize.jsx';
-import getScrollWidth from '../../utils/getScrollWidth.jsx';
-import Button from '../common/Button/Button.jsx';
-import HeaderMainMenu from './HeaderMainMenu/HeaderMainMenu.jsx';
-import HeaderCategoryMenu from './HeaderCategoryMenu/HeaderCategoryMenu.jsx';
-import HeaderSubcategoryMenu from './HeaderSubcategoryMenu/HeaderSubcategoryMenu.jsx';
-import LoginRegisterPopup from './LoginRegisterPopup/LoginRegisterPopup.jsx';
-import SearchResultBlock from './SearchResultsBlock/SearchResultsBlock.jsx';
+} from '../../queryAPI/queryAPI';
+import useScrollToTop from '../../hooks/useScrollToTop';
+import useHideScrollbarOnOpen from '../../hooks/useHideScrollbarOnOpen';
+import useOnResize from '../../hooks/useOnResize';
+import getScrollWidth from '../../utils/getScrollWidth';
+import Button from '../common/Button/Button';
+import HeaderMainMenu from './HeaderMainMenu/HeaderMainMenu';
+import HeaderCategoryMenu from './HeaderCategoryMenu/HeaderCategoryMenu';
+import HeaderSubcategoryMenu from './HeaderSubcategoryMenu/HeaderSubcategoryMenu';
+import LoginRegisterPopup from './LoginRegisterPopup/LoginRegisterPopup';
+import SearchResultBlock from './SearchResultsBlock/SearchResultsBlock';
 import containerCls from '../../scss/_container.module.scss';
 import textCls from '../../scss/_text.module.scss';
 import linkCls from '../../scss/_link.module.scss';
@@ -46,15 +44,15 @@ import Compare from '../../assets/images/icons/compare.svg';
 import Favorite from '../../assets/images/icons/favorite.svg';
 import Cart from '../../assets/images/icons/cart.svg';
 
-export default function Header() {
+const Header: React.FC = () => {
   const location = useLocation();
   const [searchParams] = useSearchParams();
 
-  const headerWrapperRef = useRef(null);
-  const headerRef = useRef(null);
-  const openMenuButtonRef = useRef(null);
-  const searchInputRef = useRef(null);
-  const openLoginPopupBtnRef = useRef(null);
+  const headerWrapperRef = useRef<HTMLDivElement | null>(null);
+  const headerRef = useRef<HTMLElement | null>(null);
+  const openMenuButtonRef = useRef<HTMLButtonElement | null>(null);
+  const searchInputRef = useRef<HTMLInputElement | null>(null);
+  const openLoginPopupBtnRef = useRef<HTMLButtonElement | null>(null);
 
   const [categories, setCategories] = useState(null);
   const [activeCategory, setActiveCategory] = useState(null);
@@ -282,77 +280,77 @@ export default function Header() {
           className={classNames(containerCls.container, headerCls.header)}
         >
           {windowWidth > 768 && (
-          <Link to="/" className={headerCls.logoLink} alt="Головна сторінка Ґимба" aria-label="Головна сторінка Ґимба">
-            <Logo className={headerCls.logoLinkImg} alt="Ґимба логотип" />
-          </Link>
+            <Link to="/" className={headerCls.logoLink} alt="Головна сторінка Ґимба" aria-label="Головна сторінка Ґимба">
+              <Logo className={headerCls.logoLinkImg} alt="Ґимба логотип" />
+            </Link>
           )}
           {windowWidth > 1024 && (
-          <div className={headerCls.topBlock}>
-            <div className={headerCls.locationAndTelBlock}>
-              <a
-                href="/"
-                className={headerCls.linkWithIcon}
-                alt="Наш магазин знаходиться в місті Одеса"
-                aria-label="Наш магазин знаходиться в місті Одеса"
-              >
-                <Tag />
-                <p className={textCls.text}>Одеса</p>
-              </a>
-              <a
-                href="tel:+380974311101"
-                className={headerCls.linkWithIcon}
-                alt="Номер телефону магазину +38 097 431-11-01"
-                aria-label="Номер телефону магазину +38 097 431-11-01"
-              >
-                <Phone />
-                <p className={textCls.text}>+38 097 431-11-01</p>
-              </a>
+            <div className={headerCls.topBlock}>
+              <div className={headerCls.locationAndTelBlock}>
+                <a
+                  href="/"
+                  className={headerCls.linkWithIcon}
+                  alt="Наш магазин знаходиться в місті Одеса"
+                  aria-label="Наш магазин знаходиться в місті Одеса"
+                >
+                  <Tag />
+                  <p className={textCls.text}>Одеса</p>
+                </a>
+                <a
+                  href="tel:+380974311101"
+                  className={headerCls.linkWithIcon}
+                  alt="Номер телефону магазину +38 097 431-11-01"
+                  aria-label="Номер телефону магазину +38 097 431-11-01"
+                >
+                  <Phone />
+                  <p className={textCls.text}>+38 097 431-11-01</p>
+                </a>
+              </div>
+              <nav className={headerCls.topNav}>
+                <ul className={headerCls.linkListTopNav}>
+                  <li>
+                    <NavLink
+                      to="/delivery"
+                      className={({ isActive }) => (isActive
+                        ? classNames(linkCls.link, linkCls.link_active) : classNames(linkCls.link))}
+                      alt="Доставка"
+                    >
+                      Доставка
+                    </NavLink>
+                  </li>
+                  <li>
+                    <NavLink
+                      to="/payment"
+                      className={({ isActive }) => (isActive
+                        ? classNames(linkCls.link, linkCls.link_active) : classNames(linkCls.link))}
+                      alt="Оплата"
+                    >
+                      Оплата
+                    </NavLink>
+                  </li>
+                  <li>
+                    <NavLink
+                      to="/news"
+                      className={({ isActive }) => (isActive
+                        ? classNames(linkCls.link, linkCls.link_active) : classNames(linkCls.link))}
+                      alt="Новини"
+                    >
+                      Новини
+                    </NavLink>
+                  </li>
+                  <li>
+                    <NavLink
+                      to="/contacts"
+                      className={({ isActive }) => (isActive
+                        ? classNames(linkCls.link, linkCls.link_active) : classNames(linkCls.link))}
+                      alt="Контакти"
+                    >
+                      Контакти
+                    </NavLink>
+                  </li>
+                </ul>
+              </nav>
             </div>
-            <nav className={headerCls.topNav}>
-              <ul className={headerCls.linkListTopNav}>
-                <li>
-                  <NavLink
-                    to="/delivery"
-                    className={({ isActive }) => (isActive
-                      ? classNames(linkCls.link, linkCls.link_active) : classNames(linkCls.link))}
-                    alt="Доставка"
-                  >
-                    Доставка
-                  </NavLink>
-                </li>
-                <li>
-                  <NavLink
-                    to="/payment"
-                    className={({ isActive }) => (isActive
-                      ? classNames(linkCls.link, linkCls.link_active) : classNames(linkCls.link))}
-                    alt="Оплата"
-                  >
-                    Оплата
-                  </NavLink>
-                </li>
-                <li>
-                  <NavLink
-                    to="/news"
-                    className={({ isActive }) => (isActive
-                      ? classNames(linkCls.link, linkCls.link_active) : classNames(linkCls.link))}
-                    alt="Новини"
-                  >
-                    Новини
-                  </NavLink>
-                </li>
-                <li>
-                  <NavLink
-                    to="/contacts"
-                    className={({ isActive }) => (isActive
-                      ? classNames(linkCls.link, linkCls.link_active) : classNames(linkCls.link))}
-                    alt="Контакти"
-                  >
-                    Контакти
-                  </NavLink>
-                </li>
-              </ul>
-            </nav>
-          </div>
           )}
           <div className={headerCls.bottomBlock}>
             <button
@@ -396,9 +394,9 @@ export default function Header() {
               {windowWidth > 1025 ? 'Каталог' : windowWidth > 768 ? 'Меню' : ''}
             </button>
             {windowWidth <= 768 && (
-            <Link to="/" className={headerCls.logoLink} alt="Головна сторінка Ґимба" aria-label="Головна сторінка Ґимба">
-              <LogoSmall className={headerCls.logoLinkImg} alt="Ґимба логотип" />
-            </Link>
+              <Link to="/" className={headerCls.logoLink} alt="Головна сторінка Ґимба" aria-label="Головна сторінка Ґимба">
+                <LogoSmall className={headerCls.logoLinkImg} alt="Ґимба логотип" />
+              </Link>
             )}
             <Form
               role="search"
@@ -431,46 +429,46 @@ export default function Header() {
             <nav className={headerCls.bottomNav}>
               <ul className={headerCls.linkListBottomNav}>
                 {windowWidth > 1024 && (
-                <>
-                  <li>
-                    <button
-                      ref={openLoginPopupBtnRef}
-                      className={headerCls.openLoginPopupBtn}
-                      type="button"
-                      onClick={openLoginPopupBtnOnClick}
-                      aria-haspopup="dialog"
-                      aria-label="Відкрити вікно Профіль користувача"
-                    >
-                      <User className={headerCls.iconInLink} />
-                    </button>
-                  </li>
-                  <li>
-                    <Link
-                      to="/compare"
-                      className={classNames(
-                        headerCls.iconLink,
-                        compareAmount && headerCls.iconLinkWithCircle,
-                      )}
-                      data-before={compareAmount}
-                      aria-label="Порівняти товари"
-                    >
-                      <Compare className={headerCls.iconInLink} />
-                    </Link>
-                  </li>
-                  <li>
-                    <Link
-                      to="/wishlist"
-                      className={classNames(
-                        headerCls.iconLink,
-                        wishlistAmount && headerCls.iconLinkWithCircle,
-                      )}
-                      data-before={wishlistAmount}
-                      aria-label="Лист бажань"
-                    >
-                      <Favorite className={headerCls.iconInLink} />
-                    </Link>
-                  </li>
-                </>
+                  <>
+                    <li>
+                      <button
+                        ref={openLoginPopupBtnRef}
+                        className={headerCls.openLoginPopupBtn}
+                        type="button"
+                        onClick={openLoginPopupBtnOnClick}
+                        aria-haspopup="dialog"
+                        aria-label="Відкрити вікно Профіль користувача"
+                      >
+                        <User className={headerCls.iconInLink} />
+                      </button>
+                    </li>
+                    <li>
+                      <Link
+                        to="/compare"
+                        className={classNames(
+                          headerCls.iconLink,
+                          compareAmount && headerCls.iconLinkWithCircle,
+                        )}
+                        data-before={compareAmount}
+                        aria-label="Порівняти товари"
+                      >
+                        <Compare className={headerCls.iconInLink} />
+                      </Link>
+                    </li>
+                    <li>
+                      <Link
+                        to="/wishlist"
+                        className={classNames(
+                          headerCls.iconLink,
+                          wishlistAmount && headerCls.iconLinkWithCircle,
+                        )}
+                        data-before={wishlistAmount}
+                        aria-label="Лист бажань"
+                      >
+                        <Favorite className={headerCls.iconInLink} />
+                      </Link>
+                    </li>
+                  </>
                 )}
                 <li>
                   <Link
@@ -496,19 +494,19 @@ export default function Header() {
           openLoginPopupBtnOnClick={openLoginPopupBtnOnClick}
         />
         {windowWidth <= 1024 && (
-        <>
-          <HeaderCategoryMenu
-            isMenuOpen={isCategoryMenuOpen}
-            categories={categories}
-            categoryBtnOnClick={categoryBtnOnClick}
-            backToMenuOnClick={backToMenuOnClick}
-          />
-          <HeaderSubcategoryMenu
-            isMenuOpen={isSubcategoryMenuOpen}
-            category={activeCategory}
-            backToCatalogOnClick={backToCatalogOnClick}
-          />
-        </>
+          <>
+            <HeaderCategoryMenu
+              isMenuOpen={isCategoryMenuOpen}
+              categories={categories}
+              categoryBtnOnClick={categoryBtnOnClick}
+              backToMenuOnClick={backToMenuOnClick}
+            />
+            <HeaderSubcategoryMenu
+              isMenuOpen={isSubcategoryMenuOpen}
+              category={activeCategory}
+              backToCatalogOnClick={backToCatalogOnClick}
+            />
+          </>
         )}
       </div>
       <div
@@ -535,3 +533,5 @@ export default function Header() {
     </>
   );
 }
+
+export default Header;

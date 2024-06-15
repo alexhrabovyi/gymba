@@ -1,9 +1,12 @@
-/* eslint-disable import/no-unresolved */
 import classNames from 'classnames';
 import spinnerCls from './BarsSpinner.module.scss';
 import barsSpinnerSrc from '../../../assets/images/icons/barsSpinner.svg?url';
 
-export default function BarsSpinner({ className }) {
+interface BarsSpinnerProps {
+  className?: string,
+}
+
+const BarsSpinner: React.FC<BarsSpinnerProps> = ({ className }) => {
   return (
     <img
       src={barsSpinnerSrc}
@@ -12,3 +15,5 @@ export default function BarsSpinner({ className }) {
     />
   );
 }
+
+export default BarsSpinner;
