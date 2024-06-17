@@ -1,6 +1,50 @@
 import products from './products.json';
 import news from './news.json';
 
+// types
+
+// interface Product {
+//   name: string,
+//   id: string,
+//   price: string,
+//   oldPrice?: string,
+//   additionalImgs?: string[],
+//   'specs-filters': {
+//     [i: string]: string | string[],
+//   },
+//   specs: {
+//     [i: string]: string,
+//   },
+//   mainSpecs: {
+//     [i: string]: string,
+//   },
+//   description?: string,
+// }
+
+// interface Subcategory {
+//   name: string,
+//   id: string,
+//   imgAlt: string,
+//   products: {
+//     ids: string[],
+//     entities: {
+//       [id: string]: Product,
+//     },
+//   }
+// }
+
+// interface Category {
+//   name: string,
+//   id: keyof typeof products.categories.entities,
+//   imgAlt: string,
+//   subcategories: {
+//     ids: string[],
+//     entities: {
+//       [id: string]: Subcategory,
+//     },
+//   }
+// }
+
 // utils
 
 async function fakeNetwork() {

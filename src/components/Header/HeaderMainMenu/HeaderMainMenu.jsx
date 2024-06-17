@@ -3,7 +3,7 @@ import {
 } from 'react';
 import { Link, NavLink, Await } from 'react-router-dom';
 import classNames from 'classnames';
-import { useGetWishlistIdsQuery, useGetCompareIdsQuery, useGetRandomProductQuery } from '../../../queryAPI/queryAPI.js';
+import { useGetWishlistIdsQuery, useGetCompareIdsQuery, useGetRandomProductQuery } from '../../../queryAPI/queryAPI';
 import useOnResize from '../../../hooks/useOnResize.jsx';
 import findAllInteractiveElements from '../../../utils/findAllInteractiveElements.js';
 import getScrollWidth from '../../../utils/getScrollWidth.jsx';

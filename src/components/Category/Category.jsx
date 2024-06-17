@@ -1,7 +1,7 @@
 import { useMemo, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import classNames from 'classnames';
-import { useGetCategoriesQuery } from '../../queryAPI/queryAPI.js';
+import { useGetCategoriesQuery } from '../../queryAPI/queryAPI';
 import ThreeDotsSpinnerBlock from '../common/ThreeDotsSpinnerBlock/ThreeDotsSpinnerBlock.jsx';
 import containerCls from '../../scss/_container.module.scss';
 import textCls from '../../scss/_text.module.scss';

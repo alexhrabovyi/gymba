@@ -4,7 +4,7 @@ import {
 } from 'react';
 import { useSearchParams, useParams } from 'react-router-dom';
 import classNames from 'classnames';
-import { useGetCategoriesQuery, useGetProductsQuery } from '../../queryAPI/queryAPI.js';
+import { useGetCategoriesQuery, useGetProductsQuery } from '../../queryAPI/queryAPI';
 import useOnResize from '../../hooks/useOnResize.jsx';
 import containerCls from '../../scss/_container.module.scss';
 import textCls from '../../scss/_text.module.scss';

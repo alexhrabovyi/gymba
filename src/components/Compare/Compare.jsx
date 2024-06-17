@@ -8,7 +8,7 @@ import {
   useGetCompareSubcategoriesQuery,
   useGetCompareProductsQuery,
   useDeleteCompareSubcategoryMutation,
-} from '../../queryAPI/queryAPI.js';
+} from '../../queryAPI/queryAPI';
 import ProductCard from '../ProductCard/ProductCard.jsx';
 import containerCls from '../../scss/_container.module.scss';
 import textCls from '../../scss/_text.module.scss';

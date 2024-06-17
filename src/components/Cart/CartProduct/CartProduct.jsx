@@ -2,7 +2,7 @@ import { Suspense, useState } from 'react';
 import { Link, Await } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 import classNames from 'classnames';
-import { queryAPI, useDeleteCartIdMutation, useEditCartIdAmountMutation } from '../../../queryAPI/queryAPI.js';
+import { queryAPI, useDeleteCartIdMutation, useEditCartIdAmountMutation } from '../../../queryAPI/queryAPI';
 import beautifyNum from '../../../utils/beautifyNum.js';
 import Spinner from '../../common/Spinner/Spinner.jsx';
 import DynamicImage from '../../common/DynamicImage/DynamicImage.jsx';

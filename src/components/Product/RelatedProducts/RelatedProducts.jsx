@@ -2,7 +2,7 @@ import {
   memo, useMemo, useState, useCallback, useLayoutEffect,
 } from 'react';
 import classNames from 'classnames';
-import { useGetAnalogueProductsQuery } from '../../../queryAPI/queryAPI.js';
+import { useGetAnalogueProductsQuery } from '../../../queryAPI/queryAPI';
 import useOnResize from '../../../hooks/useOnResize.jsx';
 import ProductCard from '../../ProductCard/ProductCard.jsx';
 import Slider from '../../common/Slider/Slider.jsx';

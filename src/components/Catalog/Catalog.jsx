@@ -8,7 +8,7 @@ import {
   useMemo,
 } from 'react';
 import classNames from 'classnames';
-import { useGetCategoriesQuery } from '../../queryAPI/queryAPI.js';
+import { useGetCategoriesQuery } from '../../queryAPI/queryAPI';
 import useOnResize from '../../hooks/useOnResize.jsx';
 import Category from './CatalogCategory/CatalogCategory.jsx';
 import ThreeDotsSpinnerBlock from '../common/ThreeDotsSpinnerBlock/ThreeDotsSpinnerBlock.jsx';

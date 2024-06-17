@@ -3,7 +3,7 @@ import {
 } from 'react';
 import { Link, Await, useSearchParams } from 'react-router-dom';
 import classNames from 'classnames';
-import { useGetSearchResultsQuery } from '../../queryAPI/queryAPI.js';
+import { useGetSearchResultsQuery } from '../../queryAPI/queryAPI';
 import useOnResize from '../../hooks/useOnResize.jsx';
 import ProductCard from '../ProductCard/ProductCard.jsx';
 import Spinner from '../common/Spinner/Spinner.jsx';

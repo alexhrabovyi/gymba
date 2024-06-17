@@ -14,7 +14,7 @@ import {
   useGetCompareIdsQuery,
   useAddCompareIdMutation,
   useDeleteCompareIdMutation,
-} from '../../queryAPI/queryAPI.js';
+} from '../../queryAPI/queryAPI';
 import beautifyNum from '../../utils/beautifyNum.js';
 import Spinner from '../common/Spinner/Spinner.jsx';
 import DynamicImage from '../common/DynamicImage/DynamicImage.jsx';

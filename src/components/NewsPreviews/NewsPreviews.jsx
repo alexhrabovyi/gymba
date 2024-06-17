@@ -2,7 +2,7 @@ import {
   useCallback, useLayoutEffect, useMemo, useState,
 } from 'react';
 import classNames from 'classnames';
-import { useGetNewsQuery } from '../../queryAPI/queryAPI.js';
+import { useGetNewsQuery } from '../../queryAPI/queryAPI';
 import useOnResize from '../../hooks/useOnResize.jsx';
 import Slider from '../common/Slider/Slider.jsx';
 import LinkWithArrow from '../common/LinkWithArrow/LinkWithArrow.jsx';

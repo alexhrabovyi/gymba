@@ -1,7 +1,7 @@
 import { useState, useMemo } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import classNames from 'classnames';
-import { useGetNewsQuery } from '../../queryAPI/queryAPI.js';
+import { useGetNewsQuery } from '../../queryAPI/queryAPI';
 import NewsPreview from '../common/NewsPreview/NewsPreview.jsx';
 import ThreeDotsSpinnerBlock from '../common/ThreeDotsSpinnerBlock/ThreeDotsSpinnerBlock.jsx';
 import PaginationBlock from '../PaginationBlock/PaginationBlock.jsx';

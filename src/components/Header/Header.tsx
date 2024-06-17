@@ -141,13 +141,14 @@ const Header: React.FC = () => {
       setSearchValue(searchParamValue);
       searchInputRef.current.value = searchParamValue;
     }
-  }, []);
+  }, [location.pathname, searchParams]);
 
   useEffect(searchInputValueInitialSetup, [searchInputValueInitialSetup]);
 
   // fetcher functions
 
-  const { data: fetchedCategories } = useGetCategoriesQuery();
+  const { data: fetchedCategories } = useGetCategoriesQuery(null);
+  console.log(fetchedCategories);
 
   if (fetchedCategories && categories === null) {
     setCategories(fetchedCategories.entities);
@@ -532,6 +533,6 @@ const Header: React.FC = () => {
       />
     </>
   );
-}
+};
 
 export default Header;

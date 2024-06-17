@@ -1,7 +1,7 @@
 import { useState, useMemo } from 'react';
 import { useDispatch } from 'react-redux';
 import classNames from 'classnames';
-import { queryAPI, useGetCartProductsQuery, useDeleteAllCartIdsMutation } from '../../queryAPI/queryAPI.js';
+import { queryAPI, useGetCartProductsQuery, useDeleteAllCartIdsMutation } from '../../queryAPI/queryAPI';
 import beautifyNum from '../../utils/beautifyNum.js';
 import CartProduct from './CartProduct/CartProduct.jsx';
 import Button from '../common/Button/Button.jsx';

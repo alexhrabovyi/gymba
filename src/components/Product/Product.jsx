@@ -18,7 +18,7 @@ import {
   useGetCompareIdsQuery,
   useAddCompareIdMutation,
   useDeleteCompareIdMutation,
-} from '../../queryAPI/queryAPI.js';
+} from '../../queryAPI/queryAPI';
 import useOnResize from '../../hooks/useOnResize.jsx';
 import findAllInteractiveElements from '../../utils/findAllInteractiveElements.js';
 import Spinner from '../common/Spinner/Spinner.jsx';

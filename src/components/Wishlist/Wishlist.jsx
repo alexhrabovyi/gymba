@@ -4,7 +4,7 @@ import {
 import { useSearchParams } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 import classNames from 'classnames';
-import { queryAPI, useGetWishlistProductsQuery, useDeleteAllWishlistIdsMutation } from '../../queryAPI/queryAPI.js';
+import { queryAPI, useGetWishlistProductsQuery, useDeleteAllWishlistIdsMutation } from '../../queryAPI/queryAPI';
 import ProductCard from '../ProductCard/ProductCard.jsx';
 import SkeletonProductCard from '../SkeletonProductCard/SkeletonProductCard.jsx';
 import ThreeDotsSpinnerBlock from '../common/ThreeDotsSpinnerBlock/ThreeDotsSpinnerBlock.jsx';
