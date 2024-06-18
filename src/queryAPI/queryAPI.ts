@@ -1,7 +1,8 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
-import { createEntityAdapter } from '@reduxjs/toolkit';
+import { EntityState, createEntityAdapter } from '@reduxjs/toolkit';
+import type { CartId, CategoryShort, CompareId, WishlistId } from '../utils/dataAPI';
 
-const categoriesAdapter = createEntityAdapter();
+const categoriesAdapter = createEntityAdapter<CategoryShort>();
 
 const tagTypes = [
   'categories',
@@ -44,9 +45,9 @@ export const queryAPI = createApi(
     baseQuery: fetchBaseQuery({ baseUrl: '/fakeAPI' }),
     tagTypes,
     endpoints: (builder) => ({
-      getCategories: builder.query({
+      getCategories: builder.query<EntityState<CategoryShort, string>, void>({
         query: () => '/categories',
-        transformResponse(response) {
+        transformResponse(response: CategoryShort[]) {
           return categoriesAdapter.addMany(categoriesAdapter.getInitialState(), response);
         },
         providesTags: ['categories'],
@@ -55,7 +56,7 @@ export const queryAPI = createApi(
         query: (partialUrl) => `/getProducts/${partialUrl}`,
         providesTags: ['subcategoryProducts'],
       }),
-      getWishlistIds: builder.query({
+      getWishlistIds: builder.query<WishlistId[] | [], void>({
         query: () => '/wishlistIds',
         providesTags: [{ type: 'wishlistIds', id: 'LIST' }],
       }),
@@ -115,7 +116,7 @@ export const queryAPI = createApi(
         query: (page) => `/getWishlistProducts?page=${page}`,
         providesTags: ['wishlistProducts'],
       }),
-      getCartIds: builder.query({
+      getCartIds: builder.query<CartId[] | [], void>({
         query: () => '/cartIds',
         providesTags: [{ type: 'cartIds', id: 'LIST' }],
       }),
@@ -201,7 +202,7 @@ export const queryAPI = createApi(
         query: () => '/getCartProducts',
         providesTags: ['cartProducts'],
       }),
-      getCompareIds: builder.query({
+      getCompareIds: builder.query<CompareId[] | [], void>({
         query: () => '/compareIds',
         providesTags: [{ type: 'compareIds', id: 'LIST' }],
       }),

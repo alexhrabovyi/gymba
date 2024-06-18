@@ -2,6 +2,8 @@
 import { http, HttpResponse } from 'msw';
 import { setupWorker } from 'msw/browser';
 import {
+  type CategoryShort,
+  type WishlistId,
   getCategoriesAndSubcategories,
   getFilteredProductsAndMinMaxPrice,
   getWishlistIds,
@@ -29,6 +31,8 @@ import {
   getAnalogueProducts,
   getRandomProduct,
   getSearchResultsPerPageAndPageAmount,
+  CompareId,
+  CartId,
 } from './dataAPI';
 
 async function addMutation(request, addFunc) {
@@ -56,7 +60,7 @@ async function deleteMutation(request, deleteFunc, deleteAllFunc) {
 export const handlers = [
   http.get('/fakeAPI/categories', async () => {
     const categories = await getCategoriesAndSubcategories();
-    return HttpResponse.json(categories);
+    return HttpResponse.json<CategoryShort[]>(categories);
   }),
   http.get('/fakeAPI/getProducts/:categoryId/:subcategoryId', async ({ request, params }) => {
     const { categoryId, subcategoryId } = params;
@@ -67,7 +71,7 @@ export const handlers = [
   http.get('/fakeAPI/wishlistIds', async () => {
     const wishlistIds = await getWishlistIds();
 
-    return HttpResponse.json(wishlistIds);
+    return HttpResponse.json<WishlistId[] | []>(wishlistIds);
   }),
   http.post('/fakeAPI/wishlistIds', async ({ request }) => addMutation(request, addIdToWishlist)),
   http.delete('/fakeAPI/wishlistIds', async ({ request }) => deleteMutation(request, deleteIdFromWishlist, deleteAllFromWishlist)),
@@ -79,7 +83,7 @@ export const handlers = [
   http.get('/fakeAPI/cartIds', async () => {
     const cartIds = await getCartIds();
 
-    return HttpResponse.json(cartIds);
+    return HttpResponse.json<CartId[] | []>(cartIds);
   }),
   http.post('/fakeAPI/cartIds', async ({ request }) => addMutation(request, addIdToCart)),
   http.patch('/fakeAPI/cartIds', async ({ request }) => {
@@ -94,9 +98,9 @@ export const handlers = [
     return HttpResponse.json(cartProducts);
   }),
   http.get('/fakeAPI/compareIds', async () => {
-    const cartIds = await getCompareIds();
+    const compareIds = await getCompareIds();
 
-    return HttpResponse.json(cartIds);
+    return HttpResponse.json<CompareId[] | []>(compareIds);
   }),
   http.post('/fakeAPI/compareIds', async ({ request }) => addMutation(request, addIdToCompare)),
   http.delete('/fakeAPI/compareIds', async ({ request }) => deleteMutation(request, deleteFromCompare)),

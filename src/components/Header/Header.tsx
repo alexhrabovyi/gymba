@@ -43,8 +43,15 @@ import User from './images/user.svg';
 import Compare from '../../assets/images/icons/compare.svg';
 import Favorite from '../../assets/images/icons/favorite.svg';
 import Cart from '../../assets/images/icons/cart.svg';
+import { CategoryShort } from '../../utils/dataAPI';
 
 const Header: React.FC = () => {
+  interface SearchBlockStyles {
+    width: number,
+    left: number,
+    headerBottom: number,
+  }
+
   const location = useLocation();
   const [searchParams] = useSearchParams();
 
@@ -54,19 +61,19 @@ const Header: React.FC = () => {
   const searchInputRef = useRef<HTMLInputElement | null>(null);
   const openLoginPopupBtnRef = useRef<HTMLButtonElement | null>(null);
 
-  const [categories, setCategories] = useState(null);
-  const [activeCategory, setActiveCategory] = useState(null);
-  const [isMainMenuOpen, setIsMainMenuOpen] = useState(false);
-  const [isCategoryMenuOpen, setIsCategoryMenuOpen] = useState(false);
-  const [isSubcategoryMenuOpen, setIsSubcategoryMenuOpen] = useState(false);
-  const [isLoginPopupOpen, setIsLoginPopupOpen] = useState(false);
-  const [isSearchBlockActive, setIsSearchBlockActive] = useState(false);
-  const [searchBlockStyles, setSearchBlockStyles] = useState(null);
-  const [searchValue, setSearchValue] = useState(null);
-  const [wishlistAmount, setWishlistAmount] = useState(null);
-  const [compareAmount, setCompareAmount] = useState(null);
-  const [cartAmount, setCartAmount] = useState(null);
-  const [windowWidth, setWindowWidth] = useState(null);
+  const [categories, setCategories] = useState<Record<string, CategoryShort> | null>(null);
+  const [activeCategory, setActiveCategory] = useState<CategoryShort | null>(null);
+  const [isMainMenuOpen, setIsMainMenuOpen] = useState<boolean>(false);
+  const [isCategoryMenuOpen, setIsCategoryMenuOpen] = useState<boolean>(false);
+  const [isSubcategoryMenuOpen, setIsSubcategoryMenuOpen] = useState<boolean>(false);
+  const [isLoginPopupOpen, setIsLoginPopupOpen] = useState<boolean>(false);
+  const [isSearchBlockActive, setIsSearchBlockActive] = useState<boolean>(false);
+  const [searchBlockStyles, setSearchBlockStyles] = useState<SearchBlockStyles | null>(null);
+  const [searchValue, setSearchValue] = useState<string | null>(null);
+  const [wishlistAmount, setWishlistAmount] = useState<number | null>(null);
+  const [compareAmount, setCompareAmount] = useState<number | null>(null);
+  const [cartAmount, setCartAmount] = useState<number | null>(null);
+  const [windowWidth, setWindowWidth] = useState<number | null>(null);
 
   const isAnyMenuOpen = isMainMenuOpen || isCategoryMenuOpen || isSubcategoryMenuOpen;
 
@@ -147,8 +154,7 @@ const Header: React.FC = () => {
 
   // fetcher functions
 
-  const { data: fetchedCategories } = useGetCategoriesQuery(null);
-  console.log(fetchedCategories);
+  const { data: fetchedCategories } = useGetCategoriesQuery();
 
   if (fetchedCategories && categories === null) {
     setCategories(fetchedCategories.entities);

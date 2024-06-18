@@ -47,13 +47,22 @@ interface Category {
   }
 }
 
-interface CategoryShort extends Omit<Category, 'subcategories'> {
+export interface CategoryShort extends Omit<Category, 'subcategories'> {
   subcategories: {
     ids: string[],
     entities: {
       [id: string]: SubcategoryShort,
     },
   }
+}
+
+export type WishlistId = [string, string, string];
+export type CompareId = [string, string, string];
+export interface CartId {
+  categoryId: string,
+  subcategoryId: string,
+  productId: string,
+  amount: number,
 }
 
 // utils
@@ -127,8 +136,9 @@ function getProductFullObj(categoryId, subcategoryId, productId) {
   };
 }
 
-function getLocalStorageIds(localStorageKey) {
-  const ids = JSON.parse(localStorage.getItem(localStorageKey)) || [];
+function getLocalStorageIds<T>(localStorageKey: string): T[] | [] {
+  const unparsedIds = localStorage.getItem(localStorageKey)
+  const ids = unparsedIds ? JSON.parse(unparsedIds) : [];;
 
   return ids;
 }
@@ -438,7 +448,7 @@ export async function getAnalogueProducts(categoryId, subcategoryId, productId) 
 export async function getWishlistIds() {
   await fakeNetwork();
 
-  return getLocalStorageIds('wishlistIds');
+  return getLocalStorageIds<WishlistId>('wishlistIds');
 }
 
 export function addIdToWishlist(categoryId, subcategoryId, productId) {
@@ -489,7 +499,7 @@ export async function getWishlistProductsPerPageAndPageAmount(pageNum) {
 export async function getCartIds() {
   await fakeNetwork();
 
-  return getLocalStorageIds('cartIds');
+  return getLocalStorageIds<CartId>('cartIds');
 }
 
 export function addIdToCart(categoryId, subcategoryId, productId) {
@@ -548,7 +558,7 @@ export async function getCartProducts() {
 export async function getCompareIds() {
   await fakeNetwork();
 
-  return getLocalStorageIds('compareIds');
+  return getLocalStorageIds<CompareId>('compareIds');
 }
 
 export function addIdToCompare(categoryId, subcategoryId, productId) {
