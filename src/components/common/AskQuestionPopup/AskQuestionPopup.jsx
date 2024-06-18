@@ -5,7 +5,7 @@ import Popup from '../Popup/Popup.jsx';
 import ValidationForm from '../ValidationForm/ValidationForm.jsx';
 import InputWithErrorMessage from '../InputWithErrorMessage/InputWithErrorMessage.jsx';
 import TextAreaWithErrorMessage from '../TextareaWIthErrorMessage/TextareaWithErrorMessage.jsx';
-import Button from '../Button/Button.jsx';
+import Button from '../Button/Button';
 import textCls from '../../../scss/_text.module.scss';
 import linkCls from '../../../scss/_link.module.scss';
 import popupCls from './AskQuestionPopup.module.scss';

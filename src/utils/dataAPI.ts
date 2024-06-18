@@ -56,6 +56,19 @@ export interface CategoryShort extends Omit<Category, 'subcategories'> {
   }
 }
 
+interface CategoryWithSubcategory {
+  categoryName: Category['name'],
+  categoryId: Category['id'],
+  categoryImgAlt: Category['imgAlt'],
+  subcategory: Subcategory,
+}
+
+export interface ProductWithIds {
+  categoryId: Category['id'],
+  subcategoryId: Subcategory['id'],
+  product: Product,
+}
+
 export type WishlistId = [string, string, string];
 export type CompareId = [string, string, string];
 export interface CartId {
@@ -73,16 +86,22 @@ async function fakeNetwork() {
   });
 }
 
-function getCategoryAndSubcategory(categoryId, subcategoryId) {
-  const category = products.categories.entities[categoryId];
+function getCategoryAndSubcategory(
+  categoryId: string,
+  subcategoryId: string,
+): CategoryWithSubcategory {
+  const categoryEntities: Record<string, Category> = products.categories.entities;
+
+  const category: Category | undefined = categoryEntities[categoryId];
 
   if (!category) throw new Response(null, { status: 404, statusText: 'Not found' });
 
-  const subcategory = category.subcategories.entities[subcategoryId];
+  const subcategory: Subcategory = category.subcategories.entities[subcategoryId];
 
   return {
     categoryName: category.name,
     categoryId: category.id,
+    categoryImgAlt: category.imgAlt,
     subcategory,
   };
 }
@@ -638,11 +657,11 @@ export async function getCompareProductCards(categoryId, subcategoryId) {
   return new Response(JSON.stringify(productCards), { status: 200, statusText: 'OK' });
 }
 
-export async function getRandomProduct() {
+export async function getRandomProduct(): Promise<ProductWithIds> {
   await fakeNetwork();
 
   const { categoryId, subcategory } = getCategoryAndSubcategory('enamels', 'alkyd_enamels');
-  const subcategoryProducts = Object.values(subcategory.products.entities);
+  const subcategoryProducts: Product[] = Object.values(subcategory.products.entities);
 
   const randomProduct = (subcategoryProducts.sort(() => 0.5 - Math.random()))[0];
 

@@ -73,7 +73,7 @@ const Header: React.FC = () => {
   const [wishlistAmount, setWishlistAmount] = useState<number | null>(null);
   const [compareAmount, setCompareAmount] = useState<number | null>(null);
   const [cartAmount, setCartAmount] = useState<number | null>(null);
-  const [windowWidth, setWindowWidth] = useState<number | null>(null);
+  const [windowWidth, setWindowWidth] = useState<number>(0);
 
   const isAnyMenuOpen = isMainMenuOpen || isCategoryMenuOpen || isSubcategoryMenuOpen;
 
@@ -101,12 +101,14 @@ const Header: React.FC = () => {
     const headerWrapper = headerWrapperRef.current;
     const header = headerRef.current;
 
+    if (!headerWrapper || !header) return;
+
     header.style.paddingRight = '';
     header.style.width = '';
     headerWrapper.style.width = '';
 
     if (isAnyMenuOpen) {
-      const headerPaddingRight = +getComputedStyle(header).paddingRight.match(/\d+/)[0];
+      const headerPaddingRight: number = Number(getComputedStyle(header).paddingRight.match(/\d+/)?.[0]);
       const newHeaderPaddingRight = headerPaddingRight + getScrollWidth();
 
       setTimeout(() => {
@@ -133,9 +135,11 @@ const Header: React.FC = () => {
   const keepOpenMenuBtnEnabled = useCallback(() => {
     const openMenuButton = openMenuButtonRef.current;
 
+    if (!openMenuButton) return;
+
     if (isMainMenuOpen || isCategoryMenuOpen || isSubcategoryMenuOpen) {
-      openMenuButton.tabIndex = '0';
-      openMenuButton.ariaHidden = false;
+      openMenuButton.tabIndex = 0;
+      openMenuButton.ariaHidden = 'false';
     }
   }, [isMainMenuOpen, isCategoryMenuOpen, isSubcategoryMenuOpen]);
 
@@ -145,8 +149,9 @@ const Header: React.FC = () => {
     if (location.pathname === '/search') {
       const searchParamValue = searchParams.get('search');
 
-      setSearchValue(searchParamValue);
-      searchInputRef.current.value = searchParamValue;
+      setSearchValue(searchParamValue || '');
+
+      searchInputRef.current!.value = searchParamValue || '';
     }
   }, [location.pathname, searchParams]);
 
@@ -211,8 +216,8 @@ const Header: React.FC = () => {
 
   // event functions
 
-  function headerOnClick(e) {
-    if (!e.target.closest('a')) return;
+  function headerOnClick(e: React.MouseEvent<HTMLElement>) {
+    if (!(e.target as HTMLElement).closest('a')) return;
 
     setIsMainMenuOpen(false);
     setIsCategoryMenuOpen(false);
@@ -233,7 +238,7 @@ const Header: React.FC = () => {
     setIsSearchBlockActive(true);
   }
 
-  function searchInputOnChange(e) {
+  function searchInputOnChange(e: React.ChangeEvent<HTMLInputElement>) {
     setSearchValue(e.target.value);
   }
 
@@ -252,11 +257,14 @@ const Header: React.FC = () => {
     setIsCategoryMenuOpen(false);
   }, []);
 
-  const categoryBtnOnClick = useCallback((e) => {
-    const btn = e.target.closest('[data-category-id]');
+  const categoryBtnOnClick = useCallback((e: React.MouseEvent<HTMLButtonElement>) => {
+    const btn = (e.target as HTMLButtonElement).closest<HTMLButtonElement>('[data-category-id]');
     if (!btn) return;
 
     const activeCategoryId = btn.dataset.categoryId;
+
+    if (!activeCategoryId || !categories) return;
+
     const category = categories[activeCategoryId];
     setActiveCategory(category);
 
@@ -287,8 +295,8 @@ const Header: React.FC = () => {
           className={classNames(containerCls.container, headerCls.header)}
         >
           {windowWidth > 768 && (
-            <Link to="/" className={headerCls.logoLink} alt="Головна сторінка Ґимба" aria-label="Головна сторінка Ґимба">
-              <Logo className={headerCls.logoLinkImg} alt="Ґимба логотип" />
+            <Link to="/" className={headerCls.logoLink} aria-label="Головна сторінка Ґимба">
+              <Logo className={headerCls.logoLinkImg} />
             </Link>
           )}
           {windowWidth > 1024 && (
@@ -297,7 +305,6 @@ const Header: React.FC = () => {
                 <a
                   href="/"
                   className={headerCls.linkWithIcon}
-                  alt="Наш магазин знаходиться в місті Одеса"
                   aria-label="Наш магазин знаходиться в місті Одеса"
                 >
                   <Tag />
@@ -306,7 +313,6 @@ const Header: React.FC = () => {
                 <a
                   href="tel:+380974311101"
                   className={headerCls.linkWithIcon}
-                  alt="Номер телефону магазину +38 097 431-11-01"
                   aria-label="Номер телефону магазину +38 097 431-11-01"
                 >
                   <Phone />
@@ -320,7 +326,6 @@ const Header: React.FC = () => {
                       to="/delivery"
                       className={({ isActive }) => (isActive
                         ? classNames(linkCls.link, linkCls.link_active) : classNames(linkCls.link))}
-                      alt="Доставка"
                     >
                       Доставка
                     </NavLink>
@@ -330,7 +335,6 @@ const Header: React.FC = () => {
                       to="/payment"
                       className={({ isActive }) => (isActive
                         ? classNames(linkCls.link, linkCls.link_active) : classNames(linkCls.link))}
-                      alt="Оплата"
                     >
                       Оплата
                     </NavLink>
@@ -340,7 +344,6 @@ const Header: React.FC = () => {
                       to="/news"
                       className={({ isActive }) => (isActive
                         ? classNames(linkCls.link, linkCls.link_active) : classNames(linkCls.link))}
-                      alt="Новини"
                     >
                       Новини
                     </NavLink>
@@ -350,7 +353,6 @@ const Header: React.FC = () => {
                       to="/contacts"
                       className={({ isActive }) => (isActive
                         ? classNames(linkCls.link, linkCls.link_active) : classNames(linkCls.link))}
-                      alt="Контакти"
                     >
                       Контакти
                     </NavLink>
@@ -401,8 +403,8 @@ const Header: React.FC = () => {
               {windowWidth > 1025 ? 'Каталог' : windowWidth > 768 ? 'Меню' : ''}
             </button>
             {windowWidth <= 768 && (
-              <Link to="/" className={headerCls.logoLink} alt="Головна сторінка Ґимба" aria-label="Головна сторінка Ґимба">
-                <LogoSmall className={headerCls.logoLinkImg} alt="Ґимба логотип" />
+              <Link to="/" className={headerCls.logoLink} aria-label="Головна сторінка Ґимба">
+                <LogoSmall className={headerCls.logoLinkImg} />
               </Link>
             )}
             <Form

@@ -3,13 +3,13 @@ import {
   memo, useCallback, useEffect, useRef, useLayoutEffect,
 } from 'react';
 import classNames from 'classnames';
-import useHideScrollbarOnOpen from '../../../hooks/useHideScrollbarOnOpen.jsx';
-import useToggleInteractiveElements from '../../../hooks/useToggleInteractiveElements.jsx';
+import useHideScrollbarOnOpen from '../../../hooks/useHideScrollbarOnOpen';
+import useToggleInteractiveElements from '../../../hooks/useToggleInteractiveElements';
 import backdropCls from '../../../scss/_backdrop.module.scss';
 import popupCls from './Popup.module.scss';
 import Cross from '../../../assets/images/icons/cross.svg';
 
-import useOnResize from '../../../hooks/useOnResize.jsx';
+import useOnResize from '../../../hooks/useOnResize';
 
 const Popup = memo(({
   children, isActive = false, setIsActive, label, openButton,

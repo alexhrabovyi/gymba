@@ -18,7 +18,7 @@ import {
 import beautifyNum from '../../utils/beautifyNum.js';
 import Spinner from '../common/Spinner/Spinner.jsx';
 import DynamicImage from '../common/DynamicImage/DynamicImage.jsx';
-import Button from '../common/Button/Button.jsx';
+import Button from '../common/Button/Button';
 import linkCls from '../../scss/_link.module.scss';
 import productCls from './ProductCard.module.scss';
 import Compare from '../../assets/images/icons/compare.svg';

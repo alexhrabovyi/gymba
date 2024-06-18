@@ -3,7 +3,7 @@ import {
 } from 'react';
 import classNames from 'classnames';
 import { useGetAnalogueProductsQuery } from '../../../queryAPI/queryAPI';
-import useOnResize from '../../../hooks/useOnResize.jsx';
+import useOnResize from '../../../hooks/useOnResize';
 import ProductCard from '../../ProductCard/ProductCard.jsx';
 import Slider from '../../common/Slider/Slider.jsx';
 import BigPrevNextButton from '../../common/BigPrevNextButton/BigPrevNextButton.jsx';

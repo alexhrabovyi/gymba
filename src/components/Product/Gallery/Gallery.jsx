@@ -5,12 +5,12 @@ import {
 } from 'react';
 import { Await } from 'react-router-dom';
 import classNames from 'classnames';
-import Spinner from '../../common/Spinner/Spinner.jsx';
-import DynamicImage from '../../common/DynamicImage/DynamicImage.jsx';
-import Slider from '../../common/Slider/Slider.jsx';
-import BigPrevNextButton from '../../common/BigPrevNextButton/BigPrevNextButton.jsx';
-import useHideScrollbarOnOpen from '../../../hooks/useHideScrollbarOnOpen.jsx';
-import useToggleInteractiveElements from '../../../hooks/useToggleInteractiveElements.jsx';
+import Spinner from '../../common/Spinner/Spinner';
+import DynamicImage from '../../common/DynamicImage/DynamicImage';
+import Slider from '../../common/Slider/Slider';
+import BigPrevNextButton from '../../common/BigPrevNextButton/BigPrevNextButton';
+import useHideScrollbarOnOpen from '../../../hooks/useHideScrollbarOnOpen';
+import useToggleInteractiveElements from '../../../hooks/useToggleInteractiveElements';
 import backdropCls from '../../../scss/_backdrop.module.scss';
 import galleryCls from './Gallery.module.scss';
 

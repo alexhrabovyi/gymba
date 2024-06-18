@@ -4,7 +4,7 @@ import classNames from 'classnames';
 import { queryAPI, useGetCartProductsQuery, useDeleteAllCartIdsMutation } from '../../queryAPI/queryAPI';
 import beautifyNum from '../../utils/beautifyNum.js';
 import CartProduct from './CartProduct/CartProduct.jsx';
-import Button from '../common/Button/Button.jsx';
+import Button from '../common/Button/Button';
 import containerCls from '../../scss/_container.module.scss';
 import textCls from '../../scss/_text.module.scss';
 import cartCls from './Cart.module.scss';

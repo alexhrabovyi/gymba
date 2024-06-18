@@ -3,7 +3,7 @@ import {
 } from 'react';
 import classNames from 'classnames';
 import { useGetNewsQuery } from '../../queryAPI/queryAPI';
-import useOnResize from '../../hooks/useOnResize.jsx';
+import useOnResize from '../../hooks/useOnResize';
 import Slider from '../common/Slider/Slider.jsx';
 import LinkWithArrow from '../common/LinkWithArrow/LinkWithArrow.jsx';
 import NewsPreview from '../common/NewsPreview/NewsPreview.jsx';

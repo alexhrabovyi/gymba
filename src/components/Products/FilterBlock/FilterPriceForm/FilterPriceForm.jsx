@@ -4,7 +4,7 @@ import {
 import { useParams, useSearchParams } from 'react-router-dom';
 import classNames from 'classnames';
 import { useGetProductsQuery } from '../../../../queryAPI/queryAPI';
-import useOnResize from '../../../../hooks/useOnResize.jsx';
+import useOnResize from '../../../../hooks/useOnResize';
 import textCls from '../../../../scss/_text.module.scss';
 import filterCls from './FilterPriceForm.module.scss';
 import ChevronUp from '../../../../assets/images/icons/chevronUp.svg';

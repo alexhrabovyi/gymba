@@ -3,7 +3,7 @@ import classNames from 'classnames';
 import Popup from '../../common/Popup/Popup.jsx';
 import ValidationForm from '../../common/ValidationForm/ValidationForm.jsx';
 import InputWithErrorMessage from '../../common/InputWithErrorMessage/InputWithErrorMessage.jsx';
-import Button from '../../common/Button/Button.jsx';
+import Button from '../../common/Button/Button';
 import textCls from '../../../scss/_text.module.scss';
 import popupCls from './LoginRegisterPopup.module.scss';
 

@@ -1,6 +1,6 @@
 import { forwardRef } from 'react';
 import classNames from 'classnames';
-import Button from '../Button/Button.jsx';
+import Button from '../Button/Button';
 import textCls from '../../../scss/_text.module.scss';
 import bannerCls from './AskQuestionBanner.module.scss';
 import InfoIcon from './images/info.svg';

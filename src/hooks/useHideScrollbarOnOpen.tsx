@@ -1,7 +1,7 @@
 import { useCallback, useEffect } from 'react';
-import getScrollWidth from '../utils/getScrollWidth.jsx';
+import getScrollWidth from '../utils/getScrollWidth';
 
-export default function useHideScrollbarOnOpen(isOpen) {
+export default function useHideScrollbarOnOpen(isOpen: boolean): void {
   const hideScrollbarOnOpen = useCallback(() => {
     if (isOpen) {
       const scrollWidth = getScrollWidth();

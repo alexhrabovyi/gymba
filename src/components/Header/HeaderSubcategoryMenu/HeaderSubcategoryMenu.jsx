@@ -4,7 +4,7 @@ import {
   memo, useRef, useEffect, useCallback, useMemo,
 } from 'react';
 import useToggleInteractiveElements from '../../../hooks/useToggleInteractiveElements.jsx';
-import useOnResize from '../../../hooks/useOnResize.jsx';
+import useOnResize from '../../../hooks/useOnResize';
 import ThreeDotsSpinnerBlock from '../../common/ThreeDotsSpinnerBlock/ThreeDotsSpinnerBlock.jsx';
 import containerCls from '../../../scss/_container.module.scss';
 import textCls from '../../../scss/_text.module.scss';

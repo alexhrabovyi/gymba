@@ -19,13 +19,13 @@ import {
   useAddCompareIdMutation,
   useDeleteCompareIdMutation,
 } from '../../queryAPI/queryAPI';
-import useOnResize from '../../hooks/useOnResize.jsx';
-import findAllInteractiveElements from '../../utils/findAllInteractiveElements.js';
+import useOnResize from '../../hooks/useOnResize';
+import findAllInteractiveElements from '../../utils/findAllInteractiveElements';
 import Spinner from '../common/Spinner/Spinner.jsx';
 import DynamicImage from '../common/DynamicImage/DynamicImage.jsx';
 import ThreeDotsSpinnerBlock from '../common/ThreeDotsSpinnerBlock/ThreeDotsSpinnerBlock.jsx';
 import Slider from '../common/Slider/Slider.jsx';
-import Button from '../common/Button/Button.jsx';
+import Button from '../common/Button/Button';
 import AddToCartBanner from './AddToCartBanner/AddToCartBanner.jsx';
 import AskQuestionBanner from '../common/AskQuestionBanner/AskQuestionBanner.jsx';
 import RelatedProducts from './RelatedProducts/RelatedProducts.jsx';

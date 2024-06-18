@@ -8,7 +8,7 @@ import { Link, Await } from 'react-router-dom';
 import { nanoid } from '@reduxjs/toolkit';
 import classNames from 'classnames';
 import { useGetSearchResultsQuery } from '../../../queryAPI/queryAPI';
-import useOnResize from '../../../hooks/useOnResize.jsx';
+import useOnResize from '../../../hooks/useOnResize';
 import findAllInteractiveElements from '../../../utils/findAllInteractiveElements';
 import Spinner from '../../common/Spinner/Spinner.jsx';
 import DynamicImage from '../../common/DynamicImage/DynamicImage.jsx';

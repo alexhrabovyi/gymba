@@ -1,5 +1,5 @@
-export default function findAllInteractiveElements(parentEl) {
-  return parentEl.querySelectorAll(
+export default function findAllInteractiveElements(parentEl: HTMLElement) {
+  return parentEl.querySelectorAll<HTMLElement>(
     `button:not([disabled]), 
     [href], 
     input:not([disabled]), 

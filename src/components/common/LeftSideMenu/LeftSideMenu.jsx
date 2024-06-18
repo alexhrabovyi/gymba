@@ -3,9 +3,9 @@ import {
   memo, useRef, useCallback, useEffect,
 } from 'react';
 import classNames from 'classnames';
-import useHideScrollbarOnOpen from '../../../hooks/useHideScrollbarOnOpen.jsx';
-import useToggleInteractiveElements from '../../../hooks/useToggleInteractiveElements.jsx';
-import useOnResize from '../../../hooks/useOnResize.jsx';
+import useHideScrollbarOnOpen from '../../../hooks/useHideScrollbarOnOpen';
+import useToggleInteractiveElements from '../../../hooks/useToggleInteractiveElements';
+import useOnResize from '../../../hooks/useOnResize';
 import backdropCls from '../../../scss/_backdrop.module.scss';
 import containerCls from '../../../scss/_container.module.scss';
 import menuCls from './LeftSideMenu.module.scss';

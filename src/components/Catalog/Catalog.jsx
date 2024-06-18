@@ -9,10 +9,10 @@ import {
 } from 'react';
 import classNames from 'classnames';
 import { useGetCategoriesQuery } from '../../queryAPI/queryAPI';
-import useOnResize from '../../hooks/useOnResize.jsx';
+import useOnResize from '../../hooks/useOnResize';
 import Category from './CatalogCategory/CatalogCategory.jsx';
 import ThreeDotsSpinnerBlock from '../common/ThreeDotsSpinnerBlock/ThreeDotsSpinnerBlock.jsx';
-import Button from '../common/Button/Button.jsx';
+import Button from '../common/Button/Button';
 import containerCls from '../../scss/_container.module.scss';
 import textCls from '../../scss/_text.module.scss';
 import catalogCls from './Catalog.module.scss';

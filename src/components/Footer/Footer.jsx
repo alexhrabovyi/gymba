@@ -5,7 +5,7 @@ import classNames from 'classnames';
 import containerCls from '../../scss/_container.module.scss';
 import textCls from '../../scss/_text.module.scss';
 import footerCls from './Footer.module.scss';
-import Button from '../common/Button/Button.jsx';
+import Button from '../common/Button/Button';
 import ValidationForm from '../common/ValidationForm/ValidationForm.jsx';
 import InputWithErrorMessage from '../common/InputWithErrorMessage/InputWithErrorMessage.jsx';
 import Logo from './images/logo.svg';

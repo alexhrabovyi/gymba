@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 
-export default function useOnResize(callback) {
+export default function useOnResize(callback: () => void): void {
   useEffect(() => {
     window.addEventListener('resize', callback);
 

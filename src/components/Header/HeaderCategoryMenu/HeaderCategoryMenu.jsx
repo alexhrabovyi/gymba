@@ -4,7 +4,7 @@ import {
   useMemo,
 } from 'react';
 import useToggleInteractiveElements from '../../../hooks/useToggleInteractiveElements.jsx';
-import useOnResize from '../../../hooks/useOnResize.jsx';
+import useOnResize from '../../../hooks/useOnResize';
 import containerCls from '../../../scss/_container.module.scss';
 import textCls from '../../../scss/_text.module.scss';
 import categoryMenuCls from './HeaderCategoryMenu.module.scss';

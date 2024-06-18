@@ -33,6 +33,7 @@ import {
   getSearchResultsPerPageAndPageAmount,
   CompareId,
   CartId,
+  ProductWithIds,
 } from './dataAPI';
 
 async function addMutation(request, addFunc) {
@@ -154,7 +155,7 @@ export const handlers = [
   http.get('/fakeAPI/getRandomProduct', async () => {
     const randomProduct = await getRandomProduct();
 
-    return HttpResponse.json(randomProduct);
+    return HttpResponse.json<ProductWithIds>(randomProduct);
   }),
   http.get('/fakeAPI/search', async ({ request }) => {
     const { searchParams } = new URL(request.url);

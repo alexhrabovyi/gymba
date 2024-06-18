@@ -5,7 +5,7 @@ import {
 import { useSearchParams, useParams } from 'react-router-dom';
 import classNames from 'classnames';
 import { useGetCategoriesQuery, useGetProductsQuery } from '../../queryAPI/queryAPI';
-import useOnResize from '../../hooks/useOnResize.jsx';
+import useOnResize from '../../hooks/useOnResize';
 import containerCls from '../../scss/_container.module.scss';
 import textCls from '../../scss/_text.module.scss';
 import productsCls from './Products.module.scss';
@@ -20,7 +20,7 @@ import CardsShortIcon from './images/productCardsShort.svg';
 import CardsLongIcon from './images/productCardsLong.svg';
 import FilterIcon from './images/filter.svg';
 import Line from '../../assets/images/icons/oblique.svg';
-import Button from '../common/Button/Button.jsx';
+import Button from '../common/Button/Button';
 
 export default function Products() {
   const [searchParams, setSearchParams] = useSearchParams();
