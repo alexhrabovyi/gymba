@@ -3,47 +3,58 @@ import news from './news.json';
 
 // types
 
-// interface Product {
-//   name: string,
-//   id: string,
-//   price: string,
-//   oldPrice?: string,
-//   additionalImgs?: string[],
-//   'specs-filters': {
-//     [i: string]: string | string[],
-//   },
-//   specs: {
-//     [i: string]: string,
-//   },
-//   mainSpecs: {
-//     [i: string]: string,
-//   },
-//   description?: string,
-// }
+interface Product {
+  name: string,
+  id: string,
+  price: string,
+  oldPrice?: string,
+  additionalImgs?: string[],
+  'specs-filters': {
+    [i: string]: string | string[],
+  },
+  specs: {
+    [i: string]: string,
+  },
+  mainSpecs: {
+    [i: string]: string,
+  },
+  description?: string,
+}
 
-// interface Subcategory {
-//   name: string,
-//   id: string,
-//   imgAlt: string,
-//   products: {
-//     ids: string[],
-//     entities: {
-//       [id: string]: Product,
-//     },
-//   }
-// }
+interface Subcategory {
+  name: string,
+  id: string,
+  imgAlt?: string,
+  products: {
+    ids: string[],
+    entities: {
+      [id: string]: Product,
+    },
+  }
+}
 
-// interface Category {
-//   name: string,
-//   id: keyof typeof products.categories.entities,
-//   imgAlt: string,
-//   subcategories: {
-//     ids: string[],
-//     entities: {
-//       [id: string]: Subcategory,
-//     },
-//   }
-// }
+interface SubcategoryShort extends Omit<Subcategory, 'products'> { }
+
+interface Category {
+  name: string,
+  id: string,
+  imgAlt: string,
+  subcategories: {
+    ids: string[],
+    entities: {
+      [id: string]: Subcategory,
+    },
+  }
+}
+
+interface CategoryShort extends Omit<Category, 'subcategories'> {
+  subcategories: {
+    ids: string[],
+    entities: {
+      [id: string]: SubcategoryShort,
+    },
+  }
+}
 
 // utils
 
@@ -176,22 +187,22 @@ function getAllProductsFromStorage(localStorageKey) {
 
 // =====
 
-export async function getCategoriesAndSubcategories() {
+export async function getCategoriesAndSubcategories(): Promise<CategoryShort[]> {
   await fakeNetwork();
 
-  const categoriesFullObjs = Object.values(products.categories.entities);
+  const categoriesFullObjs: Category[] = Object.values(products.categories.entities);
 
-  const categoriesShortObjs = categoriesFullObjs.map((c) => {
-    const subcategoriesIds = c.subcategories.ids;
+  const categoriesShortObjs: CategoryShort[] = categoriesFullObjs.map((c) => {
+    const subcategoriesIds: Category['subcategories']['ids'] = c.subcategories.ids;
 
-    const subcategoriesFullObjs = Object.values(c.subcategories.entities);
-    const subcategoriesShortObjs = subcategoriesFullObjs.map((subC) => ({
+    const subcategoriesFullObjs: Subcategory[] = Object.values(c.subcategories.entities);
+    const subcategoriesShortObjs: SubcategoryShort[] = subcategoriesFullObjs.map((subC) => ({
       name: subC.name,
       id: subC.id,
       imgAlt: subC.imgAlt,
     }));
 
-    const subcategoryEntities = {};
+    const subcategoryEntities: { [id: string]: SubcategoryShort } = {};
 
     subcategoriesShortObjs.forEach((s) => {
       subcategoryEntities[s.id] = s;
