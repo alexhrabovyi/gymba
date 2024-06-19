@@ -2,7 +2,13 @@ import classNames from 'classnames';
 import sliderButtonCls from './MainSliderButton.module.scss';
 import ChevronRight from '../../../assets/images/icons/chevronRight.svg';
 
-export default function SliderButton({ isInactive, isRight, onClick }) {
+interface SliderButtonProps {
+  isInactive: boolean,
+  isRight?: boolean,
+  onClick: React.MouseEventHandler<HTMLButtonElement>,
+}
+
+const SliderButton: React.FC<SliderButtonProps> = ({ isInactive, isRight, onClick }) => {
   const label = !isRight ? 'Показати попередній слайд' : 'Показати наступний слайд';
 
   return (
@@ -18,4 +24,6 @@ export default function SliderButton({ isInactive, isRight, onClick }) {
       />
     </button>
   );
-}
+};
+
+export default SliderButton;

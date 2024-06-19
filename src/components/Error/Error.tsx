@@ -5,8 +5,8 @@ import textCls from '../../scss/_text.module.scss';
 import errorCls from './Error.module.scss';
 import LineIcon from '../../assets/images/icons/oblique.svg';
 
-export default function Error() {
-  const err = useRouteError();
+const Error: React.FC = () => {
+  const err = useRouteError() as { status?: number };
 
   const message = err && err.status === 404 ? 'Сторінку не знайдено' : 'Виникла невідома помилка';
   const status = err?.status;
@@ -32,7 +32,6 @@ export default function Error() {
         <Link
           className={errorCls.backToMainLink}
           to="/"
-          alt="Головна сторінка"
         >
           Повернутися на головну
         </Link>
@@ -51,4 +50,6 @@ export default function Error() {
       </div>
     </main>
   );
-}
+};
+
+export default Error;

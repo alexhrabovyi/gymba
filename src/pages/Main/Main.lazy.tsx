@@ -1,5 +1,5 @@
 import { lazy } from 'react';
 
-const MainLazy = lazy(() => import('./Main.jsx'));
+const MainLazy = lazy(() => import('./Main'));
 
 export default MainLazy;

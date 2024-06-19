@@ -3,7 +3,7 @@ import { Link, Await } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 import classNames from 'classnames';
 import { queryAPI, useDeleteCartIdMutation, useEditCartIdAmountMutation } from '../../../queryAPI/queryAPI';
-import beautifyNum from '../../../utils/beautifyNum.js';
+import beautifyNum from '../../../utils/beautifyNum';
 import Spinner from '../../common/Spinner/Spinner';
 import DynamicImage from '../../common/DynamicImage/DynamicImage';
 import linkCls from '../../../scss/_link.module.scss';

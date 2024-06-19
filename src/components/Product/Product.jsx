@@ -24,7 +24,7 @@ import findAllInteractiveElements from '../../utils/findAllInteractiveElements';
 import Spinner from '../common/Spinner/Spinner';
 import DynamicImage from '../common/DynamicImage/DynamicImage';
 import ThreeDotsSpinnerBlock from '../common/ThreeDotsSpinnerBlock/ThreeDotsSpinnerBlock';
-import Slider from '../common/Slider/Slider.jsx';
+import Slider from '../common/Slider/Slider';
 import Button from '../common/Button/Button';
 import AddToCartBanner from './AddToCartBanner/AddToCartBanner.jsx';
 import AskQuestionBanner from '../common/AskQuestionBanner/AskQuestionBanner.jsx';

@@ -1,5 +1,5 @@
 import { lazy } from 'react';
 
-const FooterLazy = lazy(() => import('./Footer.jsx'));
+const FooterLazy = lazy(() => import('./Footer'));
 
 export default FooterLazy;

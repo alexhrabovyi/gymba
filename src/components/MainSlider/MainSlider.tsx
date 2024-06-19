@@ -2,12 +2,12 @@ import { useState, useMemo } from 'react';
 import classNames from 'classnames';
 import containerCls from '../../scss/_container.module.scss';
 import mainSliderCls from './MainSlider.module.scss';
-import Slide from './MainSliderSlide/MainSliderSlide.jsx';
-import SliderButton from './MainSliderButton/MainSliderButton.jsx';
-import Slider from '../common/Slider/Slider.jsx';
+import Slide from './MainSliderSlide/MainSliderSlide';
+import SliderButton from './MainSliderButton/MainSliderButton';
+import Slider from '../common/Slider/Slider';
 
-export default function MainSlider() {
-  const [activeSlideId, setActiveSlideId] = useState(0);
+const MainSlider: React.FC = () => {
+  const [activeSlideId, setActiveSlideId] = useState<number>(0);
 
   const slides = useMemo(() => [
     <Slide
@@ -54,9 +54,11 @@ export default function MainSlider() {
           activeSlideId={activeSlideId}
           setActiveSlideId={setActiveSlideId}
           slides={slides}
-          gap="1.5"
+          gap={1.5}
         />
       </div>
     </section>
   );
-}
+};
+
+export default MainSlider;

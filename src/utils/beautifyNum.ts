@@ -1,4 +1,4 @@
-export default function beautifyNum(num) {
+export default function beautifyNum(num: number) {
   const beautyNum = num.toString().split('').reverse();
 
   let spaces = 0;

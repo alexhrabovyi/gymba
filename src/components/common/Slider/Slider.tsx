@@ -1,36 +1,46 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import {
-  memo, useCallback, useEffect, useRef,
+  PointerEventHandler,
+  ReactNode, memo, useCallback, useEffect, useRef,
 } from 'react';
 import sliderCls from './Slider.module.scss';
 
-const Slider = memo(({
+interface SliderProps {
+  activeSlideId: number,
+  setActiveSlideId: React.Dispatch<React.SetStateAction<number>>,
+  slides: ReactNode[],
+  gap: number,
+  perView?: number,
+}
+
+const Slider = memo<SliderProps>(({
   activeSlideId,
   setActiveSlideId,
   slides,
   gap,
   perView = 1,
 }) => {
-  const containerRef = useRef(null);
-  const wrapperRef = useRef(null);
+  const containerRef = useRef<HTMLDivElement | null>(null);
+  const wrapperRef = useRef<HTMLDivElement | null>(null);
 
-  const slideWidth = (100 - +gap * (+perView - 1)) / +perView;
+  const slideWidth = (100 - gap * (perView - 1)) / perView;
   const gridTemplateColumns = `repeat(${slides.length}, ${slideWidth}%)`;
-  const translateValue = -(activeSlideId * slideWidth + activeSlideId * +gap);
+  const translateValue = -(activeSlideId * slideWidth + activeSlideId * gap);
 
   const addIdToSlides = useCallback(() => {
-    const slideElements = Array.from(wrapperRef.current.children);
+    const slideElements = Array.from(wrapperRef.current!.children);
 
-    slideElements.forEach((slide, i) => slide.setAttribute('data-slide-id', i));
+    slideElements.forEach((slide, i) => slide.setAttribute('data-slide-id', String(i)));
   }, [slides]);
 
   useEffect(addIdToSlides, [addIdToSlides]);
 
-  function onPointerDown(e) {
+  const onPointerDown: PointerEventHandler<HTMLDivElement> = (e) => {
     e.preventDefault();
 
-    const container = containerRef.current;
-    const wrapper = wrapperRef.current;
+    const container = containerRef.current!;
+    const wrapper = wrapperRef.current!;
+
     const lastSlide = wrapper.lastElementChild;
 
     const initialTranslateValueInPercents = wrapper.style.transform;
@@ -44,16 +54,16 @@ const Slider = memo(({
 
     const initTranslateValue = wrapperLeftCoord - containerLeftCoord;
 
-    let previousTranslateValue;
-    let newTranslateValue;
+    let previousTranslateValue: number;
+    let newTranslateValue: number;
 
-    function onPointerMove(onPointerMoveEvent) {
+    function onPointerMove(onPointerMoveEvent: PointerEvent) {
       const pointerMoveXCoord = onPointerMoveEvent.clientX;
       const pointerXCoordDiff = pointerMoveXCoord - pointerDownXCoord;
 
       newTranslateValue = initTranslateValue + pointerXCoordDiff;
 
-      const lastSlideRightCoord = lastSlide.getBoundingClientRect().right;
+      const lastSlideRightCoord = lastSlide!.getBoundingClientRect().right;
       const containerRightCoord = container.getBoundingClientRect().right;
 
       if (newTranslateValue > 0) {
@@ -68,7 +78,7 @@ const Slider = memo(({
       wrapper.style.transform = `translateX(${newTranslateValue}px)`;
     }
 
-    function onPointerUp(onPointerUpEvent) {
+    function onPointerUp(onPointerUpEvent: PointerEvent) {
       document.removeEventListener('pointermove', onPointerMove);
       wrapper.style.transitionDuration = '1s';
 
@@ -77,7 +87,7 @@ const Slider = memo(({
       const pointerUpXCoord = onPointerUpEvent.clientX;
       const finalpointerXCoordDiff = pointerUpXCoord - pointerDownXCoord;
 
-      const lastSlideRightCoord = lastSlide.getBoundingClientRect().right;
+      const lastSlideRightCoord = lastSlide!.getBoundingClientRect().right;
       const containerRightCoord = container.getBoundingClientRect().right;
 
       if (
@@ -89,34 +99,34 @@ const Slider = memo(({
         let containerY = containerCoords.top + 1;
         if (containerY < 0) containerY = containerCoords.bottom - 1;
 
-        wrapperRef.current.style.zIndex = '10000';
+        wrapper.style.zIndex = '10000';
 
         if (finalpointerXCoordDiff < 0) {
           let containerRightX = containerCoords.right - 1;
-          let lastVisibleSlide = document.elementFromPoint(containerRightX, containerY).closest('[data-slide-id]');
+          let lastVisibleSlide = document.elementFromPoint(containerRightX, containerY)?.closest('[data-slide-id]');
 
           if (!lastVisibleSlide) {
             containerRightX -= containerCoords.width * (+gap / 100);
-            lastVisibleSlide = document.elementFromPoint(containerRightX, containerY).closest('[data-slide-id]');
+            lastVisibleSlide = document.elementFromPoint(containerRightX, containerY)?.closest('[data-slide-id]');
           }
 
-          const lastVisibleSlideId = +lastVisibleSlide.dataset.slideId;
+          const lastVisibleSlideId = Number((lastVisibleSlide as HTMLElement).dataset.slideId);
           const newActiveSlideId = lastVisibleSlideId - (perView - 1);
 
           setActiveSlideId(newActiveSlideId);
-          wrapperRef.current.style.zIndex = '';
+          wrapper.style.zIndex = '';
         } else if (finalpointerXCoordDiff > 0) {
           let containerLeftX = containerCoords.left + 1;
-          let firstVisibleSlide = document.elementFromPoint(containerLeftX, containerY).closest('[data-slide-id]');
+          let firstVisibleSlide = document.elementFromPoint(containerLeftX, containerY)?.closest('[data-slide-id]');
 
           if (!firstVisibleSlide) {
             containerLeftX += containerCoords.width * (+gap / 100);
-            firstVisibleSlide = document.elementFromPoint(containerLeftX, containerY).closest('[data-slide-id]');
+            firstVisibleSlide = document.elementFromPoint(containerLeftX, containerY)?.closest('[data-slide-id]');
           }
 
-          const firstVisibleSlideId = +firstVisibleSlide.dataset.slideId;
+          const firstVisibleSlideId = Number((firstVisibleSlide as HTMLElement).dataset.slideId);
           setActiveSlideId(firstVisibleSlideId);
-          wrapperRef.current.style.zIndex = '';
+          wrapper.style.zIndex = '';
         }
       } else if (newTranslateValue > 0 && activeSlideId !== 0) {
         setActiveSlideId(0);
@@ -132,7 +142,7 @@ const Slider = memo(({
 
     document.addEventListener('pointermove', onPointerMove);
     document.addEventListener('pointerup', onPointerUp, { once: true });
-  }
+  };
 
   return (
     <div ref={containerRef} className={sliderCls.container}>
@@ -140,12 +150,12 @@ const Slider = memo(({
         ref={wrapperRef}
         className={sliderCls.wrapper}
         style={
-            {
-              gridTemplateColumns,
-              gap: `${gap}%`,
-              transform: `translateX(${translateValue}%)`,
-            }
+          {
+            gridTemplateColumns,
+            gap: `${gap}%`,
+            transform: `translateX(${translateValue}%)`,
           }
+        }
         onPointerDown={onPointerDown}
       >
         {slides}

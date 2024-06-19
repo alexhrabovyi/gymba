@@ -1,7 +1,7 @@
 /* eslint-disable react/jsx-no-bind */
 import { useRef, useState } from 'react';
 import classNames from 'classnames';
-import LinkWithArrow from '../common/LinkWithArrow/LinkWithArrow.jsx';
+import LinkWithArrow from '../common/LinkWithArrow/LinkWithArrow';
 import AskQuestionBanner from '../common/AskQuestionBanner/AskQuestionBanner.jsx';
 import AskQuestionPopup from '../common/AskQuestionPopup/AskQuestionPopup.jsx';
 import containerCls from '../../scss/_container.module.scss';

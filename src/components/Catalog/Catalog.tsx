@@ -10,20 +10,21 @@ import {
 import classNames from 'classnames';
 import { useGetCategoriesQuery } from '../../queryAPI/queryAPI';
 import useOnResize from '../../hooks/useOnResize';
-import Category from './CatalogCategory/CatalogCategory.jsx';
+import Category from './CatalogCategory/CatalogCategory';
 import ThreeDotsSpinnerBlock from '../common/ThreeDotsSpinnerBlock/ThreeDotsSpinnerBlock';
 import Button from '../common/Button/Button';
 import containerCls from '../../scss/_container.module.scss';
 import textCls from '../../scss/_text.module.scss';
 import catalogCls from './Catalog.module.scss';
+import { CategoryShort } from '../../utils/dataAPI';
 
-export default function Catalog() {
-  const catalogRef = useRef(null);
-  const categoryBlockRef = useRef(null);
+const Catalog: React.FC = () => {
+  const catalogRef = useRef<HTMLElement | null>(null);
+  const categoryBlockRef = useRef<HTMLDivElement | null>(null);
 
-  const [categories, setCategories] = useState(null);
-  const [isAccordionNeeded, setIsAccordionNeeded] = useState(false);
-  const [isAccordionOpen, setIsAccordionOpen] = useState(false);
+  const [categories, setCategories] = useState<Record<string, CategoryShort> | null>(null);
+  const [isAccordionNeeded, setIsAccordionNeeded] = useState<boolean>(false);
+  const [isAccordionOpen, setIsAccordionOpen] = useState<boolean>(false);
 
   const { data } = useGetCategoriesQuery();
 
@@ -34,19 +35,25 @@ export default function Catalog() {
   const calcCollapsedHeight = useCallback(() => {
     const categoryBlock = categoryBlockRef.current;
 
-    const gap = +getComputedStyle(categoryBlock).rowGap.match(/\d+/)[0];
-    const fourthBlockOffsetTop = categoryBlock.children[3]?.offsetTop;
+    if (!categoryBlock) return;
+
+    const gap = Number(getComputedStyle(categoryBlock).rowGap.match(/\d+/)?.[0]);
+    const fourthBlockOffsetTop = (categoryBlock.children[3] as HTMLElement).offsetTop;
     return fourthBlockOffsetTop - gap;
   }, []);
 
   const calcExpandedHeight = useCallback(() => {
     const categoryBlock = categoryBlockRef.current;
+    if (!categoryBlock) return;
+
     return categoryBlock.scrollHeight;
   }, []);
 
   const buttonOnClick = useCallback(() => {
     setIsAccordionOpen(!isAccordionOpen);
     const categoryBlock = categoryBlockRef.current;
+
+    if (!categoryBlock) return;
 
     categoryBlock.style.transition = 'height 1s ease-in-out';
     categoryBlock.addEventListener('transitionend', () => {
@@ -57,7 +64,7 @@ export default function Catalog() {
       categoryBlock.style.height = `${calcExpandedHeight()}px`;
     } else {
       categoryBlock.style.height = `${calcCollapsedHeight()}px`;
-      catalogRef.current.scrollIntoView();
+      catalogRef.current?.scrollIntoView();
     }
   }, [isAccordionOpen, calcExpandedHeight, calcCollapsedHeight]);
 
@@ -78,6 +85,8 @@ export default function Catalog() {
 
     const categoryBlock = categoryBlockRef.current;
 
+    if (!categoryBlock) return;
+
     if (isAccordionOpen) {
       categoryBlock.style.height = '';
       categoryBlock.style.height = `${calcExpandedHeight()}px`;
@@ -90,6 +99,8 @@ export default function Catalog() {
 
   useEffect(() => {
     const categoryBlock = categoryBlockRef.current;
+
+    if (!categoryBlock) return;
 
     if (isAccordionNeeded && categories) {
       categoryBlock.style.height = `${calcCollapsedHeight()}px`;
@@ -157,4 +168,6 @@ export default function Catalog() {
       )}
     </main>
   );
-}
+};
+
+export default Catalog;

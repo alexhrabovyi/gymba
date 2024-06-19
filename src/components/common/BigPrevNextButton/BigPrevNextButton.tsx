@@ -2,9 +2,18 @@ import classNames from 'classnames';
 import buttonCls from './BigPrevNextButton.module.scss';
 import BigChevronRight from '../../../assets/images/icons/bigChevronRight.svg';
 
-export default function BigPrevNextButton({
+interface BigPrevNextButtonProps {
+  className: string,
+  isInactive: boolean,
+  isPrev?: boolean,
+  id?: string,
+  onClick: React.MouseEventHandler,
+  label?: string,
+}
+
+const BigPrevNextButton: React.FC<BigPrevNextButtonProps> = ({
   className, isInactive, isPrev = false, id, onClick, label,
-}) {
+}) => {
   if (!label && isPrev) {
     label = 'Показати попередній слайд';
   } else if (!label && !isPrev) {
@@ -33,4 +42,6 @@ export default function BigPrevNextButton({
       />
     </button>
   );
-}
+};
+
+export default BigPrevNextButton;

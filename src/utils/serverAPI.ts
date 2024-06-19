@@ -35,6 +35,7 @@ import {
   CartId,
   ProductWithIds,
   SearchResults,
+  NewsArticlesWithAmount,
 } from './dataAPI';
 
 async function addMutation(request, addFunc) {
@@ -126,10 +127,10 @@ export const handlers = [
     return getCompareProductCards(categoryId, subcategoryId);
   }),
   http.get('/fakeAPI/news', async ({ request }) => {
-    const pageNum = new URL(request.url).searchParams.get('page') || 1;
+    const pageNum = Number(new URL(request.url).searchParams.get('page'));
 
     const newsPreviews = await getNewsPreviewsPerPageAndPageAmount(pageNum);
-    return HttpResponse.json(newsPreviews);
+    return HttpResponse.json<NewsArticlesWithAmount>(newsPreviews);
   }),
   http.get('/fakeAPI/newsArticle/:articleId', async ({ params }) => {
     const { articleId } = params;

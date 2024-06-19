@@ -4,21 +4,22 @@ import {
 import classNames from 'classnames';
 import { useGetNewsQuery } from '../../queryAPI/queryAPI';
 import useOnResize from '../../hooks/useOnResize';
-import Slider from '../common/Slider/Slider.jsx';
-import LinkWithArrow from '../common/LinkWithArrow/LinkWithArrow.jsx';
-import NewsPreview from '../common/NewsPreview/NewsPreview.jsx';
-import BigPrevNextButton from '../common/BigPrevNextButton/BigPrevNextButton.jsx';
+import Slider from '../common/Slider/Slider';
+import LinkWithArrow from '../common/LinkWithArrow/LinkWithArrow';
+import NewsPreview from '../common/NewsPreview/NewsPreview';
+import BigPrevNextButton from '../common/BigPrevNextButton/BigPrevNextButton';
 import containerCls from '../../scss/_container.module.scss';
 import textCls from '../../scss/_text.module.scss';
 import newsCls from './NewsPreviews.module.scss';
 import ThreeDotsSpinnerBlock from '../common/ThreeDotsSpinnerBlock/ThreeDotsSpinnerBlock';
+import { NewsArticleShort } from '../../utils/dataAPI';
 
-export default function NewsPreviews() {
-  const [news, setNews] = useState(null);
-  const [windowWidth, setWindowWidth] = useState();
-  const [activeSlideId, setActiveSlideId] = useState(0);
+const NewsPreviews: React.FC = () => {
+  const [news, setNews] = useState<NewsArticleShort[] | null>(null);
+  const [windowWidth, setWindowWidth] = useState<number>(0);
+  const [activeSlideId, setActiveSlideId] = useState<number>(0);
 
-  const { data } = useGetNewsQuery();
+  const { data } = useGetNewsQuery(1);
 
   if (data && news === null) {
     setNews(data.previews);
@@ -51,7 +52,7 @@ export default function NewsPreviews() {
   }
 
   const isPrevButtonInactive = activeSlideId === 0;
-  const isNextButtonInactive = previews && activeSlideId === previews.length - perView;
+  const isNextButtonInactive = !!(previews && activeSlideId === previews.length - perView);
 
   return (
     <article className={classNames(containerCls.container, newsCls.article)}>
@@ -77,7 +78,7 @@ export default function NewsPreviews() {
             activeSlideId={activeSlideId}
             setActiveSlideId={setActiveSlideId}
             slides={previews}
-            gap="5"
+            gap={5}
             perView={perView}
           />
         )}
@@ -106,4 +107,6 @@ export default function NewsPreviews() {
       </LinkWithArrow>
     </article>
   );
-}
+};
+
+export default NewsPreviews;

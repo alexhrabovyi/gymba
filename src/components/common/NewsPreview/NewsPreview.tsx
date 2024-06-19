@@ -3,13 +3,16 @@ import { Await, Link } from 'react-router-dom';
 import classNames from 'classnames';
 import Spinner from '../Spinner/Spinner';
 import DynamicImage from '../DynamicImage/DynamicImage';
-import beautifyNum from '../../../utils/beautifyNum.js';
+import beautifyNum from '../../../utils/beautifyNum';
 import textCls from '../../../scss/_text.module.scss';
 import linkCls from '../../../scss/_link.module.scss';
 import previewCls from './NewsPreview.module.scss';
 import ViewsIcon from '../../../assets/images/icons/views.svg';
+import { NewsArticleShort } from '../../../utils/dataAPI';
 
-const NewsPreview = memo(({
+interface NewsPreviewProps extends NewsArticleShort { }
+
+const NewsPreview = memo<NewsPreviewProps>(({
   name, id, date, views,
 }) => {
   const [imgSrc] = useState(() => import(`../../../assets/images/newsImgs/${id}.webp`));
@@ -19,7 +22,6 @@ const NewsPreview = memo(({
       <Link
         to={`/news/${id}`}
         className={previewCls.imgLink}
-        alt={name}
       >
         <Suspense
           fallback={<Spinner className={previewCls.spinner} />}
@@ -43,14 +45,13 @@ const NewsPreview = memo(({
             classNames(textCls.text, previewCls.text)
           }
           >
-            {beautifyNum(views)}
+            {beautifyNum(Number(views))}
           </p>
         </div>
       </div>
       <Link
         to={`/news/${id}`}
         className={classNames(linkCls.link, linkCls.link21px)}
-        alt={name}
       >
         {name}
       </Link>

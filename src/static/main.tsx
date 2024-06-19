@@ -6,7 +6,7 @@ import { worker } from '../utils/serverAPI';
 import store from '../globalStore/globalStore';
 import './main.scss';
 import { HeaderAndFooterLayout } from '../layouts/HeaderAndFooterLayout/HeaderAndFooterLayout';
-import { ErrorPage } from '../pages/Error/Error';
+import ErrorPage from '../pages/Error/Error';
 import MainLazy from '../pages/Main/Main.lazy';
 import CategoryPageLazy from '../pages/Category/Category.lazy';
 import ProductsPageLazy from '../pages/Products/Products.lazy';

@@ -5,8 +5,14 @@ import DynamicImage from '../../common/DynamicImage/DynamicImage';
 import Spinner from '../../common/Spinner/Spinner';
 import categoryCls from './CatalogCategory.module.scss';
 import linkCls from '../../../scss/_link.module.scss';
+import { CategoryShort } from '../../../utils/dataAPI';
 
-export default function Category({ categoryProps, figureId }) {
+interface CategoryProps {
+  categoryProps: CategoryShort,
+  figureId: number,
+}
+
+const Category: React.FC<CategoryProps> = ({ categoryProps, figureId }) => {
   const subcategories = Object.values(categoryProps.subcategories.entities);
 
   const [figureSrc] = useState(() => import(`./images/figure_${figureId}.svg?url`));
@@ -17,7 +23,6 @@ export default function Category({ categoryProps, figureId }) {
       <Link
         to={categoryProps.id}
         className={categoryCls.imageLink}
-        alt={categoryProps.name}
       >
         <Suspense>
           <Await resolve={figureSrc}>
@@ -49,7 +54,6 @@ export default function Category({ categoryProps, figureId }) {
           linkCls.linkFw800,
           linkCls.link21px,
         )}
-        alt={categoryProps.name}
       >
         {categoryProps.name}
       </Link>
@@ -63,7 +67,6 @@ export default function Category({ categoryProps, figureId }) {
               <Link
                 to={`${categoryProps.id}/${subC.id}`}
                 className={categoryCls.additionalLink}
-                alt={subC.name}
               >
                 {subC.name}
               </Link>
@@ -73,4 +76,6 @@ export default function Category({ categoryProps, figureId }) {
       </nav>
     </nav>
   );
-}
+};
+
+export default Category;

@@ -78,6 +78,50 @@ export interface CartId {
   amount: number,
 }
 
+interface NewsQuoteContent {
+  contentType: string,
+  elements: [string],
+}
+
+interface NewsTableContent {
+  contentType: string,
+  columnHeaders: string[],
+  rows: string[][],
+}
+
+interface NewsListContent {
+  contentType: string,
+  elements: string[],
+}
+
+interface NewsParagraphContent {
+  contentType: string,
+  elements: [string],
+}
+
+interface NewsImgContent {
+  contentType: string,
+  imgId: string,
+  imgAlt: string,
+}
+
+interface NewsContent {
+  titleType?: string,
+  title?: string,
+  content: (NewsQuoteContent
+    | NewsTableContent | NewsListContent | NewsParagraphContent | NewsImgContent)[],
+}
+
+interface NewsArticle {
+  name: string,
+  id: string,
+  date: string,
+  views: string,
+  description: NewsContent[],
+}
+
+export interface NewsArticleShort extends Omit<NewsArticle, 'description'> { }
+
 // utils
 
 async function fakeNetwork() {
@@ -850,9 +894,9 @@ export async function getSearchResultsPerPageAndPageAmount(
 
 // news API
 
-function getAllNewsPreviews() {
-  const newsFullObjs = Object.values(news.entities);
-  const newsShortObjs = newsFullObjs.map((n) => ({
+function getAllNewsPreviews(): NewsArticleShort[] {
+  const newsFullObjs: NewsArticle[] = Object.values(news.entities);
+  const newsShortObjs: NewsArticleShort[] = newsFullObjs.map((n) => ({
     name: n.name,
     id: n.id,
     date: n.date,
@@ -862,7 +906,14 @@ function getAllNewsPreviews() {
   return newsShortObjs;
 }
 
-export async function getNewsPreviewsPerPageAndPageAmount(pageNum) {
+export interface NewsArticlesWithAmount {
+  pageAmount: number,
+  previews: NewsArticleShort[],
+}
+
+export async function getNewsPreviewsPerPageAndPageAmount(
+  pageNum: number,
+): Promise<NewsArticlesWithAmount> {
   await fakeNetwork();
 
   const allNewsPreviews = getAllNewsPreviews();

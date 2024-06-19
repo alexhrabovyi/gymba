@@ -1,10 +1,21 @@
+import { ReactNode } from 'react';
 import { Link } from 'react-router-dom';
 import classNames from 'classnames';
 import linkWithArrowCls from './LinkWithArrow.module.scss';
 import Oblique from '../../../assets/images/icons/oblique.svg';
 import ArrowRight from '../../../assets/images/icons/arrow-right.svg';
 
-export default function LinkWithArrow({
+interface LinkWithArrowProps {
+  to: string,
+  alt: string,
+  className?: string,
+  isWhite?: boolean,
+  arrowDown?: boolean,
+  children: ReactNode,
+  isAnchorNavigation?: boolean,
+}
+
+const LinkWithArrow: React.FC<LinkWithArrowProps> = ({
   to,
   alt,
   className,
@@ -12,7 +23,7 @@ export default function LinkWithArrow({
   arrowDown,
   children,
   isAnchorNavigation = false,
-}) {
+}) => {
   if (isAnchorNavigation) {
     return (
       <a
@@ -22,7 +33,6 @@ export default function LinkWithArrow({
           isWhite && linkWithArrowCls.link_white,
           className,
         )}
-        alt={alt}
         aria-label={alt}
       >
         <Oblique className={linkWithArrowCls.oblique} />
@@ -41,13 +51,12 @@ export default function LinkWithArrow({
     <Link
       to={to}
       className={
-      classNames(
-        linkWithArrowCls.link,
-        isWhite && linkWithArrowCls.link_white,
-        className,
-      )
+        classNames(
+          linkWithArrowCls.link,
+          isWhite && linkWithArrowCls.link_white,
+          className,
+        )
       }
-      alt={alt}
       aria-label={alt}
     >
       <Oblique className={linkWithArrowCls.oblique} />
@@ -61,4 +70,6 @@ export default function LinkWithArrow({
       />
     </Link>
   );
-}
+};
+
+export default LinkWithArrow;
