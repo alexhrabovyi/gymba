@@ -1,4 +1,4 @@
-import {
+import React, {
   memo, useEffect, useRef, useState, useCallback, useLayoutEffect, useMemo, Suspense,
 } from 'react';
 import { Link, NavLink, Await } from 'react-router-dom';
@@ -221,7 +221,7 @@ const HeaderMainMenu = memo<HeaderMainMenuProps>(({
 
     return (
       <div className={headerMenuCls.productCard}>
-        <Link to={link} className={headerMenuCls.imgLink} alt={product.name}>
+        <Link to={link} className={headerMenuCls.imgLink}>
           <Suspense
             fallback={<Spinner className={headerMenuCls.productCardImgSpinner} />}
           >
@@ -236,7 +236,7 @@ const HeaderMainMenu = memo<HeaderMainMenuProps>(({
           </Suspense>
         </Link>
         <div className={headerMenuCls.nameAndPriceBlock}>
-          <Link to={link} className={linkCls.link} alt={product.name}>
+          <Link to={link} className={linkCls.link}>
             {product.name}
           </Link>
           <div className={headerMenuCls.priceBlock}>
@@ -258,12 +258,12 @@ const HeaderMainMenu = memo<HeaderMainMenuProps>(({
 
   // event functions
 
-  function onPointerMoveHandler(e) {
-    const link = e.target.closest('a');
+  function onPointerMoveHandler(e: React.PointerEvent<HTMLElement> | React.FocusEvent) {
+    const link = (e.target as HTMLElement).closest('a');
     if (!link) return;
 
     const id = link.dataset.categoryId;
-    setActiveCategoryId(id);
+    setActiveCategoryId(id!);
   }
 
   return (
@@ -280,7 +280,7 @@ const HeaderMainMenu = memo<HeaderMainMenuProps>(({
       role="dialog"
       aria-modal
       aria-label={windowWidth <= 1024 ? 'Меню каталогу та навігації' : 'Меню каталогу'}
-      tabIndex={isMenuOpen ? '0' : '-1'}
+      tabIndex={isMenuOpen ? 0 : -1}
     >
       {windowWidth > 1024 && (
         <>
@@ -386,7 +386,6 @@ const HeaderMainMenu = memo<HeaderMainMenuProps>(({
                   className={({ isActive }) => (isActive
                     ? classNames(linkCls.link, linkCls.link18px, linkCls.link_active)
                     : classNames(linkCls.link, linkCls.link18px))}
-                  alt="Доставка"
                 >
                   Доставка
                 </NavLink>
@@ -397,7 +396,6 @@ const HeaderMainMenu = memo<HeaderMainMenuProps>(({
                   className={({ isActive }) => (isActive
                     ? classNames(linkCls.link, linkCls.link18px, linkCls.link_active)
                     : classNames(linkCls.link, linkCls.link18px))}
-                  alt="Оплата"
                 >
                   Оплата
                 </NavLink>
@@ -408,7 +406,6 @@ const HeaderMainMenu = memo<HeaderMainMenuProps>(({
                   className={({ isActive }) => (isActive
                     ? classNames(linkCls.link, linkCls.link18px, linkCls.link_active)
                     : classNames(linkCls.link, linkCls.link18px))}
-                  alt="Новини"
                 >
                   Новини
                 </NavLink>
@@ -419,7 +416,6 @@ const HeaderMainMenu = memo<HeaderMainMenuProps>(({
                   className={({ isActive }) => (isActive
                     ? classNames(linkCls.link, linkCls.link18px, linkCls.link_active)
                     : classNames(linkCls.link, linkCls.link18px))}
-                  alt="Контакти"
                 >
                   Контакти
                 </NavLink>
@@ -430,7 +426,6 @@ const HeaderMainMenu = memo<HeaderMainMenuProps>(({
             <a
               href="/"
               className={headerMenuCls.linkWithIcon}
-              alt="Наш магазин знаходиться в місті Одеса"
               aria-label="Наш магазин знаходиться в місті Одеса"
             >
               <Tag />
@@ -439,7 +434,6 @@ const HeaderMainMenu = memo<HeaderMainMenuProps>(({
             <a
               href="tel:+380974311101"
               className={headerMenuCls.linkWithIcon}
-              alt="Номер телефону магазину +38 097 431-11-01"
               aria-label="Номер телефону магазину +38 097 431-11-01"
             >
               <Phone />

@@ -1,8 +1,8 @@
 import { Suspense, memo, useState } from 'react';
 import { Await, Link } from 'react-router-dom';
 import classNames from 'classnames';
-import Spinner from '../Spinner/Spinner.jsx';
-import DynamicImage from '../DynamicImage/DynamicImage.jsx';
+import Spinner from '../Spinner/Spinner';
+import DynamicImage from '../DynamicImage/DynamicImage';
 import beautifyNum from '../../../utils/beautifyNum.js';
 import textCls from '../../../scss/_text.module.scss';
 import linkCls from '../../../scss/_link.module.scss';

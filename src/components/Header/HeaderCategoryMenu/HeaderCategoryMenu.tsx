@@ -3,26 +3,36 @@ import {
   memo, useRef, useEffect, useLayoutEffect, useCallback,
   useMemo,
 } from 'react';
-import useToggleInteractiveElements from '../../../hooks/useToggleInteractiveElements.jsx';
+import useToggleInteractiveElements from '../../../hooks/useToggleInteractiveElements';
 import useOnResize from '../../../hooks/useOnResize';
 import containerCls from '../../../scss/_container.module.scss';
 import textCls from '../../../scss/_text.module.scss';
 import categoryMenuCls from './HeaderCategoryMenu.module.scss';
 import ChevronRight from '../../../assets/images/icons/chevronRight.svg';
-import ThreeDotsSpinnerBlock from '../../common/ThreeDotsSpinnerBlock/ThreeDotsSpinnerBlock.jsx';
+import ThreeDotsSpinnerBlock from '../../common/ThreeDotsSpinnerBlock/ThreeDotsSpinnerBlock';
+import { CategoryShort } from '../../../utils/dataAPI';
 
-const HeaderCategoryMenu = memo(({
+interface HeaderCategoryMenuProps {
+  isMenuOpen: boolean,
+  categories: Record<string, CategoryShort> | null,
+  categoryBtnOnClick: (e: React.MouseEvent<HTMLButtonElement>) => void,
+  backToMenuOnClick: () => void,
+}
+
+const HeaderCategoryMenu = memo<HeaderCategoryMenuProps>(({
   isMenuOpen,
   categories,
   categoryBtnOnClick,
   backToMenuOnClick,
 }) => {
-  const menuRef = useRef(null);
+  const menuRef = useRef<HTMLDivElement | null>(null);
 
-  useToggleInteractiveElements(menuRef, isMenuOpen, [categories]);
+  useToggleInteractiveElements<HTMLDivElement | null>(menuRef, isMenuOpen, [categories]);
 
   const setupMenuHeight = useCallback(() => {
     const menu = menuRef.current;
+
+    if (!menu) return;
 
     menu.style.overflowY = '';
     menu.style.height = '';
@@ -34,7 +44,7 @@ const HeaderCategoryMenu = memo(({
       const maximumMenuHeight = windowHeight - headerHeight;
       const realMenuHeight = menu.scrollHeight;
 
-      menu.style.overflowY = realMenuHeight > maximumMenuHeight && 'scroll';
+      menu.style.overflowY = realMenuHeight > maximumMenuHeight ? 'scroll' : '';
       menu.style.height = `${maximumMenuHeight}px`;
     });
   }, []);
@@ -62,7 +72,7 @@ const HeaderCategoryMenu = memo(({
   ), [categories]);
 
   useEffect(() => {
-    if (isMenuOpen) menuRef.current.focus();
+    if (isMenuOpen && menuRef.current) menuRef.current.focus();
   }, [isMenuOpen]);
 
   return (
@@ -77,7 +87,7 @@ const HeaderCategoryMenu = memo(({
       role="dialog"
       aria-modal
       aria-label="Меню каталогу"
-      tabIndex={isMenuOpen ? '0' : '-1'}
+      tabIndex={isMenuOpen ? 0 : -1}
     >
       <button
         type="button"

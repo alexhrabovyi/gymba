@@ -3,7 +3,7 @@ import classNames from 'classnames';
 import filterCls from './FilterBlock.module.scss';
 import FilterForm from './FilterForm/FilterForm.jsx';
 import FilterPriceForm from './FilterPriceForm/FilterPriceForm.jsx';
-import ThreeDotsSpinnerBlock from '../../common/ThreeDotsSpinnerBlock/ThreeDotsSpinnerBlock.jsx';
+import ThreeDotsSpinnerBlock from '../../common/ThreeDotsSpinnerBlock/ThreeDotsSpinnerBlock';
 
 const FilterBlock = memo(({ subcategoryFilters, isFetching }) => {
   const filterElems = useMemo(() => {

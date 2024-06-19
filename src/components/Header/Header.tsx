@@ -1,3 +1,4 @@
+/* eslint-disable jsx-a11y/no-static-element-interactions */
 import {
   useState,
   useRef,
@@ -534,9 +535,9 @@ const Header: React.FC = () => {
       <SearchResultBlock
         isActive={isSearchBlockActive}
         setIsActive={setIsSearchBlockActive}
-        inputLeft={searchBlockStyles?.left}
-        inputWidth={searchBlockStyles?.width}
-        headerBottom={searchBlockStyles?.headerBottom}
+        inputLeft={searchBlockStyles?.left || 0}
+        inputWidth={searchBlockStyles?.width || 0}
+        headerBottom={searchBlockStyles?.headerBottom || 0}
         searchValue={searchValue}
       />
     </>

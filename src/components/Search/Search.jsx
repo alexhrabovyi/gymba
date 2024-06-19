@@ -6,14 +6,14 @@ import classNames from 'classnames';
 import { useGetSearchResultsQuery } from '../../queryAPI/queryAPI';
 import useOnResize from '../../hooks/useOnResize';
 import ProductCard from '../ProductCard/ProductCard.jsx';
-import Spinner from '../common/Spinner/Spinner.jsx';
-import DynamicImage from '../common/DynamicImage/DynamicImage.jsx';
+import Spinner from '../common/Spinner/Spinner';
+import DynamicImage from '../common/DynamicImage/DynamicImage';
 import PaginationBlock from '../PaginationBlock/PaginationBlock.jsx';
 import containerCls from '../../scss/_container.module.scss';
 import textCls from '../../scss/_text.module.scss';
 import searchCls from './Search.module.scss';
 import LineIcon from '../../assets/images/icons/oblique.svg';
-import ThreeDotsSpinnerBlock from '../common/ThreeDotsSpinnerBlock/ThreeDotsSpinnerBlock.jsx';
+import ThreeDotsSpinnerBlock from '../common/ThreeDotsSpinnerBlock/ThreeDotsSpinnerBlock';
 
 export default function Search() {
   const [searchParams] = useSearchParams();

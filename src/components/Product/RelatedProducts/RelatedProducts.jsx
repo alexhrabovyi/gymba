@@ -7,7 +7,7 @@ import useOnResize from '../../../hooks/useOnResize';
 import ProductCard from '../../ProductCard/ProductCard.jsx';
 import Slider from '../../common/Slider/Slider.jsx';
 import BigPrevNextButton from '../../common/BigPrevNextButton/BigPrevNextButton.jsx';
-import ThreeDotsSpinnerBlock from '../../common/ThreeDotsSpinnerBlock/ThreeDotsSpinnerBlock.jsx';
+import ThreeDotsSpinnerBlock from '../../common/ThreeDotsSpinnerBlock/ThreeDotsSpinnerBlock';
 import textCls from '../../../scss/_text.module.scss';
 import relatedProductsCls from './RelatedProducts.module.scss';
 

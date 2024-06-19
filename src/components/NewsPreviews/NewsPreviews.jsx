@@ -11,7 +11,7 @@ import BigPrevNextButton from '../common/BigPrevNextButton/BigPrevNextButton.jsx
 import containerCls from '../../scss/_container.module.scss';
 import textCls from '../../scss/_text.module.scss';
 import newsCls from './NewsPreviews.module.scss';
-import ThreeDotsSpinnerBlock from '../common/ThreeDotsSpinnerBlock/ThreeDotsSpinnerBlock.jsx';
+import ThreeDotsSpinnerBlock from '../common/ThreeDotsSpinnerBlock/ThreeDotsSpinnerBlock';
 
 export default function NewsPreviews() {
   const [news, setNews] = useState(null);

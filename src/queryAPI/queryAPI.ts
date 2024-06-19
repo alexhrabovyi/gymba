@@ -1,6 +1,6 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 import { EntityState, createEntityAdapter } from '@reduxjs/toolkit';
-import type { CartId, CategoryShort, CompareId, ProductWithIds, WishlistId } from '../utils/dataAPI';
+import type { CartId, CategoryShort, CompareId, ProductWithIds, SearchResults, WishlistId } from '../utils/dataAPI';
 
 const categoriesAdapter = createEntityAdapter<CategoryShort>();
 
@@ -300,7 +300,7 @@ export const queryAPI = createApi(
         query: () => '/getRandomProduct',
         providesTags: ['randomProduct'],
       }),
-      getSearchResults: builder.query({
+      getSearchResults: builder.query<SearchResults, { searchQuery: string, pageNum: number }>({
         query: ({ searchQuery, pageNum }) => `/search?search=${searchQuery}&page=${pageNum}`,
         providesTags: ['searchResults'],
       }),

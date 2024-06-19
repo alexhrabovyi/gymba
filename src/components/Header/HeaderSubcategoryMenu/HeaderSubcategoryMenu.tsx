@@ -3,22 +3,33 @@ import classNames from 'classnames';
 import {
   memo, useRef, useEffect, useCallback, useMemo,
 } from 'react';
-import useToggleInteractiveElements from '../../../hooks/useToggleInteractiveElements.jsx';
+import useToggleInteractiveElements from '../../../hooks/useToggleInteractiveElements';
 import useOnResize from '../../../hooks/useOnResize';
-import ThreeDotsSpinnerBlock from '../../common/ThreeDotsSpinnerBlock/ThreeDotsSpinnerBlock.jsx';
+import ThreeDotsSpinnerBlock from '../../common/ThreeDotsSpinnerBlock/ThreeDotsSpinnerBlock';
 import containerCls from '../../../scss/_container.module.scss';
 import textCls from '../../../scss/_text.module.scss';
 import linkCls from '../../../scss/_link.module.scss';
 import subcategoryMenuCls from './HeaderSubcategoryMenu.module.scss';
 import ChevronRight from '../../../assets/images/icons/chevronRight.svg';
 import ArrowRight from '../../../assets/images/icons/arrow-right.svg';
+import { CategoryShort } from '../../../utils/dataAPI';
 
-const HeaderSubcategoryMenu = memo(({ isMenuOpen, category, backToCatalogOnClick }) => {
-  const menuRef = useRef(null);
+interface HeaderSubcategoryMenuProps {
+  isMenuOpen: boolean,
+  category: CategoryShort | null,
+  backToCatalogOnClick: () => void,
+}
+
+const HeaderSubcategoryMenu = memo<HeaderSubcategoryMenuProps>(({
+  isMenuOpen,
+  category,
+  backToCatalogOnClick,
+}) => {
+  const menuRef = useRef<HTMLDivElement | null>(null);
 
   const subcategories = category && Object.values(category.subcategories.entities);
 
-  useToggleInteractiveElements(menuRef, isMenuOpen, [category]);
+  useToggleInteractiveElements<HTMLDivElement | null>(menuRef, isMenuOpen, [category]);
 
   const setupMenuHeight = useCallback(() => {
     const menu = menuRef.current;
@@ -35,7 +46,7 @@ const HeaderSubcategoryMenu = memo(({ isMenuOpen, category, backToCatalogOnClick
       const maximumMenuHeight = windowHeight - headerHeight;
       const realMenuHeight = menu.scrollHeight;
 
-      menu.style.overflowY = realMenuHeight > maximumMenuHeight && 'scroll';
+      menu.style.overflowY = realMenuHeight > maximumMenuHeight ? 'scroll' : '';
       menu.style.height = `${maximumMenuHeight}px`;
     });
   }, []);
@@ -47,9 +58,8 @@ const HeaderSubcategoryMenu = memo(({ isMenuOpen, category, backToCatalogOnClick
     subcategories?.map((subC) => (
       <li key={subC.id}>
         <Link
-          to={`${category.id}/${subC.id}`}
+          to={`${category?.id}/${subC.id}`}
           className={classNames(linkCls.link, linkCls.link18px)}
-          alt={subC.name}
         >
           {subC.name}
         </Link>
@@ -58,7 +68,7 @@ const HeaderSubcategoryMenu = memo(({ isMenuOpen, category, backToCatalogOnClick
   ), [subcategories, category]);
 
   useEffect(() => {
-    if (isMenuOpen) menuRef.current.focus();
+    if (isMenuOpen) menuRef.current?.focus();
   }, [isMenuOpen]);
 
   return (
@@ -73,7 +83,7 @@ const HeaderSubcategoryMenu = memo(({ isMenuOpen, category, backToCatalogOnClick
       role="dialog"
       aria-modal
       aria-label={`Меню категорії ${category?.name}`}
-      tabIndex={isMenuOpen ? '0' : '-1'}
+      tabIndex={isMenuOpen ? 0 : -1}
     >
       <button
         type="button"
@@ -103,7 +113,7 @@ const HeaderSubcategoryMenu = memo(({ isMenuOpen, category, backToCatalogOnClick
             />
           )}
           <li>
-            <Link to={category?.id} className={subcategoryMenuCls.allCategoriesLink} alt="Усі категорії">
+            <Link to={category?.id || ''} className={subcategoryMenuCls.allCategoriesLink}>
               Усі категорії
               <ArrowRight className={subcategoryMenuCls.allCategoriesArrow} />
             </Link>

@@ -3,6 +3,7 @@
 import {
   Fragment, Suspense, memo, useState, useCallback,
   useLayoutEffect, useRef, useMemo, useEffect,
+  ReactNode,
 } from 'react';
 import { Link, Await } from 'react-router-dom';
 import { nanoid } from '@reduxjs/toolkit';
@@ -10,14 +11,24 @@ import classNames from 'classnames';
 import { useGetSearchResultsQuery } from '../../../queryAPI/queryAPI';
 import useOnResize from '../../../hooks/useOnResize';
 import findAllInteractiveElements from '../../../utils/findAllInteractiveElements';
-import Spinner from '../../common/Spinner/Spinner.jsx';
-import DynamicImage from '../../common/DynamicImage/DynamicImage.jsx';
-import ThreeDotsSpinnerBlock from '../../common/ThreeDotsSpinnerBlock/ThreeDotsSpinnerBlock.jsx';
+import Spinner from '../../common/Spinner/Spinner';
+import DynamicImage from '../../common/DynamicImage/DynamicImage';
+import ThreeDotsSpinnerBlock from '../../common/ThreeDotsSpinnerBlock/ThreeDotsSpinnerBlock';
 import backdropCls from '../../../scss/_backdrop.module.scss';
 import searchCls from './SearchResultsBlock.module.scss';
 import ArrowRightIcon from '../../../assets/images/icons/arrow-right.svg';
+import { FoundEntities } from '../../../utils/dataAPI';
 
-const SearchResultBlock = memo(({
+interface SearchResultBlockProps {
+  inputLeft: number,
+  inputWidth: number,
+  headerBottom: number,
+  isActive: boolean,
+  setIsActive: React.Dispatch<React.SetStateAction<boolean>>,
+  searchValue: string | null,
+}
+
+const SearchResultBlock = memo<SearchResultBlockProps>(({
   inputLeft,
   inputWidth,
   headerBottom,
@@ -25,23 +36,23 @@ const SearchResultBlock = memo(({
   setIsActive,
   searchValue,
 }) => {
-  const searchBlockRef = useRef();
+  const searchBlockRef = useRef<HTMLDivElement | null>(null);
 
-  const [searchResults, setSearchResults] = useState(null);
-  const [windowWidth, setWindowWidth] = useState(null);
-  const [searchResultList, setSearchResultList] = useState(null);
+  const [searchResults, setSearchResults] = useState<FoundEntities | null>(null);
+  const [windowWidth, setWindowWidth] = useState<number>(0);
+  const [searchResultList, setSearchResultList] = useState<ReactNode | null>(null);
 
   // setup functions
 
-  const isOpen = isActive && searchValue?.length;
+  const isOpen = Boolean(isActive && searchValue?.length);
 
   const requestParams = useMemo(() => ({
-    searchQuery: searchValue,
+    searchQuery: searchValue || '',
     pageNum: 1,
   }), [searchValue]);
 
   const searchParamsString = new URLSearchParams({
-    search: searchValue,
+    search: searchValue || '',
   }).toString();
 
   const getWindowWidth = useCallback(() => {
@@ -89,13 +100,13 @@ const SearchResultBlock = memo(({
 
     if (isOpen) {
       interactiveElements.forEach((el) => {
-        el.tabIndex = '';
-        el.ariaHidden = false;
+        el.tabIndex = 0;
+        el.ariaHidden = 'false';
       });
     } else {
       interactiveElements.forEach((el) => {
-        el.tabIndex = '-1';
-        el.ariaHidden = true;
+        el.tabIndex = -1;
+        el.ariaHidden = 'true';
       });
     }
   }
@@ -122,10 +133,10 @@ const SearchResultBlock = memo(({
     if (!searchResults || isFetchingResults) return;
 
     const listElems = searchResults.slice(0, 5).map((sR) => {
-      let key;
-      let type;
-      let name;
-      let link;
+      let key: string = '';
+      let type: 'Категорія:' | 'Продукт:' | 'Стаття:' = 'Категорія:';
+      let name: string = '';
+      let link: string = '';
 
       if (sR.type === 'category') {
         key = sR.category.id;
@@ -149,14 +160,16 @@ const SearchResultBlock = memo(({
         link = `/news/${sR.news.id}`;
       }
 
-      function selectMatched(matchValue, text) {
+      function selectMatched(matchValue: string | null, text: string) {
+        if (!matchValue) return;
+
         const regExp = new RegExp(matchValue, 'gi');
         const searchValueLength = matchValue.length;
 
         const matchIndexes = Array.from(text.matchAll(regExp)).map(({ index }) => index);
 
         let startIndex = 0;
-        const result = [];
+        const result: ReactNode[] = [];
 
         matchIndexes.forEach((matchIndex, i) => {
           const startText = text.slice(startIndex, matchIndex);
@@ -207,7 +220,6 @@ const SearchResultBlock = memo(({
           <Link
             className={searchCls.searchResultListLink}
             to={link}
-            alt={name}
           >
             {sR.type === 'product' ? (
               <Suspense fallback={<Spinner className={searchCls.imgSpinner} />}>
@@ -274,15 +286,15 @@ const SearchResultBlock = memo(({
           )}
           >
             {searchResultList}
-            {searchResults?.length > 5 && (
-            <Link
-              className={searchCls.allResultsLink}
-              to={`/search?${searchParamsString}`}
-              alt="Сторінка результатів пошуку"
-            >
-              Переглянути всі результати
-              <ArrowRightIcon className={searchCls.arrowRightIcon} />
-            </Link>
+            {Number(searchResults?.length) > 5 && (
+              <Link
+                className={searchCls.allResultsLink}
+                to={`/search?${searchParamsString}`}
+                aria-label="Сторінка результатів пошуку"
+              >
+                Переглянути всі результати
+                <ArrowRightIcon className={searchCls.arrowRightIcon} />
+              </Link>
             )}
           </div>
         ) : (

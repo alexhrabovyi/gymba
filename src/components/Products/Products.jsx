@@ -12,7 +12,7 @@ import productsCls from './Products.module.scss';
 import Select from './Select/Select.jsx';
 import FilterBlock from './FilterBlock/FilterBlock.jsx';
 import AppliedFiltersBlock from './AppliedFiltersBlock/AppliedFiltersBlock.jsx';
-import ThreeDotsSpinnerBlock from '../common/ThreeDotsSpinnerBlock/ThreeDotsSpinnerBlock.jsx';
+import ThreeDotsSpinnerBlock from '../common/ThreeDotsSpinnerBlock/ThreeDotsSpinnerBlock';
 import ProductCard from '../ProductCard/ProductCard.jsx';
 import PaginationBlock from '../PaginationBlock/PaginationBlock.jsx';
 import LeftSideMenu from '../common/LeftSideMenu/LeftSideMenu.jsx';

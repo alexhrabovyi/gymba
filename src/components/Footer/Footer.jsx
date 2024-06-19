@@ -6,8 +6,8 @@ import containerCls from '../../scss/_container.module.scss';
 import textCls from '../../scss/_text.module.scss';
 import footerCls from './Footer.module.scss';
 import Button from '../common/Button/Button';
-import ValidationForm from '../common/ValidationForm/ValidationForm.jsx';
-import InputWithErrorMessage from '../common/InputWithErrorMessage/InputWithErrorMessage.jsx';
+import ValidationForm from '../common/ValidationForm/ValidationForm';
+import InputWithErrorMessage from '../common/InputWithErrorMessage/InputWithErrorMessage';
 import Logo from './images/logo.svg';
 
 export default function Footer() {

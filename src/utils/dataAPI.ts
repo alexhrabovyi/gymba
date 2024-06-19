@@ -370,7 +370,7 @@ function sortByType(subcategoryProducts, sortType) {
   return sortedProducts;
 }
 
-function getPageAmount(productAmount, perView) {
+function getPageAmount(productAmount: number, perView: number): number {
   if (perView === null) perView = 12;
 
   return Math.ceil(+productAmount / +perView);
@@ -674,16 +674,61 @@ export async function getRandomProduct(): Promise<ProductWithIds> {
 
 // search API
 
-function getAllSearchResults(searchQuery) {
+interface CategoryForSearch {
+  id: string,
+  name: string,
+}
+
+interface SubcategoryForSearch {
+  categoryId: string,
+  id: string,
+  name: string,
+}
+
+interface ProductForSearch {
+  categoryId: string,
+  subcategoryId: string,
+  product: Product,
+}
+
+interface NewsForSearch {
+  id: string,
+  name: string,
+}
+
+interface FoundCategory {
+  type: 'category',
+  category: CategoryForSearch,
+}
+
+interface FoundSubcategory {
+  type: 'subcategory',
+  subcategory: SubcategoryForSearch,
+}
+
+interface FoundProduct {
+  type: 'product',
+  product: ProductForSearch,
+}
+
+interface FoundNews {
+  type: 'news',
+  news: NewsForSearch,
+}
+
+export type FoundEntities = (
+  FoundCategory | FoundSubcategory | FoundProduct | FoundNews)[]
+
+function getAllSearchResults(searchQuery: string): FoundEntities {
   const firstOrderRegExp = new RegExp(`^${searchQuery}`, 'i');
   const lastOrderRegExp = new RegExp(`${searchQuery}`, 'i');
 
-  const allCategories = [];
-  const allSubcategories = [];
-  const allProducts = [];
-  const allNews = [];
-  const firstOrderResults = [];
-  const lastOrderResults = [];
+  const allCategories: CategoryForSearch[] = [];
+  const allSubcategories: SubcategoryForSearch[] = [];
+  const allProducts: ProductForSearch[] = [];
+  const allNews: NewsForSearch[] = [];
+  const firstOrderResults: FoundEntities = [];
+  const lastOrderResults: FoundEntities = [];
 
   Object.values(products.categories.entities).forEach((c) => {
     allCategories.push({
@@ -769,12 +814,20 @@ function getAllSearchResults(searchQuery) {
     }
   });
 
-  const result = [...firstOrderResults, ...lastOrderResults];
+  const result: FoundEntities = [...firstOrderResults, ...lastOrderResults];
 
   return result;
 }
 
-export async function getSearchResultsPerPageAndPageAmount(searchQuery, pageNum) {
+export interface SearchResults {
+  searchResults: FoundEntities,
+  pageAmount: number,
+}
+
+export async function getSearchResultsPerPageAndPageAmount(
+  searchQuery: string,
+  pageNum: number,
+): Promise<SearchResults> {
   await fakeNetwork();
 
   const perView = 12;

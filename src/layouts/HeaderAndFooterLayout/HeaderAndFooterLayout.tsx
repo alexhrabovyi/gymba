@@ -1,3 +1,4 @@
+/* eslint-disable import/prefer-default-export */
 import { Suspense } from 'react';
 import { Outlet } from 'react-router-dom';
 import classNames from 'classnames';
@@ -29,4 +30,4 @@ export const HeaderAndFooterLayout: React.FC = () => {
       </Suspense>
     </>
   );
-}
+};

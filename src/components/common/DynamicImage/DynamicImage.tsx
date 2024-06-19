@@ -1,8 +1,13 @@
 import { memo } from 'react';
 import { useAsyncValue } from 'react-router-dom';
 
-const DynamicImage = memo(({ className, alt }) => {
-  let src = useAsyncValue();
+interface DynamicImageProps {
+  className: string,
+  alt: string,
+}
+
+const DynamicImage = memo<DynamicImageProps>(({ className, alt }) => {
+  let src = useAsyncValue() as any;
 
   if (typeof src !== 'string') src = src.default;
 

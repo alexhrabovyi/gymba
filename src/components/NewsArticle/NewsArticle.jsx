@@ -8,9 +8,9 @@ import {
 import { Await, Link, useParams } from 'react-router-dom';
 import classNames from 'classnames';
 import { useGetNewsArticleQuery, useGetRecommendedNewsQuery } from '../../queryAPI/queryAPI';
-import Spinner from '../common/Spinner/Spinner.jsx';
-import DynamicImage from '../common/DynamicImage/DynamicImage.jsx';
-import ThreeDotsSpinnerBlock from '../common/ThreeDotsSpinnerBlock/ThreeDotsSpinnerBlock.jsx';
+import Spinner from '../common/Spinner/Spinner';
+import DynamicImage from '../common/DynamicImage/DynamicImage';
+import ThreeDotsSpinnerBlock from '../common/ThreeDotsSpinnerBlock/ThreeDotsSpinnerBlock';
 import containerCls from '../../scss/_container.module.scss';
 import linkCls from '../../scss/_link.module.scss';
 import articleCls from './NewsArticle.module.scss';

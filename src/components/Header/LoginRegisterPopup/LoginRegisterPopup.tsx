@@ -1,14 +1,24 @@
 import { memo, useState } from 'react';
 import classNames from 'classnames';
-import Popup from '../../common/Popup/Popup.jsx';
-import ValidationForm from '../../common/ValidationForm/ValidationForm.jsx';
-import InputWithErrorMessage from '../../common/InputWithErrorMessage/InputWithErrorMessage.jsx';
+import Popup from '../../common/Popup/Popup';
+import ValidationForm from '../../common/ValidationForm/ValidationForm';
+import InputWithErrorMessage from '../../common/InputWithErrorMessage/InputWithErrorMessage';
 import Button from '../../common/Button/Button';
 import textCls from '../../../scss/_text.module.scss';
 import popupCls from './LoginRegisterPopup.module.scss';
 
-const LoginRegisterPopup = memo(({ isActive, setIsActive, openButtonRef }) => {
-  const [isLoginTabActive, setIsLoginTabActive] = useState(true);
+interface LoginRegisterPopupProps {
+  isActive: boolean,
+  setIsActive: React.Dispatch<React.SetStateAction<boolean>>
+  openButtonRef: React.MutableRefObject<HTMLButtonElement | null>
+}
+
+const LoginRegisterPopup = memo<LoginRegisterPopupProps>(({
+  isActive,
+  setIsActive,
+  openButtonRef,
+}) => {
+  const [isLoginTabActive, setIsLoginTabActive] = useState<boolean>(true);
 
   return (
     <Popup

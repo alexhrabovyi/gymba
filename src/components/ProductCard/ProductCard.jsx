@@ -16,8 +16,8 @@ import {
   useDeleteCompareIdMutation,
 } from '../../queryAPI/queryAPI';
 import beautifyNum from '../../utils/beautifyNum.js';
-import Spinner from '../common/Spinner/Spinner.jsx';
-import DynamicImage from '../common/DynamicImage/DynamicImage.jsx';
+import Spinner from '../common/Spinner/Spinner';
+import DynamicImage from '../common/DynamicImage/DynamicImage';
 import Button from '../common/Button/Button';
 import linkCls from '../../scss/_link.module.scss';
 import productCls from './ProductCard.module.scss';

@@ -7,7 +7,7 @@ import classNames from 'classnames';
 import { queryAPI, useGetWishlistProductsQuery, useDeleteAllWishlistIdsMutation } from '../../queryAPI/queryAPI';
 import ProductCard from '../ProductCard/ProductCard.jsx';
 import SkeletonProductCard from '../SkeletonProductCard/SkeletonProductCard.jsx';
-import ThreeDotsSpinnerBlock from '../common/ThreeDotsSpinnerBlock/ThreeDotsSpinnerBlock.jsx';
+import ThreeDotsSpinnerBlock from '../common/ThreeDotsSpinnerBlock/ThreeDotsSpinnerBlock';
 import PaginationBlock from '../PaginationBlock/PaginationBlock.jsx';
 import containerCls from '../../scss/_container.module.scss';
 import textCls from '../../scss/_text.module.scss';

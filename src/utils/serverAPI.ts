@@ -34,6 +34,7 @@ import {
   CompareId,
   CartId,
   ProductWithIds,
+  SearchResults,
 } from './dataAPI';
 
 async function addMutation(request, addFunc) {
@@ -160,12 +161,12 @@ export const handlers = [
   http.get('/fakeAPI/search', async ({ request }) => {
     const { searchParams } = new URL(request.url);
 
-    const searchQuery = searchParams.get('search');
-    const pageNum = +searchParams.get('page');
+    const searchQuery = searchParams.get('search') || '';
+    const pageNum = Number(searchParams.get('page')) || 1;
 
     const searchResults = await getSearchResultsPerPageAndPageAmount(searchQuery, pageNum);
 
-    return HttpResponse.json(searchResults);
+    return HttpResponse.json<SearchResults>(searchResults);
   }),
 ];
 

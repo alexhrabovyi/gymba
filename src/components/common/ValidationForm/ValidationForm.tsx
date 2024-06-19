@@ -2,31 +2,39 @@
 /* eslint-disable react/jsx-no-bind */
 /* eslint-disable prefer-regex-literals, no-control-regex, no-useless-escape */
 import {
+  ReactNode,
   memo, useEffect, useRef, useState,
 } from 'react';
 import { Form } from 'react-router-dom';
-import ValidationError from '../../../utils/ValidationError.js';
+import ValidationError from '../../../utils/ValidationError';
 
-const ValidationForm = memo(({ className, children }) => {
-  const formRef = useRef(null);
-  const [inputs, setInputs] = useState([]);
-  const [textareas, setTextareas] = useState([]);
+interface ValidationFormProps {
+  className: string,
+  children: ReactNode[],
+}
 
-  function markInvalid(input, errorMessage) {
+const ValidationForm = memo<ValidationFormProps>(({ className, children }) => {
+  const formRef = useRef<HTMLFormElement | null>(null);
+  const [inputs, setInputs] = useState<HTMLInputElement[]>([]);
+  const [textareas, setTextareas] = useState<HTMLTextAreaElement[]>([]);
+
+  function markInvalid(input: HTMLInputElement | HTMLTextAreaElement, errorMessage: string) {
+    if (!input.parentElement) return;
+
     input.parentElement.dataset.errorMessage = errorMessage;
     input.style.backgroundColor = 'rgb(250 209 206)';
     input.focus();
 
     input.addEventListener('input', () => {
       input.style.backgroundColor = '';
-      input.parentElement.removeAttribute('data-error-message');
+      input.parentElement?.removeAttribute('data-error-message');
     }, { once: true });
   }
 
-  function addTelMask(input) {
+  function addTelMask(input: HTMLInputElement) {
     if (!input) return;
 
-    function createTel(str) {
+    function createTel(str: string) {
       let tel = str.replace(/\d{1,2}/, '+38($&');
       tel = tel.replace(/(?<=\+38\(\d\d)\d(?=\d)/, '$&)');
       tel = tel.replace(/(?<=\))\d{3}(?=\d)/, '$&-');
@@ -35,30 +43,36 @@ const ValidationForm = memo(({ className, children }) => {
     }
 
     input.addEventListener('focusin', (e) => {
-      if (e.target.value.length < 3) {
-        e.target.value = '+38';
+      const targetInput = e.target as HTMLInputElement;
+
+      if (targetInput.value.length < 3) {
+        targetInput.value = '+38';
       }
     }, { once: true, passive: true });
 
     input.addEventListener('input', (e) => {
-      if (e.target.value.length < 3) {
-        e.target.value = '+38';
+      const targetInput = e.target as HTMLInputElement;
+
+      if (targetInput.value.length < 3) {
+        targetInput.value = '+38';
       }
 
-      e.target.value = e.target.value.replace(/(?<=\+38)[^0]/, '');
-      e.target.value = e.target.value.replace(/(?<=[\d-()+])\D/, '');
+      targetInput.value = targetInput.value.replace(/(?<=\+38)[^0]/, '');
+      targetInput.value = targetInput.value.replace(/(?<=[\d-()+])\D/, '');
 
-      if (e.target.value.length > 3) {
-        const nums = e.target.value.slice(3, 15).match(/\d/g).join('');
+      if (targetInput.value.length > 3) {
+        const nums = targetInput.value.slice(3, 15).match(/\d/g)!.join('');
 
-        e.target.value = createTel(nums);
+        targetInput.value = createTel(nums);
       }
     }, { passive: true });
 
     input.addEventListener('paste', (e) => {
       e.preventDefault();
 
-      let paste = (e.clipboardData || window.clipboardData).getData('text');
+      const targetInput = e.target as HTMLInputElement;
+
+      let paste = (e.clipboardData)?.getData('text') || '';
 
       if (paste.match(/\D/g)) return;
 
@@ -70,46 +84,44 @@ const ValidationForm = memo(({ className, children }) => {
         paste = `0${paste}`;
       }
 
-      e.target.value = createTel(paste);
+      targetInput.value = createTel(paste);
     });
   }
 
-  function validateEmail(input) {
+  type ValidateFunc = (input: HTMLInputElement | HTMLTextAreaElement) => boolean;
+
+  const validateEmail: ValidateFunc = (input) => {
     const regex = new RegExp("([!#-'*+/-9=?A-Z^-~-]+(\.[!#-'*+/-9=?A-Z^-~-]+)*|\"\(\[\]!#-[^-~ \t]|(\\[\t -~]))+\")@([!#-'*+/-9=?A-Z^-~-]+(\.[!#-'*+/-9=?A-Z^-~-]+)*|\[[\t -Z^-~]*])");
     return regex.test(input.value);
-  }
+  };
 
-  function validateName(input) {
+  const validateName: ValidateFunc = (input) => {
     const regex = new RegExp('^[а-яa-z]{2,}(\\s[а-яa-z]{2,})*$', 'i');
     return regex.test(input.value);
-  }
+  };
 
-  function validateFullname(input) {
+  const validateFullname: ValidateFunc = (input) => {
     const regex = new RegExp('^[а-яa-z]{2,}(\\s[а-яa-z]{2,}){2}$', 'i');
     return regex.test(input.value);
-  }
+  };
 
-  function validatePassword(input) {
+  const validatePassword: ValidateFunc = (input) => {
     const regex = new RegExp('\\s');
 
     return !regex.test(input.value) && input.value.length > 7;
-  }
+  };
 
-  function validatePasswordControl(input) {
-    const originalPasswordInputValue = formRef.current.querySelector('[name="password"]')?.value;
+  const validatePasswordControl: ValidateFunc = (input) => {
+    const originalPasswordInputValue = formRef.current?.querySelector<HTMLInputElement>('[name="password"]')?.value;
 
     return input.value === originalPasswordInputValue;
-  }
+  };
 
-  function validateTel(input) {
-    return input.value.length === 17;
-  }
+  const validateTel: ValidateFunc = (input) => input.value.length === 17;
 
-  function validateTextarea(textarea) {
-    return textarea.value.length > 5;
-  }
+  const validateTextarea: ValidateFunc = (textarea) => textarea.value.length > 5;
 
-  function validate(formData) {
+  function validate(formData: FormData) {
     inputs.forEach((input) => {
       switch (input.type) {
         case 'email': {
@@ -196,18 +208,18 @@ const ValidationForm = memo(({ className, children }) => {
   }
 
   useEffect(() => {
-    setInputs(Array.from(formRef.current.querySelectorAll('input')));
+    setInputs(Array.from(formRef.current!.querySelectorAll('input')));
   }, []);
 
   useEffect(() => {
-    setTextareas(Array.from(formRef.current.querySelectorAll('textarea')));
+    setTextareas(Array.from(formRef.current!.querySelectorAll('textarea')));
   }, []);
 
   useEffect(() => {
-    addTelMask(formRef.current.querySelector('input[type="tel"]'));
+    addTelMask(formRef.current!.querySelector('input[type="tel"]') as HTMLInputElement);
   }, []);
 
-  function onSubmitHandler(event) {
+  function onSubmitHandler(event: React.FormEvent<HTMLFormElement>) {
     const formData = new FormData();
 
     try {

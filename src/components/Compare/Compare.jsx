@@ -17,7 +17,7 @@ import CrossIcon from '../../assets/images/icons/cross.svg';
 import BinIcon from '../../assets/images/icons/bin.svg';
 import ChevronIcon from '../../assets/images/icons/chevronRight.svg';
 import Line from '../../assets/images/icons/oblique.svg';
-import ThreeDotsSpinnerBlock from '../common/ThreeDotsSpinnerBlock/ThreeDotsSpinnerBlock.jsx';
+import ThreeDotsSpinnerBlock from '../common/ThreeDotsSpinnerBlock/ThreeDotsSpinnerBlock';
 
 export default function Compare() {
   const dispatch = useDispatch();

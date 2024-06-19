@@ -1,9 +1,9 @@
 import { memo } from 'react';
 import { Link } from 'react-router-dom';
 import classNames from 'classnames';
-import Popup from '../Popup/Popup.jsx';
-import ValidationForm from '../ValidationForm/ValidationForm.jsx';
-import InputWithErrorMessage from '../InputWithErrorMessage/InputWithErrorMessage.jsx';
+import Popup from '../Popup/Popup';
+import ValidationForm from '../ValidationForm/ValidationForm';
+import InputWithErrorMessage from '../InputWithErrorMessage/InputWithErrorMessage';
 import TextAreaWithErrorMessage from '../TextareaWIthErrorMessage/TextareaWithErrorMessage.jsx';
 import Button from '../Button/Button';
 import textCls from '../../../scss/_text.module.scss';

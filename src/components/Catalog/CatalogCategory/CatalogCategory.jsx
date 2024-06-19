@@ -1,8 +1,8 @@
 import { Suspense, useState } from 'react';
 import { Await, Link } from 'react-router-dom';
 import classNames from 'classnames';
-import DynamicImage from '../../common/DynamicImage/DynamicImage.jsx';
-import Spinner from '../../common/Spinner/Spinner.jsx';
+import DynamicImage from '../../common/DynamicImage/DynamicImage';
+import Spinner from '../../common/Spinner/Spinner';
 import categoryCls from './CatalogCategory.module.scss';
 import linkCls from '../../../scss/_link.module.scss';
 

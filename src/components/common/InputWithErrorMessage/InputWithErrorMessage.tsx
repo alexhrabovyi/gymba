@@ -1,9 +1,19 @@
 import { memo } from 'react';
 import classNames from 'classnames';
-import Input from '../Input/Input.jsx';
+import Input from '../Input/Input';
 import inputCls from './InputWithErrorMessage.module.scss';
 
-const InputWithErrorMessage = memo(({
+interface InputWithErrorMessageProps {
+  type: React.InputHTMLAttributes<HTMLInputElement>['type'],
+  name: React.InputHTMLAttributes<HTMLInputElement>['name'],
+  inputBlockClassName?: string,
+  inputClassName: string,
+  placeholder: React.InputHTMLAttributes<HTMLInputElement>['placeholder'],
+  id?: React.InputHTMLAttributes<HTMLInputElement>['id'],
+  required: React.InputHTMLAttributes<HTMLInputElement>['required'],
+}
+
+const InputWithErrorMessage = memo<InputWithErrorMessageProps>(({
   type, name, inputBlockClassName, inputClassName, placeholder, id, required,
 }) => (
   <div
