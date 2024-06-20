@@ -7,7 +7,15 @@ import textCls from '../../../scss/_text.module.scss';
 import subcategoryCls from './Subcategory.module.scss';
 import ArrowRight from '../../../assets/images/icons/arrow-right.svg';
 
-const Subcategory = memo(({
+interface SubcategoryProps {
+  categoryId: string,
+  id: string,
+  name: string,
+  imgId: string,
+  imgAlt: string,
+}
+
+const Subcategory = memo<SubcategoryProps>(({
   categoryId, id, name, imgId, imgAlt,
 }) => {
   const ErrorElement = (
@@ -24,7 +32,6 @@ const Subcategory = memo(({
     <Link
       to={`${id}`}
       className={subcategoryCls.subcategory}
-      alt={name}
       aria-label={name}
     >
       <Suspense

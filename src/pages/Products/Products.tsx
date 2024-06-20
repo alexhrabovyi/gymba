@@ -1,11 +1,11 @@
-import AllNews from '../../components/AllNews/AllNews.jsx';
 import BreadCrumbs from '../../components/BreadCrumbs/BreadCrumbs';
+import Products from '../../components/Products/Products';
 
-export default function NewsPage() {
+export default function ProductsPage() {
   return (
     <>
       <BreadCrumbs />
-      <AllNews />
+      <Products />
     </>
   );
 }

@@ -69,7 +69,7 @@ export const handlers = [
     const { categoryId, subcategoryId } = params;
     const { searchParams } = new URL(request.url);
 
-    return getFilteredProductsAndMinMaxPrice(categoryId, subcategoryId, searchParams);
+    return getFilteredProductsAndMinMaxPrice(categoryId as string, subcategoryId as string, searchParams);
   }),
   http.get('/fakeAPI/wishlistIds', async () => {
     const wishlistIds = await getWishlistIds();

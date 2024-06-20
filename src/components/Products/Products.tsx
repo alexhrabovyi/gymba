@@ -9,27 +9,28 @@ import useOnResize from '../../hooks/useOnResize';
 import containerCls from '../../scss/_container.module.scss';
 import textCls from '../../scss/_text.module.scss';
 import productsCls from './Products.module.scss';
-import Select from './Select/Select.jsx';
-import FilterBlock from './FilterBlock/FilterBlock.jsx';
-import AppliedFiltersBlock from './AppliedFiltersBlock/AppliedFiltersBlock.jsx';
+import Select from './Select/Select';
+import FilterBlock from './FilterBlock/FilterBlock';
+import AppliedFiltersBlock from './AppliedFiltersBlock/AppliedFiltersBlock';
 import ThreeDotsSpinnerBlock from '../common/ThreeDotsSpinnerBlock/ThreeDotsSpinnerBlock';
-import ProductCard from '../ProductCard/ProductCard.jsx';
-import PaginationBlock from '../PaginationBlock/PaginationBlock.jsx';
-import LeftSideMenu from '../common/LeftSideMenu/LeftSideMenu.jsx';
+import ProductCard from '../ProductCard/ProductCard';
+import PaginationBlock from '../PaginationBlock/PaginationBlock';
+import LeftSideMenu from '../common/LeftSideMenu/LeftSideMenu';
 import CardsShortIcon from './images/productCardsShort.svg';
 import CardsLongIcon from './images/productCardsLong.svg';
 import FilterIcon from './images/filter.svg';
 import Line from '../../assets/images/icons/oblique.svg';
 import Button from '../common/Button/Button';
+import { CategoryShort } from '../../utils/dataAPI';
 
 export default function Products() {
   const [searchParams, setSearchParams] = useSearchParams();
   const params = useParams();
 
-  const titleRef = useRef();
-  const openFilterMenuBtnRef = useRef();
+  const titleRef = useRef<HTMLHeadingElement | null>(null);
+  const openFilterMenuBtnRef = useRef<HTMLButtonElement | null>();
 
-  const [category, setCategory] = useState(null);
+  const [category, setCategory] = useState<CategoryShort | null>(null);
   const [subcategoryFilters, setSubcategoryFilters] = useState(null);
   const [productsAndInfo, setProductsAndInfo] = useState(null);
   const [isFilterMenuOpen, setIsFilterMenuOpen] = useState(false);
@@ -76,8 +77,8 @@ export default function Products() {
   const { data: fetchedCategories } = useGetCategoriesQuery();
 
   if (fetchedCategories) {
-    if (fetchedCategories.entities[categoryId] !== category) {
-      setCategory(fetchedCategories.entities[categoryId]);
+    if (fetchedCategories.entities[categoryId!] !== category) {
+      setCategory(fetchedCategories.entities[categoryId!]);
     }
   }
 
@@ -271,30 +272,30 @@ export default function Products() {
                 searchParamName="perView"
               />
               {windowWidth > 576 && (
-              <div className={productsCls.appearanceButtonBlock}>
-                <button
-                  className={classNames(
-                    productsCls.iconButton,
-                    isProductCardsShort && productsCls.iconButton_active,
-                  )}
-                  type="button"
-                  onClick={shortCardBtnOnClick}
-                  aria-label="Показувати маленькі карточки товарів"
-                >
-                  <CardsShortIcon className={productsCls.buttonIcon} />
-                </button>
-                <button
-                  className={classNames(
-                    productsCls.iconButton,
-                    !isProductCardsShort && productsCls.iconButton_active,
-                  )}
-                  type="button"
-                  onClick={longCardBtnOnClick}
-                  aria-label="Показувати великі карточки товарів"
-                >
-                  <CardsLongIcon className={productsCls.buttonIcon} />
-                </button>
-              </div>
+                <div className={productsCls.appearanceButtonBlock}>
+                  <button
+                    className={classNames(
+                      productsCls.iconButton,
+                      isProductCardsShort && productsCls.iconButton_active,
+                    )}
+                    type="button"
+                    onClick={shortCardBtnOnClick}
+                    aria-label="Показувати маленькі карточки товарів"
+                  >
+                    <CardsShortIcon className={productsCls.buttonIcon} />
+                  </button>
+                  <button
+                    className={classNames(
+                      productsCls.iconButton,
+                      !isProductCardsShort && productsCls.iconButton_active,
+                    )}
+                    type="button"
+                    onClick={longCardBtnOnClick}
+                    aria-label="Показувати великі карточки товарів"
+                  >
+                    <CardsLongIcon className={productsCls.buttonIcon} />
+                  </button>
+                </div>
               )}
             </div>
           </div>
@@ -325,20 +326,20 @@ export default function Products() {
         </div>
       </main>
       {windowWidth <= 1024 && (
-      <LeftSideMenu
-        isMenuOpen={isFilterMenuOpen}
-        setIsMenuOpen={setIsFilterMenuOpen}
-        label="Меню фільтрів"
-        openButton={openFilterMenuBtnRef.current}
-        id="filterBlockMenu"
-      >
-        <div className={productsCls.filterBlockInMenu}>
-          <FilterBlock
-            subcategoryFilters={subcategoryFilters}
-            isFetching={isProductsFetching}
-          />
-        </div>
-      </LeftSideMenu>
+        <LeftSideMenu
+          isMenuOpen={isFilterMenuOpen}
+          setIsMenuOpen={setIsFilterMenuOpen}
+          label="Меню фільтрів"
+          openButton={openFilterMenuBtnRef.current}
+          id="filterBlockMenu"
+        >
+          <div className={productsCls.filterBlockInMenu}>
+            <FilterBlock
+              subcategoryFilters={subcategoryFilters}
+              isFetching={isProductsFetching}
+            />
+          </div>
+        </LeftSideMenu>
       )}
     </>
   );

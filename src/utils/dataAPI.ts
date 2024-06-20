@@ -28,7 +28,7 @@ interface Subcategory {
   products: {
     ids: string[],
     entities: {
-      [id: string]: Product,
+      [id: string]: Product | undefined,
     },
   }
 }
@@ -42,7 +42,7 @@ interface Category {
   subcategories: {
     ids: string[],
     entities: {
-      [id: string]: Subcategory,
+      [id: string]: Subcategory | undefined,
     },
   }
 }
@@ -51,8 +51,17 @@ export interface CategoryShort extends Omit<Category, 'subcategories'> {
   subcategories: {
     ids: string[],
     entities: {
-      [id: string]: SubcategoryShort,
+      [id: string]: SubcategoryShort | undefined,
     },
+  }
+}
+
+interface JSON {
+  categories: {
+    ids: string[],
+    entities: {
+      [index: string]: Category | undefined,
+    }
   }
 }
 
@@ -140,7 +149,9 @@ function getCategoryAndSubcategory(
 
   if (!category) throw new Response(null, { status: 404, statusText: 'Not found' });
 
-  const subcategory: Subcategory = category.subcategories.entities[subcategoryId];
+  const subcategory: Subcategory | undefined = category.subcategories.entities[subcategoryId];
+
+  if (!subcategory) throw new Response(null, { status: 404, statusText: 'Not found' });
 
   return {
     categoryName: category.name,
@@ -260,6 +271,10 @@ function getAllProductsFromStorage(localStorageKey) {
 
 // =====
 
+interface Filters {
+  [index: string]: string[]
+}
+
 export async function getCategoriesAndSubcategories(): Promise<CategoryShort[]> {
   await fakeNetwork();
 
@@ -268,7 +283,8 @@ export async function getCategoriesAndSubcategories(): Promise<CategoryShort[]> 
   const categoriesShortObjs: CategoryShort[] = categoriesFullObjs.map((c) => {
     const subcategoriesIds: Category['subcategories']['ids'] = c.subcategories.ids;
 
-    const subcategoriesFullObjs: Subcategory[] = Object.values(c.subcategories.entities);
+    const subcategoriesFullObjs: Subcategory[] = Object
+      .values(c.subcategories.entities) as Subcategory[];
     const subcategoriesShortObjs: SubcategoryShort[] = subcategoriesFullObjs.map((subC) => ({
       name: subC.name,
       id: subC.id,
@@ -293,8 +309,12 @@ export async function getCategoriesAndSubcategories(): Promise<CategoryShort[]> 
   return categoriesShortObjs;
 }
 
-function getSubcategoryFilters(subcategoryProducts) {
-  const filters = {};
+function getSubcategoryFilters(subcategoryProducts: Product[]) {
+  interface SetFilters {
+    [index: string]: Set<string>,
+  }
+
+  const filters: SetFilters = {};
 
   subcategoryProducts.forEach((p) => {
     const specsFilters = p['specs-filters'];
@@ -314,15 +334,17 @@ function getSubcategoryFilters(subcategoryProducts) {
     });
   });
 
+  const arrishFiltes: Filters = {};
+
   Object.keys(filters).forEach((key) => {
-    filters[key] = Array.from(filters[key]);
+    arrishFiltes[key] = Array.from(filters[key]);
   });
 
-  return filters;
+  return arrishFiltes;
 }
 
-function filterBySpecs(subcategoryProducts, searchParams) {
-  let filters = {};
+function filterBySpecs(subcategoryProducts: Product[], searchParams: URLSearchParams): Product[] {
+  const filters: Filters = {};
 
   Array.from(searchParams).forEach(([key, value]) => {
     if (!filters[key]) {
@@ -332,25 +354,25 @@ function filterBySpecs(subcategoryProducts, searchParams) {
     filters[key].push(value);
   });
 
-  filters = Object.entries(filters);
+  const filterEntries = Object.entries(filters);
 
-  const filteredProducts = [];
+  const filteredProducts: Product[] = [];
 
   subcategoryProducts.forEach((p) => {
     const productFilters = p['specs-filters'];
 
     let isSuitable = true;
 
-    filters.forEach(([name, value]) => {
+    filterEntries.forEach(([name, value]) => {
       if (productFilters[name]) {
         if (typeof productFilters[name] === 'string') {
-          if (!value.includes(productFilters[name])) {
+          if (!value.includes(productFilters[name] as string)) {
             isSuitable = false;
           }
         } else if (typeof productFilters[name] === 'object') {
           let includesSuitableValue = false;
 
-          productFilters[name].forEach((pfValue) => {
+          (productFilters[name] as string[]).forEach((pfValue) => {
             if (value.includes(pfValue)) includesSuitableValue = true;
           });
 
@@ -367,7 +389,10 @@ function filterBySpecs(subcategoryProducts, searchParams) {
   return filteredProducts;
 }
 
-function getMinAndMaxPrice(subcategoryProducts) {
+function getMinAndMaxPrice(subcategoryProducts: Product[]): {
+  minPrice: number,
+  maxPrice: number,
+} {
   const prices = subcategoryProducts.map((p) => +p.price);
   prices.sort((a, b) => a - b);
 
@@ -380,14 +405,19 @@ function getMinAndMaxPrice(subcategoryProducts) {
   };
 }
 
-function filterByPrice(subcategoryProducts, minPrice, maxPrice) {
+function filterByPrice(
+  subcategoryProducts: Product[],
+  minPrice: string | null,
+  maxPrice: string | null,
+): Product[] {
   if (minPrice === null) return subcategoryProducts;
+  if (maxPrice === null) return subcategoryProducts;
 
   return subcategoryProducts.filter((p) => +p.price >= +minPrice && +p.price <= +maxPrice);
 }
 
-function sortByType(subcategoryProducts, sortType) {
-  let sortedProducts;
+function sortByType(subcategoryProducts: Product[], sortType: string | null): Product[] {
+  let sortedProducts: Product[];
 
   switch (sortType) {
     case 'name-A-Z': {
@@ -414,15 +444,20 @@ function sortByType(subcategoryProducts, sortType) {
   return sortedProducts;
 }
 
-function getPageAmount(productAmount: number, perView: number): number {
+function getPageAmount(productAmount: number, perView: number | null): number {
   if (perView === null) perView = 12;
 
   return Math.ceil(+productAmount / +perView);
 }
 
-function getProductsPerPage(subcategoryProducts, perView, pageNum, pageAmount) {
+function getProductsPerPage(
+  subcategoryProducts: Product[],
+  perView: number | null,
+  pageNum: number | string | null,
+  pageAmount: number,
+): Product[] {
   if (perView === null) perView = 12;
-  if (pageNum === null || pageNum > pageAmount) pageNum = 1;
+  if (pageNum === null || Number(pageNum) > pageAmount) pageNum = 1;
 
   const firstPageProduct = (+pageNum - 1) * +perView;
   const lastPageProduct = +pageNum * +perView;
@@ -430,10 +465,16 @@ function getProductsPerPage(subcategoryProducts, perView, pageNum, pageAmount) {
   return subcategoryProducts.slice(firstPageProduct, lastPageProduct);
 }
 
-export async function getFilteredProductsAndMinMaxPrice(categoryId, subcategoryId, searchParams) {
+export async function getFilteredProductsAndMinMaxPrice(
+  categoryId: string,
+  subcategoryId: string,
+  searchParams: URLSearchParams,
+) {
   await fakeNetwork();
 
-  const category = products.categories.entities[categoryId];
+  const parsedJSON: JSON = products;
+
+  const category = parsedJSON.categories.entities[categoryId];
 
   if (!category) throw new Response(null, { status: 404, statusText: 'Not found' });
 
@@ -441,7 +482,7 @@ export async function getFilteredProductsAndMinMaxPrice(categoryId, subcategoryI
 
   if (!subcategory) throw new Response(null, { status: 404, statusText: 'Not found' });
 
-  const subcategoryProducts = Object.values(subcategory.products.entities);
+  const subcategoryProducts = Object.values(subcategory.products.entities) as Product[];
 
   const searchParamsMinPrice = searchParams.get('minPrice');
   const searchParamsMaxPrice = searchParams.get('maxPrice');
@@ -451,20 +492,20 @@ export async function getFilteredProductsAndMinMaxPrice(categoryId, subcategoryI
 
   const sortBy = searchParams.get('sortBy');
   searchParams.delete('sortBy');
-  const perView = searchParams.get('perView');
+  const perView = Number(searchParams.get('perView')) || 12;
   searchParams.delete('perView');
   const pageNum = searchParams.get('page');
   searchParams.delete('page');
 
-  let filteredProducts = filterBySpecs(subcategoryProducts, searchParams);
+  let filteredProducts: Product[] = filterBySpecs(subcategoryProducts, searchParams);
   const { minPrice, maxPrice } = getMinAndMaxPrice(filteredProducts);
 
   filteredProducts = filterByPrice(filteredProducts, searchParamsMinPrice, searchParamsMaxPrice);
 
-  let filteredAndSortedProducts = sortByType(filteredProducts, sortBy);
+  let filteredAndSortedProducts: Product[] = sortByType(filteredProducts, sortBy);
 
-  const productAmount = filteredAndSortedProducts.length;
-  const pageAmount = getPageAmount(productAmount, perView);
+  const productAmount: number = filteredAndSortedProducts.length;
+  const pageAmount: number = getPageAmount(productAmount, perView);
 
   filteredAndSortedProducts = getProductsPerPage(
     filteredAndSortedProducts,
@@ -473,7 +514,7 @@ export async function getFilteredProductsAndMinMaxPrice(categoryId, subcategoryI
     pageAmount,
   );
 
-  const subcategoryFilters = getSubcategoryFilters(subcategoryProducts);
+  const subcategoryFilters: Filters = getSubcategoryFilters(subcategoryProducts);
 
   const body = JSON.stringify({
     subcategoryFilters,

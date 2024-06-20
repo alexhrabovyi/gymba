@@ -1,11 +1,11 @@
-import AllNews from '../../components/AllNews/AllNews.jsx';
 import BreadCrumbs from '../../components/BreadCrumbs/BreadCrumbs';
+import Category from '../../components/Category/Category';
 
-export default function NewsPage() {
+export default function CategoryPage() {
   return (
     <>
       <BreadCrumbs />
-      <AllNews />
+      <Category />
     </>
   );
 }

@@ -1,4 +1,4 @@
-import BreadCrumbs from '../../components/BreadCrumbs/BreadCrumbs.jsx';
+import BreadCrumbs from '../../components/BreadCrumbs/BreadCrumbs';
 import Contacts from '../../components/Contacts/Contacts.jsx';
 
 export default function ContactsPage() {

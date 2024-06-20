@@ -52,7 +52,7 @@ export const queryAPI = createApi(
         },
         providesTags: ['categories'],
       }),
-      getProducts: builder.query({
+      getProducts: builder.query<Promise<Response>, string>({
         query: (partialUrl) => `/getProducts/${partialUrl}`,
         providesTags: ['subcategoryProducts'],
       }),

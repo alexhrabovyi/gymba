@@ -1,4 +1,4 @@
-import BreadCrumbs from '../../components/BreadCrumbs/BreadCrumbs.jsx';
+import BreadCrumbs from '../../components/BreadCrumbs/BreadCrumbs';
 import Product from '../../components/Product/Product.jsx';
 
 export default function ProductPage() {

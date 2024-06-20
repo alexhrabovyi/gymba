@@ -6,16 +6,17 @@ import ThreeDotsSpinnerBlock from '../common/ThreeDotsSpinnerBlock/ThreeDotsSpin
 import containerCls from '../../scss/_container.module.scss';
 import textCls from '../../scss/_text.module.scss';
 import categoryCls from './Category.module.scss';
-import Subcategory from './Subcategory/Subcategory.jsx';
+import Subcategory from './Subcategory/Subcategory';
+import { CategoryShort } from '../../utils/dataAPI';
 
-export default function Category() {
-  const categoryIdFromParams = useParams().categoryId;
+const Category: React.FC = () => {
+  const categoryIdFromParams = useParams().categoryId!;
 
-  const [category, setCategory] = useState(null);
+  const [category, setCategory] = useState<CategoryShort | null>(null);
 
   const { data, status } = useGetCategoriesQuery();
 
-  if (status === 'fulfilled') {
+  if (status === 'fulfilled' && data) {
     const fetchedCategory = data.entities[categoryIdFromParams];
 
     if (!fetchedCategory) {
@@ -33,11 +34,11 @@ export default function Category() {
     subcategories?.map((s) => (
       <Subcategory
         key={s.id}
-        categoryId={categoryId}
+        categoryId={categoryId!}
         name={s.name}
         id={s.id}
         imgId={s.id}
-        imgAlt={s.imgAlt}
+        imgAlt={s.imgAlt!}
       />
     ))
   ), [subcategories, categoryId]);
@@ -60,4 +61,6 @@ export default function Category() {
       </div>
     </main>
   );
-}
+};
+
+export default Category;
