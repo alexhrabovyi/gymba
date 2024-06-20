@@ -3,6 +3,8 @@ import {
   Suspense, memo, useState,
 } from 'react';
 import { Await, Link } from 'react-router-dom';
+import { MutationTrigger } from '@reduxjs/toolkit/dist/query/react/buildHooks';
+import { MutationDefinition } from '@reduxjs/toolkit/query';
 import classNames from 'classnames';
 import {
   useGetWishlistIdsQuery,
@@ -26,14 +28,32 @@ import Favorite from '../../assets/images/icons/favorite.svg';
 import Cart from '../../assets/images/icons/cart.svg';
 import Mark from '../../assets/images/icons/mark.svg';
 
-const ProductCard = memo(({
+type MutationFunc = (
+  categoryId: string,
+  subcategoryId: string,
+  productId: string,
+) => void;
+
+interface ProductCardProps {
+  name: string,
+  categoryId: string,
+  subcategoryId: string,
+  productId: string,
+  price: string,
+  oldPrice?: string | undefined,
+  isShortCard: boolean,
+  wishlistMutationFunc?: MutationFunc,
+  compareMutationFunc?: MutationFunc,
+}
+
+const ProductCard = memo<ProductCardProps>(({
   name, categoryId, subcategoryId, productId, price, oldPrice, isShortCard,
   wishlistMutationFunc, compareMutationFunc,
 }) => {
   const [imgSrc] = useState(() => import(`../../assets/images/productImgs/${productId}.webp`));
-  const [productInWishlist, setProductInWishlist] = useState(false);
-  const [productInCart, setProductInCart] = useState(false);
-  const [productInCompare, setProductInCompare] = useState(false);
+  const [productInWishlist, setProductInWishlist] = useState<boolean>(false);
+  const [productInCart, setProductInCart] = useState<boolean>(false);
+  const [productInCompare, setProductInCompare] = useState<boolean>(false);
 
   const { data: wishlistFetcherData } = useGetWishlistIdsQuery();
 
@@ -70,7 +90,11 @@ const ProductCard = memo(({
     }
   }
 
-  function sendMutationRequest(state, addMutationFunc, deleteMutationFunc) {
+  function sendMutationRequest(
+    state: boolean,
+    addMutationFunc: MutationTrigger<MutationDefinition<any, any, any, any>>,
+    deleteMutationFunc: MutationTrigger<MutationDefinition<any, any, any, any>>,
+  ) {
     const body = JSON.stringify([categoryId, subcategoryId, productId]);
 
     if (!state) {
@@ -141,7 +165,6 @@ const ProductCard = memo(({
         <Link
           className={productCls.imageLink}
           to={productLink}
-          alt={name}
         >
           <Suspense
             fallback={<Spinner className={productCls.spinner} />}
@@ -157,20 +180,19 @@ const ProductCard = memo(({
         <Link
           className={classNames(linkCls.link, productCls.textLink)}
           to={productLink}
-          alt={name}
         >
           {name}
         </Link>
         <div className={productCls.priceAndCartBlock}>
           <div className={productCls.priceBlock}>
             {oldPrice && (
-            <p className={productCls.oldPrice}>
-              {oldPrice}
-              ₴/шт
-            </p>
+              <p className={productCls.oldPrice}>
+                {oldPrice}
+                ₴/шт
+              </p>
             )}
             <p className={productCls.price}>
-              {beautifyNum(price)}
+              {beautifyNum(Number(price))}
               <span className={productCls.priceSpan}>₴/шт</span>
             </p>
           </div>
@@ -195,7 +217,6 @@ const ProductCard = memo(({
       <Link
         className={productCls.longImageLink}
         to={productLink}
-        alt={name}
       >
         <Suspense
           fallback={<Spinner className={productCls.spinner} />}
@@ -212,7 +233,6 @@ const ProductCard = memo(({
         <Link
           className={classNames(linkCls.link, productCls.longTextLink)}
           to={productLink}
-          alt={name}
         >
           {name}
         </Link>
@@ -250,7 +270,7 @@ const ProductCard = memo(({
             </p>
           )}
           <p className={productCls.price}>
-            {beautifyNum(price)}
+            {beautifyNum(Number(price))}
             <span className={productCls.priceSpan}>₴/шт</span>
           </p>
         </div>

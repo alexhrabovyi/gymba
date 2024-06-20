@@ -1,6 +1,7 @@
-import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
+import { EndpointBuilder, FetchArgs, QueryArgFrom, createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 import { EntityState, createEntityAdapter } from '@reduxjs/toolkit';
-import type { CartId, CategoryShort, CompareId, NewsArticlesWithAmount, ProductWithIds, SearchResults, WishlistId } from '../utils/dataAPI';
+import type { CartId, CategoryShort, CompareId, FilteredProductsAndMinMaxPrice, NewsArticlesWithAmount, ProductWithIds, SearchResults, WishlistId } from '../utils/dataAPI';
+import { MutationLifecycleApi } from '@reduxjs/toolkit/dist/query/endpointDefinitions';
 
 const categoriesAdapter = createEntityAdapter<CategoryShort>();
 
@@ -23,11 +24,15 @@ const tagTypes = [
   'searchResults',
 ];
 
-function createPatchDeleteMutation(queryFn, invalidatedTags, updateQueryFn) {
+function createPatchDeleteMutation<ArgType>(
+  queryFn: (arg?: ArgType) => string | FetchArgs,
+  invalidatedTags: ({ type: string, id: string } | string)[],
+  updateQueryFn: (arg: ArgType) => void,
+) {
   return {
     query: queryFn,
     invalidatesTags: invalidatedTags,
-    async onQueryStarted(args, { dispatch, queryFulfilled }) {
+    async onQueryStarted(args: ArgType, { dispatch, queryFulfilled }: any) {
       const patchResult = dispatch(updateQueryFn(args));
       try {
         await queryFulfilled;
@@ -52,7 +57,7 @@ export const queryAPI = createApi(
         },
         providesTags: ['categories'],
       }),
-      getProducts: builder.query<Promise<Response>, string>({
+      getProducts: builder.query<FilteredProductsAndMinMaxPrice, string>({
         query: (partialUrl) => `/getProducts/${partialUrl}`,
         providesTags: ['subcategoryProducts'],
       }),
@@ -69,7 +74,7 @@ export const queryAPI = createApi(
           }),
           [{ type: 'wishlistIds', id: 'LIST' }, 'wishlistProducts'],
           (args) => (
-            queryAPI.util.updateQueryData('getWishlistIds', undefined, (draft) => {
+            queryAPI.util.updateQueryData('getWishlistIds', undefined, (draft: any) => {
               const parsedBody = JSON.parse(args);
               draft.push(parsedBody);
             })

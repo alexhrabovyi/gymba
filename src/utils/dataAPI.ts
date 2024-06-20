@@ -217,23 +217,30 @@ function getLocalStorageIds<T>(localStorageKey: string): T[] | [] {
   return ids;
 }
 
-async function addIdToStorage(localStorageKey, entitityToAdd, findFunc) {
+async function addIdToStorage<E>(
+  localStorageKey: string,
+  entitityToAdd: E,
+  findFunc: (arg: E) => boolean,
+) {
   await fakeNetwork();
 
-  let ids = localStorage.getItem(localStorageKey);
+  const ids = localStorage.getItem(localStorageKey);
+
+  let newIds: E[];
 
   if (ids === null) {
-    ids = [];
-    ids.push(entitityToAdd);
-    localStorage.setItem(localStorageKey, JSON.stringify(ids));
-  } else {
-    ids = JSON.parse(ids);
+    newIds = [];
 
-    const isAlreadyExist = ids.find(findFunc);
+    newIds.push(entitityToAdd);
+    localStorage.setItem(localStorageKey, JSON.stringify(newIds));
+  } else {
+    newIds = JSON.parse(ids);
+
+    const isAlreadyExist = newIds.find(findFunc);
 
     if (!isAlreadyExist) {
-      ids.push(entitityToAdd);
-      localStorage.setItem(localStorageKey, JSON.stringify(ids));
+      newIds.push(entitityToAdd);
+      localStorage.setItem(localStorageKey, JSON.stringify(newIds));
     }
   }
 
@@ -271,7 +278,7 @@ function getAllProductsFromStorage(localStorageKey) {
 
 // =====
 
-interface Filters {
+export interface Filters {
   [index: string]: string[]
 }
 
@@ -465,11 +472,20 @@ function getProductsPerPage(
   return subcategoryProducts.slice(firstPageProduct, lastPageProduct);
 }
 
+export interface FilteredProductsAndMinMaxPrice {
+  subcategoryFilters: Filters,
+  filteredAndSortedProducts: Product[],
+  minPrice: number,
+  maxPrice: number,
+  productAmount: number,
+  pageAmount: number,
+}
+
 export async function getFilteredProductsAndMinMaxPrice(
   categoryId: string,
   subcategoryId: string,
   searchParams: URLSearchParams,
-) {
+): Promise<FilteredProductsAndMinMaxPrice> {
   await fakeNetwork();
 
   const parsedJSON: JSON = products;
@@ -516,16 +532,14 @@ export async function getFilteredProductsAndMinMaxPrice(
 
   const subcategoryFilters: Filters = getSubcategoryFilters(subcategoryProducts);
 
-  const body = JSON.stringify({
+  return {
     subcategoryFilters,
     filteredAndSortedProducts,
     minPrice,
     maxPrice,
     productAmount,
     pageAmount,
-  });
-
-  return new Response(body, { status: 200, statusText: 'OK' });
+  };
 }
 
 export async function getProduct(categoryId, subcategoryId, productId) {
@@ -555,12 +569,15 @@ export async function getWishlistIds() {
   return getLocalStorageIds<WishlistId>('wishlistIds');
 }
 
-export function addIdToWishlist(categoryId, subcategoryId, productId) {
-  const newIdEntitity = [categoryId, subcategoryId, productId];
-  const findFunc = ([cId, subcId, pId]) => (cId === categoryId
+export function addIdToWishlist(categoryId: string, subcategoryId: string, productId: string) {
+  type NewIdEntitity = [string, string, string]
+
+  const newIdEntitity: NewIdEntitity = [categoryId, subcategoryId, productId];
+
+  const findFunc = ([cId, subcId, pId]: NewIdEntitity) => (cId === categoryId
     && subcId === subcategoryId && pId === productId);
 
-  return addIdToStorage('wishlistIds', newIdEntitity, findFunc);
+  return addIdToStorage<NewIdEntitity>('wishlistIds', newIdEntitity, findFunc);
 }
 
 export function deleteIdFromWishlist(categoryId, subcategoryId, productId) {

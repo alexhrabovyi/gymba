@@ -9,7 +9,7 @@ import {
   useGetCompareProductsQuery,
   useDeleteCompareSubcategoryMutation,
 } from '../../queryAPI/queryAPI';
-import ProductCard from '../ProductCard/ProductCard.jsx';
+import ProductCard from '../ProductCard/ProductCard';
 import containerCls from '../../scss/_container.module.scss';
 import textCls from '../../scss/_text.module.scss';
 import compareCls from './Compare.module.scss';

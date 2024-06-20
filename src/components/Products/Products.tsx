@@ -21,9 +21,14 @@ import CardsLongIcon from './images/productCardsLong.svg';
 import FilterIcon from './images/filter.svg';
 import Line from '../../assets/images/icons/oblique.svg';
 import Button from '../common/Button/Button';
-import { CategoryShort } from '../../utils/dataAPI';
+import { CategoryShort, FilteredProductsAndMinMaxPrice, Filters } from '../../utils/dataAPI';
 
 export default function Products() {
+  interface PrevCategoryAndSubcategoryType {
+    categoryId: string,
+    subcategoryId: string,
+  }
+
   const [searchParams, setSearchParams] = useSearchParams();
   const params = useParams();
 
@@ -31,17 +36,22 @@ export default function Products() {
   const openFilterMenuBtnRef = useRef<HTMLButtonElement | null>();
 
   const [category, setCategory] = useState<CategoryShort | null>(null);
-  const [subcategoryFilters, setSubcategoryFilters] = useState(null);
-  const [productsAndInfo, setProductsAndInfo] = useState(null);
-  const [isFilterMenuOpen, setIsFilterMenuOpen] = useState(false);
-  const [windowWidth, setWindowWidth] = useState();
-  const [prevCategoryAndSubcategory, setPrevCategoryAndSubcategory] = useState(null);
+  const [subcategoryFilters, setSubcategoryFilters] = useState<Filters | null>(null);
+  const [
+    productsAndInfo, setProductsAndInfo,
+  ] = useState<FilteredProductsAndMinMaxPrice | null>(null);
+  const [isFilterMenuOpen, setIsFilterMenuOpen] = useState<boolean>(false);
+  const [windowWidth, setWindowWidth] = useState<number>(0);
+  const [
+    prevCategoryAndSubcategory, setPrevCategoryAndSubcategory,
+  ] = useState<PrevCategoryAndSubcategoryType | null>(null);
 
   // setup functions
 
-  const { categoryId, subcategoryId } = params;
+  const categoryId = params.categoryId as string;
+  const subcategoryId = params.subcategoryId as string;
 
-  const subcategoryName = category?.subcategories.entities[subcategoryId]?.name;
+  const subcategoryName = category?.subcategories.entities[subcategoryId as string]?.name;
 
   const filteredAndSortedProducts = useMemo(() => productsAndInfo
     ?.filteredAndSortedProducts, [productsAndInfo]);
@@ -61,7 +71,7 @@ export default function Products() {
 
   useOnResize(getWindowWidth);
 
-  const [isProductCardsShort, setIsProductCardsShort] = useState(() => {
+  const [isProductCardsShort, setIsProductCardsShort] = useState<boolean>(() => {
     const localStorageValue = localStorage.getItem('productCardAppearance');
 
     if (localStorageValue) {

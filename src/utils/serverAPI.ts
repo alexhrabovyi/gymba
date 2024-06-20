@@ -1,5 +1,5 @@
 /* eslint-disable max-len */
-import { http, HttpResponse } from 'msw';
+import { http, HttpResponse, StrictRequest } from 'msw';
 import { setupWorker } from 'msw/browser';
 import {
   type CategoryShort,
@@ -36,9 +36,13 @@ import {
   ProductWithIds,
   SearchResults,
   NewsArticlesWithAmount,
+  FilteredProductsAndMinMaxPrice,
 } from './dataAPI';
 
-async function addMutation(request, addFunc) {
+async function addMutation(
+  request: StrictRequest<any>,
+  addFunc: (categoryId: string, subcategoryId: string, productId: string) => Promise<Response>,
+) {
   const [categoryId, subcategoryId, productId] = await request.json();
 
   const response = await addFunc(categoryId, subcategoryId, productId);
@@ -69,7 +73,8 @@ export const handlers = [
     const { categoryId, subcategoryId } = params;
     const { searchParams } = new URL(request.url);
 
-    return getFilteredProductsAndMinMaxPrice(categoryId as string, subcategoryId as string, searchParams);
+    const filteredProductsAndMinMaxPrice = await getFilteredProductsAndMinMaxPrice(categoryId as string, subcategoryId as string, searchParams);
+    return HttpResponse.json<FilteredProductsAndMinMaxPrice>(filteredProductsAndMinMaxPrice);
   }),
   http.get('/fakeAPI/wishlistIds', async () => {
     const wishlistIds = await getWishlistIds();

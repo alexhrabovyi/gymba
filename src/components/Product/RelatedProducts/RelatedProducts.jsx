@@ -4,7 +4,7 @@ import {
 import classNames from 'classnames';
 import { useGetAnalogueProductsQuery } from '../../../queryAPI/queryAPI';
 import useOnResize from '../../../hooks/useOnResize';
-import ProductCard from '../../ProductCard/ProductCard.jsx';
+import ProductCard from '../../ProductCard/ProductCard';
 import Slider from '../../common/Slider/Slider';
 import BigPrevNextButton from '../../common/BigPrevNextButton/BigPrevNextButton';
 import ThreeDotsSpinnerBlock from '../../common/ThreeDotsSpinnerBlock/ThreeDotsSpinnerBlock';

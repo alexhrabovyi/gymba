@@ -5,7 +5,7 @@ import { Link, Await, useSearchParams } from 'react-router-dom';
 import classNames from 'classnames';
 import { useGetSearchResultsQuery } from '../../queryAPI/queryAPI';
 import useOnResize from '../../hooks/useOnResize';
-import ProductCard from '../ProductCard/ProductCard.jsx';
+import ProductCard from '../ProductCard/ProductCard';
 import Spinner from '../common/Spinner/Spinner';
 import DynamicImage from '../common/DynamicImage/DynamicImage';
 import PaginationBlock from '../PaginationBlock/PaginationBlock.jsx';
