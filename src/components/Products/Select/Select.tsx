@@ -1,4 +1,6 @@
 import {
+  KeyboardEventHandler,
+  MouseEventHandler,
   memo, useCallback, useEffect, useRef, useState,
 } from 'react';
 import { useSearchParams } from 'react-router-dom';
@@ -7,24 +9,36 @@ import textCls from '../../../scss/_text.module.scss';
 import selectCls from './Select.module.scss';
 import ChevronUp from '../../../assets/images/icons/chevronUp.svg';
 
-const Select = memo(({
+interface SelectOption {
+  name: string,
+  id: string,
+}
+
+interface SelectProps {
+  label: string,
+  options: SelectOption[],
+  defaultSelectedOptionId: string,
+  searchParamName: string,
+}
+
+const Select = memo<SelectProps>(({
   label, options, defaultSelectedOptionId, searchParamName,
 }) => {
   const [searchParams, setSearchParams] = useSearchParams();
 
-  const [isOpen, setIsOpen] = useState(false);
-  const [selectedOptionId, setSelectedOptionId] = useState(defaultSelectedOptionId);
-  const [focusedOptionIndex, setFocusedOptionIndex] = useState(-1);
+  const [isOpen, setIsOpen] = useState<boolean>(false);
+  const [selectedOptionId, setSelectedOptionId] = useState<string>(defaultSelectedOptionId);
+  const [focusedOptionIndex, setFocusedOptionIndex] = useState<number>(-1);
 
-  const openButtonRef = useRef(null);
-  const selectRef = useRef(null);
-  const listRef = useRef(null);
+  const openButtonRef = useRef<HTMLButtonElement | null>(null);
+  const selectRef = useRef<HTMLDivElement | null>(null);
+  const listRef = useRef<HTMLDivElement | null>(null);
 
   const closeOnClick = useCallback(() => {
     if (isOpen) {
       setTimeout(() => {
         document.addEventListener('click', (e) => {
-          if (e.target.closest('[data-select]') !== selectRef.current) {
+          if ((e.target as HTMLElement).closest('[data-select]') !== selectRef.current) {
             setIsOpen(false);
           }
         }, { once: true });
@@ -35,7 +49,7 @@ const Select = memo(({
   useEffect(closeOnClick, [closeOnClick]);
 
   if (searchParams.has(searchParamName)) {
-    const searchParamValue = searchParams.get(searchParamName);
+    const searchParamValue = searchParams.get(searchParamName) as string;
 
     if (searchParamValue !== selectedOptionId) {
       setSelectedOptionId(searchParamValue);
@@ -50,13 +64,13 @@ const Select = memo(({
 
     if (!isOpen) {
       setTimeout(() => {
-        listRef.current.focus();
+        listRef.current?.focus();
       }, 0);
     }
   }
 
-  function optionListOnClick(e) {
-    const option = e.target.closest('[role="option"]');
+  const optionListOnClick: MouseEventHandler<HTMLDivElement> = (e) => {
+    const option = (e.target as HTMLElement).closest('[role="option"]');
     if (!option) return;
 
     const newOptionId = option.id;
@@ -67,17 +81,19 @@ const Select = memo(({
     searchParams.set(searchParamName, newOptionId);
     setSearchParams(searchParams);
 
-    openButtonRef.current.focus();
-  }
+    openButtonRef.current?.focus();
+  };
 
-  function optionListOnKeyDown(e) {
+  const optionListOnKeyDown: KeyboardEventHandler<HTMLDivElement> = (e) => {
     if (e.code === 'ArrowDown') {
       e.preventDefault();
 
       let newFocusedOptionIndex = focusedOptionIndex + 1;
       if (newFocusedOptionIndex === options.length) newFocusedOptionIndex = 0;
 
-      listRef.current.children[newFocusedOptionIndex].focus();
+      const childrenElem = listRef.current?.children[newFocusedOptionIndex] as HTMLButtonElement;
+      childrenElem.focus();
+
       setFocusedOptionIndex(newFocusedOptionIndex);
     } else if (e.code === 'ArrowUp') {
       e.preventDefault();
@@ -85,25 +101,28 @@ const Select = memo(({
       let newFocusedOptionIndex = focusedOptionIndex - 1;
       if (newFocusedOptionIndex < 0) newFocusedOptionIndex = options.length - 1;
 
-      listRef.current.children[newFocusedOptionIndex].focus();
+      const childrenElem = listRef.current?.children[newFocusedOptionIndex] as HTMLButtonElement;
+      childrenElem.focus();
 
       setFocusedOptionIndex(newFocusedOptionIndex);
     } else if (e.code === 'Home') {
       e.preventDefault();
 
       const newFocusedOptionIndex = 0;
-      listRef.current.children[newFocusedOptionIndex].focus();
+      const childrenElem = listRef.current?.children[newFocusedOptionIndex] as HTMLButtonElement;
+      childrenElem.focus();
 
       setFocusedOptionIndex(newFocusedOptionIndex);
     } else if (e.code === 'End') {
       e.preventDefault();
 
       const newFocusedOptionIndex = options.length - 1;
-      listRef.current.children[newFocusedOptionIndex].focus();
+      const childrenElem = listRef.current?.children[newFocusedOptionIndex] as HTMLButtonElement;
+      childrenElem.focus();
 
       setFocusedOptionIndex(newFocusedOptionIndex);
     }
-  }
+  };
 
   const selectedOption = options.find((o) => o.id === selectedOptionId);
 
@@ -146,7 +165,7 @@ const Select = memo(({
           onClick={openButtonOnClick}
           aria-label={`Відкрити селектор ${label}`}
         >
-          {selectedOption.name}
+          {selectedOption?.name}
           <ChevronUp
             className={classNames(
               selectCls.chevron,
@@ -162,7 +181,7 @@ const Select = memo(({
           style={{ display: isOpen ? '' : 'none' }}
           role="listbox"
           aria-activedescendant={selectedOptionId}
-          tabIndex="0"
+          tabIndex={0}
         >
           {optionButtons}
         </div>

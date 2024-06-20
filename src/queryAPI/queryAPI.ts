@@ -1,7 +1,15 @@
-import { EndpointBuilder, FetchArgs, QueryArgFrom, createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
+import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 import { EntityState, createEntityAdapter } from '@reduxjs/toolkit';
-import type { CartId, CategoryShort, CompareId, FilteredProductsAndMinMaxPrice, NewsArticlesWithAmount, ProductWithIds, SearchResults, WishlistId } from '../utils/dataAPI';
-import { MutationLifecycleApi } from '@reduxjs/toolkit/dist/query/endpointDefinitions';
+import type {
+  CartId,
+  CategoryShort,
+  CompareId,
+  FilteredProductsAndMinMaxPrice,
+  NewsArticlesWithAmount,
+  ProductWithIds,
+  SearchResults,
+  WishlistId,
+} from '../utils/dataAPI';
 
 const categoriesAdapter = createEntityAdapter<CategoryShort>();
 
@@ -23,25 +31,6 @@ const tagTypes = [
   'randomProduct',
   'searchResults',
 ];
-
-function createPatchDeleteMutation<ArgType>(
-  queryFn: (arg?: ArgType) => string | FetchArgs,
-  invalidatedTags: ({ type: string, id: string } | string)[],
-  updateQueryFn: (arg: ArgType) => void,
-) {
-  return {
-    query: queryFn,
-    invalidatesTags: invalidatedTags,
-    async onQueryStarted(args: ArgType, { dispatch, queryFulfilled }: any) {
-      const patchResult = dispatch(updateQueryFn(args));
-      try {
-        await queryFulfilled;
-      } catch {
-        patchResult.undo();
-      }
-    },
-  };
-}
 
 export const queryAPI = createApi(
   {
@@ -66,56 +55,80 @@ export const queryAPI = createApi(
         providesTags: [{ type: 'wishlistIds', id: 'LIST' }],
       }),
       addWishlistId: builder.mutation(
-        createPatchDeleteMutation(
-          (body) => ({
+        {
+          query: (body) => ({
             url: '/wishlistIds',
             method: 'POST',
             body,
           }),
-          [{ type: 'wishlistIds', id: 'LIST' }, 'wishlistProducts'],
-          (args) => (
-            queryAPI.util.updateQueryData('getWishlistIds', undefined, (draft: any) => {
-              const parsedBody = JSON.parse(args);
-              draft.push(parsedBody);
-            })
-          ),
-        ),
+          invalidatesTags: [{ type: 'wishlistIds', id: 'LIST' }, 'wishlistProducts'],
+          async onQueryStarted(args, { dispatch, queryFulfilled }) {
+            const patchResult = dispatch(
+              queryAPI.util.updateQueryData('getWishlistIds', undefined, (draft) => {
+                const parsedBody = JSON.parse(args);
+                (draft as WishlistId[]).push(parsedBody);
+              }),
+            );
+
+            try {
+              await queryFulfilled;
+            } catch {
+              patchResult.undo();
+            }
+          },
+        },
       ),
       deleteWishlistId: builder.mutation(
-        createPatchDeleteMutation(
-          (body) => ({
+        {
+          query: (body) => ({
             url: '/wishlistIds',
             method: 'DELETE',
             body,
           }),
-          [{ type: 'wishlistIds', id: 'LIST' }, 'wishlistProducts'],
-          (args) => (
-            queryAPI.util.updateQueryData('getWishlistIds', undefined, (draft) => {
-              const [categoryId, subcategoryId, productId] = JSON.parse(args);
-              const index = draft.findIndex(([draftCaId, draftSId, draftPId]) => (
-                draftCaId === categoryId
-                && draftSId === subcategoryId
-                && draftPId === productId
-              ));
-              draft.splice(index, 1);
-            })
-          ),
-        ),
+          invalidatesTags: [{ type: 'wishlistIds', id: 'LIST' }, 'wishlistProducts'],
+          async onQueryStarted(args, { dispatch, queryFulfilled }) {
+            const patchResult = dispatch(
+              queryAPI.util.updateQueryData('getWishlistIds', undefined, (draft) => {
+                const [categoryId, subcategoryId, productId] = JSON.parse(args);
+                const index = draft.findIndex(([draftCaId, draftSId, draftPId]) => (
+                  draftCaId === categoryId
+                  && draftSId === subcategoryId
+                  && draftPId === productId
+                ));
+                draft.splice(index, 1);
+              }),
+            );
+
+            try {
+              await queryFulfilled;
+            } catch {
+              patchResult.undo();
+            }
+          },
+        },
       ),
       deleteAllWishlistIds: builder.mutation(
-        createPatchDeleteMutation(
-          () => ({
+        {
+          query: () => ({
             url: '/wishlistIds',
             method: 'DELETE',
             body: JSON.stringify({ deleteAll: true }),
           }),
-          [{ type: 'wishlistIds', id: 'LIST' }, 'wishlistProducts'],
-          () => (
-            queryAPI.util.updateQueryData('getWishlistIds', undefined, (draft) => {
-              draft.splice(0);
-            })
-          ),
-        ),
+          invalidatesTags: [{ type: 'wishlistIds', id: 'LIST' }, 'wishlistProducts'],
+          async onQueryStarted(_, { dispatch, queryFulfilled }) {
+            const patchResult = dispatch(
+              queryAPI.util.updateQueryData('getWishlistIds', undefined, (draft) => {
+                draft.splice(0);
+              }),
+            );
+
+            try {
+              await queryFulfilled;
+            } catch {
+              patchResult.undo();
+            }
+          },
+        },
       ),
       getWishlistProducts: builder.query({
         query: (page) => `/getWishlistProducts?page=${page}`,
@@ -126,82 +139,115 @@ export const queryAPI = createApi(
         providesTags: [{ type: 'cartIds', id: 'LIST' }],
       }),
       addCartId: builder.mutation(
-        createPatchDeleteMutation(
-          (body) => ({
+        {
+          query: (body) => ({
             url: '/cartIds',
             method: 'POST',
             body,
           }),
-          [{ type: 'cartIds', id: 'LIST' }, 'cartProducts'],
-          (args) => (
-            queryAPI.util.updateQueryData('getCartIds', undefined, (draft) => {
-              const [categoryId, subcategoryId, productId] = JSON.parse(args);
-              const cartProductIdObject = {
-                categoryId,
-                subcategoryId,
-                productId,
-                amount: 1,
-              };
+          invalidatesTags: [{ type: 'cartIds', id: 'LIST' }, 'cartProducts'],
+          async onQueryStarted(args, { dispatch, queryFulfilled }) {
+            const patchResult = dispatch(
+              queryAPI.util.updateQueryData('getCartIds', undefined, (draft) => {
+                const [categoryId, subcategoryId, productId] = JSON.parse(args);
+                const cartProductIdObject = {
+                  categoryId,
+                  subcategoryId,
+                  productId,
+                  amount: 1,
+                };
 
-              draft.push(cartProductIdObject);
-            })
-          ),
-        ),
+                (draft as CartId[]).push(cartProductIdObject);
+              }),
+            );
+
+            try {
+              await queryFulfilled;
+            } catch {
+              patchResult.undo();
+            }
+          },
+
+        },
       ),
-      editCartIdAmount: builder.mutation(
-        createPatchDeleteMutation(
-          (body) => ({
+      editCartIdAmount: builder.mutation<Response, string>(
+        {
+          query: (body) => ({
             url: '/cartIds',
             method: 'PATCH',
             body,
           }),
-          [{ type: 'cartIds', id: 'LIST' }, 'cartProducts'],
-          (args) => (
-            queryAPI.util.updateQueryData('getCartIds', undefined, (draft) => {
-              const [categoryId, subcategoryId, productId, amount] = JSON.parse(args);
-              const product = draft.find((dObj) => dObj.categoryId === categoryId
-                && dObj.subcategoryId === subcategoryId && dObj.productId === productId);
+          invalidatesTags: [{ type: 'cartIds', id: 'LIST' }, 'cartProducts'],
+          async onQueryStarted(args, { dispatch, queryFulfilled }) {
+            const patchResult = dispatch(
+              queryAPI.util.updateQueryData('getCartIds', undefined, (draft) => {
+                const [categoryId, subcategoryId, productId, amount] = JSON.parse(args);
+                const product = draft.find((dObj) => dObj.categoryId === categoryId
+                  && dObj.subcategoryId === subcategoryId && dObj.productId === productId);
 
-              product.amount = amount;
-            })
-          ),
-        ),
+                (product as CartId).amount = amount;
+              }),
+            );
+
+            try {
+              await queryFulfilled;
+            } catch {
+              patchResult.undo();
+            }
+          },
+        },
       ),
       deleteCartId: builder.mutation(
-        createPatchDeleteMutation(
-          (body) => ({
+        {
+          query: (body) => ({
             url: '/cartIds',
             method: 'DELETE',
             body,
           }),
-          [{ type: 'cartIds', id: 'LIST' }, 'cartProducts'],
-          (args) => (
-            queryAPI.util.updateQueryData('getCartIds', undefined, (draft) => {
-              const [categoryId, subcategoryId, productId] = JSON.parse(args);
-              const index = draft.findIndex((draftCartIdObj) => (
-                draftCartIdObj.categoryId === categoryId
-                && draftCartIdObj.subcategoryId === subcategoryId
-                && draftCartIdObj.productId === productId
-              ));
-              draft.splice(index, 1);
-            })
-          ),
-        ),
+          invalidatesTags: [{ type: 'cartIds', id: 'LIST' }, 'cartProducts'],
+          async onQueryStarted(args, { dispatch, queryFulfilled }) {
+            const patchResult = dispatch(
+              queryAPI.util.updateQueryData('getCartIds', undefined, (draft) => {
+                const [categoryId, subcategoryId, productId] = JSON.parse(args);
+                const index = draft.findIndex((draftCartIdObj) => (
+                  draftCartIdObj.categoryId === categoryId
+                  && draftCartIdObj.subcategoryId === subcategoryId
+                  && draftCartIdObj.productId === productId
+                ));
+                draft.splice(index, 1);
+              }),
+            );
+
+            try {
+              await queryFulfilled;
+            } catch {
+              patchResult.undo();
+            }
+          },
+        },
       ),
       deleteAllCartIds: builder.mutation(
-        createPatchDeleteMutation(
-          () => ({
+        {
+          query: () => ({
             url: '/cartIds',
             method: 'DELETE',
             body: JSON.stringify({ deleteAll: true }),
           }),
-          [{ type: 'cartIds', id: 'LIST' }, 'cartProducts'],
-          () => (
-            queryAPI.util.updateQueryData('getCartIds', undefined, (draft) => {
-              draft.splice(0);
-            })
-          ),
-        ),
+          invalidatesTags: [{ type: 'cartIds', id: 'LIST' }, 'cartProducts'],
+          async onQueryStarted(args, { dispatch, queryFulfilled }) {
+            const patchResult = dispatch(
+              queryAPI.util.updateQueryData('getCartIds', undefined, (draft) => {
+                draft.splice(0);
+              }),
+            );
+
+            try {
+              await queryFulfilled;
+            } catch {
+              patchResult.undo();
+            }
+          },
+        },
       ),
       getCartProducts: builder.query({
         query: () => '/getCartProducts',
@@ -212,70 +258,94 @@ export const queryAPI = createApi(
         providesTags: [{ type: 'compareIds', id: 'LIST' }],
       }),
       addCompareId: builder.mutation(
-        createPatchDeleteMutation(
-          (body) => ({
+        {
+          query: (body) => ({
             url: '/compareIds',
             method: 'POST',
             body,
           }),
-          [{ type: 'compareIds', id: 'LIST' }, 'compareSubcategories', 'compareProducts'],
-          (args) => (
-            queryAPI.util.updateQueryData('getCompareIds', undefined, (draft) => {
-              const parsedBody = JSON.parse(args);
-              draft.push(parsedBody);
-            })
-          ),
-        ),
+          invalidatesTags: [{ type: 'compareIds', id: 'LIST' }, 'compareSubcategories', 'compareProducts'],
+          async onQueryStarted(args, { dispatch, queryFulfilled }) {
+            const patchResult = dispatch(
+              queryAPI.util.updateQueryData('getCompareIds', undefined, (draft) => {
+                const parsedBody = JSON.parse(args);
+                (draft as CompareId[]).push(parsedBody);
+              }),
+            );
+
+            try {
+              await queryFulfilled;
+            } catch {
+              patchResult.undo();
+            }
+          },
+        },
       ),
       deleteCompareId: builder.mutation(
-        createPatchDeleteMutation(
-          (body) => ({
+        {
+          query: (body) => ({
             url: '/compareIds',
             method: 'DELETE',
             body,
           }),
-          [{ type: 'compareIds', id: 'LIST' }, 'compareSubcategories', 'compareProducts'],
-          (args) => (
-            queryAPI.util.updateQueryData('getCompareIds', undefined, (draft) => {
-              const [categoryId, subcategoryId, productId] = JSON.parse(args);
-              const index = draft.findIndex(([draftCaId, draftSId, draftPId]) => (
-                draftCaId === categoryId
-                && draftSId === subcategoryId
-                && draftPId === productId
-              ));
-              draft.splice(index, 1);
-            })
-          ),
-        ),
+          invalidatesTags: [{ type: 'compareIds', id: 'LIST' }, 'compareSubcategories', 'compareProducts'],
+          async onQueryStarted(args, { dispatch, queryFulfilled }) {
+            const patchResult = dispatch(
+              queryAPI.util.updateQueryData('getCompareIds', undefined, (draft) => {
+                const [categoryId, subcategoryId, productId] = JSON.parse(args);
+                const index = draft.findIndex(([draftCaId, draftSId, draftPId]) => (
+                  draftCaId === categoryId
+                  && draftSId === subcategoryId
+                  && draftPId === productId
+                ));
+                draft.splice(index, 1);
+              }),
+            );
+
+            try {
+              await queryFulfilled;
+            } catch {
+              patchResult.undo();
+            }
+          },
+        },
       ),
       getCompareSubcategories: builder.query({
         query: () => '/compareSubcategories',
         providesTags: ['compareSubcategories'],
       }),
       deleteCompareSubcategory: builder.mutation(
-        createPatchDeleteMutation(
-          (body) => ({
+        {
+          query: (body) => ({
             url: '/compareSubcategories',
             method: 'DELETE',
             body,
           }),
-          [{ type: 'compareIds', id: 'LIST' }, 'compareSubcategories', 'compareProducts'],
-          (args) => (
-            queryAPI.util.updateQueryData('getCompareSubcategories', undefined, (draft) => {
-              const request = JSON.parse(args);
+          invalidatesTags: [{ type: 'compareIds', id: 'LIST' }, 'compareSubcategories', 'compareProducts'],
+          async onQueryStarted(args, { dispatch, queryFulfilled }) {
+            const patchResult = dispatch(
+              queryAPI.util.updateQueryData('getCompareSubcategories', undefined, (draft) => {
+                const request = JSON.parse(args);
 
-              if (request.deleteAll) {
-                draft.splice(0);
-              } else {
-                const [categoryId, subcategoryId] = request;
-                const index = draft.findIndex((subcObj) => (
-                  subcObj.categoryId === categoryId && subcObj.subcategoryId === subcategoryId
-                ));
-                draft.splice(index, 1);
-              }
-            })
-          ),
-        ),
+                if (request.deleteAll) {
+                  draft.splice(0);
+                } else {
+                  const [categoryId, subcategoryId] = request;
+                  const index = draft.findIndex((subcObj) => (
+                    subcObj.categoryId === categoryId && subcObj.subcategoryId === subcategoryId
+                  ));
+                  draft.splice(index, 1);
+                }
+              }),
+            );
+
+            try {
+              await queryFulfilled;
+            } catch {
+              patchResult.undo();
+            }
+          },
+        },
       ),
       getCompareProducts: builder.query({
         query: ({ categoryId, subcategoryId }) => `/getCompareProducts/${categoryId}/${subcategoryId}`,

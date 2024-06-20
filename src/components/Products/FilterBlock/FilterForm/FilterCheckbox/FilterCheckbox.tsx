@@ -2,7 +2,13 @@ import { memo } from 'react';
 import classNames from 'classnames';
 import checkboxCls from './FilterCheckbox.module.scss';
 
-const FilterCheckbox = memo(({ value, isChecked, updateParams }) => {
+interface CheckboxProps {
+  value: string,
+  isChecked: boolean,
+  updateParams: React.Dispatch<React.SetStateAction<string[]>>,
+}
+
+const FilterCheckbox = memo<CheckboxProps>(({ value, isChecked, updateParams }) => {
   function onClickHandler() {
     if (!isChecked) {
       updateParams((oldParams) => [...oldParams, value]);

@@ -1,11 +1,17 @@
 import { memo, useMemo } from 'react';
 import classNames from 'classnames';
 import filterCls from './FilterBlock.module.scss';
-import FilterForm from './FilterForm/FilterForm.jsx';
-import FilterPriceForm from './FilterPriceForm/FilterPriceForm.jsx';
+import FilterForm from './FilterForm/FilterForm';
+import FilterPriceForm from './FilterPriceForm/FilterPriceForm';
 import ThreeDotsSpinnerBlock from '../../common/ThreeDotsSpinnerBlock/ThreeDotsSpinnerBlock';
+import { Filters } from '../../../utils/dataAPI';
 
-const FilterBlock = memo(({ subcategoryFilters, isFetching }) => {
+interface FilterBlockProps {
+  subcategoryFilters: Filters | null,
+  isFetching: boolean,
+}
+
+const FilterBlock = memo<FilterBlockProps>(({ subcategoryFilters, isFetching }) => {
   const filterElems = useMemo(() => {
     if (!subcategoryFilters) return;
 

@@ -1,4 +1,4 @@
-import {
+import React, {
   useCallback, useEffect, useLayoutEffect, useRef, useState,
 } from 'react';
 import { useParams, useSearchParams } from 'react-router-dom';
@@ -9,7 +9,7 @@ import textCls from '../../../../scss/_text.module.scss';
 import filterCls from './FilterPriceForm.module.scss';
 import ChevronUp from '../../../../assets/images/icons/chevronUp.svg';
 
-export default function FilterPriceForm() {
+const FilterPriceForm: React.FC = () => {
   const params = useParams();
   const [searchParams, setSearchParams] = useSearchParams();
 
@@ -588,4 +588,6 @@ export default function FilterPriceForm() {
       </div>
     </form>
   );
-}
+};
+
+export default FilterPriceForm;

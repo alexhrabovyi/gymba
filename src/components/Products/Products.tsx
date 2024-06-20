@@ -33,7 +33,7 @@ export default function Products() {
   const params = useParams();
 
   const titleRef = useRef<HTMLHeadingElement | null>(null);
-  const openFilterMenuBtnRef = useRef<HTMLButtonElement | null>();
+  const openFilterMenuBtnRef = useRef<HTMLButtonElement | null>(null);
 
   const [category, setCategory] = useState<CategoryShort | null>(null);
   const [subcategoryFilters, setSubcategoryFilters] = useState<Filters | null>(null);

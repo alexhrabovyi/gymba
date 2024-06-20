@@ -4,14 +4,20 @@ import classNames from 'classnames';
 import textCls from '../../../../scss/_text.module.scss';
 import filterCls from './FilterForm.module.scss';
 import ChevronUp from '../../../../assets/images/icons/chevronUp.svg';
-import FilterCheckbox from './FilterCheckbox/FilterCheckbox.jsx';
+import FilterCheckbox from './FilterCheckbox/FilterCheckbox';
 
-export default function FilterForm({ name, values, initIsClosed = false }) {
+interface FilterFormProps {
+  name: string,
+  values: string[],
+  initIsClosed: boolean,
+}
+
+const FilterForm: React.FC<FilterFormProps> = ({ name, values, initIsClosed = false }) => {
   const [searchParams, setSearchParams] = useSearchParams();
-  const listRef = useRef(null);
-  const [isClosed, setIsClose] = useState(initIsClosed);
-  const [isAdditionalClosed, setIsAdditionalClosed] = useState(true);
-  const [params, setParams] = useState([]);
+  const listRef = useRef<HTMLUListElement | null>(null);
+  const [isClosed, setIsClose] = useState<boolean>(initIsClosed);
+  const [isAdditionalClosed, setIsAdditionalClosed] = useState<boolean>(true);
+  const [params, setParams] = useState<string[]>([]);
 
   const isAdditionalAccordionNeeded = values.length >= 8;
 
@@ -23,7 +29,7 @@ export default function FilterForm({ name, values, initIsClosed = false }) {
     }
   }, [searchParams, name]);
 
-  function onSubmitHandler(e) {
+  const onSubmitHandler: React.FormEventHandler = (e) => {
     e.preventDefault();
 
     const URLParams = new URLSearchParams();
@@ -36,7 +42,7 @@ export default function FilterForm({ name, values, initIsClosed = false }) {
     });
 
     setSearchParams(URLParams);
-  }
+  };
 
   const checkboxes = values.slice().sort().map((value, i) => (
     <li
@@ -105,4 +111,6 @@ export default function FilterForm({ name, values, initIsClosed = false }) {
       </ul>
     </form>
   );
-}
+};
+
+export default FilterForm;
