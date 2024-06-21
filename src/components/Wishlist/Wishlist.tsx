@@ -14,26 +14,31 @@ import textCls from '../../scss/_text.module.scss';
 import wishlistCls from './Wishlist.module.scss';
 import BinIcon from '../../assets/images/icons/bin.svg';
 import Line from '../../assets/images/icons/oblique.svg';
+import { ProductCard as TypeProductCard } from '../../utils/dataAPI';
 
-export default function Wishlist() {
+const Wishlist: React.FC = () => {
   const [searchParams, setSearchParams] = useSearchParams();
   const dispatch = useDispatch();
 
-  const titleRef = useRef();
+  const titleRef = useRef<HTMLHeadingElement | null>(null);
 
-  const [wishlistProducts, setWishlistProducts] = useState(null);
-  const [totalProductAmount, setTotalProductAmount] = useState(null);
-  const [pageAmount, setPageAmount] = useState(1);
-  const [prevPageNum, setPrevPageNum] = useState(null);
+  const [wishlistProducts, setWishlistProducts] = useState<TypeProductCard[] | null>(null);
+  const [totalProductAmount, setTotalProductAmount] = useState<number | null>(null);
+  const [pageAmount, setPageAmount] = useState<number>(1);
+  const [prevPageNum, setPrevPageNum] = useState<number | null>(null);
 
   const [deleteAllWishlistIds] = useDeleteAllWishlistIdsMutation();
 
   const perView = 12;
-  const currentPageNum = +searchParams.get('page') || 1;
+  const currentPageNum = Number(searchParams.get('page')) || 1;
 
   // event functions
 
-  const productOnAddDeleteButton = useCallback((categoryId, subcategoryId, productId) => {
+  const productOnAddDeleteButton = useCallback((
+    categoryId: string,
+    subcategoryId: string,
+    productId: string,
+  ) => {
     dispatch(queryAPI.util.updateQueryData('getWishlistProducts', currentPageNum, (draft) => {
       const products = draft.wishlistProducts;
 
@@ -44,17 +49,17 @@ export default function Wishlist() {
       products.splice(index, 1);
 
       draft.totalProductAmount -= 1;
-    }));
+    }) as any);
   }, [dispatch, currentPageNum]);
 
   function deleteAllBtnOnClick() {
-    deleteAllWishlistIds();
+    deleteAllWishlistIds('');
 
     dispatch(queryAPI.util.updateQueryData('getWishlistProducts', currentPageNum, (draft) => {
       draft.wishlistProducts = [];
       draft.pageAmount = 0;
       draft.totalProductAmount = 0;
-    }));
+    }) as any);
   }
 
   // fetch functions
@@ -80,7 +85,7 @@ export default function Wishlist() {
   function changePageWhenLastProductDeleted() {
     if (wishlistProducts?.length === 0 && pageAmount !== 1) {
       if (currentPageNum <= pageAmount && currentPageNum !== 1) {
-        searchParams.set('page', currentPageNum - 1);
+        searchParams.set('page', String(currentPageNum - 1));
         setSearchParams(searchParams);
       }
     }
@@ -120,11 +125,11 @@ export default function Wishlist() {
   }, [wishlistProducts, productOnAddDeleteButton]);
 
   function addSkeletonProduct() {
-    products.push(<SkeletonProductCard />);
+    products!.push(<SkeletonProductCard />);
   }
 
   function isSkeletonProductNeeded() {
-    if (!products) return;
+    if (!products || !totalProductAmount) return;
 
     if (products.length < perView && !checkIsLoadingNextPageNum()) {
       const lastCardOnPageIndex = currentPageNum * perView - 1;
@@ -159,17 +164,17 @@ export default function Wishlist() {
           Список бажань
         </h1>
         {products && products.length > 0 && (
-        <button
-          type="button"
-          className={wishlistCls.deleteBtn}
-          onClick={deleteAllBtnOnClick}
-          aria-label="Видалити все"
-        >
-          <BinIcon
-            className={wishlistCls.binIcon}
-          />
-          Видалити все
-        </button>
+          <button
+            type="button"
+            className={wishlistCls.deleteBtn}
+            onClick={deleteAllBtnOnClick}
+            aria-label="Видалити все"
+          >
+            <BinIcon
+              className={wishlistCls.binIcon}
+            />
+            Видалити все
+          </button>
         )}
       </div>
       <div className={classNames(
@@ -218,4 +223,6 @@ export default function Wishlist() {
       )}
     </main>
   );
-}
+};
+
+export default Wishlist;

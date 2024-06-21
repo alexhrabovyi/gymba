@@ -39,6 +39,7 @@ import {
   FilteredProductsAndMinMaxPrice,
   ProductWithIdsAndNames,
   Product,
+  WishlistProductsAndPageAmout,
 } from './dataAPI';
 
 async function addMutation(
@@ -90,9 +91,11 @@ export const handlers = [
   http.post('/fakeAPI/wishlistIds', async ({ request }) => addMutation(request, addIdToWishlist)),
   http.delete('/fakeAPI/wishlistIds', async ({ request }) => deleteMutation(request, deleteIdFromWishlist, deleteAllFromWishlist)),
   http.get('/fakeAPI/getWishlistProducts', async ({ request }) => {
-    const pageNum = new URL(request.url).searchParams.get('page');
+    const pageNum = Number(new URL(request.url).searchParams.get('page')) || null;
 
-    return getWishlistProductsPerPageAndPageAmount(+pageNum);
+    const wishlistProductsAndPageAmout = await getWishlistProductsPerPageAndPageAmount(pageNum);
+
+    return HttpResponse.json<WishlistProductsAndPageAmout>(wishlistProductsAndPageAmout);
   }),
   http.get('/fakeAPI/cartIds', async () => {
     const cartIds = await getCartIds();

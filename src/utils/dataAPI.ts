@@ -83,8 +83,23 @@ export interface ProductWithIdsAndNames extends ProductWithIds {
   subcategoryName: Subcategory['name'],
 }
 
+export interface ProductCard {
+  categoryId: Category['id'],
+  categoryName: Category['name'],
+  subcategoryId: Subcategory['id'],
+  subcategoryName: Subcategory['name'],
+  product: {
+    id: Product['id'],
+    name: Product['name'],
+    price: Product['price'],
+    oldPrice?: Product['oldPrice'],
+  }
+}
+
 export type WishlistId = [string, string, string];
+
 export type CompareId = [string, string, string];
+
 export interface CartId {
   categoryId: string,
   subcategoryId: string,
@@ -166,16 +181,22 @@ function getCategoryAndSubcategory(
   };
 }
 
-function getProductCard(categoryId, subcategoryId, productId) {
-  const category = products.categories.entities[categoryId];
+function getProductCard(
+  categoryId: string,
+  subcategoryId: string,
+  productId: string,
+): ProductCard {
+  const productsJSON: JSON = products;
+
+  const category: Category | undefined = productsJSON.categories.entities[categoryId];
 
   if (!category) throw new Response(null, { status: 404, statusText: 'Not found' });
 
-  const subcategory = category.subcategories.entities[subcategoryId];
+  const subcategory: Subcategory | undefined = category.subcategories.entities[subcategoryId];
 
   if (!subcategory) throw new Response(null, { status: 404, statusText: 'Not found' });
 
-  const product = subcategory.products.entities[productId];
+  const product: Product | undefined = subcategory.products.entities[productId];
 
   if (!product) throw new Response(null, { status: 404, statusText: 'Not found' });
 
@@ -222,8 +243,8 @@ function getProductFullObj(
 }
 
 function getLocalStorageIds<T>(localStorageKey: string): T[] | [] {
-  const unparsedIds = localStorage.getItem(localStorageKey)
-  const ids = unparsedIds ? JSON.parse(unparsedIds) : [];;
+  const unparsedIds = localStorage.getItem(localStorageKey);
+  const ids = unparsedIds ? JSON.parse(unparsedIds) : [];
 
   return ids;
 }
@@ -283,10 +304,10 @@ function deleteAllFromStorage(localStorageKey: string): Response {
   return new Response(null, { status: 200, statusText: 'OK' });
 }
 
-function getAllProductsFromStorage(localStorageKey) {
-  const ids = getLocalStorageIds(localStorageKey);
+function getAllProductsFromStorage<T extends any[]>(localStorageKey: string): ProductCard[] {
+  const ids = getLocalStorageIds<T>(localStorageKey);
 
-  const productsForIds = ids.map(([cId, subcId, pId]) => (
+  const productsForIds: ProductCard[] = ids.map(([cId, subcId, pId]) => (
     getProductCard(cId, subcId, pId)));
 
   return productsForIds;
@@ -620,11 +641,19 @@ export async function deleteAllFromWishlist(): Promise<Response> {
   return deleteAllFromStorage('wishlistIds');
 }
 
-export async function getWishlistProductsPerPageAndPageAmount(pageNum) {
+export interface WishlistProductsAndPageAmout {
+  totalProductAmount: number,
+  wishlistProducts: ProductCard[],
+  pageAmount: number,
+}
+
+export async function getWishlistProductsPerPageAndPageAmount(
+  pageNum: null | number,
+): Promise<WishlistProductsAndPageAmout> {
   await fakeNetwork();
 
   const perView = 12;
-  const allWishlistProducts = getAllProductsFromStorage('wishlistIds');
+  const allWishlistProducts = getAllProductsFromStorage<WishlistId>('wishlistIds');
   const wishlistProductsAmount = allWishlistProducts.length;
   const pageAmount = getPageAmount(wishlistProductsAmount, perView);
 
@@ -635,13 +664,13 @@ export async function getWishlistProductsPerPageAndPageAmount(pageNum) {
 
   const wishlistProducts = allWishlistProducts.slice(firstPageProduct, lastPageProduct);
 
-  const body = JSON.stringify({
+  const wishlistProductsAndPageAmout: WishlistProductsAndPageAmout = {
     totalProductAmount: wishlistProductsAmount,
     wishlistProducts,
     pageAmount,
-  });
+  };
 
-  return new Response(body, { status: 200, statusText: 'OK' });
+  return wishlistProductsAndPageAmout;
 }
 
 export async function getCartIds() {

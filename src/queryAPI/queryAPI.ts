@@ -11,6 +11,7 @@ import type {
   ProductWithIdsAndNames,
   SearchResults,
   WishlistId,
+  WishlistProductsAndPageAmout,
 } from '../utils/dataAPI';
 import { AnyAaaaRecord } from 'dns';
 
@@ -133,7 +134,7 @@ export const queryAPI = createApi(
           },
         },
       ),
-      getWishlistProducts: builder.query({
+      getWishlistProducts: builder.query<WishlistProductsAndPageAmout, number>({
         query: (page) => `/getWishlistProducts?page=${page}`,
         providesTags: ['wishlistProducts'],
       }),
