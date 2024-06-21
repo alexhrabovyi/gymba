@@ -329,7 +329,7 @@ export default function Products() {
             <div className={productsCls.paginationBlock}>
               <PaginationBlock
                 elemToScrollRef={titleRef}
-                pageAmount={pageAmount}
+                pageAmount={pageAmount || 0}
               />
             </div>
           </div>

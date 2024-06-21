@@ -1,6 +1,7 @@
 /* eslint-disable jsx-a11y/no-static-element-interactions */
 import {
   memo, useRef, useCallback, useEffect,
+  ReactNode,
 } from 'react';
 import classNames from 'classnames';
 import useHideScrollbarOnOpen from '../../../hooks/useHideScrollbarOnOpen';
@@ -11,14 +12,23 @@ import containerCls from '../../../scss/_container.module.scss';
 import menuCls from './LeftSideMenu.module.scss';
 import CrossIcon from '../../../assets/images/icons/cross.svg';
 
-const LeftSideMenu = memo(({
+interface LeftSideMenuProps {
+  children: ReactNode | ReactNode[],
+  isMenuOpen: boolean,
+  setIsMenuOpen: React.Dispatch<React.SetStateAction<boolean>>,
+  label: string,
+  openButton: HTMLButtonElement | null,
+  id: string,
+}
+
+const LeftSideMenu = memo<LeftSideMenuProps>(({
   children, isMenuOpen, setIsMenuOpen, label, openButton, id,
 }) => {
-  const menuBackdropRef = useRef(null);
-  const menuRef = useRef(null);
+  const menuBackdropRef = useRef<HTMLDivElement | null>(null);
+  const menuRef = useRef<HTMLDivElement | null>(null);
 
   useHideScrollbarOnOpen(isMenuOpen);
-  useToggleInteractiveElements(menuRef, isMenuOpen);
+  useToggleInteractiveElements<HTMLDivElement | null>(menuRef, isMenuOpen);
 
   const calcMenuHeight = useCallback(() => {
     const menu = menuRef.current;
@@ -39,17 +49,17 @@ const LeftSideMenu = memo(({
   useOnResize(calcMenuHeight);
 
   const focusOnOpen = useCallback(() => {
-    if (isMenuOpen) menuRef.current.focus();
+    if (isMenuOpen) menuRef.current?.focus();
   }, [isMenuOpen]);
 
   useEffect(focusOnOpen, [focusOnOpen]);
 
-  function backdropOnClick(e) {
+  const backdropOnClick: React.MouseEventHandler<HTMLDivElement> = (e) => {
     if (e.target === menuBackdropRef.current) {
       setIsMenuOpen(false);
-      openButton.focus();
+      openButton?.focus();
     }
-  }
+  };
 
   return (
     <div
@@ -61,7 +71,7 @@ const LeftSideMenu = memo(({
       onClick={backdropOnClick}
     >
       <div
-        id={id || null}
+        id={id || undefined}
         ref={menuRef}
         className={classNames(
           containerCls.container,
@@ -72,7 +82,7 @@ const LeftSideMenu = memo(({
         role="dialog"
         aria-modal
         aria-label={label}
-        tabIndex={isMenuOpen ? '0' : '-1'}
+        tabIndex={isMenuOpen ? 0 : -1}
       >
         <button
           type="button"
@@ -80,7 +90,7 @@ const LeftSideMenu = memo(({
           aria-label={`Закрити ${label}`}
           onClick={() => {
             setIsMenuOpen(false);
-            openButton.focus();
+            openButton?.focus();
           }}
         >
           <CrossIcon className={menuCls.crossIcon} />

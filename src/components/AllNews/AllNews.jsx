@@ -4,7 +4,7 @@ import classNames from 'classnames';
 import { useGetNewsQuery } from '../../queryAPI/queryAPI';
 import NewsPreview from '../common/NewsPreview/NewsPreview';
 import ThreeDotsSpinnerBlock from '../common/ThreeDotsSpinnerBlock/ThreeDotsSpinnerBlock';
-import PaginationBlock from '../PaginationBlock/PaginationBlock.jsx';
+import PaginationBlock from '../PaginationBlock/PaginationBlock';
 import containerCls from '../../scss/_container.module.scss';
 import textCls from '../../scss/_text.module.scss';
 import newsCls from './AllNews.module.scss';

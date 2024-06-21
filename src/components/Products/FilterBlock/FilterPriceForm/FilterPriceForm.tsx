@@ -1,4 +1,8 @@
 import React, {
+  FormEvent,
+  FormEventHandler,
+  KeyboardEventHandler,
+  PointerEventHandler,
   useCallback, useEffect, useLayoutEffect, useRef, useState,
 } from 'react';
 import { useParams, useSearchParams } from 'react-router-dom';
@@ -13,35 +17,35 @@ const FilterPriceForm: React.FC = () => {
   const params = useParams();
   const [searchParams, setSearchParams] = useSearchParams();
 
-  const [isClosed, setIsClose] = useState(false);
-  const [formWasInteracted, setFormWasInteracted] = useState(false);
+  const [isClosed, setIsClose] = useState<boolean>(false);
+  const [formWasInteracted, setFormWasInteracted] = useState<boolean>(false);
 
-  const [prevSearchParams, setPrevSearchParams] = useState(null);
+  const [prevSearchParams, setPrevSearchParams] = useState<URLSearchParams | null>(null);
 
-  const [fetchedMinPrice, setFetchedMinPrice] = useState(0);
-  const [fetchedMaxPrice, setFetchedMaxPrice] = useState(0);
-  const [prevLoaderMinPrice, setPrevLoaderMinPrice] = useState(null);
-  const [prevLoaderMaxPrice, setPrevLoaderMaxPrice] = useState(null);
-  const [totalMinPrice, setTotalMinPrice] = useState(null);
-  const [totalMaxPrice, setTotalMaxPrice] = useState(null);
-  const [currentMinPrice, setCurrentMinPrice] = useState(null);
-  const [currentMaxPrice, setCurrentMaxPrice] = useState(null);
-  const [minInputValue, setMinInputValue] = useState('');
-  const [maxInputValue, setMaxInputValue] = useState('');
-  const [minButtonLeft, setMinButtonLeft] = useState(null);
-  const [maxButtonLeft, setMaxButtonLeft] = useState(null);
+  const [fetchedMinPrice, setFetchedMinPrice] = useState<number>(0);
+  const [fetchedMaxPrice, setFetchedMaxPrice] = useState<number>(0);
+  const [prevLoaderMinPrice, setPrevLoaderMinPrice] = useState<number>(0);
+  const [prevLoaderMaxPrice, setPrevLoaderMaxPrice] = useState<number>(0);
+  const [totalMinPrice, setTotalMinPrice] = useState<number>(0);
+  const [totalMaxPrice, setTotalMaxPrice] = useState<number>(0);
+  const [currentMinPrice, setCurrentMinPrice] = useState<number>(0);
+  const [currentMaxPrice, setCurrentMaxPrice] = useState<number>(0);
+  const [minInputValue, setMinInputValue] = useState<string>('0');
+  const [maxInputValue, setMaxInputValue] = useState<string>('0');
+  const [minButtonLeft, setMinButtonLeft] = useState<number>(0);
+  const [maxButtonLeft, setMaxButtonLeft] = useState<number>(0);
 
-  const contentRef = useRef(null);
-  const formRef = useRef(null);
-  const mainLineRef = useRef(null);
-  const activeLineRef = useRef(null);
-  const minButtonRef = useRef(null);
-  const maxButtonRef = useRef(null);
+  const contentRef = useRef<HTMLDivElement | null>(null);
+  const formRef = useRef<HTMLFormElement | null>(null);
+  const mainLineRef = useRef<HTMLSpanElement | null>(null);
+  const activeLineRef = useRef<HTMLSpanElement | null>(null);
+  const minButtonRef = useRef<HTMLButtonElement | null>(null);
+  const maxButtonRef = useRef<HTMLButtonElement | null>(null);
 
   // fetcher functions
 
-  const categoryIdParam = params.categoryId;
-  const subcategoryIdParam = params.subcategoryId;
+  const categoryIdParam = params.categoryId as string;
+  const subcategoryIdParam = params.subcategoryId as string;
 
   const fetchUrl = searchParams.size ? `${categoryIdParam}/${subcategoryIdParam}?${searchParams.toString()}`
     : `${categoryIdParam}/${subcategoryIdParam}`;
@@ -84,11 +88,11 @@ const FilterPriceForm: React.FC = () => {
 
         if (searchParamsMinPrice !== currentMinPrice) {
           setCurrentMinPrice(searchParamsMinPrice);
-          setMinInputValue(searchParamsMinPrice);
+          setMinInputValue(String(searchParamsMinPrice));
         }
         if (searchParamsMaxPrice !== currentMaxPrice) {
           setCurrentMaxPrice(searchParamsMaxPrice);
-          setMaxInputValue(searchParamsMaxPrice);
+          setMaxInputValue(String(searchParamsMaxPrice));
         }
       } else {
         if (totalMinPrice !== fetchedMinPrice) setTotalMinPrice(fetchedMinPrice);
@@ -96,11 +100,11 @@ const FilterPriceForm: React.FC = () => {
 
         if (currentMinPrice !== fetchedMinPrice) {
           setCurrentMinPrice(fetchedMinPrice);
-          setMinInputValue(fetchedMinPrice);
+          setMinInputValue(String(fetchedMinPrice));
         }
         if (currentMaxPrice !== fetchedMaxPrice) {
           setCurrentMaxPrice(fetchedMaxPrice);
-          setMaxInputValue(fetchedMaxPrice);
+          setMaxInputValue(String(fetchedMaxPrice));
         }
       }
     } else {
@@ -129,12 +133,12 @@ const FilterPriceForm: React.FC = () => {
 
           if (searchParamsMinPrice !== currentMinPrice) {
             setCurrentMinPrice(searchParamsMinPrice);
-            setMinInputValue(searchParamsMinPrice);
+            setMinInputValue(String(searchParamsMinPrice));
           }
 
           if (searchParamsMaxPrice !== currentMaxPrice) {
             setCurrentMaxPrice(searchParamsMaxPrice);
-            setMaxInputValue(searchParamsMaxPrice);
+            setMaxInputValue(String(searchParamsMaxPrice));
           }
         } else {
           setFormWasInteracted(false);
@@ -150,14 +154,14 @@ const FilterPriceForm: React.FC = () => {
   // helper functions
 
   const getMainLinePxWidth = useCallback(() => {
-    const mainLine = mainLineRef.current;
+    const mainLine = mainLineRef.current!;
 
     return mainLine.offsetWidth;
   }, []);
 
   const getRoundButtonPercentWidth = useCallback(() => {
     const roundButton = minButtonRef.current;
-    const roundButtonPxWidth = roundButton.offsetWidth;
+    const roundButtonPxWidth = roundButton!.offsetWidth;
     const mainLinePxWidth = getMainLinePxWidth();
 
     const roundButtonPercentWidth = (roundButtonPxWidth / mainLinePxWidth) * 100;
@@ -166,7 +170,7 @@ const FilterPriceForm: React.FC = () => {
 
   // calculation functions
 
-  const calcAndUpdateButtonLeft = useCallback((buttonType, price) => {
+  const calcAndUpdateButtonLeft = useCallback((buttonType: 'min' | 'max', price: number) => {
     const roundButtonWidthInPercent = getRoundButtonPercentWidth();
     const availableMainLineWidth = 100 - roundButtonWidthInPercent * 2;
     const minMaxPriceDiff = totalMaxPrice - totalMinPrice;
@@ -188,7 +192,7 @@ const FilterPriceForm: React.FC = () => {
     }
   }, [getRoundButtonPercentWidth, totalMinPrice, totalMaxPrice]);
 
-  function calcCurrentMinMaxPrice(buttonType, leftInPercent) {
+  function calcCurrentMinMaxPrice(buttonType: 'min' | 'max', leftInPercent: number) {
     const roundButtonWidthInPercent = getRoundButtonPercentWidth();
     const availableMainLineWidth = 100 - roundButtonWidthInPercent * 2;
     const minMaxDiff = totalMaxPrice - totalMinPrice;
@@ -198,14 +202,14 @@ const FilterPriceForm: React.FC = () => {
       result = Number(result.toFixed());
 
       setCurrentMinPrice(result);
-      setMinInputValue(result);
+      setMinInputValue(String(result));
     } else {
       let result = (((leftInPercent - roundButtonWidthInPercent)
         / availableMainLineWidth) * minMaxDiff) + totalMinPrice;
       result = Number(result.toFixed());
 
       setCurrentMaxPrice(result);
-      setMaxInputValue(result);
+      setMaxInputValue(String(result));
     }
   }
 
@@ -222,7 +226,7 @@ const FilterPriceForm: React.FC = () => {
   const makeInactiveOnSameValues = useCallback(() => {
     if (formWasInteracted) return;
 
-    const contentBlock = contentRef.current;
+    const contentBlock = contentRef.current!;
 
     if (fetchedMinPrice === fetchedMaxPrice
       && currentMinPrice === fetchedMinPrice
@@ -247,22 +251,22 @@ const FilterPriceForm: React.FC = () => {
     const width = maxButtonLeft - minButtonLeft;
     const left = minButtonLeft;
 
-    activeLineRef.current.style.width = `${width}%`;
-    activeLineRef.current.style.left = `${left}%`;
+    activeLineRef.current!.style.width = `${width}%`;
+    activeLineRef.current!.style.left = `${left}%`;
   }, [minButtonLeft, maxButtonLeft]);
 
   useLayoutEffect(setupActiveLineStyles, [setupActiveLineStyles]);
 
   // user events
 
-  function roundButtonOnDown(e) {
+  const roundButtonOnDown: PointerEventHandler<HTMLButtonElement> = (e) => {
     e.preventDefault();
 
     setFormWasInteracted(true);
 
     let filterMenuHasScroll = false;
 
-    const filterMenu = document.querySelector('#filterBlockMenu');
+    const filterMenu = document.querySelector('#filterBlockMenu') as HTMLElement;
 
     if (filterMenu) {
       if (filterMenu.style.overflowY === 'scroll') {
@@ -271,13 +275,13 @@ const FilterPriceForm: React.FC = () => {
       }
     }
 
-    const { buttonType } = e.target.dataset;
-    const button = buttonType === 'min' ? minButtonRef.current : maxButtonRef.current;
+    const buttonType: 'min' | 'max' = (e.target as HTMLElement).dataset.buttonType as 'min' | 'max';
+    const button = buttonType === 'min' ? minButtonRef.current! : maxButtonRef.current!;
 
     const roundButtonWidthInPercent = getRoundButtonPercentWidth();
 
-    let minLeft;
-    let maxLeft;
+    let minLeft: number;
+    let maxLeft: number;
 
     if (buttonType === 'min') {
       minLeft = 0;
@@ -293,8 +297,8 @@ const FilterPriceForm: React.FC = () => {
 
     button.setPointerCapture(e.pointerId);
 
-    function roundButtonOnMove(onMoveEvent) {
-      const mainLineLeftCoord = mainLineRef.current.getBoundingClientRect().left;
+    function roundButtonOnMove(onMoveEvent: PointerEvent) {
+      const mainLineLeftCoord = mainLineRef.current!.getBoundingClientRect().left;
       const cursorCoordXOnMove = onMoveEvent.clientX;
       const buttonLeftInPx = cursorCoordXOnMove - mainLineLeftCoord - cursorDiff;
 
@@ -313,7 +317,7 @@ const FilterPriceForm: React.FC = () => {
 
     function roundButtonOnUp() {
       button.removeEventListener('pointermove', roundButtonOnMove);
-      formRef.current.requestSubmit();
+      formRef.current!.requestSubmit();
 
       if (filterMenuHasScroll) {
         filterMenu.style.overflowY = 'scroll';
@@ -322,34 +326,35 @@ const FilterPriceForm: React.FC = () => {
 
     button.addEventListener('pointermove', roundButtonOnMove);
     button.addEventListener('pointerup', roundButtonOnUp, { once: true });
-  }
+  };
 
-  function formOnSubmit(e) {
+  function formOnSubmit(e: FormEvent) {
     e.preventDefault();
 
-    searchParams.set('minPrice', currentMinPrice);
-    searchParams.set('maxPrice', currentMaxPrice);
+    searchParams.set('minPrice', String(currentMinPrice));
+    searchParams.set('maxPrice', String(currentMaxPrice));
 
     setSearchParams(searchParams);
   }
 
-  function inputOnInput(e) {
-    const inputType = e.target.name;
-    const { value } = e.target;
+  const inputOnInput: FormEventHandler<HTMLInputElement> = (e) => {
+    const inputType = (e.target as HTMLInputElement).name;
+    const { value } = e.target as HTMLInputElement;
 
     if (inputType === 'minPrice') {
       setMinInputValue(value);
     } else {
       setMaxInputValue(value);
     }
-  }
+  };
 
-  function inputOnKeyDown(e) {
+  const inputOnKeyDown: KeyboardEventHandler<HTMLInputElement> = (e) => {
     if (e.code === 'Enter') {
       setFormWasInteracted(true);
 
-      const inputType = e.target.name;
-      let value = Number(e.target.value);
+      const input = e.target as HTMLInputElement;
+      const inputType = input.name;
+      let value = Number(input.value);
 
       if (inputType === 'minPrice' && value > currentMaxPrice) {
         value = currentMaxPrice;
@@ -362,21 +367,21 @@ const FilterPriceForm: React.FC = () => {
       }
 
       if (inputType === 'minPrice') {
-        setMinInputValue(value);
+        setMinInputValue(String(value));
         setCurrentMinPrice(value);
       } else {
-        setMaxInputValue(value);
+        setMaxInputValue(String(value));
         setCurrentMaxPrice(value);
       }
 
       setTimeout(() => {
-        formRef.current.requestSubmit();
+        formRef.current!.requestSubmit();
       }, 0);
     }
-  }
+  };
 
-  function roundButtonOnKeyDown(e) {
-    const { buttonType } = e.target.dataset;
+  const roundButtonOnKeyDown: KeyboardEventHandler<HTMLButtonElement> = (e) => {
+    const { buttonType } = (e.target as HTMLButtonElement).dataset;
 
     if (e.code === 'ArrowUp' || e.code === 'ArrowRight') {
       e.preventDefault();
@@ -388,14 +393,14 @@ const FilterPriceForm: React.FC = () => {
         if (newCurrentMin > currentMaxPrice) newCurrentMin = currentMaxPrice;
 
         setCurrentMinPrice(newCurrentMin);
-        setMinInputValue(newCurrentMin);
+        setMinInputValue(String(newCurrentMin));
       } else {
         let newCurrentMax = currentMaxPrice + 1;
 
         if (newCurrentMax > totalMaxPrice) newCurrentMax = totalMaxPrice;
 
         setCurrentMaxPrice(newCurrentMax);
-        setMaxInputValue(newCurrentMax);
+        setMaxInputValue(String(newCurrentMax));
       }
     } else if (e.code === 'ArrowDown' || e.code === 'ArrowLeft') {
       e.preventDefault();
@@ -407,14 +412,14 @@ const FilterPriceForm: React.FC = () => {
         if (newCurrentMin < totalMinPrice) newCurrentMin = totalMinPrice;
 
         setCurrentMinPrice(newCurrentMin);
-        setMinInputValue(newCurrentMin);
+        setMinInputValue(String(newCurrentMin));
       } else {
         let newCurrentMax = currentMaxPrice - 1;
 
         if (newCurrentMax < currentMinPrice) newCurrentMax = currentMinPrice;
 
         setCurrentMaxPrice(newCurrentMax);
-        setMaxInputValue(newCurrentMax);
+        setMaxInputValue(String(newCurrentMax));
       }
     } else if (e.code === 'PageUp') {
       e.preventDefault();
@@ -428,14 +433,14 @@ const FilterPriceForm: React.FC = () => {
         if (newCurrentMin > currentMaxPrice) newCurrentMin = currentMaxPrice;
 
         setCurrentMinPrice(newCurrentMin);
-        setMinInputValue(newCurrentMin);
+        setMinInputValue(String(newCurrentMin));
       } else {
         let newCurrentMax = Number((currentMaxPrice + fivePercentValue).toFixed(0));
 
         if (newCurrentMax > totalMaxPrice) newCurrentMax = totalMaxPrice;
 
         setCurrentMaxPrice(newCurrentMax);
-        setMaxInputValue(newCurrentMax);
+        setMaxInputValue(String(newCurrentMax));
       }
     } else if (e.code === 'PageDown') {
       e.preventDefault();
@@ -449,14 +454,14 @@ const FilterPriceForm: React.FC = () => {
         if (newCurrentMin < totalMinPrice) newCurrentMin = totalMinPrice;
 
         setCurrentMinPrice(newCurrentMin);
-        setMinInputValue(newCurrentMin);
+        setMinInputValue(String(newCurrentMin));
       } else {
         let newCurrentMax = Number((currentMaxPrice - fivePercentValue).toFixed(0));
 
         if (newCurrentMax < currentMinPrice) newCurrentMax = currentMinPrice;
 
         setCurrentMaxPrice(newCurrentMax);
-        setMaxInputValue(newCurrentMax);
+        setMaxInputValue(String(newCurrentMax));
       }
     } else if (e.code === 'Home') {
       e.preventDefault();
@@ -466,12 +471,12 @@ const FilterPriceForm: React.FC = () => {
         const newCurrentMin = currentMaxPrice;
 
         setCurrentMinPrice(newCurrentMin);
-        setMinInputValue(newCurrentMin);
+        setMinInputValue(String(newCurrentMin));
       } else {
         const newCurrentMax = totalMaxPrice;
 
         setCurrentMaxPrice(newCurrentMax);
-        setMaxInputValue(newCurrentMax);
+        setMaxInputValue(String(newCurrentMax));
       }
     } else if (e.code === 'End') {
       e.preventDefault();
@@ -481,15 +486,15 @@ const FilterPriceForm: React.FC = () => {
         const newCurrentMin = totalMinPrice;
 
         setCurrentMinPrice(newCurrentMin);
-        setMinInputValue(newCurrentMin);
+        setMinInputValue(String(newCurrentMin));
       } else {
         const newCurrentMax = currentMinPrice;
 
         setCurrentMaxPrice(newCurrentMax);
-        setMaxInputValue(newCurrentMax);
+        setMaxInputValue(String(newCurrentMax));
       }
     }
-  }
+  };
 
   return (
     <form

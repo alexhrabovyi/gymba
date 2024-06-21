@@ -8,7 +8,7 @@ import useOnResize from '../../hooks/useOnResize';
 import ProductCard from '../ProductCard/ProductCard';
 import Spinner from '../common/Spinner/Spinner';
 import DynamicImage from '../common/DynamicImage/DynamicImage';
-import PaginationBlock from '../PaginationBlock/PaginationBlock.jsx';
+import PaginationBlock from '../PaginationBlock/PaginationBlock';
 import containerCls from '../../scss/_container.module.scss';
 import textCls from '../../scss/_text.module.scss';
 import searchCls from './Search.module.scss';

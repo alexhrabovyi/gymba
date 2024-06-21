@@ -1,5 +1,6 @@
 import {
   memo, useState, Fragment, useCallback, useLayoutEffect, useEffect, useRef,
+  ReactNode,
 } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import classNames from 'classnames';
@@ -7,12 +8,17 @@ import paginationCls from './PaginationBlock.module.scss';
 import ThreeDots from './images/threeDots.svg';
 import useOnResize from '../../hooks/useOnResize';
 
-const PaginationBlock = memo(({ pageAmount, elemToScrollRef }) => {
+interface PaginationBlockProps {
+  pageAmount: number,
+  elemToScrollRef?: React.MutableRefObject<HTMLElement | null>,
+}
+
+const PaginationBlock = memo<PaginationBlockProps>(({ pageAmount, elemToScrollRef }) => {
   const [searchParams, setSearchParams] = useSearchParams();
 
-  const formRef = useRef(null);
+  const formRef = useRef<HTMLFormElement | null>(null);
 
-  const [windowWidth, setWindowWidth] = useState();
+  const [windowWidth, setWindowWidth] = useState<number>(0);
 
   const getWindowWidth = useCallback(() => {
     setWindowWidth(window.innerWidth);
@@ -24,9 +30,9 @@ const PaginationBlock = memo(({ pageAmount, elemToScrollRef }) => {
 
   useOnResize(getWindowWidth);
 
-  const [currentPageNum, setCurrentPageNum] = useState(() => {
+  const [currentPageNum, setCurrentPageNum] = useState<number>(() => {
     if (searchParams.has('page')) {
-      return +searchParams.get('page');
+      return +searchParams.get('page')!;
     }
 
     return 1;
@@ -40,7 +46,7 @@ const PaginationBlock = memo(({ pageAmount, elemToScrollRef }) => {
 
   const onBackForward = useCallback(() => {
     if (searchParams.has('page')) {
-      const searchParamValue = +searchParams.get('page');
+      const searchParamValue = +searchParams.get('page')!;
 
       if (searchParamValue !== currentPageNum) {
         setCurrentPageNum(searchParamValue);
@@ -52,18 +58,18 @@ const PaginationBlock = memo(({ pageAmount, elemToScrollRef }) => {
 
   useEffect(onBackForward, [onBackForward]);
 
-  function formOnSubmit(e) {
+  const formOnSubmit: React.FormEventHandler<HTMLFormElement> = (e) => {
     e.preventDefault();
 
-    searchParams.set('page', currentPageNum);
+    searchParams.set('page', String(currentPageNum));
     setSearchParams(searchParams);
 
-    elemToScrollRef?.current.scrollIntoView({ block: 'center' });
-  }
+    elemToScrollRef?.current?.scrollIntoView({ block: 'center' });
+  };
 
-  let additionalBtnsAvailable;
-  let additionalStartBtnNeeded;
-  let additionalEndBtnNeeded;
+  let additionalBtnsAvailable: boolean;
+  let additionalStartBtnNeeded: boolean;
+  let additionalEndBtnNeeded: boolean;
 
   if (windowWidth > 576) {
     additionalBtnsAvailable = pageAmount > 9;
@@ -75,11 +81,11 @@ const PaginationBlock = memo(({ pageAmount, elemToScrollRef }) => {
     additionalEndBtnNeeded = additionalBtnsAvailable && currentPageNum <= pageAmount - 4;
   }
 
-  let firstMainButtonId;
-  let lastMainButtonId;
+  let firstMainButtonId: number;
+  let lastMainButtonId: number;
 
-  let additionalStartBtnId;
-  let additionalEndBtnId;
+  let additionalStartBtnId: number;
+  let additionalEndBtnId: number;
 
   if (windowWidth > 576) {
     if (additionalBtnsAvailable && !additionalStartBtnNeeded) {
@@ -119,25 +125,25 @@ const PaginationBlock = memo(({ pageAmount, elemToScrollRef }) => {
     }
   }
 
-  const buttons = [];
+  const buttons: ReactNode[] = [];
 
-  for (let i = firstMainButtonId; i <= lastMainButtonId; i += 1) {
+  for (let i = firstMainButtonId!; i <= lastMainButtonId!; i += 1) {
     buttons.push((
       <Fragment key={i}>
         <button
           type="submit"
-          id={i}
+          id={String(i)}
           onClick={() => setCurrentPageNum(i)}
           className={classNames(
             paginationCls.paginationButton,
             i === currentPageNum && paginationCls.paginationButton_active,
           )}
-          style={{ borderRadius: i === firstMainButtonId ? '4px 0 0 4px' : i === lastMainButtonId ? '0px 4px 4px 0' : '' }}
+          style={{ borderRadius: i === firstMainButtonId! ? '4px 0 0 4px' : i === lastMainButtonId! ? '0px 4px 4px 0' : '' }}
           aria-label={`Перейти на сторінку товарів ${i}`}
         >
           {i}
         </button>
-        {i !== lastMainButtonId && (
+        {i !== lastMainButtonId! && (
           <span className={paginationCls.greyLine} />
         )}
       </Fragment>
@@ -154,12 +160,12 @@ const PaginationBlock = memo(({ pageAmount, elemToScrollRef }) => {
         <>
           <button
             type="submit"
-            id={1}
+            id="1"
             onClick={() => {
               setCurrentPageNum(1);
-              searchParams.set('page', 1);
+              searchParams.set('page', '1');
               setSearchParams(searchParams);
-              elemToScrollRef?.current.scrollIntoView();
+              elemToScrollRef?.current?.scrollIntoView();
             }}
             className={classNames(
               paginationCls.paginationButton,
@@ -171,15 +177,15 @@ const PaginationBlock = memo(({ pageAmount, elemToScrollRef }) => {
           </button>
           <button
             type="submit"
-            id={additionalStartBtnId}
+            id={String(additionalStartBtnId!)}
             onClick={() => {
               setCurrentPageNum(additionalStartBtnId);
-              searchParams.set('page', additionalStartBtnId);
+              searchParams.set('page', String(additionalStartBtnId!));
               setSearchParams(searchParams);
-              elemToScrollRef?.current.scrollIntoView();
+              elemToScrollRef?.current?.scrollIntoView();
             }}
             className={paginationCls.additionalButton}
-            aria-label={`Перейти на сторінку товарів ${additionalStartBtnId}`}
+            aria-label={`Перейти на сторінку товарів ${additionalStartBtnId!}`}
           >
             <ThreeDots className={paginationCls.icon} />
           </button>
@@ -190,26 +196,26 @@ const PaginationBlock = memo(({ pageAmount, elemToScrollRef }) => {
         <>
           <button
             type="submit"
-            id={additionalEndBtnId}
+            id={String(additionalEndBtnId!)}
             onClick={() => {
               setCurrentPageNum(additionalEndBtnId);
-              searchParams.set('page', additionalEndBtnId);
+              searchParams.set('page', String(additionalEndBtnId!));
               setSearchParams(searchParams);
-              elemToScrollRef?.current.scrollIntoView();
+              elemToScrollRef?.current?.scrollIntoView();
             }}
             className={paginationCls.additionalButton}
-            aria-label={`Перейти на сторінку товарів ${additionalEndBtnId}`}
+            aria-label={`Перейти на сторінку товарів ${additionalEndBtnId!}`}
           >
             <ThreeDots className={paginationCls.icon} />
           </button>
           <button
             type="submit"
-            id={pageAmount}
+            id={String(pageAmount)}
             onClick={() => {
               setCurrentPageNum(pageAmount);
-              searchParams.set('page', pageAmount);
+              searchParams.set('page', String(pageAmount));
               setSearchParams(searchParams);
-              elemToScrollRef?.current.scrollIntoView();
+              elemToScrollRef?.current?.scrollIntoView();
             }}
             className={classNames(
               paginationCls.paginationButton,

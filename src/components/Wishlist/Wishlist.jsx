@@ -8,7 +8,7 @@ import { queryAPI, useGetWishlistProductsQuery, useDeleteAllWishlistIdsMutation 
 import ProductCard from '../ProductCard/ProductCard';
 import SkeletonProductCard from '../SkeletonProductCard/SkeletonProductCard';
 import ThreeDotsSpinnerBlock from '../common/ThreeDotsSpinnerBlock/ThreeDotsSpinnerBlock';
-import PaginationBlock from '../PaginationBlock/PaginationBlock.jsx';
+import PaginationBlock from '../PaginationBlock/PaginationBlock';
 import containerCls from '../../scss/_container.module.scss';
 import textCls from '../../scss/_text.module.scss';
 import wishlistCls from './Wishlist.module.scss';
