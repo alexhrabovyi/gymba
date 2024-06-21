@@ -96,6 +96,10 @@ export interface ProductCard {
   }
 }
 
+export interface CartProduct extends ProductCard {
+  amount: number,
+}
+
 export type WishlistId = [string, string, string];
 
 export type CompareId = [string, string, string];
@@ -696,13 +700,18 @@ export function addIdToCart(
   return addIdToStorage<CartId>('cartIds', newIdEntitity, findFunc);
 }
 
-export async function editProductAmountInCart(categoryId, subcategoryId, productId, newAmount) {
+export async function editProductAmountInCart(
+  categoryId: string,
+  subcategoryId: string,
+  productId: string,
+  newAmount: number,
+): Promise<Response> {
   await fakeNetwork();
 
-  const cartIds = getLocalStorageIds('cartIds');
+  const cartIds = getLocalStorageIds<CartId>('cartIds');
 
   const cartObj = cartIds.find((cId) => cId.categoryId === categoryId
-    && cId.subcategoryId === subcategoryId && cId.productId === productId);
+    && cId.subcategoryId === subcategoryId && cId.productId === productId)!;
   cartObj.amount = newAmount;
 
   localStorage.setItem('cartIds', JSON.stringify(cartIds));
@@ -727,17 +736,19 @@ export async function deleteAllFromCart(): Promise<Response> {
   return deleteAllFromStorage('cartIds');
 }
 
-export async function getCartProducts() {
+export async function getCartProducts(): Promise<CartProduct[]> {
   await fakeNetwork();
 
-  const cartIds = getLocalStorageIds('cartIds');
+  const cartIds = getLocalStorageIds<CartId>('cartIds');
 
-  return cartIds.map((idObj) => {
+  const cartProductObjs: CartProduct[] = cartIds.map((idObj) => {
     const productObj = getProductCard(idObj.categoryId, idObj.subcategoryId, idObj.productId);
-    productObj.amount = idObj.amount;
+    const cartProductObj: CartProduct = Object.assign(productObj, { amount: idObj.amount });
 
-    return productObj;
+    return cartProductObj;
   });
+
+  return cartProductObjs;
 }
 
 export async function getCompareIds() {

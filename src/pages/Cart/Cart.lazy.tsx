@@ -1,5 +1,5 @@
 import { lazy } from 'react';
 
-const CartPageLazy = lazy(() => import('./Cart.jsx'));
+const CartPageLazy = lazy(() => import('./Cart'));
 
 export default CartPageLazy;

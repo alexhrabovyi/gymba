@@ -40,6 +40,7 @@ import {
   ProductWithIdsAndNames,
   Product,
   WishlistProductsAndPageAmout,
+  CartProduct,
 } from './dataAPI';
 
 async function addMutation(
@@ -104,15 +105,15 @@ export const handlers = [
   }),
   http.post('/fakeAPI/cartIds', async ({ request }) => addMutation(request, addIdToCart)),
   http.patch('/fakeAPI/cartIds', async ({ request }) => {
-    const [categoryId, subcategoryId, productId, amount] = await request.json();
+    const [categoryId, subcategoryId, productId, amount] = await request.json() as any[];
 
-    return editProductAmountInCart(categoryId, subcategoryId, productId, amount);
+    return editProductAmountInCart(categoryId as string, subcategoryId as string, productId as string, Number(amount));
   }),
   http.delete('/fakeAPI/cartIds', async ({ request }) => deleteMutation(request, deleteFromCart, deleteAllFromCart)),
   http.get('/fakeAPI/getCartProducts', async () => {
     const cartProducts = await getCartProducts();
 
-    return HttpResponse.json(cartProducts);
+    return HttpResponse.json<CartProduct[]>(cartProducts);
   }),
   http.get('/fakeAPI/compareIds', async () => {
     const compareIds = await getCompareIds();

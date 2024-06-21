@@ -3,7 +3,7 @@ import { useDispatch } from 'react-redux';
 import classNames from 'classnames';
 import { queryAPI, useGetCartProductsQuery, useDeleteAllCartIdsMutation } from '../../queryAPI/queryAPI';
 import beautifyNum from '../../utils/beautifyNum';
-import CartProduct from './CartProduct/CartProduct.jsx';
+import CartProduct from './CartProduct/CartProduct';
 import Button from '../common/Button/Button';
 import containerCls from '../../scss/_container.module.scss';
 import textCls from '../../scss/_text.module.scss';
@@ -11,16 +11,17 @@ import cartCls from './Cart.module.scss';
 import BinIcon from '../../assets/images/icons/bin.svg';
 import Line from '../../assets/images/icons/oblique.svg';
 import ThreeDotsSpinnerBlock from '../common/ThreeDotsSpinnerBlock/ThreeDotsSpinnerBlock';
+import { CartProduct as CartProductType } from '../../utils/dataAPI';
 
-export default function Cart() {
+const Cart: React.FC = () => {
   const dispatch = useDispatch();
 
   const [deleteAllRequest] = useDeleteAllCartIdsMutation();
 
-  const [cartProducts, setCartProducts] = useState(null);
+  const [cartProducts, setCartProducts] = useState<CartProductType[] | null>(null);
 
   const totalPrice = useMemo(() => (cartProducts
-    ?.reduce((acc, pObj) => acc + pObj.amount * pObj.product.price, 0)), [cartProducts]);
+    ?.reduce((acc, pObj) => acc + pObj.amount * +pObj.product.price, 0)), [cartProducts]);
 
   const { data: fetcherData } = useGetCartProductsQuery();
 
@@ -31,11 +32,11 @@ export default function Cart() {
   }
 
   function deleteAllBtnOnClick() {
-    deleteAllRequest();
+    deleteAllRequest('');
 
     dispatch(queryAPI.util.updateQueryData('getCartProducts', undefined, (draft) => {
       draft.splice(0);
-    }));
+    }) as any);
   }
 
   const products = useMemo(() => {
@@ -51,7 +52,7 @@ export default function Cart() {
         price={cP.product.price}
         oldPrice={cP.product.oldPrice}
         amount={cP.amount}
-        totalPrice={cP.amount * cP.product.price}
+        totalPrice={cP.amount * +cP.product.price}
       />
     ));
   }, [cartProducts]);
@@ -76,17 +77,17 @@ export default function Cart() {
           Кошик
         </h1>
         {products && products.length > 0 && (
-        <button
-          type="button"
-          className={cartCls.deleteBtn}
-          onClick={deleteAllBtnOnClick}
-          aria-label="Видалити все"
-        >
-          <BinIcon
-            className={cartCls.binIcon}
-          />
-          Видалити все
-        </button>
+          <button
+            type="button"
+            className={cartCls.deleteBtn}
+            onClick={deleteAllBtnOnClick}
+            aria-label="Видалити все"
+          >
+            <BinIcon
+              className={cartCls.binIcon}
+            />
+            Видалити все
+          </button>
         )}
       </div>
       <div className={cartCls.productBlock}>
@@ -120,40 +121,42 @@ export default function Cart() {
         )}
       </div>
       {products && products.length > 0 && (
-      <div className={cartCls.totalPriceAndCheckoutBtnBlock}>
-        <div className={cartCls.totalPriceBlock}>
-          <p className={classNames(
-            textCls.text,
-            textCls.textBlack,
-          )}
-          >
-            {`${products.length} товар(и) на суму`}
-          </p>
-          <p className={classNames(
-            textCls.text,
-            textCls.textFw800,
-            textCls.text38px,
-            textCls.textBlack,
-          )}
-          >
-            {beautifyNum(totalPrice)}
-            <span className={classNames(
+        <div className={cartCls.totalPriceAndCheckoutBtnBlock}>
+          <div className={cartCls.totalPriceBlock}>
+            <p className={classNames(
               textCls.text,
               textCls.textBlack,
-              cartCls.totalPriceSpan,
             )}
             >
-              ₴
-            </span>
-          </p>
+              {`${products.length} товар(и) на суму`}
+            </p>
+            <p className={classNames(
+              textCls.text,
+              textCls.textFw800,
+              textCls.text38px,
+              textCls.textBlack,
+            )}
+            >
+              {beautifyNum(Number(totalPrice))}
+              <span className={classNames(
+                textCls.text,
+                textCls.textBlack,
+                cartCls.totalPriceSpan,
+              )}
+              >
+                ₴
+              </span>
+            </p>
+          </div>
+          <Button
+            className={cartCls.checkoutButton}
+          >
+            Оформити замовлення
+          </Button>
         </div>
-        <Button
-          className={cartCls.checkoutButton}
-        >
-          Оформити замовлення
-        </Button>
-      </div>
       )}
     </main>
   );
-}
+};
+
+export default Cart;

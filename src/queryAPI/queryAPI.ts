@@ -2,6 +2,7 @@ import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 import { EntityState, createEntityAdapter } from '@reduxjs/toolkit';
 import type {
   CartId,
+  CartProduct,
   CategoryShort,
   CompareId,
   FilteredProductsAndMinMaxPrice,
@@ -253,7 +254,7 @@ export const queryAPI = createApi(
           },
         },
       ),
-      getCartProducts: builder.query({
+      getCartProducts: builder.query<CartProduct[], void>({
         query: () => '/getCartProducts',
         providesTags: ['cartProducts'],
       }),

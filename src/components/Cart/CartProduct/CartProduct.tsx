@@ -10,9 +10,20 @@ import linkCls from '../../../scss/_link.module.scss';
 import productCls from './CartProduct.module.scss';
 import BinIcon from '../../../assets/images/icons/bin.svg';
 
-export default function CartProduct({
+interface CartProductProps {
+  categoryId: string,
+  subcategoryId: string,
+  productId: string,
+  name: string,
+  price: string,
+  oldPrice?: string,
+  amount: number,
+  totalPrice: number,
+}
+
+const CartProduct: React.FC<CartProductProps> = ({
   categoryId, subcategoryId, productId, name, price, oldPrice, amount, totalPrice,
-}) {
+}) => {
   const dispatch = useDispatch();
 
   const [deleteProductIdRequest] = useDeleteCartIdMutation();
@@ -20,16 +31,16 @@ export default function CartProduct({
 
   const [imgSrc] = useState(() => import(`../../../assets/images/productImgs/${productId}.webp`));
 
-  function submitNewAmount(newAmount) {
+  function submitNewAmount(newAmount: number) {
     const data = JSON.stringify([categoryId, subcategoryId, productId, newAmount]);
     editProductAmountRequest(data);
 
     dispatch(queryAPI.util.updateQueryData('getCartProducts', undefined, (draft) => {
       const productObj = draft.find((p) => p.categoryId === categoryId
-        && p.subcategoryId === subcategoryId && p.product.id === productId);
+        && p.subcategoryId === subcategoryId && p.product.id === productId)!;
 
       productObj.amount = newAmount;
-    }));
+    }) as any);
   }
 
   function deleteBtnOnClick() {
@@ -41,7 +52,7 @@ export default function CartProduct({
         && p.subcategoryId === subcategoryId && p.product.id === productId);
 
       draft.splice(index, 1);
-    }));
+    }) as any);
   }
 
   return (
@@ -49,7 +60,6 @@ export default function CartProduct({
       <Link
         to={`/${categoryId}/${subcategoryId}/${productId}`}
         className={productCls.imgLink}
-        alt={name}
       >
         <Suspense
           fallback={<Spinner className={productCls.spinner} />}
@@ -74,13 +84,13 @@ export default function CartProduct({
       </Link>
       <div className={productCls.priceBlock}>
         {oldPrice && (
-        <p className={productCls.oldPrice}>
-          {oldPrice}
-          ₴/шт
-        </p>
+          <p className={productCls.oldPrice}>
+            {oldPrice}
+            ₴/шт
+          </p>
         )}
         <p className={productCls.price}>
-          {beautifyNum(price)}
+          {beautifyNum(Number(price))}
           <span className={productCls.priceSpan}>₴/шт</span>
         </p>
       </div>
@@ -135,4 +145,6 @@ export default function CartProduct({
       </button>
     </div>
   );
-}
+};
+
+export default CartProduct;
