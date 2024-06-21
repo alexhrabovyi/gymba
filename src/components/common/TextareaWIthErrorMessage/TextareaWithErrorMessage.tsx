@@ -1,9 +1,19 @@
 import { memo } from 'react';
 import classNames from 'classnames';
-import Textarea from '../Textarea/Textarea.jsx';
+import Textarea from '../Textarea/Textarea';
 import textareaCls from './TextareaWithErrorMessage.module.scss';
 
-const TextAreaWithErrorMessage = memo(({
+interface TextAreaWithErrorMessageProps {
+  name: string,
+  textareaBlockClassName: string,
+  textareaClassName: string,
+  placeholder: string,
+  id?: string,
+  required: boolean,
+  textareaType: string,
+}
+
+const TextAreaWithErrorMessage = memo<TextAreaWithErrorMessageProps>(({
   name, textareaBlockClassName, textareaClassName, placeholder, id, required, textareaType,
 }) => (
   <div

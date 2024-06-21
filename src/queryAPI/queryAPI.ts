@@ -6,10 +6,13 @@ import type {
   CompareId,
   FilteredProductsAndMinMaxPrice,
   NewsArticlesWithAmount,
+  Product,
   ProductWithIds,
+  ProductWithIdsAndNames,
   SearchResults,
   WishlistId,
 } from '../utils/dataAPI';
+import { AnyAaaaRecord } from 'dns';
 
 const categoriesAdapter = createEntityAdapter<CategoryShort>();
 
@@ -331,7 +334,7 @@ export const queryAPI = createApi(
                   draft.splice(0);
                 } else {
                   const [categoryId, subcategoryId] = request;
-                  const index = draft.findIndex((subcObj) => (
+                  const index = draft.findIndex((subcObj: AnyAaaaRecord) => (
                     subcObj.categoryId === categoryId && subcObj.subcategoryId === subcategoryId
                   ));
                   draft.splice(index, 1);
@@ -363,11 +366,11 @@ export const queryAPI = createApi(
         query: (articleId) => `/getRecommendedNews/${articleId}`,
         providesTags: ['recommendedNews'],
       }),
-      getProduct: builder.query({
+      getProduct: builder.query<ProductWithIdsAndNames, string>({
         query: (partialUrl) => `/getProduct/${partialUrl}`,
         providesTags: ['product'],
       }),
-      getAnalogueProducts: builder.query({
+      getAnalogueProducts: builder.query<Product[], string>({
         query: (partialUrl) => `/getAnalogueProducts/${partialUrl}`,
         providesTags: ['analogueProducts'],
       }),

@@ -3,7 +3,12 @@ import { Link } from 'react-router-dom';
 import classNames from 'classnames';
 import bannerCls from './AddToCartBanner.module.scss';
 
-export default function AddToCartBanner({ isActive = false, setIsActive }) {
+interface AddToCartBannerProps {
+  isActive: boolean,
+  setIsActive: React.Dispatch<React.SetStateAction<boolean>>,
+}
+
+const AddToCartBanner: React.FC<AddToCartBannerProps> = ({ isActive = false, setIsActive }) => {
   const addCloseEvent = useCallback(() => {
     if (isActive) {
       setTimeout(() => {
@@ -34,12 +39,13 @@ export default function AddToCartBanner({ isActive = false, setIsActive }) {
       <Link
         className={bannerCls.link}
         to="/cart"
-        alt="Перейти до кошику"
-        tabIndex={isActive ? '0' : '-1'}
+        tabIndex={isActive ? 0 : -1}
         aria-hidden={!isActive}
       >
         Перейти до кошику
       </Link>
     </div>
   );
-}
+};
+
+export default AddToCartBanner;

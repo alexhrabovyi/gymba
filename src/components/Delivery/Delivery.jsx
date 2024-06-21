@@ -2,8 +2,8 @@
 import { useRef, useState } from 'react';
 import classNames from 'classnames';
 import LinkWithArrow from '../common/LinkWithArrow/LinkWithArrow';
-import AskQuestionBanner from '../common/AskQuestionBanner/AskQuestionBanner.jsx';
-import AskQuestionPopup from '../common/AskQuestionPopup/AskQuestionPopup.jsx';
+import AskQuestionBanner from '../common/AskQuestionBanner/AskQuestionBanner';
+import AskQuestionPopup from '../common/AskQuestionPopup/AskQuestionPopup';
 import containerCls from '../../scss/_container.module.scss';
 import textCls from '../../scss/_text.module.scss';
 import deliveryCls from './Delivery.module.scss';

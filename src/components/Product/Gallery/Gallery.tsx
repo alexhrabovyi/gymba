@@ -14,18 +14,27 @@ import useToggleInteractiveElements from '../../../hooks/useToggleInteractiveEle
 import backdropCls from '../../../scss/_backdrop.module.scss';
 import galleryCls from './Gallery.module.scss';
 
-const Gallery = memo(({
+interface GalleryProps {
+  imgIds: string[],
+  isOpen: boolean,
+  setIsOpen: React.Dispatch<React.SetStateAction<boolean>>,
+  activeSlideId: number,
+  setActiveSlideId: React.Dispatch<React.SetStateAction<number>>,
+  productName: string,
+}
+
+const Gallery = memo<GalleryProps>(({
   imgIds, isOpen = false, setIsOpen, activeSlideId, setActiveSlideId, productName,
 }) => {
-  const backdropRef = useRef(null);
-  const sliderBlockRef = useRef(null);
+  const backdropRef = useRef<HTMLDivElement | null>(null);
+  const sliderBlockRef = useRef<HTMLElement | null>(null);
 
   useHideScrollbarOnOpen(isOpen);
   useToggleInteractiveElements(sliderBlockRef, isOpen);
 
-  function backdropOnClick(e) {
+  const backdropOnClick: React.MouseEventHandler<HTMLDivElement> = (e) => {
     if (e.target === backdropRef.current) setIsOpen(false);
-  }
+  };
 
   const imgSrcs = useMemo(() => imgIds.map((imgId) => import(`../../../assets/images/productImgs/${imgId}.webp`)), [imgIds]);
 
@@ -64,7 +73,7 @@ const Gallery = memo(({
         role="dialog"
         aria-modal
         aria-label={`Галерея зображень ${productName}`}
-        tabIndex={isOpen ? '0' : '-1'}
+        tabIndex={isOpen ? 0 : -1}
       >
         <Slider
           slides={slides}

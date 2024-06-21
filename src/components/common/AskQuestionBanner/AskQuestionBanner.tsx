@@ -1,11 +1,19 @@
-import { forwardRef } from 'react';
+import { ForwardedRef, forwardRef } from 'react';
 import classNames from 'classnames';
 import Button from '../Button/Button';
 import textCls from '../../../scss/_text.module.scss';
 import bannerCls from './AskQuestionBanner.module.scss';
 import InfoIcon from './images/info.svg';
 
-const AskQuestionBannerAndPopup = forwardRef(({ title, subtitle, btnOnClick }, ref) => (
+interface BannerProps {
+  title: string,
+  subtitle: string,
+  btnOnClick: React.MouseEventHandler,
+}
+
+const AskQuestionBannerAndPopup = forwardRef<HTMLButtonElement, BannerProps>(({
+  title, subtitle, btnOnClick,
+}, ref) => (
   <div className={bannerCls.banner}>
     <InfoIcon className={bannerCls.infoIcon} />
     <p className={classNames(

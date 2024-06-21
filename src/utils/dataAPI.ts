@@ -3,7 +3,7 @@ import news from './news.json';
 
 // types
 
-interface Product {
+export interface Product {
   name: string,
   id: string,
   price: string,
@@ -76,6 +76,11 @@ export interface ProductWithIds {
   categoryId: Category['id'],
   subcategoryId: Subcategory['id'],
   product: Product,
+}
+
+export interface ProductWithIdsAndNames extends ProductWithIds {
+  categoryName: Category['name'],
+  subcategoryName: Subcategory['name'],
 }
 
 export type WishlistId = [string, string, string];
@@ -188,16 +193,22 @@ function getProductCard(categoryId, subcategoryId, productId) {
   };
 }
 
-function getProductFullObj(categoryId, subcategoryId, productId) {
-  const category = products.categories.entities[categoryId];
+function getProductFullObj(
+  categoryId: string,
+  subcategoryId: string,
+  productId: string,
+): ProductWithIdsAndNames {
+  const parsedJSON: JSON = products;
+
+  const category: Category | undefined = parsedJSON.categories.entities[categoryId];
 
   if (!category) throw new Response(null, { status: 404, statusText: 'Not found' });
 
-  const subcategory = category.subcategories.entities[subcategoryId];
+  const subcategory: Subcategory | undefined = category.subcategories.entities[subcategoryId];
 
   if (!subcategory) throw new Response(null, { status: 404, statusText: 'Not found' });
 
-  const product = subcategory.products.entities[productId];
+  const product: Product | undefined = subcategory.products.entities[productId];
 
   if (!product) throw new Response(null, { status: 404, statusText: 'Not found' });
 
@@ -221,7 +232,7 @@ async function addIdToStorage<E>(
   localStorageKey: string,
   entitityToAdd: E,
   findFunc: (arg: E) => boolean,
-) {
+): Promise<Response> {
   await fakeNetwork();
 
   const ids = localStorage.getItem(localStorageKey);
@@ -247,10 +258,15 @@ async function addIdToStorage<E>(
   return new Response(null, { status: 200, statusText: 'OK' });
 }
 
-async function deleteIdFromStorage(localStorageKey, findFunc) {
+async function deleteIdFromStorage<E>(
+  localStorageKey: string,
+  findFunc: (arg: E) => boolean,
+) {
   await fakeNetwork();
 
-  const ids = JSON.parse(localStorage.getItem(localStorageKey)) || [];
+  const unparsedIds = localStorage.getItem(localStorageKey);
+
+  const ids: E[] = unparsedIds ? JSON.parse(unparsedIds) : [];
 
   const index = ids.findIndex(findFunc);
 
@@ -261,7 +277,7 @@ async function deleteIdFromStorage(localStorageKey, findFunc) {
   return new Response(null, { status: 200, statusText: 'OK' });
 }
 
-function deleteAllFromStorage(localStorageKey) {
+function deleteAllFromStorage(localStorageKey: string): Response {
   localStorage.removeItem(localStorageKey);
 
   return new Response(null, { status: 200, statusText: 'OK' });
@@ -542,25 +558,38 @@ export async function getFilteredProductsAndMinMaxPrice(
   };
 }
 
-export async function getProduct(categoryId, subcategoryId, productId) {
+export async function getProduct(
+  categoryId: string,
+  subcategoryId: string,
+  productId: string,
+): Promise<ProductWithIdsAndNames> {
   await fakeNetwork();
 
-  const product = getProductFullObj(categoryId, subcategoryId, productId);
-
-  return new Response(JSON.stringify(product), { status: 200, statusText: 'OK' });
+  return getProductFullObj(categoryId, subcategoryId, productId);
 }
 
-export async function getAnalogueProducts(categoryId, subcategoryId, productId) {
+export async function getAnalogueProducts(
+  categoryId: string,
+  subcategoryId: string,
+  productId: string,
+): Promise<Product[]> {
   await fakeNetwork();
 
-  const category = products.categories.entities[categoryId];
+  const parsedJSON: JSON = products;
+  const category: Category | undefined = parsedJSON.categories.entities[categoryId];
+
+  if (!category) throw new Response(null, { status: 404, statusText: 'Not found' });
+
   const subcategory = category.subcategories.entities[subcategoryId];
+
+  if (!subcategory) throw new Response(null, { status: 404, statusText: 'Not found' });
+
   const subcategoryProducts = Object.values(subcategory.products.entities)
-    .filter((p) => p.id !== productId);
+    .filter((p) => p!.id !== productId) as Product[];
 
   const randomProducts = (subcategoryProducts.sort(() => 0.5 - Math.random())).slice(0, 8);
 
-  return new Response(JSON.stringify(randomProducts), { status: 200, statusText: 'OK' });
+  return randomProducts;
 }
 
 export async function getWishlistIds() {
@@ -570,24 +599,22 @@ export async function getWishlistIds() {
 }
 
 export function addIdToWishlist(categoryId: string, subcategoryId: string, productId: string) {
-  type NewIdEntitity = [string, string, string]
+  const newIdEntitity: WishlistId = [categoryId, subcategoryId, productId];
 
-  const newIdEntitity: NewIdEntitity = [categoryId, subcategoryId, productId];
-
-  const findFunc = ([cId, subcId, pId]: NewIdEntitity) => (cId === categoryId
+  const findFunc = ([cId, subcId, pId]: WishlistId) => (cId === categoryId
     && subcId === subcategoryId && pId === productId);
 
-  return addIdToStorage<NewIdEntitity>('wishlistIds', newIdEntitity, findFunc);
+  return addIdToStorage<WishlistId>('wishlistIds', newIdEntitity, findFunc);
 }
 
-export function deleteIdFromWishlist(categoryId, subcategoryId, productId) {
-  const findFunction = ([cId, subcId, pId]) => (cId === categoryId
+export function deleteIdFromWishlist(categoryId: string, subcategoryId: string, productId: string) {
+  const findFunction = ([cId, subcId, pId]: WishlistId) => (cId === categoryId
     && subcId === subcategoryId && pId === productId);
 
-  return deleteIdFromStorage('wishlistIds', findFunction);
+  return deleteIdFromStorage<WishlistId>('wishlistIds', findFunction);
 }
 
-export async function deleteAllFromWishlist() {
+export async function deleteAllFromWishlist(): Promise<Response> {
   await fakeNetwork();
 
   return deleteAllFromStorage('wishlistIds');
@@ -623,17 +650,21 @@ export async function getCartIds() {
   return getLocalStorageIds<CartId>('cartIds');
 }
 
-export function addIdToCart(categoryId, subcategoryId, productId) {
-  const newIdEntitity = {
+export function addIdToCart(
+  categoryId: string,
+  subcategoryId: string,
+  productId: string,
+): Promise<Response> {
+  const newIdEntitity: CartId = {
     categoryId,
     subcategoryId,
     productId,
     amount: 1,
   };
-  const findFunc = (cId) => (cId.categoryId === categoryId
+  const findFunc = (cId: CartId) => (cId.categoryId === categoryId
     && cId.subcategoryId === subcategoryId && cId.productId === productId);
 
-  return addIdToStorage('cartIds', newIdEntitity, findFunc);
+  return addIdToStorage<CartId>('cartIds', newIdEntitity, findFunc);
 }
 
 export async function editProductAmountInCart(categoryId, subcategoryId, productId, newAmount) {
@@ -650,14 +681,18 @@ export async function editProductAmountInCart(categoryId, subcategoryId, product
   return new Response(null, { status: 200, statusText: 'OK' });
 }
 
-export function deleteFromCart(categoryId, subcategoryId, productId) {
-  const findFunction = (cId) => (cId.categoryId === categoryId
+export function deleteFromCart(
+  categoryId: string,
+  subcategoryId: string,
+  productId: string,
+): Promise<Response> {
+  const findFunction = (cId: CartId) => (cId.categoryId === categoryId
     && cId.subcategoryId === subcategoryId && cId.productId === productId);
 
-  return deleteIdFromStorage('cartIds', findFunction);
+  return deleteIdFromStorage<CartId>('cartIds', findFunction);
 }
 
-export async function deleteAllFromCart() {
+export async function deleteAllFromCart(): Promise<Response> {
   await fakeNetwork();
 
   return deleteAllFromStorage('cartIds');
@@ -682,19 +717,27 @@ export async function getCompareIds() {
   return getLocalStorageIds<CompareId>('compareIds');
 }
 
-export function addIdToCompare(categoryId, subcategoryId, productId) {
-  const newIdEntitity = [categoryId, subcategoryId, productId];
-  const findFunc = ([cId, subcId, pId]) => (cId === categoryId
+export function addIdToCompare(
+  categoryId: string,
+  subcategoryId: string,
+  productId: string,
+): Promise<Response> {
+  const newIdEntitity: CompareId = [categoryId, subcategoryId, productId];
+  const findFunc = ([cId, subcId, pId]: CompareId) => (cId === categoryId
     && subcId === subcategoryId && pId === productId);
 
-  return addIdToStorage('compareIds', newIdEntitity, findFunc);
+  return addIdToStorage<CompareId>('compareIds', newIdEntitity, findFunc);
 }
 
-export function deleteFromCompare(categoryId, subcategoryId, productId) {
-  const findFunction = ([cId, subcId, pId]) => (cId === categoryId
+export function deleteFromCompare(
+  categoryId: string,
+  subcategoryId: string,
+  productId: string,
+): Promise<Response> {
+  const findFunction = ([cId, subcId, pId]: CompareId) => (cId === categoryId
     && subcId === subcategoryId && pId === productId);
 
-  return deleteIdFromStorage('compareIds', findFunction);
+  return deleteIdFromStorage<CompareId>('compareIds', findFunction);
 }
 
 export async function getCompareSubcategories() {

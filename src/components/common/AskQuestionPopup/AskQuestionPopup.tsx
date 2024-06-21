@@ -4,18 +4,24 @@ import classNames from 'classnames';
 import Popup from '../Popup/Popup';
 import ValidationForm from '../ValidationForm/ValidationForm';
 import InputWithErrorMessage from '../InputWithErrorMessage/InputWithErrorMessage';
-import TextAreaWithErrorMessage from '../TextareaWIthErrorMessage/TextareaWithErrorMessage.jsx';
+import TextAreaWithErrorMessage from '../TextareaWIthErrorMessage/TextareaWithErrorMessage';
 import Button from '../Button/Button';
 import textCls from '../../../scss/_text.module.scss';
 import linkCls from '../../../scss/_link.module.scss';
 import popupCls from './AskQuestionPopup.module.scss';
 
-const AskQuestionPopup = memo(({ isActive, setIsActive, openButtonRef }) => (
+interface AskQuestionPopupProps {
+  isActive: boolean,
+  setIsActive: React.Dispatch<React.SetStateAction<boolean>>,
+  openButtonRef: React.MutableRefObject<HTMLButtonElement | null>,
+}
+
+const AskQuestionPopup = memo<AskQuestionPopupProps>(({ isActive, setIsActive, openButtonRef }) => (
   <Popup
     isActive={isActive}
     setIsActive={setIsActive}
     label="Вікно задати питання"
-    openButton={openButtonRef.current}
+    openButton={openButtonRef?.current}
   >
     <p
       className={classNames(
@@ -68,7 +74,7 @@ const AskQuestionPopup = memo(({ isActive, setIsActive, openButtonRef }) => (
           Надсилаючи повідомлення ви даєте згоду на обробку&nbsp;
           <Link
             to="/terms"
-            alt="Умови обробки персональних даних"
+            aria-label="Умови обробки персональних даних"
             className={classNames(
               linkCls.link,
               linkCls.link14px,

@@ -1,11 +1,13 @@
 /* eslint-disable react/no-array-index-key */
 /* eslint-disable react/jsx-no-bind */
-import {
+import React, {
   useState, useEffect, Suspense, useMemo, useRef, useCallback, useLayoutEffect,
 } from 'react';
 import {
   useParams, Await, Link,
 } from 'react-router-dom';
+import { MutationTrigger } from '@reduxjs/toolkit/dist/query/react/buildHooks';
+import { MutationDefinition } from '@reduxjs/toolkit/query';
 import classNames from 'classnames';
 import {
   useGetProductQuery,
@@ -26,15 +28,15 @@ import DynamicImage from '../common/DynamicImage/DynamicImage';
 import ThreeDotsSpinnerBlock from '../common/ThreeDotsSpinnerBlock/ThreeDotsSpinnerBlock';
 import Slider from '../common/Slider/Slider';
 import Button from '../common/Button/Button';
-import AddToCartBanner from './AddToCartBanner/AddToCartBanner.jsx';
-import AskQuestionBanner from '../common/AskQuestionBanner/AskQuestionBanner.jsx';
-import RelatedProducts from './RelatedProducts/RelatedProducts.jsx';
+import AddToCartBanner from './AddToCartBanner/AddToCartBanner';
+import AskQuestionBanner from '../common/AskQuestionBanner/AskQuestionBanner';
+import RelatedProducts from './RelatedProducts/RelatedProducts';
 import Popup from '../common/Popup/Popup';
 import ValidationForm from '../common/ValidationForm/ValidationForm';
 import InputWithErrorMessage from '../common/InputWithErrorMessage/InputWithErrorMessage';
-import TextAreaWithErrorMessage from '../common/TextareaWIthErrorMessage/TextareaWithErrorMessage.jsx';
-import AskQuestionPopup from '../common/AskQuestionPopup/AskQuestionPopup.jsx';
-import Gallery from './Gallery/Gallery.jsx';
+import TextAreaWithErrorMessage from '../common/TextareaWIthErrorMessage/TextareaWithErrorMessage';
+import AskQuestionPopup from '../common/AskQuestionPopup/AskQuestionPopup';
+import Gallery from './Gallery/Gallery';
 import containerCls from '../../scss/_container.module.scss';
 import textCls from '../../scss/_text.module.scss';
 import linkCls from '../../scss/_link.module.scss';
@@ -42,27 +44,28 @@ import productCls from './Product.module.scss';
 import Favorite from '../../assets/images/icons/favorite.svg';
 import Compare from '../../assets/images/icons/compare.svg';
 import Line from '../../assets/images/icons/oblique.svg';
+import { ProductWithIdsAndNames } from '../../utils/dataAPI';
 
 export default function Product() {
   const params = useParams();
 
-  const descTabPanelRef = useRef();
-  const commentTabPanelRef = useRef();
-  const openCommentPopupBtnRef = useRef();
-  const openQuestionPopupBtnRef = useRef();
+  const descTabPanelRef = useRef<HTMLDivElement | null>(null);
+  const commentTabPanelRef = useRef<HTMLDivElement | null>(null);
+  const openCommentPopupBtnRef = useRef<HTMLButtonElement | null>(null);
+  const openQuestionPopupBtnRef = useRef<HTMLButtonElement | null>(null);
 
-  const [productData, setProductData] = useState(null);
-  const [imgSrcs, setImgSrcs] = useState([]);
-  const [windowWidth, setWindowWidth] = useState(null);
-  const [productInWishlist, setProductInWishlist] = useState(false);
-  const [productInCart, setProductInCart] = useState(false);
-  const [productInCompare, setProductInCompare] = useState(false);
-  const [activeSlideId, setActiveSlideId] = useState(0);
-  const [isCartBannerActive, setIsCartBannerActive] = useState(false);
-  const [isDescTabPanelActive, setIsDescTabPanelActive] = useState(true);
-  const [isCommentPopupActive, setIsCommentPopupActive] = useState(false);
-  const [isQuestionPopupActive, setIsQuestionPopupActive] = useState(false);
-  const [isGalleryOpen, setIsGalleryOpen] = useState(false);
+  const [productData, setProductData] = useState<ProductWithIdsAndNames | null>(null);
+  const [imgSrcs, setImgSrcs] = useState<(string | Promise<any>)[][]>([]);
+  const [windowWidth, setWindowWidth] = useState<number>(0);
+  const [productInWishlist, setProductInWishlist] = useState<boolean>(false);
+  const [productInCart, setProductInCart] = useState<boolean>(false);
+  const [productInCompare, setProductInCompare] = useState<boolean>(false);
+  const [activeSlideId, setActiveSlideId] = useState<number>(0);
+  const [isCartBannerActive, setIsCartBannerActive] = useState<boolean>(false);
+  const [isDescTabPanelActive, setIsDescTabPanelActive] = useState<boolean>(true);
+  const [isCommentPopupActive, setIsCommentPopupActive] = useState<boolean>(false);
+  const [isQuestionPopupActive, setIsQuestionPopupActive] = useState<boolean>(false);
+  const [isGalleryOpen, setIsGalleryOpen] = useState<boolean>(false);
 
   // setup functions
 
@@ -90,7 +93,7 @@ export default function Product() {
     isFetching,
   } = useGetProductQuery(fetchUrl);
 
-  if (status === 'fulfilled') {
+  if (status === 'fulfilled' && fetchedProduct) {
     if (fetchedProduct !== productData) {
       setProductData(fetchedProduct);
     }
@@ -157,7 +160,7 @@ export default function Product() {
   const paginationBtns = useMemo(() => (
     imgSrcs.map(([key, src], i) => (
       <button
-        key={key}
+        key={key as string}
         type="button"
         className={classNames(
           productCls.paginationBtn,
@@ -172,7 +175,7 @@ export default function Product() {
           <Await resolve={src}>
             <DynamicImage
               className={productCls.paginationBtnImg}
-              alt={product.name}
+              alt={product!.name}
             />
           </Await>
         </Suspense>
@@ -183,7 +186,7 @@ export default function Product() {
   const slides = useMemo(() => {
     const result = imgSrcs.map(([id, src]) => (
       <div
-        key={id}
+        key={id as string}
         className={productCls.slide}
       >
         <button
@@ -208,7 +211,7 @@ export default function Product() {
             <Await resolve={src}>
               <DynamicImage
                 className={productCls.slideImg}
-                alt={product.name}
+                alt={product!.name}
               />
             </Await>
           </Suspense>
@@ -249,11 +252,11 @@ export default function Product() {
     ));
   }, [product]);
 
-  let discountPercent;
+  let discountPercent: number;
 
   if (product && product.oldPrice) {
-    discountPercent = ((product.oldPrice - product.price) / product.oldPrice) * 100;
-    discountPercent = discountPercent.toFixed(0);
+    discountPercent = ((+product.oldPrice - +product.price) / +product.oldPrice) * 100;
+    discountPercent = +discountPercent.toFixed(0);
   }
 
   // tabs function
@@ -264,20 +267,20 @@ export default function Product() {
     let interactiveElems;
 
     if (isDescTabPanelActive) {
-      interactiveElems = findAllInteractiveElements(commentTabPanelRef.current);
+      interactiveElems = findAllInteractiveElements(commentTabPanelRef.current!);
     } else {
-      interactiveElems = findAllInteractiveElements(descTabPanelRef.current);
+      interactiveElems = findAllInteractiveElements(descTabPanelRef.current!);
     }
 
     interactiveElems.forEach((el) => {
-      el.tabIndex = '-1';
-      el.setAttribute('aria-hidden', true);
+      el.tabIndex = -1;
+      el.setAttribute('aria-hidden', String(true));
     });
 
     return () => {
       interactiveElems.forEach((el) => {
-        el.tabIndex = '0';
-        el.setAttribute('aria-hidden', false);
+        el.tabIndex = 0;
+        el.setAttribute('aria-hidden', String(false));
       });
     };
   }, [product, isDescTabPanelActive]);
@@ -380,8 +383,12 @@ export default function Product() {
 
   // event functions
 
-  function sendMutationRequest(state, addMutationFunc, deleteMutationFunc) {
-    const body = JSON.stringify([categoryId, subcategoryId, product.id]);
+  function sendMutationRequest(
+    state: boolean,
+    addMutationFunc: MutationTrigger<MutationDefinition<any, any, any, any>>,
+    deleteMutationFunc: MutationTrigger<MutationDefinition<any, any, any, any>>,
+  ) {
+    const body = JSON.stringify([categoryId, subcategoryId, product!.id]);
 
     if (!state) {
       addMutationFunc(body);
@@ -411,9 +418,9 @@ export default function Product() {
     sendMutationRequest(productInCompare, addToCompareRequest, deleteFromCompareRequest);
   }
 
-  function askQuestionBtnOnClick() {
+  const askQuestionBtnOnClick: React.MouseEventHandler<HTMLButtonElement> = () => {
     setIsQuestionPopupActive(true);
-  }
+  };
 
   return (
     <>
@@ -436,32 +443,32 @@ export default function Product() {
         {product ? (
           <>
             {windowWidth > 576 && (
-            <div className={productCls.additionalButtonsBlock}>
-              <button
-                type="button"
-                className={classNames(
-                  productCls.iconButton,
-                  productInWishlist && productCls.iconButton_active,
-                )}
-                onClick={wishlistButtonOnClick}
-                aria-label={productInWishlist ? `Видалити ${product.name} зі списку бажань` : `Додати ${product.name} до списку бажань`}
-              >
-                <Favorite className={productCls.buttonIcon} />
-                {!productInWishlist ? 'В обране' : 'В обраному'}
-              </button>
-              <button
-                type="button"
-                className={classNames(
-                  productCls.iconButton,
-                  productInCompare && productCls.iconButton_active,
-                )}
-                onClick={compareButtonOnClick}
-                aria-label={productInCompare ? `Видалити ${product.name} з порівняння` : `Додати ${product.name} в порівняння`}
-              >
-                <Compare className={productCls.buttonIcon} />
-                {!productInCompare ? ' До порівняння' : 'В порівнянні'}
-              </button>
-            </div>
+              <div className={productCls.additionalButtonsBlock}>
+                <button
+                  type="button"
+                  className={classNames(
+                    productCls.iconButton,
+                    productInWishlist && productCls.iconButton_active,
+                  )}
+                  onClick={wishlistButtonOnClick}
+                  aria-label={productInWishlist ? `Видалити ${product.name} зі списку бажань` : `Додати ${product.name} до списку бажань`}
+                >
+                  <Favorite className={productCls.buttonIcon} />
+                  {!productInWishlist ? 'В обране' : 'В обраному'}
+                </button>
+                <button
+                  type="button"
+                  className={classNames(
+                    productCls.iconButton,
+                    productInCompare && productCls.iconButton_active,
+                  )}
+                  onClick={compareButtonOnClick}
+                  aria-label={productInCompare ? `Видалити ${product.name} з порівняння` : `Додати ${product.name} в порівняння`}
+                >
+                  <Compare className={productCls.buttonIcon} />
+                  {!productInCompare ? ' До порівняння' : 'В порівнянні'}
+                </button>
+              </div>
             )}
             <div className={productCls.mainBlock}>
               <div className={productCls.imageSliderBlock}>
@@ -495,45 +502,45 @@ export default function Product() {
                     linkCls.link,
                     linkCls.linkBlue,
                   )}
-                  alt="Переглянути всі характеристики"
+                  aria-label="Переглянути всі характеристики"
                   onClick={() => setIsDescTabPanelActive(true)}
                 >
                   Переглянути всі
                 </a>
               </div>
               {windowWidth <= 576 && (
-              <div className={productCls.additionalButtonsBlock}>
-                <button
-                  type="button"
-                  className={classNames(
-                    productCls.iconButton,
-                    productInWishlist && productCls.iconButton_active,
-                  )}
-                  onClick={wishlistButtonOnClick}
-                  aria-label={productInWishlist ? `Видалити ${product.name} зі списку бажань` : `Додати ${product.name} до списку бажань`}
-                >
-                  <Favorite className={productCls.buttonIcon} />
-                  {!productInWishlist ? 'В обране' : 'В обраному'}
-                </button>
-                <button
-                  type="button"
-                  className={classNames(
-                    productCls.iconButton,
-                    productInCompare && productCls.iconButton_active,
-                  )}
-                  onClick={compareButtonOnClick}
-                  aria-label={productInCompare ? `Видалити ${product.name} з порівняння` : `Додати ${product.name} в порівняння`}
-                >
-                  <Compare className={productCls.buttonIcon} />
-                  {!productInCompare ? ' До порівняння' : 'В порівнянні'}
-                </button>
-              </div>
+                <div className={productCls.additionalButtonsBlock}>
+                  <button
+                    type="button"
+                    className={classNames(
+                      productCls.iconButton,
+                      productInWishlist && productCls.iconButton_active,
+                    )}
+                    onClick={wishlistButtonOnClick}
+                    aria-label={productInWishlist ? `Видалити ${product.name} зі списку бажань` : `Додати ${product.name} до списку бажань`}
+                  >
+                    <Favorite className={productCls.buttonIcon} />
+                    {!productInWishlist ? 'В обране' : 'В обраному'}
+                  </button>
+                  <button
+                    type="button"
+                    className={classNames(
+                      productCls.iconButton,
+                      productInCompare && productCls.iconButton_active,
+                    )}
+                    onClick={compareButtonOnClick}
+                    aria-label={productInCompare ? `Видалити ${product.name} з порівняння` : `Додати ${product.name} в порівняння`}
+                  >
+                    <Compare className={productCls.buttonIcon} />
+                    {!productInCompare ? ' До порівняння' : 'В порівнянні'}
+                  </button>
+                </div>
               )}
               <div className={productCls.priceAndCartBlock}>
                 {product.oldPrice && (
-                <p className={productCls.oldPrice}>
-                  {`${product.oldPrice} ₴/шт`}
-                </p>
+                  <p className={productCls.oldPrice}>
+                    {`${product.oldPrice} ₴/шт`}
+                  </p>
                 )}
                 <div className={productCls.mainPriceBlock}>
                   <p className={classNames(
@@ -554,9 +561,9 @@ export default function Product() {
                     ₴/шт
                   </span>
                   {product.oldPrice && (
-                  <div className={productCls.discountBlock}>
-                    {`-${discountPercent}%`}
-                  </div>
+                    <div className={productCls.discountBlock}>
+                      {`-${discountPercent!}%`}
+                    </div>
                   )}
                 </div>
                 <div className={productCls.cartBtnAndBannerBlock}>
@@ -679,9 +686,9 @@ export default function Product() {
               </aside>
             </div>
             <RelatedProducts
-              categoryId={categoryId}
-              subcategoryId={subcategoryId}
-              productId={productId}
+              categoryId={categoryId as string}
+              subcategoryId={subcategoryId as string}
+              productId={productId as string}
             />
           </>
         ) : (
@@ -747,7 +754,7 @@ export default function Product() {
                   Надсилаючи повідомлення ви даєте згоду на обробку&nbsp;
                   <Link
                     to="terms"
-                    alt="Умови обробки персональних даних"
+                    aria-label="Умови обробки персональних даних"
                     className={classNames(
                       linkCls.link,
                       linkCls.link14px,
@@ -766,7 +773,7 @@ export default function Product() {
             openButtonRef={openQuestionPopupBtnRef}
           />
           <Gallery
-            imgIds={imgIdsForGallery}
+            imgIds={imgIdsForGallery as string[]}
             isOpen={isGalleryOpen}
             setIsOpen={setIsGalleryOpen}
             activeSlideId={activeSlideId}

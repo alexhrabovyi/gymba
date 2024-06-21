@@ -37,6 +37,8 @@ import {
   SearchResults,
   NewsArticlesWithAmount,
   FilteredProductsAndMinMaxPrice,
+  ProductWithIdsAndNames,
+  Product,
 } from './dataAPI';
 
 async function addMutation(
@@ -45,20 +47,24 @@ async function addMutation(
 ) {
   const [categoryId, subcategoryId, productId] = await request.json();
 
-  const response = await addFunc(categoryId, subcategoryId, productId);
+  const response = await addFunc(categoryId as string, subcategoryId as string, productId as string);
 
   return response;
 }
 
-async function deleteMutation(request, deleteFunc, deleteAllFunc) {
+async function deleteMutation(
+  request: StrictRequest<any>,
+  deleteFunc: (categoryId: string, subcategoryId: string, productId: string) => Promise<Response>,
+  deleteAllFunc?: () => Promise<Response>,
+) {
   const requestData = await request.json();
-  let response;
+  let response: Response;
 
-  if (requestData.deleteAll) {
+  if (requestData.deleteAll && deleteAllFunc) {
     response = await deleteAllFunc();
   } else {
     const [categoryId, subcategoryId, productId] = requestData;
-    response = await deleteFunc(categoryId, subcategoryId, productId);
+    response = await deleteFunc(categoryId as string, subcategoryId as string, productId as string);
   }
 
   return response;
@@ -152,12 +158,14 @@ export const handlers = [
   http.get('/fakeAPI/getProduct/:categoryId/:subcategoryId/:productId', async ({ params }) => {
     const { categoryId, subcategoryId, productId } = params;
 
-    return getProduct(categoryId, subcategoryId, productId);
+    const product = await getProduct(categoryId as string, subcategoryId as string, productId as string);
+    return HttpResponse.json<ProductWithIdsAndNames>(product);
   }),
   http.get('/fakeAPI/getAnalogueProducts/:categoryId/:subcategoryId/:productId', async ({ params }) => {
     const { categoryId, subcategoryId, productId } = params;
 
-    return getAnalogueProducts(categoryId, subcategoryId, productId);
+    const analogueProducts = await getAnalogueProducts(categoryId as string, subcategoryId as string, productId as string);
+    return HttpResponse.json<Product[]>(analogueProducts);
   }),
   http.get('/fakeAPI/getRandomProduct', async () => {
     const randomProduct = await getRandomProduct();

@@ -2,7 +2,16 @@ import { memo } from 'react';
 import classNames from 'classnames';
 import textareaCls from './Textarea.module.scss';
 
-const Textarea = memo(({
+interface TextareaProps {
+  name: string,
+  className: string | string[],
+  placeholder: string
+  id?: string,
+  required: boolean,
+  textareaType: string,
+}
+
+const Textarea = memo<TextareaProps>(({
   name, className, placeholder, id, required, textareaType,
 }) => (
   <textarea

@@ -10,11 +10,18 @@ import BigPrevNextButton from '../../common/BigPrevNextButton/BigPrevNextButton'
 import ThreeDotsSpinnerBlock from '../../common/ThreeDotsSpinnerBlock/ThreeDotsSpinnerBlock';
 import textCls from '../../../scss/_text.module.scss';
 import relatedProductsCls from './RelatedProducts.module.scss';
+import { Product } from '../../../utils/dataAPI';
 
-const RelatedProducts = memo(({ categoryId, subcategoryId, productId }) => {
-  const [windowWidth, setWindowWidth] = useState(null);
-  const [products, setProducts] = useState();
-  const [activeSlideId, setActiveSlideId] = useState(0);
+interface RelatedProductsProps {
+  categoryId: string,
+  subcategoryId: string,
+  productId: string,
+}
+
+const RelatedProducts = memo<RelatedProductsProps>(({ categoryId, subcategoryId, productId }) => {
+  const [windowWidth, setWindowWidth] = useState<number>(0);
+  const [products, setProducts] = useState<Product[] | null>(null);
+  const [activeSlideId, setActiveSlideId] = useState<number>(0);
 
   const getWindowWidth = useCallback(() => {
     setWindowWidth(window.innerWidth);
@@ -87,7 +94,7 @@ const RelatedProducts = memo(({ categoryId, subcategoryId, productId }) => {
               activeSlideId={activeSlideId}
               setActiveSlideId={setActiveSlideId}
               slides={productSlides}
-              gap="0"
+              gap={0}
               perView={perView}
             />
             <BigPrevNextButton
