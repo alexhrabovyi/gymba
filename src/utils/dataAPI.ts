@@ -56,7 +56,7 @@ export interface CategoryShort extends Omit<Category, 'subcategories'> {
   }
 }
 
-interface JSON {
+interface ProductJSON {
   categories: {
     ids: string[],
     entities: {
@@ -111,28 +111,28 @@ export interface CartId {
   amount: number,
 }
 
-interface NewsQuoteContent {
+export interface NewsQuoteContent {
   contentType: string,
   elements: [string],
 }
 
-interface NewsTableContent {
+export interface NewsTableContent {
   contentType: string,
   columnHeaders: string[],
   rows: string[][],
 }
 
-interface NewsListContent {
+export interface NewsListContent {
   contentType: string,
   elements: string[],
 }
 
-interface NewsParagraphContent {
+export interface NewsParagraphContent {
   contentType: string,
   elements: [string],
 }
 
-interface NewsImgContent {
+export interface NewsImgContent {
   contentType: string,
   imgId: string,
   imgAlt: string,
@@ -145,7 +145,7 @@ interface NewsContent {
     | NewsTableContent | NewsListContent | NewsParagraphContent | NewsImgContent)[],
 }
 
-interface NewsArticle {
+export interface NewsArticle {
   name: string,
   id: string,
   date: string,
@@ -154,6 +154,19 @@ interface NewsArticle {
 }
 
 export interface NewsArticleShort extends Omit<NewsArticle, 'description'> { }
+
+interface NewsJSON {
+  ids: string[],
+  entities: {
+    [index: string]: NewsArticle | undefined,
+  }
+}
+
+export interface CompareSubcategory {
+  categoryId: Category['id'],
+  subcategoryId: Subcategory['id'],
+  subcategoryName: Subcategory['name'],
+}
 
 // utils
 
@@ -190,7 +203,7 @@ function getProductCard(
   subcategoryId: string,
   productId: string,
 ): ProductCard {
-  const productsJSON: JSON = products;
+  const productsJSON: ProductJSON = products;
 
   const category: Category | undefined = productsJSON.categories.entities[categoryId];
 
@@ -223,7 +236,7 @@ function getProductFullObj(
   subcategoryId: string,
   productId: string,
 ): ProductWithIdsAndNames {
-  const parsedJSON: JSON = products;
+  const parsedJSON: ProductJSON = products;
 
   const category: Category | undefined = parsedJSON.categories.entities[categoryId];
 
@@ -529,7 +542,7 @@ export async function getFilteredProductsAndMinMaxPrice(
 ): Promise<FilteredProductsAndMinMaxPrice> {
   await fakeNetwork();
 
-  const parsedJSON: JSON = products;
+  const parsedJSON: ProductJSON = products;
 
   const category = parsedJSON.categories.entities[categoryId];
 
@@ -600,7 +613,7 @@ export async function getAnalogueProducts(
 ): Promise<Product[]> {
   await fakeNetwork();
 
-  const parsedJSON: JSON = products;
+  const parsedJSON: ProductJSON = products;
   const category: Category | undefined = parsedJSON.categories.entities[categoryId];
 
   if (!category) throw new Response(null, { status: 404, statusText: 'Not found' });
@@ -780,12 +793,12 @@ export function deleteFromCompare(
   return deleteIdFromStorage<CompareId>('compareIds', findFunction);
 }
 
-export async function getCompareSubcategories() {
+export async function getCompareSubcategories(): Promise<CompareSubcategory[]> {
   await fakeNetwork();
 
-  const compareIds = getLocalStorageIds('compareIds');
+  const compareIds = getLocalStorageIds<CompareId>('compareIds');
 
-  const uniqueCompareCategoryAndSubcategory = [];
+  const uniqueCompareCategoryAndSubcategory: [string, string][] = [];
   compareIds.forEach(([cId, subcId]) => {
     const isAlreadyExist = uniqueCompareCategoryAndSubcategory
       .find(([uCId, uSubcId]) => uCId === cId && uSubcId === subcId);
@@ -793,29 +806,29 @@ export async function getCompareSubcategories() {
     if (!isAlreadyExist) uniqueCompareCategoryAndSubcategory.push([cId, subcId]);
   });
 
-  const compareSubcategoriesBtnInfo = uniqueCompareCategoryAndSubcategory.map(([cId, subcId]) => {
-    const { categoryId, subcategory } = getCategoryAndSubcategory(cId, subcId);
+  const compareSubcategoriesBtnInfo: CompareSubcategory[] = uniqueCompareCategoryAndSubcategory
+    .map(([cId, subcId]) => {
+      const { categoryId, subcategory } = getCategoryAndSubcategory(cId, subcId);
 
-    return {
-      categoryId,
-      subcategoryId: subcategory.id,
-      subcategoryName: subcategory.name,
-    };
-  });
+      const compareSubcategory: CompareSubcategory = {
+        categoryId,
+        subcategoryId: subcategory.id,
+        subcategoryName: subcategory.name,
+      };
 
-  const data = JSON.stringify(compareSubcategoriesBtnInfo);
+      return compareSubcategory;
+    });
 
-  return new Response(data, { status: 200, statusText: 'OK' });
+  return compareSubcategoriesBtnInfo;
 }
 
-export async function deleteCompareSubcategory(categoryId, subcategoryId) {
+export async function deleteCompareSubcategory(categoryId: string, subcategoryId: string) {
   await fakeNetwork();
 
-  let compareIds = getLocalStorageIds('compareIds');
+  let compareIds = getLocalStorageIds<CompareId>('compareIds');
   compareIds = compareIds.filter(([cId, sId]) => cId !== categoryId && sId !== subcategoryId);
-  compareIds = JSON.stringify(compareIds);
 
-  localStorage.setItem('compareIds', compareIds);
+  localStorage.setItem('compareIds', JSON.stringify(compareIds));
 
   return new Response(null, { status: 200, statusText: 'OK' });
 }
@@ -828,25 +841,28 @@ export async function deleteAllCompareSubcategories() {
   return new Response(null, { status: 200, statusText: 'OK' });
 }
 
-export async function getCompareProductCards(categoryId, subcategoryId) {
+export async function getCompareProductCards(
+  categoryId: string | null,
+  subcategoryId: string | null,
+): Promise<ProductWithIdsAndNames[]> {
   await fakeNetwork();
 
   if (categoryId === null || subcategoryId === null) throw new Response(null, { status: 404, statusText: 'Not found' });
 
-  let compareIds = getLocalStorageIds('compareIds');
+  let compareIds = getLocalStorageIds<CompareId>('compareIds');
 
   compareIds = compareIds.filter(([cId, subcId]) => cId === categoryId && subcId === subcategoryId);
 
   const productCards = compareIds.map(([cId, subcId, pId]) => getProductFullObj(cId, subcId, pId));
 
-  return new Response(JSON.stringify(productCards), { status: 200, statusText: 'OK' });
+  return productCards;
 }
 
 export async function getRandomProduct(): Promise<ProductWithIds> {
   await fakeNetwork();
 
   const { categoryId, subcategory } = getCategoryAndSubcategory('enamels', 'alkyd_enamels');
-  const subcategoryProducts: Product[] = Object.values(subcategory.products.entities);
+  const subcategoryProducts: Product[] = Object.values(subcategory.products.entities) as Product[];
 
   const randomProduct = (subcategoryProducts.sort(() => 0.5 - Math.random()))[0];
 
@@ -1076,17 +1092,19 @@ export async function getNewsPreviewsPerPageAndPageAmount(
   };
 }
 
-export async function getNewsArticle(articleId) {
+export async function getNewsArticle(articleId: string): Promise<NewsArticle> {
   await fakeNetwork();
 
-  const article = news.entities[articleId];
+  const newsJSON: NewsJSON = news;
+
+  const article = newsJSON.entities[articleId];
 
   if (!article) throw new Response(null, { status: 404, statusText: 'Not found' });
 
-  return new Response(JSON.stringify(article), { status: 200, statusText: 'OK' });
+  return article;
 }
 
-export async function getRecommendedNews(id) {
+export async function getRecommendedNews(id: string): Promise<NewsArticleShort[]> {
   await fakeNetwork();
 
   let allNewsPreviews = getAllNewsPreviews();

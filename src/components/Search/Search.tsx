@@ -14,19 +14,20 @@ import textCls from '../../scss/_text.module.scss';
 import searchCls from './Search.module.scss';
 import LineIcon from '../../assets/images/icons/oblique.svg';
 import ThreeDotsSpinnerBlock from '../common/ThreeDotsSpinnerBlock/ThreeDotsSpinnerBlock';
+import { FoundEntities } from '../../utils/dataAPI';
 
-export default function Search() {
+const Search: React.FC = () => {
   const [searchParams] = useSearchParams();
 
-  const [searchResults, setSearchResults] = useState(null);
-  const [pageAmount, setPageAmount] = useState(null);
-  const [isShortProductCard, setIsShortProductCard] = useState(false);
+  const [searchResults, setSearchResults] = useState<FoundEntities | null>(null);
+  const [pageAmount, setPageAmount] = useState<number | null>(null);
+  const [isShortProductCard, setIsShortProductCard] = useState<boolean>(false);
 
-  const searchQuery = searchParams.get('search');
+  const searchQuery = searchParams.get('search') || '';
 
   const requestParams = useMemo(() => ({
     searchQuery,
-    pageNum: +searchParams.get('page') || 1,
+    pageNum: Number(searchParams.get('page')) || 1,
   }), [searchQuery, searchParams]);
 
   const shouldSkip = searchQuery === null;
@@ -62,11 +63,11 @@ export default function Search() {
     if (!searchResults) return;
 
     const listElems = searchResults.map((sR) => {
-      let key;
-      let type;
-      let name;
-      let link;
-      let imgSrc;
+      let key: string;
+      let type: string;
+      let name: string;
+      let link: string;
+      let imgSrc: Promise<any>;
 
       if (sR.type === 'category') {
         key = sR.category.id;
@@ -99,7 +100,7 @@ export default function Search() {
 
       return (
         <li
-          key={key}
+          key={key!}
           className={searchCls.searchResultListElement}
         >
           {sR.type === 'product' ? (
@@ -118,25 +119,24 @@ export default function Search() {
           ) : (
             <Link
               className={searchCls.searchResultListLink}
-              to={link}
-              alt={name}
+              to={link!}
             >
               <Suspense fallback={<Spinner className={searchCls.imgSpinner} />}>
                 <Await
-                  resolve={imgSrc}
+                  resolve={imgSrc!}
                   errorElement={<div style={{ display: 'none' }} />}
                 >
                   <DynamicImage
                     className={searchCls.img}
-                    alt={name}
+                    alt={name!}
                   />
                 </Await>
               </Suspense>
               <span className={searchCls.searchResultListType}>
-                {type}
+                {type!}
               </span>
               <span className={searchCls.linkName}>
-                {name}
+                {name!}
               </span>
             </Link>
           )}
@@ -211,4 +211,6 @@ export default function Search() {
       )}
     </main>
   );
-}
+};
+
+export default Search;

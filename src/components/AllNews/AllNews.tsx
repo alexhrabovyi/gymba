@@ -8,14 +8,15 @@ import PaginationBlock from '../PaginationBlock/PaginationBlock';
 import containerCls from '../../scss/_container.module.scss';
 import textCls from '../../scss/_text.module.scss';
 import newsCls from './AllNews.module.scss';
+import { NewsArticleShort } from '../../utils/dataAPI';
 
-export default function AllNews() {
+const AllNews: React.FC = () => {
   const [searchParams] = useSearchParams();
 
-  const [newsPreviewsObjs, setNewsPreviewsObjs] = useState(null);
-  const [pageAmount, setPageAmount] = useState(null);
+  const [newsPreviewsObjs, setNewsPreviewsObjs] = useState<NewsArticleShort[] | null>(null);
+  const [pageAmount, setPageAmount] = useState<number | null>(null);
 
-  const currentPageNum = searchParams.get('page') || 1;
+  const currentPageNum = Number(searchParams.get('page')) || 1;
 
   const { data: fetchedData, isLoading, isFetching } = useGetNewsQuery(currentPageNum);
 
@@ -77,4 +78,6 @@ export default function AllNews() {
       )}
     </main>
   );
-}
+};
+
+export default AllNews;

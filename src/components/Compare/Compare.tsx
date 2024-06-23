@@ -18,18 +18,20 @@ import BinIcon from '../../assets/images/icons/bin.svg';
 import ChevronIcon from '../../assets/images/icons/chevronRight.svg';
 import Line from '../../assets/images/icons/oblique.svg';
 import ThreeDotsSpinnerBlock from '../common/ThreeDotsSpinnerBlock/ThreeDotsSpinnerBlock';
+import { CompareSubcategory, ProductWithIdsAndNames } from '../../utils/dataAPI';
 
-export default function Compare() {
+const Compare: React.FC = () => {
   const dispatch = useDispatch();
 
-  const productBlockRef = useRef();
-  const specsTableRef = useRef();
+  const productBlockRef = useRef<HTMLDivElement | null>(null);
+  const specsTableRef = useRef<HTMLTableElement | null>(null);
 
-  const [compareSubcategories, setCompareSubcategories] = useState(null);
-  const [activeSubcategoryId, setActiveSubcategoryId] = useState(null);
-  const [previousSubcategoryId, setPreviousSubcategoryId] = useState(null);
-  const [activeCategoryId, setActiveCategoryId] = useState(null);
-  const [productObjs, setProductObjs] = useState(null);
+  const [compareSubcategories,
+    setCompareSubcategories] = useState<CompareSubcategory[] | null>(null);
+  const [activeSubcategoryId, setActiveSubcategoryId] = useState<string | null>(null);
+  const [previousSubcategoryId, setPreviousSubcategoryId] = useState<string | null>(null);
+  const [activeCategoryId, setActiveCategoryId] = useState<string | null>(null);
+  const [productObjs, setProductObjs] = useState<ProductWithIdsAndNames[] | null>(null);
   const [displayedSpecsType, setDisplayedSpecsType] = useState('all');
 
   const [deleteSubcategoryRequest] = useDeleteCompareSubcategoryMutation();
@@ -50,7 +52,7 @@ export default function Compare() {
   function updateActiveCategoryId() {
     if (previousSubcategoryId !== activeSubcategoryId) {
       setPreviousSubcategoryId(activeSubcategoryId);
-      setActiveCategoryId(compareSubcategories[activeSubcategoryBtnIndex].categoryId);
+      setActiveCategoryId(compareSubcategories![activeSubcategoryBtnIndex!].categoryId);
     }
   }
 
@@ -71,8 +73,8 @@ export default function Compare() {
 
   const resetScrollLeftOnNewCards = useCallback(() => {
     if (productObjs?.length) {
-      productBlockRef.current.scrollLeft = 0;
-      specsTableRef.current.scrollLeft = 0;
+      productBlockRef.current!.scrollLeft = 0;
+      specsTableRef.current!.scrollLeft = 0;
     }
   }, [productObjs]);
 
@@ -93,8 +95,8 @@ export default function Compare() {
 
   const shouldSkip = !activeSubcategoryId;
   const requestObj = useMemo(() => ({
-    categoryId: activeCategoryId,
-    subcategoryId: activeSubcategoryId,
+    categoryId: activeCategoryId!,
+    subcategoryId: activeSubcategoryId!,
   }), [activeCategoryId, activeSubcategoryId]);
 
   const { data: fetchedProducts } = useGetCompareProductsQuery(requestObj, { skip: shouldSkip });
@@ -107,8 +109,12 @@ export default function Compare() {
 
   // event handler functions
 
-  const productOnAddDeleteButton = useCallback((categoryId, subcategoryId, productId) => {
-    const shouldDeleteSubcategory = productObjs.length === 1;
+  const productOnAddDeleteButton = useCallback((
+    categoryId: string,
+    subcategoryId: string,
+    productId: string,
+  ) => {
+    const shouldDeleteSubcategory = productObjs?.length === 1;
 
     dispatch(queryAPI.util.updateQueryData('getCompareProducts', requestObj, (draft) => {
       const index = draft.findIndex((pObj) => (pObj.categoryId === categoryId
@@ -116,7 +122,7 @@ export default function Compare() {
         && pObj.product.id === productId));
 
       draft.splice(index, 1);
-    }));
+    }) as any);
 
     if (shouldDeleteSubcategory) {
       dispatch(queryAPI.util.updateQueryData('getCompareSubcategories', undefined, (draft) => {
@@ -124,7 +130,7 @@ export default function Compare() {
           && subC.subcategoryId === subcategoryId));
 
         draft.splice(index, 1);
-      }));
+      }) as any);
     }
   }, [productObjs, dispatch, requestObj]);
 
@@ -135,18 +141,18 @@ export default function Compare() {
 
     dispatch(queryAPI.util.updateQueryData('getCompareProducts', requestObj, (draft) => {
       draft.splice(0);
-    }));
+    }) as any);
   }
 
   function prevControlButtonOnClick() {
     setActiveSubcategoryId(
-      compareSubcategories[activeSubcategoryBtnIndex - 1].subcategoryId,
+      compareSubcategories![activeSubcategoryBtnIndex! - 1].subcategoryId,
     );
   }
 
   function nextControlButtonOnClick() {
     setActiveSubcategoryId(
-      compareSubcategories[activeSubcategoryBtnIndex + 1].subcategoryId,
+      compareSubcategories![activeSubcategoryBtnIndex! + 1].subcategoryId,
     );
   }
 
@@ -154,14 +160,14 @@ export default function Compare() {
     const productBlock = productBlockRef.current;
     const specsTable = specsTableRef.current;
 
-    specsTable.scrollLeft = productBlock.scrollLeft;
+    specsTable!.scrollLeft = productBlock!.scrollLeft;
   }
 
   function specsTableOnScroll() {
     const productBlock = productBlockRef.current;
     const specsTable = specsTableRef.current;
 
-    productBlock.scrollLeft = specsTable.scrollLeft;
+    productBlock!.scrollLeft = specsTable!.scrollLeft;
   }
 
   // setup subcategory buttons and control buttons
@@ -182,11 +188,11 @@ export default function Compare() {
         id={`${categoryId}${subcategoryId}`}
         role="button"
         onClick={(e) => {
-          if (e.target.id === `${categoryId}${subcategoryId}`) {
+          if ((e.target as HTMLButtonElement).id === `${categoryId}${subcategoryId}`) {
             setActiveSubcategoryId(subcategoryId);
           }
         }}
-        tabIndex="0"
+        tabIndex={0}
         aria-label={`Показати порівняння товарів з категорії ${subcategoryName}`}
         aria-pressed={activeSubcategoryId === subcategoryId}
       >
@@ -199,9 +205,9 @@ export default function Compare() {
             deleteSubcategoryRequest(data);
 
             if (compareSubcategories.length === 1) {
-              dispatch(queryAPI.util.updateQueryData('getCompareProducts', requestObj, (draft) => {
+              dispatch(queryAPI.util.updateQueryData('getCompareProducts', requestObj, (draft: ProductWithIdsAndNames[]) => {
                 draft.splice(0);
-              }));
+              }) as any);
             }
           }}
           aria-label={`Видалити категорію ${subcategoryName} з порівняння`}
@@ -242,7 +248,7 @@ export default function Compare() {
   const allSpecFilterNames = useMemo(() => {
     if (!productObjs || !productObjs.length) return;
 
-    const filters = new Set();
+    const filters = new Set<string>();
 
     productObjs.forEach(({ product }) => {
       const specsFilters = product['specs-filters'];
@@ -250,17 +256,17 @@ export default function Compare() {
       Object.entries(specsFilters).forEach(([name]) => filters.add(name));
     });
 
-    return Array.from(filters).sort((a, b) => a.localeCompare(b));
+    return Array.from(filters).sort((a: string, b: string) => a.localeCompare(b));
   }, [productObjs]);
 
   const allSpecFilterNamesAndValues = useMemo(() => {
     if (!allSpecFilterNames) return;
 
-    const nameAndValues = {};
+    const nameAndValues: { [index: string]: string[] } = {};
 
     allSpecFilterNames.forEach((n) => { nameAndValues[n] = []; });
 
-    productObjs.forEach(({ product }) => {
+    productObjs?.forEach(({ product }) => {
       const productSpecsFilters = product['specs-filters'];
 
       allSpecFilterNames.forEach((name) => {
@@ -283,12 +289,12 @@ export default function Compare() {
 
   const sortedSpecFilterNameAndValue = useMemo(() => {
     if (!allSpecFilterNamesAndValues) return;
-    let sortedNameAndValue;
+    let sortedNameAndValue: { [index: string]: string[] };
 
     if (displayedSpecsType === 'all') {
       sortedNameAndValue = allSpecFilterNamesAndValues;
     } else if (displayedSpecsType === 'similar') {
-      const result = {};
+      const result: { [index: string]: string[] } = {};
 
       Object.entries(allSpecFilterNamesAndValues).forEach(([name, value]) => {
         const firstValue = value[0];
@@ -304,7 +310,7 @@ export default function Compare() {
 
       sortedNameAndValue = result;
     } else if (displayedSpecsType === 'differ') {
-      const result = {};
+      const result: { [index: string]: string[] } = {};
 
       Object.entries(allSpecFilterNamesAndValues).forEach(([name, value]) => {
         const firstValue = value[0];
@@ -321,11 +327,11 @@ export default function Compare() {
       sortedNameAndValue = result;
     }
 
-    return sortedNameAndValue;
+    return sortedNameAndValue!;
   }, [allSpecFilterNamesAndValues, displayedSpecsType]);
 
   const tableRows = useMemo(() => {
-    if (!sortedSpecFilterNameAndValue) return;
+    if (!sortedSpecFilterNameAndValue || !productObjs) return;
 
     const productIds = productObjs.map(({ product }) => product.id);
 
@@ -383,123 +389,123 @@ export default function Compare() {
           >
             Порівняння товарів
           </h1>
-          {subcategoryBtns?.length > 0 && (
-          <button
-            type="button"
-            className={compareCls.deleteBtn}
-            onClick={deleteAllBtnOnClick}
-            aria-label="Видалити все"
-          >
-            <BinIcon
-              className={compareCls.binIcon}
-            />
-            Видалити все
-          </button>
-          )}
-        </div>
-        {subcategoryBtns?.length > 0 && (
-        <div className={compareCls.subcategoryBtnAndControlBtnBlock}>
-          <div className={compareCls.subcategoryBtnBlock}>
-            {subcategoryBtns}
-          </div>
-          {subcategoryBtns.length > 1 && (
-          <div className={compareCls.controlBtnBlock}>
+          {Number(subcategoryBtns?.length) > 0 && (
             <button
               type="button"
-              className={classNames(
-                compareCls.controlButton,
-                isPrevControlBtnDisabled && compareCls.controlButton_disabled,
-              )}
-              onClick={prevControlButtonOnClick}
-              disabled={isPrevControlBtnDisabled}
-              aria-disabled={isPrevControlBtnDisabled}
-              tabIndex={isPrevControlBtnDisabled ? -1 : 0}
-              aria-label="Показати попередню категорію"
+              className={compareCls.deleteBtn}
+              onClick={deleteAllBtnOnClick}
+              aria-label="Видалити все"
             >
-              <ChevronIcon className={compareCls.chevronIcon} />
-            </button>
-            <button
-              type="button"
-              className={classNames(
-                compareCls.controlButton,
-                isNextControlBtnDisabled && compareCls.controlButton_disabled,
-              )}
-              onClick={nextControlButtonOnClick}
-              disabled={isNextControlBtnDisabled}
-              aria-disabled={isNextControlBtnDisabled}
-              tabIndex={isNextControlBtnDisabled ? -1 : 0}
-              aria-label="Показати наступну категорію"
-            >
-              <ChevronIcon className={classNames(
-                compareCls.chevronIcon,
-                compareCls.chevronIcon_next,
-              )}
+              <BinIcon
+                className={compareCls.binIcon}
               />
+              Видалити все
             </button>
-          </div>
           )}
         </div>
+        {Number(subcategoryBtns?.length) > 0 && (
+          <div className={compareCls.subcategoryBtnAndControlBtnBlock}>
+            <div className={compareCls.subcategoryBtnBlock}>
+              {subcategoryBtns}
+            </div>
+            {subcategoryBtns!.length > 1 && (
+              <div className={compareCls.controlBtnBlock}>
+                <button
+                  type="button"
+                  className={classNames(
+                    compareCls.controlButton,
+                    isPrevControlBtnDisabled && compareCls.controlButton_disabled,
+                  )}
+                  onClick={prevControlButtonOnClick}
+                  disabled={isPrevControlBtnDisabled}
+                  aria-disabled={isPrevControlBtnDisabled}
+                  tabIndex={isPrevControlBtnDisabled ? -1 : 0}
+                  aria-label="Показати попередню категорію"
+                >
+                  <ChevronIcon className={compareCls.chevronIcon} />
+                </button>
+                <button
+                  type="button"
+                  className={classNames(
+                    compareCls.controlButton,
+                    isNextControlBtnDisabled && compareCls.controlButton_disabled,
+                  )}
+                  onClick={nextControlButtonOnClick}
+                  disabled={isNextControlBtnDisabled}
+                  aria-disabled={isNextControlBtnDisabled}
+                  tabIndex={isNextControlBtnDisabled ? -1 : 0}
+                  aria-label="Показати наступну категорію"
+                >
+                  <ChevronIcon className={classNames(
+                    compareCls.chevronIcon,
+                    compareCls.chevronIcon_next,
+                  )}
+                  />
+                </button>
+              </div>
+            )}
+          </div>
         )}
         {productObjs && productObjs.length > 0 && (
-        <>
-          <div
-            ref={productBlockRef}
-            className={classNames(
-              compareCls.productBlock,
-              isFetchingProductsForAnotherSubcategory && compareCls.productBlock_inactive,
-            )}
-            onScroll={productBlockOnScroll}
-          >
-            {productCards}
-          </div>
-          <div className={compareCls.specsTitleAndControlBtnBlock}>
-            <h2 className={classNames(
-              textCls.text,
-              textCls.textFw800,
-              textCls.text24px,
-              textCls.textBlack,
-              compareCls.subtitle,
-            )}
+          <>
+            <div
+              ref={productBlockRef}
+              className={classNames(
+                compareCls.productBlock,
+                isFetchingProductsForAnotherSubcategory && compareCls.productBlock_inactive,
+              )}
+              onScroll={productBlockOnScroll}
             >
-              Характеристики
-            </h2>
-            <div className={compareCls.specsControlBtnBlock}>
-              <button
-                type="button"
-                className={classNames(
-                  compareCls.specsControlBtn,
-                  displayedSpecsType === 'all' && compareCls.specsControlBtn_active,
-                )}
-                onClick={() => setDisplayedSpecsType('all')}
-                aria-label="Показати всі характеристики"
-              >
-                Усі характеристики
-              </button>
-              <button
-                type="button"
-                className={classNames(
-                  compareCls.specsControlBtn,
-                  displayedSpecsType === 'similar' && compareCls.specsControlBtn_active,
-                )}
-                onClick={() => setDisplayedSpecsType('similar')}
-                aria-label="Показати характеристики, що сходяться"
-              >
-                Однакові
-              </button>
-              <button
-                type="button"
-                className={classNames(
-                  compareCls.specsControlBtn,
-                  displayedSpecsType === 'differ' && compareCls.specsControlBtn_active,
-                )}
-                onClick={() => setDisplayedSpecsType('differ')}
-                aria-label="Показати характеристики, які відрізняються"
-              >
-                Різні
-              </button>
+              {productCards}
             </div>
-          </div>
-        </>
+            <div className={compareCls.specsTitleAndControlBtnBlock}>
+              <h2 className={classNames(
+                textCls.text,
+                textCls.textFw800,
+                textCls.text24px,
+                textCls.textBlack,
+                compareCls.subtitle,
+              )}
+              >
+                Характеристики
+              </h2>
+              <div className={compareCls.specsControlBtnBlock}>
+                <button
+                  type="button"
+                  className={classNames(
+                    compareCls.specsControlBtn,
+                    displayedSpecsType === 'all' && compareCls.specsControlBtn_active,
+                  )}
+                  onClick={() => setDisplayedSpecsType('all')}
+                  aria-label="Показати всі характеристики"
+                >
+                  Усі характеристики
+                </button>
+                <button
+                  type="button"
+                  className={classNames(
+                    compareCls.specsControlBtn,
+                    displayedSpecsType === 'similar' && compareCls.specsControlBtn_active,
+                  )}
+                  onClick={() => setDisplayedSpecsType('similar')}
+                  aria-label="Показати характеристики, що сходяться"
+                >
+                  Однакові
+                </button>
+                <button
+                  type="button"
+                  className={classNames(
+                    compareCls.specsControlBtn,
+                    displayedSpecsType === 'differ' && compareCls.specsControlBtn_active,
+                  )}
+                  onClick={() => setDisplayedSpecsType('differ')}
+                  aria-label="Показати характеристики, які відрізняються"
+                >
+                  Різні
+                </button>
+              </div>
+            </div>
+          </>
         )}
         {!productObjs && (!compareSubcategories || compareSubcategories?.length !== 0) && (
           <ThreeDotsSpinnerBlock />
@@ -550,4 +556,6 @@ export default function Compare() {
       )}
     </main>
   );
-}
+};
+
+export default Compare;

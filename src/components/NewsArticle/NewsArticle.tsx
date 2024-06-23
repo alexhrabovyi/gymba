@@ -16,14 +16,19 @@ import linkCls from '../../scss/_link.module.scss';
 import articleCls from './NewsArticle.module.scss';
 import LineIcon from '../../assets/images/icons/oblique.svg';
 import ViewsIcon from '../../assets/images/icons/views.svg';
+import {
+  NewsArticleShort,
+  NewsArticle as NewsArticleType,
+  NewsImgContent, NewsListContent, NewsParagraphContent, NewsQuoteContent, NewsTableContent,
+} from '../../utils/dataAPI';
 
-export default function NewsArticle() {
+const NewsArticle: React.FC = () => {
   const params = useParams();
 
-  const [articleObj, setArticleObj] = useState(null);
-  const [recommendedNewsObjs, setRecommendedNewsObjs] = useState(null);
+  const [articleObj, setArticleObj] = useState<NewsArticleType | null>(null);
+  const [recommendedNewsObjs, setRecommendedNewsObjs] = useState<NewsArticleShort[] | null>(null);
 
-  const { articleId } = params;
+  const articleId = params.articleId as string;
 
   const {
     data: fetchedArticleObj,
@@ -50,7 +55,7 @@ export default function NewsArticle() {
     }
   }
 
-  const createContentTitle = useCallback((titleType, title) => {
+  const createContentTitle = useCallback((titleType: string, title: string) => {
     switch (titleType) {
       case 'h1': {
         return (
@@ -85,8 +90,8 @@ export default function NewsArticle() {
     }
   }, []);
 
-  const createContentImg = useCallback((imgId, imgAlt) => {
-    const imgSrc = import(`../../assets/images/newsImgs/additional-${imgId}-${articleObj.id}.webp`);
+  const createContentImg = useCallback((imgId: string, imgAlt: string) => {
+    const imgSrc = import(`../../assets/images/newsImgs/additional-${imgId}-${articleObj?.id}.webp`);
 
     return (
       <div
@@ -108,7 +113,7 @@ export default function NewsArticle() {
     );
   }, [articleObj]);
 
-  const createContentList = useCallback((key, listElems) => {
+  const createContentList = useCallback((key: string, listElems: string[]) => {
     const listElements = listElems.map((e, i) => (
       <li
         key={i}
@@ -131,7 +136,7 @@ export default function NewsArticle() {
     );
   }, []);
 
-  const createContentParagraphs = useCallback((paragraphs) => (
+  const createContentParagraphs = useCallback((paragraphs: string[]) => (
     paragraphs.map((p, i) => (
       <p
         key={i}
@@ -142,7 +147,7 @@ export default function NewsArticle() {
     ))
   ), []);
 
-  const createContentQuoteBlock = useCallback((key, quotes) => {
+  const createContentQuoteBlock = useCallback((key: string, quotes: [string]) => {
     const quoteTextParagraphs = quotes.map((e, i) => (
       <blockquote
         key={i}
@@ -163,7 +168,11 @@ export default function NewsArticle() {
     );
   }, []);
 
-  const createContentTable = useCallback((key, columnHeaders, rows) => {
+  const createContentTable = useCallback((
+    key: string,
+    columnHeaders: string[],
+    rows: string[][],
+  ) => {
     let columnHeadersRow;
 
     if (columnHeaders) {
@@ -227,25 +236,35 @@ export default function NewsArticle() {
       let title;
 
       if (d.titleType) {
-        title = createContentTitle(d.titleType, d.title);
+        title = createContentTitle(d.titleType, d.title as string);
       }
 
       const content = d.content.map((c, i) => {
         switch (c.contentType) {
           case 'img': {
-            return createContentImg(c.imgId, c.imgAlt);
+            const typedC = c as NewsImgContent;
+
+            return createContentImg(typedC.imgId, typedC.imgAlt);
           }
           case 'list': {
-            return createContentList(i, c.elements);
+            const typedC = c as NewsListContent;
+
+            return createContentList(String(i), typedC.elements);
           }
           case 'paragraph': {
-            return createContentParagraphs(c.elements);
+            const typedC = c as NewsParagraphContent;
+
+            return createContentParagraphs(typedC.elements);
           }
           case 'quote': {
-            return createContentQuoteBlock(i, c.elements);
+            const typedC = c as NewsQuoteContent;
+
+            return createContentQuoteBlock(String(i), typedC.elements);
           }
           case 'table': {
-            return createContentTable(i, c.columnHeaders, c.rows);
+            const typedC = c as NewsTableContent;
+
+            return createContentTable(String(i), typedC.columnHeaders, typedC.rows);
           }
         }
       });
@@ -283,7 +302,6 @@ export default function NewsArticle() {
         <Link
           className={linkCls.link}
           to={`/news/${rN.id}`}
-          alt={rN.name}
         >
           {rN.name}
         </Link>
@@ -335,4 +353,6 @@ export default function NewsArticle() {
       )}
     </main>
   );
-}
+};
+
+export default NewsArticle;

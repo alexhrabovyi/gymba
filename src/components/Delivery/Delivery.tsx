@@ -9,10 +9,10 @@ import textCls from '../../scss/_text.module.scss';
 import deliveryCls from './Delivery.module.scss';
 import Line from '../../assets/images/icons/oblique.svg';
 
-export default function Delivery() {
-  const askQuestionBannerBtnRef = useRef(null);
+const Delivery: React.FC = () => {
+  const askQuestionBannerBtnRef = useRef<HTMLButtonElement | null>(null);
 
-  const [isQuestionPopupActive, setIsQuestionPopupActive] = useState(false);
+  const [isQuestionPopupActive, setIsQuestionPopupActive] = useState<boolean>(false);
 
   function askQuestionBannerBtnOnClick() {
     setIsQuestionPopupActive(true);
@@ -165,4 +165,6 @@ export default function Delivery() {
       />
     </>
   );
-}
+};
+
+export default Delivery;

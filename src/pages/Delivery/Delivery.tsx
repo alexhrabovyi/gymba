@@ -1,11 +1,11 @@
 import BreadCrumbs from '../../components/BreadCrumbs/BreadCrumbs';
-import Search from '../../components/Search/Search.jsx';
+import Delivery from '../../components/Delivery/Delivery';
 
-export default function SearchPage() {
+export default function DeliveryPage() {
   return (
     <>
       <BreadCrumbs />
-      <Search />
+      <Delivery />
     </>
   );
 }

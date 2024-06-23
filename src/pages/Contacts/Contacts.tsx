@@ -1,11 +1,11 @@
 import BreadCrumbs from '../../components/BreadCrumbs/BreadCrumbs';
-import Delivery from '../../components/Delivery/Delivery.jsx';
+import Contacts from '../../components/Contacts/Contacts';
 
-export default function DeliveryPage() {
+export default function ContactsPage() {
   return (
     <>
       <BreadCrumbs />
-      <Delivery />
+      <Contacts />
     </>
   );
 }

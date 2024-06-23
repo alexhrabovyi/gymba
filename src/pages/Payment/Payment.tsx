@@ -1,11 +1,11 @@
 import BreadCrumbs from '../../components/BreadCrumbs/BreadCrumbs';
-import Contacts from '../../components/Contacts/Contacts.jsx';
+import Payment from '../../components/Payment/Payment';
 
-export default function ContactsPage() {
+export default function PaymentPage() {
   return (
     <>
       <BreadCrumbs />
-      <Contacts />
+      <Payment />
     </>
   );
 }

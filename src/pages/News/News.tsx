@@ -1,11 +1,11 @@
+import AllNews from '../../components/AllNews/AllNews';
 import BreadCrumbs from '../../components/BreadCrumbs/BreadCrumbs';
-import Compare from '../../components/Compare/Compare.jsx';
 
-export default function ComparePage() {
+export default function NewsPage() {
   return (
     <>
       <BreadCrumbs />
-      <Compare />
+      <AllNews />
     </>
   );
 }

@@ -41,6 +41,9 @@ import {
   Product,
   WishlistProductsAndPageAmout,
   CartProduct,
+  CompareSubcategory,
+  NewsArticle,
+  NewsArticleShort,
 } from './dataAPI';
 
 async function addMutation(
@@ -122,15 +125,21 @@ export const handlers = [
   }),
   http.post('/fakeAPI/compareIds', async ({ request }) => addMutation(request, addIdToCompare)),
   http.delete('/fakeAPI/compareIds', async ({ request }) => deleteMutation(request, deleteFromCompare)),
-  http.get('/fakeAPI/compareSubcategories', async () => getCompareSubcategories()),
+  http.get('/fakeAPI/compareSubcategories', async () => {
+    const compareSubcategories = await getCompareSubcategories();
+
+    return HttpResponse.json<CompareSubcategory[]>(compareSubcategories);
+  }),
   http.delete('/fakeAPI/compareSubcategories', async ({ request }) => {
-    const requestData = await request.json();
+    type RequestData = { deleteAll: boolean } | [string, string];
+
+    const requestData: RequestData = await request.json() as RequestData;
     let response;
 
-    if (requestData.deleteAll) {
+    if ('deleteAll' in requestData && requestData.deleteAll) {
       response = await deleteAllCompareSubcategories();
     } else {
-      const [categoryId, subcategoryId] = requestData;
+      const [categoryId, subcategoryId] = requestData as [string, string];
       response = await deleteCompareSubcategory(categoryId, subcategoryId);
     }
 
@@ -139,7 +148,9 @@ export const handlers = [
   http.get('/fakeAPI/getCompareProducts/:categoryId/:subcategoryId', async ({ params }) => {
     const { categoryId, subcategoryId } = params;
 
-    return getCompareProductCards(categoryId, subcategoryId);
+    const productCards = await getCompareProductCards(categoryId as string, subcategoryId as string);
+
+    return HttpResponse.json<ProductWithIdsAndNames[]>(productCards);
   }),
   http.get('/fakeAPI/news', async ({ request }) => {
     const pageNum = Number(new URL(request.url).searchParams.get('page'));
@@ -150,14 +161,16 @@ export const handlers = [
   http.get('/fakeAPI/newsArticle/:articleId', async ({ params }) => {
     const { articleId } = params;
 
-    return getNewsArticle(articleId);
+    const newsArticle = await getNewsArticle(articleId as string);
+
+    return HttpResponse.json<NewsArticle>(newsArticle);
   }),
   http.get('/fakeAPI/getRecommendedNews/:articleId', async ({ params }) => {
     const { articleId } = params;
 
-    const recommendedNews = await getRecommendedNews(articleId);
+    const recommendedNews = await getRecommendedNews(articleId as string);
 
-    return HttpResponse.json(recommendedNews);
+    return HttpResponse.json<NewsArticleShort[]>(recommendedNews);
   }),
   http.get('/fakeAPI/getProduct/:categoryId/:subcategoryId/:productId', async ({ params }) => {
     const { categoryId, subcategoryId, productId } = params;

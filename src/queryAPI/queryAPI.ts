@@ -5,7 +5,10 @@ import type {
   CartProduct,
   CategoryShort,
   CompareId,
+  CompareSubcategory,
   FilteredProductsAndMinMaxPrice,
+  NewsArticle,
+  NewsArticleShort,
   NewsArticlesWithAmount,
   Product,
   ProductWithIds,
@@ -14,7 +17,6 @@ import type {
   WishlistId,
   WishlistProductsAndPageAmout,
 } from '../utils/dataAPI';
-import { AnyAaaaRecord } from 'dns';
 
 const categoriesAdapter = createEntityAdapter<CategoryShort>();
 
@@ -315,11 +317,11 @@ export const queryAPI = createApi(
           },
         },
       ),
-      getCompareSubcategories: builder.query({
+      getCompareSubcategories: builder.query<CompareSubcategory[], void>({
         query: () => '/compareSubcategories',
         providesTags: ['compareSubcategories'],
       }),
-      deleteCompareSubcategory: builder.mutation(
+      deleteCompareSubcategory: builder.mutation<Response, string>(
         {
           query: (body) => ({
             url: '/compareSubcategories',
@@ -336,7 +338,7 @@ export const queryAPI = createApi(
                   draft.splice(0);
                 } else {
                   const [categoryId, subcategoryId] = request;
-                  const index = draft.findIndex((subcObj: AnyAaaaRecord) => (
+                  const index = draft.findIndex((subcObj) => (
                     subcObj.categoryId === categoryId && subcObj.subcategoryId === subcategoryId
                   ));
                   draft.splice(index, 1);
@@ -352,19 +354,20 @@ export const queryAPI = createApi(
           },
         },
       ),
-      getCompareProducts: builder.query({
-        query: ({ categoryId, subcategoryId }) => `/getCompareProducts/${categoryId}/${subcategoryId}`,
-        providesTags: ['compareProducts'],
-      }),
+      getCompareProducts: builder
+        .query<ProductWithIdsAndNames[], { categoryId: string, subcategoryId: string }>({
+          query: ({ categoryId, subcategoryId }) => `/getCompareProducts/${categoryId}/${subcategoryId}`,
+          providesTags: ['compareProducts'],
+        }),
       getNews: builder.query<NewsArticlesWithAmount, number>({
         query: (pageNum) => `/news?page=${pageNum}`,
         providesTags: ['news'],
       }),
-      getNewsArticle: builder.query({
+      getNewsArticle: builder.query<NewsArticle, string>({
         query: (articleId) => `/newsArticle/${articleId}`,
         providesTags: ['newsArticle'],
       }),
-      getRecommendedNews: builder.query({
+      getRecommendedNews: builder.query<NewsArticleShort[], string>({
         query: (articleId) => `/getRecommendedNews/${articleId}`,
         providesTags: ['recommendedNews'],
       }),
