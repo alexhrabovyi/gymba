@@ -1,1 +1,0 @@
-"use strict";(self.webpackChunkreact_config=self.webpackChunkreact_config||[]).push([[5032],{5032:function(i,a,e){i.exports=e.p+"assets/images/additional-1-yak_pidibraty_vidpovidni_budivelni_materialy_dlia_vashoho_proektu.cfbff79efa6280b3618c..webp"}}]);

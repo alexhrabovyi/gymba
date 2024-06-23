@@ -15,6 +15,7 @@ P.S.S.: Some categories and subcategories will throw error because I haven't add
 its subcategory "Алкідні емалі".
 
 ## Tech Stack
+- Typescript
 - React 18.2
 - React Router 6.22
 - Redux (React Redux, Redux Toolkit, RTK Query)

@@ -33,12 +33,12 @@ const Category: React.FC = () => {
   const subcategoryElements = useMemo(() => (
     subcategories?.map((s) => (
       <Subcategory
-        key={s.id}
+        key={s!.id}
         categoryId={categoryId!}
-        name={s.name}
-        id={s.id}
-        imgId={s.id}
-        imgAlt={s.imgAlt!}
+        name={s!.name}
+        id={s!.id}
+        imgId={s!.id}
+        imgAlt={s!.imgAlt!}
       />
     ))
   ), [subcategories, categoryId]);

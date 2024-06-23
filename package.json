@@ -10,7 +10,7 @@
     "stylelint:fix": "stylelint **/*.scss --fix",
     "build:dev": "webpack",
     "build:dev:analyze": "webpack --env analyze",
-    "build:prod": "npm run eslint:fix && npm run stylelint:fix && webpack --env production tscheck",
+    "build:prod": "npm run stylelint:fix && webpack --env production tscheck",
     "build:prod:analyze": "npm run eslint:fix && npm run stylelint:fix && webpack --env production analyze tscheck",
     "serve": "webpack serve",
     "serve:tscheck": "webpack serve --env tscheck",

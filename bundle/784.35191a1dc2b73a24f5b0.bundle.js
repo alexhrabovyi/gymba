@@ -1,1 +1,0 @@
-"use strict";(self.webpackChunkreact_config=self.webpackChunkreact_config||[]).push([[784],{8400:function(e,s,t){e.exports=t.p+"assets/images/grunt-emal-3-v-1-progres-chernyy-shelkovistyy-mat-2-5-kg.12e1152f14414d8fb8b9..webp"}}]);

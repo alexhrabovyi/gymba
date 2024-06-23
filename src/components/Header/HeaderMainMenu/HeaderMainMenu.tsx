@@ -200,12 +200,12 @@ const HeaderMainMenu = memo<HeaderMainMenuProps>(({
   const subcategoryLinkList = useMemo(() => (
     <ul className={headerMenuCls.additionalLinkList}>
       {subcategories && Object.values(subcategories).map((subC) => (
-        <li key={subC.id}>
+        <li key={subC!.id}>
           <Link
-            to={`${activeCategory?.id}/${subC.id}`}
+            to={`${activeCategory?.id}/${subC!.id}`}
             className={classNames(linkCls.link, linkCls.link18px)}
           >
-            {subC.name}
+            {subC!.name}
           </Link>
         </li>
       ))}

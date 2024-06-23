@@ -24,8 +24,7 @@ export default (env: EnvVariable): Configuration => {
   const entry = path.resolve(__dirname, 'src/static/main.tsx');
 
   const output = {
-    // publicPath: '/gymba/',
-    publicPath: '/',
+    publicPath: '/gymba/',
     filename: '[name].[contenthash].bundle.js',
     path: path.resolve(__dirname, 'bundle'),
     clean: true,
@@ -62,8 +61,7 @@ export default (env: EnvVariable): Configuration => {
           isProd ? {
             loader: MiniCssExtractPlugin.loader,
             options: {
-              // publicPath: "/gymba/",
-              publicPath: "/",
+              publicPath: "/gymba/",
             },
           } : "style-loader",
           {
@@ -165,8 +163,7 @@ export default (env: EnvVariable): Configuration => {
   // devServer
 
   const devServer: DevServerConfiguration | undefined = !isProd ? {
-    // open: ['/gymba/'],
-    open: true,
+    open: ['/gymba/'],
     watchFiles: ['src/**/*.html', 'bundle/*.html'],
     client: {
       overlay: true,

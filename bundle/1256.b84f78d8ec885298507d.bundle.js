@@ -1,1 +1,0 @@
-"use strict";(self.webpackChunkreact_config=self.webpackChunkreact_config||[]).push([[1256],{1256:function(e,s,c){e.exports=c.p+"assets/images/enamels_soils_gf_ge.2dc048f8c3c9657dba1d..webp"}}]);

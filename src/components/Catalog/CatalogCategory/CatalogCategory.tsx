@@ -61,14 +61,14 @@ const Category: React.FC<CategoryProps> = ({ categoryProps, figureId }) => {
         <ul className={categoryCls.additionalLinkList}>
           {subcategories.map((subC) => (
             <li
-              key={subC.id}
+              key={subC?.id}
               className={categoryCls.additionalLinkListElement}
             >
               <Link
-                to={`${categoryProps.id}/${subC.id}`}
+                to={`${categoryProps.id}/${subC?.id}`}
                 className={categoryCls.additionalLink}
               >
-                {subC.name}
+                {subC?.name}
               </Link>
             </li>
           ))}

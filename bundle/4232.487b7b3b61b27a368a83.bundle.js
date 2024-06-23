@@ -1,1 +1,0 @@
-"use strict";(self.webpackChunkreact_config=self.webpackChunkreact_config||[]).push([[4232],{4232:function(e,s,c){e.exports=c.p+"assets/images/fasteners.f6edc82630c952e03379..webp"}}]);

@@ -56,12 +56,12 @@ const HeaderSubcategoryMenu = memo<HeaderSubcategoryMenuProps>(({
 
   const subcategoryLinkList = useMemo(() => (
     subcategories?.map((subC) => (
-      <li key={subC.id}>
+      <li key={subC!.id}>
         <Link
-          to={`${category?.id}/${subC.id}`}
+          to={`${category?.id}/${subC!.id}`}
           className={classNames(linkCls.link, linkCls.link18px)}
         >
-          {subC.name}
+          {subC!.name}
         </Link>
       </li>
     ))

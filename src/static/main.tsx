@@ -1,4 +1,4 @@
-import { createBrowserRouter, RouterProvider } from 'react-router-dom';
+import { createHashRouter, RouterProvider } from 'react-router-dom';
 import React from 'react';
 import { createRoot } from 'react-dom/client';
 import { Provider } from 'react-redux';
@@ -21,7 +21,7 @@ import NewsPageLazy from '../pages/News/News.lazy';
 import NewsArticlePageLazy from '../pages/NewsArticle/NewsArticle.lazy';
 import SearchPageLazy from '../pages/Search/Search.lazy';
 
-const router = createBrowserRouter([
+const router = createHashRouter([
   {
     element: <HeaderAndFooterLayout />,
     children: [
